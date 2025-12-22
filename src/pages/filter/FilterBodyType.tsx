@@ -34,9 +34,10 @@ export default function FilterBodyType() {
     setSelectedId(bodyType);
     updateConfig('bodyType', bodyType);
 
+    // Slow cinematic animation - 2.5 seconds before navigation
     setTimeout(() => {
       navigate('/filter/hair-type');
-    }, 600);
+    }, 2500);
   }, [isAnimating, navigate, updateConfig]);
 
   return (

@@ -34,9 +34,10 @@ export default function FilterSkinTone() {
     setSelectedId(skinTone);
     updateConfig('skinTone', skinTone);
 
+    // Slow cinematic animation - 2.5 seconds before navigation
     setTimeout(() => {
       navigate('/filter/hair-color');
-    }, 600);
+    }, 2500);
   }, [isAnimating, navigate, updateConfig]);
 
   return (
