@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { cn } from '@/lib/utils';
 
 const bodyTypeOptions = [
   { id: 'Slim', label: 'Slim', subtitle: 'Lean and slender' },
@@ -19,15 +20,24 @@ const bodyTypeOptions = [
 export default function FilterBodyType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentStep(6);
   }, [setCurrentStep]);
 
-  const handleSelect = (bodyType: string) => {
+  const handleSelect = useCallback((bodyType: string) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setSelectedId(bodyType);
     updateConfig('bodyType', bodyType);
-    navigate('/filter/hair-type');
-  };
+
+    setTimeout(() => {
+      navigate('/filter/hair-type');
+    }, 600);
+  }, [isAnimating, navigate, updateConfig]);
 
   return (
     <FilterStepLayout 
@@ -35,14 +45,19 @@ export default function FilterBodyType() {
       subtitle="Choose the body type for your model"
       onBack={() => navigate('/filter/eye-color')}
     >
-      <div className="grid grid-cols-3 gap-4">
-        {bodyTypeOptions.map((option) => (
+      <div className={cn("selection-backdrop", isAnimating && "active")} />
+      
+      <div className="grid grid-cols-3 gap-4 relative">
+        {bodyTypeOptions.map((option, index) => (
           <SelectionCard
             key={option.id}
             title={option.label}
             subtitle={option.subtitle}
             selected={config.bodyType === option.id}
             onClick={() => handleSelect(option.id)}
+            isAnimating={selectedId === option.id}
+            isFadingOut={isAnimating && selectedId !== option.id}
+            animationDelay={index * 30}
           />
         ))}
       </div>

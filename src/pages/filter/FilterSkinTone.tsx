@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { cn } from '@/lib/utils';
 
 const skinToneOptions = [
   { id: 'Fair', label: 'Fair', color: '#FFE5D4' },
@@ -19,15 +20,24 @@ const skinToneOptions = [
 export default function FilterSkinTone() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentStep(3);
   }, [setCurrentStep]);
 
-  const handleSelect = (skinTone: string) => {
+  const handleSelect = useCallback((skinTone: string) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setSelectedId(skinTone);
     updateConfig('skinTone', skinTone);
-    navigate('/filter/hair-color');
-  };
+
+    setTimeout(() => {
+      navigate('/filter/hair-color');
+    }, 600);
+  }, [isAnimating, navigate, updateConfig]);
 
   return (
     <FilterStepLayout 
@@ -35,14 +45,19 @@ export default function FilterSkinTone() {
       subtitle="Choose the skin tone for your model"
       onBack={() => navigate('/filter/ethnicity')}
     >
-      <div className="grid grid-cols-3 gap-4">
-        {skinToneOptions.map((option) => (
+      <div className={cn("selection-backdrop", isAnimating && "active")} />
+      
+      <div className="grid grid-cols-3 gap-4 relative">
+        {skinToneOptions.map((option, index) => (
           <SelectionCard
             key={option.id}
             title={option.label}
             colorSwatch={option.color}
             selected={config.skinTone === option.id}
             onClick={() => handleSelect(option.id)}
+            isAnimating={selectedId === option.id}
+            isFadingOut={isAnimating && selectedId !== option.id}
+            animationDelay={index * 30}
           />
         ))}
       </div>
