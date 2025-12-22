@@ -34,9 +34,10 @@ export default function FilterEyeColor() {
     setSelectedId(eyeColor);
     updateConfig('eyeColor', eyeColor);
 
+    // Slow cinematic animation - 2.5 seconds before navigation
     setTimeout(() => {
       navigate('/filter/body-type');
-    }, 600);
+    }, 2500);
   }, [isAnimating, navigate, updateConfig]);
 
   return (

@@ -34,9 +34,10 @@ export default function FilterHairColor() {
     setSelectedId(hairColor);
     updateConfig('hairColor', hairColor);
 
+    // Slow cinematic animation - 2.5 seconds before navigation
     setTimeout(() => {
       navigate('/filter/eye-color');
-    }, 600);
+    }, 2500);
   }, [isAnimating, navigate, updateConfig]);
 
   return (

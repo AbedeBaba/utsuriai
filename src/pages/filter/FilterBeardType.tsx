@@ -40,9 +40,10 @@ export default function FilterBeardType() {
     setSelectedId(beardType);
     updateConfig('beardType', beardType);
 
+    // Slow cinematic animation - 2.5 seconds before navigation
     setTimeout(() => {
       navigate('/clothing');
-    }, 600);
+    }, 2500);
   }, [isAnimating, navigate, updateConfig]);
 
   return (

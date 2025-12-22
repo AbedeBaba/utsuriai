@@ -34,9 +34,10 @@ export default function FilterEthnicity() {
     setSelectedId(ethnicity);
     updateConfig('ethnicity', ethnicity);
 
+    // Slow cinematic animation - 2.5 seconds before navigation
     setTimeout(() => {
       navigate('/filter/skin-tone');
-    }, 600);
+    }, 2500);
   }, [isAnimating, navigate, updateConfig]);
 
   return (
