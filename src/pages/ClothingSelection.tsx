@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { ImageUpload } from '@/components/ImageUpload';
 
 const topOptions = ['T-Shirt', 'Blouse', 'Blazer', 'Sweater', 'Tank Top', 'Dress Shirt', 'Hoodie', 'Crop Top', 'Jacket'];
 const bottomOptions = ['Jeans', 'Dress Pants', 'Shorts', 'Skirt', 'Leggings', 'Chinos', 'Joggers', 'Maxi Skirt', 'Culottes'];
@@ -21,8 +22,16 @@ export default function ClothingSelection() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [referenceImage, setReferenceImage] = useState<{ file: File | null; preview: string | null }>({
+    file: null,
+    preview: null,
+  });
 
   setCurrentStep(totalSteps);
+
+  const handleImageSelect = (file: File | null, preview: string | null) => {
+    setReferenceImage({ file, preview });
+  };
 
   const handleGenerate = async () => {
     if (!user) {
@@ -98,13 +107,32 @@ export default function ClothingSelection() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-12">
-        <div className="text-center mb-10 animate-fade-in">
+      <main className="flex-1 flex flex-col items-center justify-start px-6 pb-12 pt-4 overflow-y-auto">
+        <div className="text-center mb-8 animate-fade-in">
           <h1 className="text-3xl font-semibold text-foreground mb-2">Clothing & Style</h1>
           <p className="text-muted-foreground">Customize the outfit and pose for your model</p>
         </div>
 
         <div className="w-full max-w-lg space-y-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          {/* Image Upload Section */}
+          <div className="space-y-3">
+            <Label className="text-base">Reference Image</Label>
+            <ImageUpload
+              onImageSelect={handleImageSelect}
+              label="Upload reference clothing image"
+              sublabel="Optional: Add your own outfit inspiration"
+            />
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or choose from options</span>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Top</Label>

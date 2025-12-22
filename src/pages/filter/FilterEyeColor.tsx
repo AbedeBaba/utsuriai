@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { cn } from '@/lib/utils';
 
 const eyeColorOptions = [
   { id: 'Brown', label: 'Brown', color: '#634E34' },
@@ -19,15 +20,24 @@ const eyeColorOptions = [
 export default function FilterEyeColor() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentStep(5);
   }, [setCurrentStep]);
 
-  const handleSelect = (eyeColor: string) => {
+  const handleSelect = useCallback((eyeColor: string) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setSelectedId(eyeColor);
     updateConfig('eyeColor', eyeColor);
-    navigate('/filter/body-type');
-  };
+
+    setTimeout(() => {
+      navigate('/filter/body-type');
+    }, 600);
+  }, [isAnimating, navigate, updateConfig]);
 
   return (
     <FilterStepLayout 
@@ -35,14 +45,19 @@ export default function FilterEyeColor() {
       subtitle="Choose the eye color for your model"
       onBack={() => navigate('/filter/hair-color')}
     >
-      <div className="grid grid-cols-3 gap-4">
-        {eyeColorOptions.map((option) => (
+      <div className={cn("selection-backdrop", isAnimating && "active")} />
+      
+      <div className="grid grid-cols-3 gap-4 relative">
+        {eyeColorOptions.map((option, index) => (
           <SelectionCard
             key={option.id}
             title={option.label}
             colorSwatch={option.color}
             selected={config.eyeColor === option.id}
             onClick={() => handleSelect(option.id)}
+            isAnimating={selectedId === option.id}
+            isFadingOut={isAnimating && selectedId !== option.id}
+            animationDelay={index * 30}
           />
         ))}
       </div>

@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { cn } from '@/lib/utils';
 
 const hairTypeOptions = [
   { id: 'Straight', label: 'Straight', subtitle: 'Sleek and smooth' },
@@ -19,20 +20,28 @@ const hairTypeOptions = [
 export default function FilterHairType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentStep(7);
   }, [setCurrentStep]);
 
-  const handleSelect = (hairType: string) => {
+  const handleSelect = useCallback((hairType: string) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setSelectedId(hairType);
     updateConfig('hairType', hairType);
-    // If male, go to beard type; otherwise go to clothing
-    if (config.gender === 'Male') {
-      navigate('/filter/beard-type');
-    } else {
-      navigate('/clothing');
-    }
-  };
+
+    setTimeout(() => {
+      if (config.gender === 'Male') {
+        navigate('/filter/beard-type');
+      } else {
+        navigate('/clothing');
+      }
+    }, 600);
+  }, [isAnimating, navigate, updateConfig, config.gender]);
 
   return (
     <FilterStepLayout 
@@ -40,14 +49,19 @@ export default function FilterHairType() {
       subtitle="Choose the hair type for your model"
       onBack={() => navigate('/filter/body-type')}
     >
-      <div className="grid grid-cols-3 gap-4">
-        {hairTypeOptions.map((option) => (
+      <div className={cn("selection-backdrop", isAnimating && "active")} />
+      
+      <div className="grid grid-cols-3 gap-4 relative">
+        {hairTypeOptions.map((option, index) => (
           <SelectionCard
             key={option.id}
             title={option.label}
             subtitle={option.subtitle}
             selected={config.hairType === option.id}
             onClick={() => handleSelect(option.id)}
+            isAnimating={selectedId === option.id}
+            isFadingOut={isAnimating && selectedId !== option.id}
+            animationDelay={index * 30}
           />
         ))}
       </div>

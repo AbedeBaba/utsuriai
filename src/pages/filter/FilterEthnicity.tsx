@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { cn } from '@/lib/utils';
 
 const ethnicityOptions = [
   { id: 'Caucasian', label: 'Caucasian' },
@@ -19,15 +20,24 @@ const ethnicityOptions = [
 export default function FilterEthnicity() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentStep(2);
   }, [setCurrentStep]);
 
-  const handleSelect = (ethnicity: string) => {
+  const handleSelect = useCallback((ethnicity: string) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setSelectedId(ethnicity);
     updateConfig('ethnicity', ethnicity);
-    navigate('/filter/skin-tone');
-  };
+
+    setTimeout(() => {
+      navigate('/filter/skin-tone');
+    }, 600);
+  }, [isAnimating, navigate, updateConfig]);
 
   return (
     <FilterStepLayout 
@@ -35,13 +45,18 @@ export default function FilterEthnicity() {
       subtitle="Choose the ethnicity for your model"
       onBack={() => navigate('/filter/gender')}
     >
-      <div className="grid grid-cols-3 gap-4">
-        {ethnicityOptions.map((option) => (
+      <div className={cn("selection-backdrop", isAnimating && "active")} />
+      
+      <div className="grid grid-cols-3 gap-4 relative">
+        {ethnicityOptions.map((option, index) => (
           <SelectionCard
             key={option.id}
             title={option.label}
             selected={config.ethnicity === option.id}
             onClick={() => handleSelect(option.id)}
+            isAnimating={selectedId === option.id}
+            isFadingOut={isAnimating && selectedId !== option.id}
+            animationDelay={index * 30}
           />
         ))}
       </div>
