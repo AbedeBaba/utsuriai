@@ -3,22 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ImageUpload } from '@/components/ImageUpload';
 
-const topOptions = ['T-Shirt', 'Blouse', 'Blazer', 'Sweater', 'Tank Top', 'Dress Shirt', 'Hoodie', 'Crop Top', 'Jacket'];
-const bottomOptions = ['Jeans', 'Dress Pants', 'Shorts', 'Skirt', 'Leggings', 'Chinos', 'Joggers', 'Maxi Skirt', 'Culottes'];
-const shoesOptions = ['Sneakers', 'Heels', 'Boots', 'Loafers', 'Sandals', 'Flats', 'Oxfords', 'Platforms', 'Athletic'];
-const poseOptions = ['Standing', 'Walking', 'Sitting', 'Leaning', 'Dynamic', 'Casual', 'Professional', 'Artistic', 'Editorial'];
-const backgroundOptions = ['Studio White', 'Studio Gray', 'Outdoor Urban', 'Beach', 'Nature', 'Gradient', 'Minimalist', 'Luxury Interior', 'Street'];
-
 export default function ClothingSelection() {
   const navigate = useNavigate();
-  const { config, updateConfig, setCurrentStep, totalSteps } = useModelConfig();
+  const { config, setCurrentStep, totalSteps } = useModelConfig();
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -60,11 +52,6 @@ export default function ClothingSelection() {
           body_type: config.bodyType,
           hair_type: config.hairType,
           beard_type: config.beardType || null,
-          clothing_top: config.clothingTop || null,
-          clothing_bottom: config.clothingBottom || null,
-          shoes: config.shoes || null,
-          pose: config.pose || null,
-          background: config.background || null,
           status: 'pending',
         })
         .select()
@@ -107,114 +94,39 @@ export default function ClothingSelection() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 flex flex-col items-center justify-start px-6 pb-12 pt-4 overflow-y-auto">
+      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-12">
         <div className="text-center mb-8 animate-fade-in">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">Clothing & Style</h1>
-          <p className="text-muted-foreground">Customize the outfit and pose for your model</p>
+          <h1 className="text-3xl font-semibold text-foreground mb-2">Reference Image</h1>
+          <p className="text-muted-foreground">Upload a clothing or style reference for your model</p>
         </div>
 
-        <div className="w-full max-w-lg space-y-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          {/* Image Upload Section */}
-          <div className="space-y-3">
-            <Label className="text-base">Reference Image</Label>
-            <ImageUpload
-              onImageSelect={handleImageSelect}
-              label="Upload reference clothing image"
-              sublabel="Optional: Add your own outfit inspiration"
-            />
-          </div>
+        <div className="w-full max-w-md space-y-8">
+          {/* Reference Image Upload */}
+          <ImageUpload
+            onImageSelect={handleImageSelect}
+            label="Upload Reference Image"
+            sublabel="Drag & drop or click to upload clothing inspiration"
+            className="min-h-[280px]"
+          />
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or choose from options</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Top</Label>
-              <Select value={config.clothingTop} onValueChange={(v) => updateConfig('clothingTop', v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select top" />
-                </SelectTrigger>
-                <SelectContent>
-                  {topOptions.map(opt => (
-                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Bottom</Label>
-              <Select value={config.clothingBottom} onValueChange={(v) => updateConfig('clothingBottom', v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select bottom" />
-                </SelectTrigger>
-                <SelectContent>
-                  {bottomOptions.map(opt => (
-                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Shoes</Label>
-            <Select value={config.shoes} onValueChange={(v) => updateConfig('shoes', v)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select shoes" />
-              </SelectTrigger>
-              <SelectContent>
-                {shoesOptions.map(opt => (
-                  <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Pose (Optional)</Label>
-              <Select value={config.pose} onValueChange={(v) => updateConfig('pose', v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select pose" />
-                </SelectTrigger>
-                <SelectContent>
-                  {poseOptions.map(opt => (
-                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Background (Optional)</Label>
-              <Select value={config.background} onValueChange={(v) => updateConfig('background', v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select background" />
-                </SelectTrigger>
-                <SelectContent>
-                  {backgroundOptions.map(opt => (
-                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
+          {/* Generate Button */}
           <Button
             onClick={handleGenerate}
-            disabled={loading || !config.clothingTop || !config.clothingBottom || !config.shoes}
-            className="w-full btn-gold mt-8"
+            disabled={loading}
+            size="lg"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg font-medium"
           >
-            {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-            <Sparkles className="mr-2 h-5 w-5" />
-            Generate Model Image
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Starting Generation...
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-5 w-5" />
+                Generate Model Image
+              </>
+            )}
           </Button>
         </div>
       </main>
