@@ -15,14 +15,66 @@ serve(async (req) => {
     
     console.log('Generation request received:', { generationId, config });
 
-    // Placeholder response - AI integration ready to be connected
-    // When Lovable AI is enabled, this will generate actual images
+    const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL');
+    
+    if (!n8nWebhookUrl) {
+      console.error('N8N_WEBHOOK_URL is not configured');
+      return new Response(
+        JSON.stringify({ error: 'Webhook URL not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Calling n8n webhook:', n8nWebhookUrl);
+
+    // Send request to n8n webhook and wait for response
+    const n8nResponse = await fetch(n8nWebhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        generationId,
+        config,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+
+    console.log('n8n response status:', n8nResponse.status);
+
+    // Get the response from n8n (from "Respond to Webhook" node)
+    const responseText = await n8nResponse.text();
+    console.log('n8n response body:', responseText);
+
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch {
+      // If response is not JSON, wrap it
+      responseData = { 
+        success: n8nResponse.ok, 
+        data: responseText,
+        status: n8nResponse.status
+      };
+    }
+
+    if (!n8nResponse.ok) {
+      console.error('n8n webhook error:', responseData);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Webhook request failed', 
+          details: responseData,
+          status: n8nResponse.status 
+        }),
+        { status: n8nResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true,
         generationId,
-        imageUrl: null,
-        message: 'AI image generation is prepared. Enable Lovable AI to generate images.'
+        ...responseData
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
