@@ -97,7 +97,7 @@ export default function ClothingSelection() {
       const payload = buildPayload();
       console.log('Generation payload:', payload);
 
-      // Save to database with all filter data
+      // Save to database with all filter data including reference image
       const { data, error } = await supabase
         .from('model_generations')
         .insert({
@@ -110,6 +110,7 @@ export default function ClothingSelection() {
           body_type: payload.filters.body_type,
           hair_type: payload.filters.hair_type,
           beard_type: payload.filters.beard_type || null,
+          reference_image: payload.reference_image || null,
           status: 'pending',
         })
         .select()
