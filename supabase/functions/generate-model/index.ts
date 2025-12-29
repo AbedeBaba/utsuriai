@@ -27,18 +27,40 @@ serve(async (req) => {
 
     console.log('Calling n8n webhook:', n8nWebhookUrl);
 
-    // Send request to n8n webhook and wait for response
+    // Build multipart form data to send binary image
+    const formData = new FormData();
+    formData.append('generationId', generationId);
+    formData.append('config', JSON.stringify(config));
+    formData.append('timestamp', new Date().toISOString());
+
+    // Convert base64 to binary if reference image exists
+    if (referenceImage) {
+      // Remove data URL prefix if present (e.g., "data:image/png;base64,")
+      const base64Data = referenceImage.replace(/^data:image\/\w+;base64,/, '');
+      
+      // Decode base64 to binary
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      
+      // Determine mime type from original data URL or default to jpeg
+      const mimeMatch = referenceImage.match(/^data:(image\/\w+);base64,/);
+      const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+      const extension = mimeType.split('/')[1];
+      
+      // Create blob and append as file
+      const blob = new Blob([bytes], { type: mimeType });
+      formData.append('referenceImage', blob, `reference.${extension}`);
+      
+      console.log('Attached binary image:', { mimeType, size: bytes.length });
+    }
+
+    // Send request to n8n webhook with multipart form data
     const n8nResponse = await fetch(n8nWebhookUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        generationId,
-        config,
-        referenceImage: referenceImage || null,
-        timestamp: new Date().toISOString(),
-      }),
+      body: formData,
     });
 
     console.log('n8n response status:', n8nResponse.status);
