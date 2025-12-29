@@ -24,6 +24,7 @@ interface GenerationData {
   shoes: string | null;
   pose: string | null;
   background: string | null;
+  reference_image: string | null;
 }
 
 export default function Result() {
@@ -98,6 +99,7 @@ export default function Result() {
             pose: data.pose,
             background: data.background,
           },
+          referenceImage: data.reference_image,
         },
       });
 

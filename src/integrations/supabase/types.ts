@@ -30,6 +30,7 @@ export type Database = {
           id: string
           image_url: string | null
           pose: string | null
+          reference_image: string | null
           shoes: string | null
           skin_tone: string
           status: string
@@ -50,6 +51,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           pose?: string | null
+          reference_image?: string | null
           shoes?: string | null
           skin_tone: string
           status?: string
@@ -70,6 +72,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           pose?: string | null
+          reference_image?: string | null
           shoes?: string | null
           skin_tone?: string
           status?: string

@@ -11,9 +11,9 @@ serve(async (req) => {
   }
 
   try {
-    const { generationId, config } = await req.json();
+    const { generationId, config, referenceImage } = await req.json();
     
-    console.log('Generation request received:', { generationId, config });
+    console.log('Generation request received:', { generationId, config, hasReferenceImage: !!referenceImage });
 
     const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL');
     
@@ -36,6 +36,7 @@ serve(async (req) => {
       body: JSON.stringify({
         generationId,
         config,
+        referenceImage: referenceImage || null,
         timestamp: new Date().toISOString(),
       }),
     });
