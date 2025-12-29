@@ -33,10 +33,9 @@ export default function FilterGender() {
       updateConfig('beardType', '');
     }
 
-    // Slow cinematic animation - 2.5 seconds before navigation
     setTimeout(() => {
       navigate('/filter/ethnicity');
-    }, 2500);
+    }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
   return (

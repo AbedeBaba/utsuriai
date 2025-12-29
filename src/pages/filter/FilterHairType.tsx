@@ -34,14 +34,13 @@ export default function FilterHairType() {
     setSelectedId(hairType);
     updateConfig('hairType', hairType);
 
-    // Slow cinematic animation - 2.5 seconds before navigation
     setTimeout(() => {
       if (config.gender === 'Male') {
         navigate('/filter/beard-type');
       } else {
         navigate('/clothing');
       }
-    }, 2500);
+    }, 1000);
   }, [isAnimating, navigate, updateConfig, config.gender]);
 
   return (
