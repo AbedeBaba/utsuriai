@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -15,89 +16,113 @@ serve(async (req) => {
     
     console.log('Generation request received:', { generationId, config, hasReferenceImage: !!referenceImage });
 
-    const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL');
-    
-    if (!n8nWebhookUrl) {
-      console.error('N8N_WEBHOOK_URL is not configured');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      console.error('LOVABLE_API_KEY is not configured');
       return new Response(
-        JSON.stringify({ error: 'Webhook URL not configured' }),
+        JSON.stringify({ error: 'AI API key not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Calling n8n webhook:', n8nWebhookUrl);
+    // Build the prompt for the AI model
+    const prompt = buildPrompt(config, !!referenceImage);
+    console.log('Generated prompt:', prompt);
 
-    // Build multipart form data to send binary image
-    const formData = new FormData();
-    formData.append('generationId', generationId);
-    formData.append('config', JSON.stringify(config));
-    formData.append('timestamp', new Date().toISOString());
-
-    // Convert base64 to binary if reference image exists
-    if (referenceImage) {
-      // Remove data URL prefix if present (e.g., "data:image/png;base64,")
-      const base64Data = referenceImage.replace(/^data:image\/\w+;base64,/, '');
-      
-      // Decode base64 to binary
-      const binaryString = atob(base64Data);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+    // Prepare messages for AI request
+    const messages: any[] = [
+      {
+        role: "user",
+        content: referenceImage 
+          ? [
+              { type: "text", text: prompt },
+              { 
+                type: "image_url", 
+                image_url: { url: referenceImage } 
+              }
+            ]
+          : prompt
       }
-      
-      // Determine mime type from original data URL or default to jpeg
-      const mimeMatch = referenceImage.match(/^data:(image\/\w+);base64,/);
-      const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-      const extension = mimeType.split('/')[1];
-      
-      // Create blob and append as file
-      const blob = new Blob([bytes], { type: mimeType });
-      formData.append('referenceImage', blob, `reference.${extension}`);
-      
-      console.log('Attached binary image:', { mimeType, size: bytes.length });
-    }
+    ];
 
-    // Send request to n8n webhook with multipart form data
-    const n8nResponse = await fetch(n8nWebhookUrl, {
-      method: 'POST',
-      body: formData,
+    console.log('Calling Lovable AI Gateway with Nano Banana model...');
+
+    // Call Lovable AI Gateway with Nano Banana (image generation model)
+    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-image-preview",
+        messages: messages,
+        modalities: ["image", "text"],
+      }),
     });
 
-    console.log('n8n response status:', n8nResponse.status);
-
-    // Get the response from n8n (from "Respond to Webhook" node)
-    const responseText = await n8nResponse.text();
-    console.log('n8n response body:', responseText);
-
-    let responseData;
-    try {
-      responseData = JSON.parse(responseText);
-    } catch {
-      // If response is not JSON, wrap it
-      responseData = { 
-        success: n8nResponse.ok, 
-        data: responseText,
-        status: n8nResponse.status
-      };
+    if (!aiResponse.ok) {
+      const errorText = await aiResponse.text();
+      console.error('AI Gateway error:', aiResponse.status, errorText);
+      
+      if (aiResponse.status === 429) {
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      if (aiResponse.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'AI credits exhausted. Please add credits to continue.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      return new Response(
+        JSON.stringify({ error: 'AI generation failed', details: errorText }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    if (!n8nResponse.ok) {
-      console.error('n8n webhook error:', responseData);
+    const aiData = await aiResponse.json();
+    console.log('AI response received');
+
+    // Extract the generated image from the response
+    const generatedImageUrl = aiData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    
+    if (!generatedImageUrl) {
+      console.error('No image in AI response:', JSON.stringify(aiData));
       return new Response(
-        JSON.stringify({ 
-          error: 'Webhook request failed', 
-          details: responseData,
-          status: n8nResponse.status 
-        }),
-        { status: n8nResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'AI did not generate an image', response: aiData }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    console.log('Image generated successfully');
+
+    // Update the database with the generated image
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const { error: updateError } = await supabase
+      .from('model_generations')
+      .update({ 
+        image_url: generatedImageUrl,
+        status: 'completed'
+      })
+      .eq('id', generationId);
+
+    if (updateError) {
+      console.error('Database update error:', updateError);
     }
 
     return new Response(
       JSON.stringify({ 
         success: true,
         generationId,
-        ...responseData
+        imageUrl: generatedImageUrl,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -110,3 +135,47 @@ serve(async (req) => {
     );
   }
 });
+
+function buildPrompt(config: any, hasReferenceImage: boolean): string {
+  const parts: string[] = [];
+  
+  // Base description
+  parts.push('Generate a high-quality, photorealistic fashion model image.');
+  
+  // Physical attributes
+  parts.push(`The model is a ${config.gender?.toLowerCase() || 'person'}`);
+  if (config.ethnicity) parts.push(`with ${config.ethnicity} ethnicity`);
+  if (config.skinTone) parts.push(`and ${config.skinTone.toLowerCase()} skin tone.`);
+  
+  // Hair
+  if (config.hairColor || config.hairType) {
+    parts.push(`Hair: ${config.hairColor || ''} ${config.hairType || ''}.`.trim());
+  }
+  
+  // Eyes
+  if (config.eyeColor) {
+    parts.push(`Eye color: ${config.eyeColor}.`);
+  }
+  
+  // Body type
+  if (config.bodyType) {
+    parts.push(`Body type: ${config.bodyType}.`);
+  }
+  
+  // Beard (for males)
+  if (config.beardType) {
+    parts.push(`Facial hair: ${config.beardType}.`);
+  }
+  
+  // Reference image instruction
+  if (hasReferenceImage) {
+    parts.push('The model should be wearing the clothing shown in the reference image.');
+  } else {
+    parts.push('The model should be wearing stylish, professional fashion attire.');
+  }
+  
+  // Quality instructions
+  parts.push('Studio lighting, high resolution, professional fashion photography, full body shot, clean background, magazine quality.');
+  
+  return parts.join(' ');
+}
