@@ -39,11 +39,17 @@ export default function FilterEthnicity() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandom = useCallback(() => {
+    const randomOption = ethnicityOptions[Math.floor(Math.random() * ethnicityOptions.length)];
+    handleSelect(randomOption.id);
+  }, [handleSelect]);
+
   return (
     <FilterStepLayout 
       title="Select Ethnicity"
       subtitle="Choose the ethnicity for your model"
       onBack={() => navigate('/filter/gender')}
+      onRandom={handleRandom}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       

@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Sparkles, Loader2, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ImageUpload } from '@/components/ImageUpload';
+import { MultiImageUpload, UploadedImage } from '@/components/MultiImageUpload';
 
 // Backend-ready data structure for API communication
 interface GenerationPayload {
-  // Filter data (JSON serializable)
   filters: {
     gender: string;
     ethnicity: string;
@@ -21,8 +20,10 @@ interface GenerationPayload {
     hair_type: string;
     beard_type?: string;
   };
-  // Reference image will be sent as base64 or uploaded separately
-  reference_image?: string;
+  reference_images?: {
+    type: string;
+    data: string;
+  }[];
 }
 
 export default function ClothingSelection() {
@@ -31,15 +32,12 @@ export default function ClothingSelection() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [referenceImage, setReferenceImage] = useState<{ file: File | null; preview: string | null }>({
-    file: null,
-    preview: null,
-  });
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 
   setCurrentStep(totalSteps);
 
-  const handleImageSelect = (file: File | null, preview: string | null) => {
-    setReferenceImage({ file, preview });
+  const handleImagesChange = (images: UploadedImage[]) => {
+    setUploadedImages(images);
   };
 
   // Build the payload structure for backend API
@@ -55,7 +53,9 @@ export default function ClothingSelection() {
         hair_type: config.hairType,
         ...(config.beardType && { beard_type: config.beardType }),
       },
-      reference_image: referenceImage.preview || undefined,
+      reference_images: uploadedImages.length > 0 
+        ? uploadedImages.map(img => ({ type: img.type, data: img.preview }))
+        : undefined,
     };
   };
 
@@ -93,11 +93,14 @@ export default function ClothingSelection() {
     setLoading(true);
 
     try {
-      // Build the payload for backend communication
       const payload = buildPayload();
       console.log('Generation payload:', payload);
 
-      // Save to database with all filter data including reference image
+      // Serialize reference images to JSON string for storage
+      const referenceImageData = payload.reference_images 
+        ? JSON.stringify(payload.reference_images) 
+        : null;
+
       const { data, error } = await supabase
         .from('model_generations')
         .insert({
@@ -110,7 +113,7 @@ export default function ClothingSelection() {
           body_type: payload.filters.body_type,
           hair_type: payload.filters.hair_type,
           beard_type: payload.filters.beard_type || null,
-          reference_image: payload.reference_image || null,
+          reference_image: referenceImageData,
           status: 'pending',
         })
         .select()
@@ -118,7 +121,6 @@ export default function ClothingSelection() {
 
       if (error) throw error;
 
-      // Navigate to result page where generation will be triggered
       navigate(`/result/${data.id}`);
     } catch (error) {
       console.error('Error saving generation:', error);
@@ -132,7 +134,6 @@ export default function ClothingSelection() {
     }
   };
 
-  // Summary of selected filters for user confirmation
   const filterSummary = [
     { label: 'Gender', value: config.gender },
     { label: 'Ethnicity', value: config.ethnicity },
@@ -169,7 +170,7 @@ export default function ClothingSelection() {
       <main className="flex-1 flex flex-col items-center justify-start px-6 pb-12 pt-4">
         <div className="text-center mb-6 animate-fade-in">
           <h1 className="text-3xl font-semibold text-foreground mb-2">Ready to Generate</h1>
-          <p className="text-muted-foreground">Review your selections and add a reference image</p>
+          <p className="text-muted-foreground">Upload clothing, accessories, and jewelry images</p>
         </div>
 
         <div className="w-full max-w-lg space-y-6">
@@ -189,12 +190,12 @@ export default function ClothingSelection() {
             </div>
           </div>
 
-          {/* Reference Image Upload */}
+          {/* Multi Image Upload */}
           <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
-            <ImageUpload
-              onImageSelect={handleImageSelect}
-              label="Reference Image (Optional)"
-              sublabel="Upload clothing or style inspiration for the AI model"
+            <MultiImageUpload
+              images={uploadedImages}
+              onImagesChange={handleImagesChange}
+              maxImages={10}
               className="min-h-[220px]"
             />
           </div>
@@ -220,9 +221,8 @@ export default function ClothingSelection() {
             )}
           </Button>
 
-          {/* Backend info hint */}
           <p className="text-xs text-center text-muted-foreground animate-fade-in" style={{ animationDelay: '300ms' }}>
-            Your selections will be processed by our AI pipeline
+            Add different angles, accessories, and jewelry - the AI will dress your model accordingly
           </p>
         </div>
       </main>

@@ -38,11 +38,17 @@ export default function FilterGender() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandom = useCallback(() => {
+    const randomOption = genderOptions[Math.floor(Math.random() * genderOptions.length)];
+    handleSelect(randomOption.id);
+  }, [handleSelect]);
+
   return (
     <FilterStepLayout 
       title="Select Gender"
       subtitle="Choose the gender for your fashion model"
       onBack={() => navigate('/')}
+      onRandom={handleRandom}
     >
       {/* Backdrop */}
       <div className={cn("selection-backdrop", isAnimating && "active")} />
