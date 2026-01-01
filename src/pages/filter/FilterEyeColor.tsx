@@ -39,11 +39,17 @@ export default function FilterEyeColor() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandom = useCallback(() => {
+    const randomOption = eyeColorOptions[Math.floor(Math.random() * eyeColorOptions.length)];
+    handleSelect(randomOption.id);
+  }, [handleSelect]);
+
   return (
     <FilterStepLayout 
       title="Select Eye Color"
       subtitle="Choose the eye color for your model"
       onBack={() => navigate('/filter/hair-color')}
+      onRandom={handleRandom}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       

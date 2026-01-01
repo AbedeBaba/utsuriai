@@ -14,7 +14,24 @@ serve(async (req) => {
   try {
     const { generationId, config, referenceImage } = await req.json();
     
-    console.log('Generation request received:', { generationId, config, hasReferenceImage: !!referenceImage });
+    // Parse reference images - could be JSON string of array or single base64 string
+    let referenceImages: { type: string; data: string }[] | null = null;
+    
+    if (referenceImage) {
+      try {
+        // Try parsing as JSON array first
+        referenceImages = JSON.parse(referenceImage);
+      } catch {
+        // If not JSON, treat as single base64 image
+        referenceImages = [{ type: 'outfit', data: referenceImage }];
+      }
+    }
+    
+    console.log('Generation request received:', { 
+      generationId, 
+      config, 
+      imageCount: referenceImages?.length || 0 
+    });
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -26,22 +43,27 @@ serve(async (req) => {
     }
 
     // Build the prompt for the AI model
-    const prompt = buildPrompt(config, !!referenceImage);
+    const prompt = buildPrompt(config, referenceImages);
     console.log('Generated prompt:', prompt);
+
+    // Prepare content array with text and all images
+    const contentParts: any[] = [{ type: "text", text: prompt }];
+    
+    if (referenceImages && referenceImages.length > 0) {
+      referenceImages.forEach((img, index) => {
+        contentParts.push({
+          type: "image_url",
+          image_url: { url: img.data }
+        });
+        console.log(`Added reference image ${index + 1} (type: ${img.type})`);
+      });
+    }
 
     // Prepare messages for AI request
     const messages: any[] = [
       {
         role: "user",
-        content: referenceImage 
-          ? [
-              { type: "text", text: prompt },
-              { 
-                type: "image_url", 
-                image_url: { url: referenceImage } 
-              }
-            ]
-          : prompt
+        content: contentParts.length > 1 ? contentParts : prompt
       }
     ];
 
@@ -136,7 +158,12 @@ serve(async (req) => {
   }
 });
 
-function buildPrompt(config: any, hasReferenceImage: boolean): string {
+interface ReferenceImage {
+  type: string;
+  data: string;
+}
+
+function buildPrompt(config: any, referenceImages: ReferenceImage[] | null): string {
   const parts: string[] = [];
   
   // Base description
@@ -167,9 +194,22 @@ function buildPrompt(config: any, hasReferenceImage: boolean): string {
     parts.push(`Facial hair: ${config.beardType}.`);
   }
   
-  // Reference image instruction
-  if (hasReferenceImage) {
-    parts.push('The model should be wearing the clothing shown in the reference image.');
+  // Reference images instruction
+  if (referenceImages && referenceImages.length > 0) {
+    const outfits = referenceImages.filter(img => img.type === 'outfit');
+    const jewelry = referenceImages.filter(img => img.type === 'jewelry');
+    const accessories = referenceImages.filter(img => img.type === 'accessory');
+    
+    if (outfits.length > 0) {
+      parts.push(`The model should be wearing the outfit/clothing shown in the reference images.`);
+    }
+    if (jewelry.length > 0) {
+      parts.push(`The model should be wearing the jewelry shown in the reference images (necklaces, earrings, rings, bracelets, etc.).`);
+    }
+    if (accessories.length > 0) {
+      parts.push(`Include the accessories shown in the reference images (bags, hats, scarves, watches, etc.).`);
+    }
+    parts.push('Combine all the referenced items into a cohesive fashion look.');
   } else {
     parts.push('The model should be wearing stylish, professional fashion attire.');
   }

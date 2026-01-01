@@ -39,11 +39,17 @@ export default function FilterSkinTone() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandom = useCallback(() => {
+    const randomOption = skinToneOptions[Math.floor(Math.random() * skinToneOptions.length)];
+    handleSelect(randomOption.id);
+  }, [handleSelect]);
+
   return (
     <FilterStepLayout 
       title="Select Skin Tone"
       subtitle="Choose the skin tone for your model"
       onBack={() => navigate('/filter/ethnicity')}
+      onRandom={handleRandom}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       

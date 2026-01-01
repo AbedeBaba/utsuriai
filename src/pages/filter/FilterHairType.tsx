@@ -43,11 +43,17 @@ export default function FilterHairType() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig, config.gender]);
 
+  const handleRandom = useCallback(() => {
+    const randomOption = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
+    handleSelect(randomOption.id);
+  }, [handleSelect]);
+
   return (
     <FilterStepLayout 
       title="Select Hair Type"
       subtitle="Choose the hair type for your model"
       onBack={() => navigate('/filter/body-type')}
+      onRandom={handleRandom}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
