@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import exampleProduct from '@/assets/example-product.jpeg';
 import exampleModel from '@/assets/example-model.jpeg';
 import modelRealBg from '@/assets/modelreal.jpg';
+import heroBanner from '@/assets/hero-banner.jpeg';
 export default function Landing() {
   const navigate = useNavigate();
   const {
@@ -53,7 +54,7 @@ export default function Landing() {
       {/* Full-Screen Hero Banner */}
       <section 
         className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center"
-        style={{ backgroundImage: `url(${modelRealBg})` }}
+        style={{ backgroundImage: `url(${heroBanner})` }}
       >
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/40" />
