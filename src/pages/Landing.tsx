@@ -4,11 +4,12 @@ import { Sparkles, Upload, Wand2, Download, ArrowRight, Play } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import exampleProduct from '@/assets/example-product.jpeg';
 import exampleModel from '@/assets/example-model.jpeg';
-
 export default function Landing() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
-
+  const {
+    user,
+    loading
+  } = useAuth();
   const handleStart = () => {
     if (user) {
       navigate('/filter/gender');
@@ -16,9 +17,7 @@ export default function Landing() {
       navigate('/auth');
     }
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -39,19 +38,11 @@ export default function Landing() {
           </nav>
 
           <div className="flex items-center gap-4">
-            {!loading && !user && (
-              <button 
-                onClick={() => navigate('/auth')}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
+            {!loading && !user && <button onClick={() => navigate('/auth')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Login
-              </button>
-            )}
+              </button>}
             
-            <Button 
-              onClick={handleStart}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6"
-            >
+            <Button onClick={handleStart} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
               Try Now
             </Button>
           </div>
@@ -88,20 +79,12 @@ export default function Landing() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Button 
-                  onClick={handleStart}
-                  size="lg"
-                  className="btn-gold animate-glow-pulse text-lg px-8 py-6 rounded-xl"
-                >
+                <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-lg px-8 py-6 rounded-xl">
                   Get Started
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  className="text-lg px-8 py-6 rounded-xl border-border hover:bg-secondary"
-                >
+                <Button variant="outline" size="lg" className="text-lg px-8 py-6 rounded-xl border-border hover:bg-secondary">
                   <Play className="mr-2 h-5 w-5" />
                   Watch Demo
                 </Button>
@@ -114,11 +97,7 @@ export default function Landing() {
                 {/* Product Image */}
                 <div className="relative flex-1 max-w-[200px] lg:max-w-[240px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-border">
-                    <img 
-                      src={exampleProduct} 
-                      alt="Product photo" 
-                      className="w-full h-full object-cover"
-                    />
+                    <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/b4937822-22eb-49f8-96be-dfa06eea80c0.jpg" />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted text-sm font-medium text-muted-foreground whitespace-nowrap">
                     Product Photo
@@ -136,11 +115,7 @@ export default function Landing() {
                 {/* Model Image */}
                 <div className="relative flex-1 max-w-[200px] lg:max-w-[240px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
-                    <img 
-                      src={exampleModel} 
-                      alt="AI generated model" 
-                      className="w-full h-full object-cover"
-                    />
+                    <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/11627e4b-18bd-409b-9d53-46c9609d0ea7.jpg" />
                     {/* Decorative badge */}
                     <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/90 backdrop-blur-sm text-xs">
                       <Sparkles className="w-3 h-3 text-primary" />
@@ -245,11 +220,7 @@ export default function Landing() {
           </div>
 
           <div className="text-center mt-12">
-            <Button 
-              onClick={handleStart}
-              size="lg"
-              className="btn-gold text-lg px-8 py-6 rounded-xl"
-            >
+            <Button onClick={handleStart} size="lg" className="btn-gold text-lg px-8 py-6 rounded-xl">
               Try Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -330,11 +301,7 @@ export default function Landing() {
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
             Join thousands of fashion brands creating stunning AI-generated model photos.
           </p>
-          <Button 
-            onClick={handleStart}
-            size="lg"
-            className="btn-gold animate-glow-pulse text-lg px-10 py-6 rounded-xl"
-          >
+          <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-lg px-10 py-6 rounded-xl">
             Start Creating Now
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
@@ -367,6 +334,5 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 }
