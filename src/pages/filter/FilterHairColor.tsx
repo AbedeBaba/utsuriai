@@ -39,17 +39,11 @@ export default function FilterHairColor() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
-  const handleRandom = useCallback(() => {
-    const randomOption = hairColorOptions[Math.floor(Math.random() * hairColorOptions.length)];
-    handleSelect(randomOption.id);
-  }, [handleSelect]);
-
   return (
     <FilterStepLayout 
       title="Select Hair Color"
       subtitle="Choose the hair color for your model"
       onBack={() => navigate('/filter/skin-tone')}
-      onRandom={handleRandom}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       

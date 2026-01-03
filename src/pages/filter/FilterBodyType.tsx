@@ -39,17 +39,11 @@ export default function FilterBodyType() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
-  const handleRandom = useCallback(() => {
-    const randomOption = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
-    handleSelect(randomOption.id);
-  }, [handleSelect]);
-
   return (
     <FilterStepLayout 
       title="Select Body Type"
       subtitle="Choose the body type for your model"
       onBack={() => navigate('/filter/eye-color')}
-      onRandom={handleRandom}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
