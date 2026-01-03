@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Sparkles, Upload, Wand2, Download, ArrowRight, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import exampleProduct from '@/assets/example-product.jpeg';
+import exampleModel from '@/assets/example-model.jpeg';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -106,46 +108,47 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Right content - Hero image */}
+            {/* Right content - Before/After Example */}
             <div className="relative">
-              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-secondary to-muted shadow-2xl">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <div className="w-20 h-20 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
-                      <Wand2 className="w-10 h-10 text-primary" />
+              <div className="flex gap-4 items-center justify-center">
+                {/* Product Image */}
+                <div className="relative flex-1 max-w-[200px] lg:max-w-[240px]">
+                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-border">
+                    <img 
+                      src={exampleProduct} 
+                      alt="Product photo" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Product Photo
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <div className="flex flex-col items-center gap-2 px-2">
+                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Wand2 className="w-6 h-6 text-primary" />
+                  </div>
+                  <ArrowRight className="w-6 h-6 text-primary" />
+                </div>
+
+                {/* Model Image */}
+                <div className="relative flex-1 max-w-[200px] lg:max-w-[240px]">
+                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
+                    <img 
+                      src={exampleModel} 
+                      alt="AI generated model" 
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Decorative badge */}
+                    <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/90 backdrop-blur-sm text-xs">
+                      <Sparkles className="w-3 h-3 text-primary" />
+                      <span className="text-foreground">AI Generated</span>
                     </div>
-                    <p className="text-muted-foreground">AI Generated Fashion Model</p>
                   </div>
-                </div>
-                
-                {/* Decorative badge */}
-                <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3 py-2 rounded-full bg-background/90 backdrop-blur-sm text-sm">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  <span className="text-foreground">Created with Fashion AI</span>
-                </div>
-              </div>
-              
-              {/* Floating cards */}
-              <div className="absolute -left-4 top-1/4 bg-card p-4 rounded-xl shadow-lg border border-border/50 animate-fade-in">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                    <Upload className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Upload</p>
-                    <p className="text-xs text-muted-foreground">Your clothing</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="absolute -right-4 bottom-1/4 bg-card p-4 rounded-xl shadow-lg border border-border/50 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                    <Wand2 className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Transform</p>
-                    <p className="text-xs text-muted-foreground">AI magic</p>
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap">
+                    AI Model
                   </div>
                 </div>
               </div>
