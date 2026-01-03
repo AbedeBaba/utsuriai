@@ -4,6 +4,7 @@ import { Sparkles, Upload, Wand2, Download, ArrowRight, Play } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import exampleProduct from '@/assets/example-product.jpeg';
 import exampleModel from '@/assets/example-model.jpeg';
+import modelRealBg from '@/assets/modelreal.jpg';
 export default function Landing() {
   const navigate = useNavigate();
   const {
@@ -60,7 +61,7 @@ export default function Landing() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-6 bg-[#b5aacf]">
+        <div className="relative max-w-7xl mx-auto px-6 bg-cover bg-center bg-no-repeat rounded-3xl py-12" style={{ backgroundImage: `linear-gradient(rgba(181, 170, 207, 0.85), rgba(181, 170, 207, 0.85)), url(${modelRealBg})` }}>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left">
