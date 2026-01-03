@@ -97,7 +97,7 @@ export default function Landing() {
                 {/* Product Image */}
                 <div className="relative flex-1 max-w-[200px] lg:max-w-[240px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-border">
-                    <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/b4937822-22eb-49f8-96be-dfa06eea80c0.jpg" />
+                    <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/e6ac3d98-a0e4-443b-8c82-cd40f4ba0aa7.jpg" />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted text-sm font-medium text-muted-foreground whitespace-nowrap">
                     Product Photo
@@ -115,7 +115,7 @@ export default function Landing() {
                 {/* Model Image */}
                 <div className="relative flex-1 max-w-[200px] lg:max-w-[240px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
-                    <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/11627e4b-18bd-409b-9d53-46c9609d0ea7.jpg" />
+                    <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/8ddcbf82-c9e2-4152-a3d7-c569be0b9c8b.jpg" />
                     {/* Decorative badge */}
                     <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/90 backdrop-blur-sm text-xs">
                       <Sparkles className="w-3 h-3 text-primary" />
