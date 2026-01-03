@@ -50,6 +50,29 @@ export default function Landing() {
         </div>
       </header>
 
+      {/* Full-Screen Hero Banner */}
+      <section 
+        className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center"
+        style={{ backgroundImage: `url(${modelRealBg})` }}
+      >
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black/40" />
+        
+        {/* Text content - customize as needed */}
+        <div className="relative z-10 text-center px-6 max-w-4xl">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+            Your Headline Here
+          </h1>
+          <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+            Add your subheadline or description text here
+          </p>
+          <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-lg px-10 py-6 rounded-xl">
+            Get Started
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </div>
+      </section>
+
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
         {/* Background gradient */}
