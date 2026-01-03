@@ -45,17 +45,11 @@ export default function FilterBeardType() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
-  const handleRandom = useCallback(() => {
-    const randomOption = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)];
-    handleSelect(randomOption.id);
-  }, [handleSelect]);
-
   return (
     <FilterStepLayout 
       title="Select Beard Type"
       subtitle="Choose the facial hair style for your model"
       onBack={() => navigate('/filter/hair-type')}
-      onRandom={handleRandom}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
