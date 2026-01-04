@@ -17,6 +17,7 @@ import FilterHairType from "./pages/filter/FilterHairType";
 import FilterBeardType from "./pages/filter/FilterBeardType";
 import ClothingSelection from "./pages/ClothingSelection";
 import Result from "./pages/Result";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/filter/gender" element={<FilterGender />} />
               <Route path="/filter/ethnicity" element={<FilterEthnicity />} />
               <Route path="/filter/skin-tone" element={<FilterSkinTone />} />

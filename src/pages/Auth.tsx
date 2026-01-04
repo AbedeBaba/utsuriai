@@ -8,7 +8,14 @@ import { useToast } from '@/hooks/use-toast';
 import { Sparkles, ArrowLeft, Loader2 } from 'lucide-react';
 import { z } from 'zod';
 
-const authSchema = z.object({
+const signInSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+const signUpSchema = z.object({
+  firstName: z.string().min(1, 'First name is required').max(50, 'First name is too long'),
+  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name is too long'),
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
@@ -19,27 +26,35 @@ export default function Auth() {
   const { toast } = useToast();
   
   const [isSignUp, setIsSignUp] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; email?: string; password?: string }>({});
 
   useEffect(() => {
     if (user) {
-      navigate('/filter/gender');
+      navigate('/dashboard');
     }
   }, [user, navigate]);
 
   const validateForm = () => {
     try {
-      authSchema.parse({ email, password });
+      if (isSignUp) {
+        signUpSchema.parse({ firstName, lastName, email, password });
+      } else {
+        signInSchema.parse({ email, password });
+      }
       setErrors({});
       return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldErrors: { email?: string; password?: string } = {};
+        const fieldErrors: { firstName?: string; lastName?: string; email?: string; password?: string } = {};
         error.errors.forEach(err => {
+          if (err.path[0] === 'firstName') fieldErrors.firstName = err.message;
+          if (err.path[0] === 'lastName') fieldErrors.lastName = err.message;
           if (err.path[0] === 'email') fieldErrors.email = err.message;
           if (err.path[0] === 'password') fieldErrors.password = err.message;
         });
@@ -58,7 +73,7 @@ export default function Auth() {
 
     try {
       if (isSignUp) {
-        const { error } = await signUp(email, password);
+        const { error } = await signUp(email, password, firstName, lastName);
         if (error) {
           if (error.message.includes('already registered')) {
             toast({
@@ -125,7 +140,7 @@ export default function Auth() {
         
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          <span className="font-medium text-foreground">Fashion AI</span>
+          <span className="font-medium text-foreground italic">Utsuri</span>
         </div>
         
         <div className="w-10" />
@@ -187,7 +202,40 @@ export default function Auth() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {isSignUp && (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    placeholder="John"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className={errors.firstName ? 'border-destructive' : ''}
+                  />
+                  {errors.firstName && (
+                    <p className="text-sm text-destructive">{errors.firstName}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className={errors.lastName ? 'border-destructive' : ''}
+                  />
+                  {errors.lastName && (
+                    <p className="text-sm text-destructive">{errors.lastName}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -234,6 +282,8 @@ export default function Auth() {
               onClick={() => {
                 setIsSignUp(!isSignUp);
                 setErrors({});
+                setFirstName('');
+                setLastName('');
               }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
