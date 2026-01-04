@@ -281,13 +281,24 @@ export default function Landing() {
 
           {/* Top Row - Asymmetric 3-column grid with center empty */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            {/* Empty left */}
-            <div className="hidden md:block" />
+            {/* Instant Generation - Left aligned (above Studio-Quality) */}
+            <div 
+              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
+              style={{ backgroundImage: `url(${instantGenerationBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
+              <div className="relative z-10">
+                <h3 className="text-lg font-semibold text-white mb-2">Instant Generation</h3>
+                <p className="text-sm text-white/80">
+                  Generate stunning, professional photos and launch collections in no time.
+                </p>
+              </div>
+            </div>
             
             {/* Empty center - intentional negative space */}
             <div className="hidden md:block" />
             
-            {/* Feature 1 - Right aligned */}
+            {/* Diverse Model Portfolio - Right aligned */}
             <div 
               className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
               style={{ backgroundImage: `url(${diverseModelsBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
@@ -304,7 +315,7 @@ export default function Landing() {
 
           {/* Bottom Row - 3 feature boxes */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Feature 2 */}
+            {/* Studio-Quality Results */}
             <div 
               className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
               style={{ backgroundImage: `url(${studioQualityBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
@@ -318,7 +329,7 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Feature 3 */}
+            {/* Multi-Angle Support */}
             <div 
               className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
               style={{ backgroundImage: `url(${multiAngleBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
@@ -332,7 +343,7 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Feature 4 */}
+            {/* Full Image Rights */}
             <div 
               className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
               style={{ backgroundImage: `url(${fullImageRightsBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
@@ -345,29 +356,6 @@ export default function Landing() {
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* Second Bottom Row - Centered single feature */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            {/* Empty left */}
-            <div className="hidden md:block" />
-            
-            {/* Feature 5 - Centered */}
-            <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
-              style={{ backgroundImage: `url(${instantGenerationBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
-              <div className="relative z-10">
-                <h3 className="text-lg font-semibold text-white mb-2">Instant Generation</h3>
-                <p className="text-sm text-white/80">
-                  Generate stunning, professional photos and launch collections in no time.
-                </p>
-              </div>
-            </div>
-            
-            {/* Empty right */}
-            <div className="hidden md:block" />
           </div>
         </div>
       </section>
