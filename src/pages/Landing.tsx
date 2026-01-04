@@ -14,6 +14,7 @@ import multiAngleBg from '@/assets/multi-angle-bg.jpg';
 import aiSolutionsBg from '@/assets/ai-solutions-bg.jpg';
 import howItWorksLeft from '@/assets/how-it-works-left.jpg';
 import howItWorksRight from '@/assets/how-it-works-right.jpg';
+import ctaBackground from '@/assets/cta-background.jpg';
 export default function Landing() {
   const navigate = useNavigate();
   const {
@@ -383,8 +384,13 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-b from-background to-secondary/50">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+      <section className="py-24 relative overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${ctaBackground})` }}
+        />
+        <div className="absolute inset-0 bg-background/70" />
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
             Ready to Transform Your Fashion Photography?
           </h2>
