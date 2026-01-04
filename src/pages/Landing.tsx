@@ -11,6 +11,7 @@ import instantGenerationBg from '@/assets/instant-generation-bg.jpg';
 import studioQualityBg from '@/assets/studio-quality-bg.jpg';
 import fullImageRightsBg from '@/assets/full-image-rights-bg.jpg';
 import multiAngleBg from '@/assets/multi-angle-bg.jpg';
+import aiSolutionsBg from '@/assets/ai-solutions-bg.jpg';
 export default function Landing() {
   const navigate = useNavigate();
   const {
@@ -262,24 +263,36 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-secondary/30">
-        <div className="max-w-7xl mx-auto px-6">
+      <section 
+        id="features" 
+        className="py-24 relative"
+        style={{ backgroundImage: `url(${aiSolutionsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
+      >
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              AI Solutions to <span className="italic text-primary">Boost</span> Your Brand
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              AI Solutions to Boost Your Brand
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-white/80 max-w-2xl mx-auto">
               Transform your fashion photography with powerful AI-driven features.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Feature 1 */}
+          {/* Top Row - Asymmetric 3-column grid with center empty */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            {/* Empty left */}
+            <div className="hidden md:block" />
+            
+            {/* Empty center - intentional negative space */}
+            <div className="hidden md:block" />
+            
+            {/* Feature 1 - Right aligned */}
             <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-lg overflow-hidden min-h-[180px] flex flex-col justify-end"
+              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
               style={{ backgroundImage: `url(${diverseModelsBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Diverse Model Portfolio</h3>
                 <p className="text-sm text-white/80">
@@ -287,13 +300,16 @@ export default function Landing() {
                 </p>
               </div>
             </div>
+          </div>
 
+          {/* Bottom Row - 3 feature boxes */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Feature 2 */}
             <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-lg overflow-hidden min-h-[180px] flex flex-col justify-end"
+              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
               style={{ backgroundImage: `url(${studioQualityBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Studio-Quality Results</h3>
                 <p className="text-sm text-white/80">
@@ -304,10 +320,10 @@ export default function Landing() {
 
             {/* Feature 3 */}
             <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-lg overflow-hidden min-h-[180px] flex flex-col justify-end"
+              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
               style={{ backgroundImage: `url(${multiAngleBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Multi-Angle Support</h3>
                 <p className="text-sm text-white/80">
@@ -316,12 +332,12 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Feature 5 */}
+            {/* Feature 4 */}
             <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-lg overflow-hidden min-h-[180px] flex flex-col justify-end"
+              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
               style={{ backgroundImage: `url(${fullImageRightsBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Full Image Rights</h3>
                 <p className="text-sm text-white/80">
@@ -329,13 +345,19 @@ export default function Landing() {
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Feature 6 */}
+          {/* Second Bottom Row - Centered single feature */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            {/* Empty left */}
+            <div className="hidden md:block" />
+            
+            {/* Feature 5 - Centered */}
             <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-lg overflow-hidden min-h-[180px] flex flex-col justify-end"
+              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
               style={{ backgroundImage: `url(${instantGenerationBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Instant Generation</h3>
                 <p className="text-sm text-white/80">
@@ -343,6 +365,9 @@ export default function Landing() {
                 </p>
               </div>
             </div>
+            
+            {/* Empty right */}
+            <div className="hidden md:block" />
           </div>
         </div>
       </section>
