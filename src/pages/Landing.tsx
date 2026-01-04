@@ -89,7 +89,7 @@ export default function Landing() {
           {/* Blurred lavender gradient background */}
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] blur-xl" />
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] opacity-90" />
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm mb-8">
