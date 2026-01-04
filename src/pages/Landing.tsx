@@ -12,6 +12,8 @@ import studioQualityBg from '@/assets/studio-quality-bg.jpg';
 import fullImageRightsBg from '@/assets/full-image-rights-bg.jpg';
 import multiAngleBg from '@/assets/multi-angle-bg.jpg';
 import aiSolutionsBg from '@/assets/ai-solutions-bg.jpg';
+import howItWorksLeft from '@/assets/how-it-works-left.jpg';
+import howItWorksRight from '@/assets/how-it-works-right.jpg';
 export default function Landing() {
   const navigate = useNavigate();
   const {
@@ -191,8 +193,26 @@ export default function Landing() {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" className="py-24 bg-background">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="how-it-works" className="py-24 relative overflow-hidden" style={{ backgroundColor: '#ECEAF0' }}>
+        {/* Left decorative image */}
+        <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-[200px] xl:w-[280px] h-[400px] xl:h-[500px]">
+          <img 
+            src={howItWorksLeft} 
+            alt="" 
+            className="w-full h-full object-cover rounded-r-2xl shadow-xl"
+          />
+        </div>
+        
+        {/* Right decorative image */}
+        <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[200px] xl:w-[280px] h-[400px] xl:h-[500px]">
+          <img 
+            src={howItWorksRight} 
+            alt="" 
+            className="w-full h-full object-cover rounded-l-2xl shadow-xl"
+          />
+        </div>
+
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               How <span className="italic text-primary">Utsuri</span> Works
