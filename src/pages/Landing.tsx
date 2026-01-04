@@ -208,7 +208,7 @@ export default function Landing() {
       {/* How it Works Section */}
       <section id="how-it-works" className="py-24 relative overflow-hidden" style={{ backgroundColor: '#ECEAF0' }}>
         {/* Left decorative image */}
-        <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-[200px] xl:w-[280px] h-[400px] xl:h-[500px]">
+        <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-[280px] xl:w-[360px] h-[500px] xl:h-[600px]">
           <img 
             src={howItWorksLeft} 
             alt="" 
@@ -217,7 +217,7 @@ export default function Landing() {
         </div>
         
         {/* Right decorative image */}
-        <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[200px] xl:w-[280px] h-[400px] xl:h-[500px]">
+        <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[280px] xl:w-[360px] h-[500px] xl:h-[600px]">
           <img 
             src={howItWorksRight} 
             alt="" 
