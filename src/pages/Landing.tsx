@@ -8,6 +8,7 @@ import modelRealBg from '@/assets/modelreal.jpg';
 import heroBanner from '@/assets/hero-banner.jpeg';
 import diverseModelsBg from '@/assets/diverse-models-bg.jpg';
 import instantGenerationBg from '@/assets/instant-generation-bg.jpg';
+import studioQualityBg from '@/assets/studio-quality-bg.jpg';
 export default function Landing() {
   const navigate = useNavigate();
   const {
@@ -294,11 +295,17 @@ export default function Landing() {
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-card border border-border rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:border-primary/30">
-              <h3 className="text-lg font-semibold text-foreground mb-2">Studio-Quality Results</h3>
-              <p className="text-sm text-muted-foreground">
-                Get professional, studio-quality photos without the expensive photoshoot.
-              </p>
+            <div 
+              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-lg overflow-hidden min-h-[180px] flex flex-col justify-end"
+              style={{ backgroundImage: `url(${studioQualityBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="relative z-10">
+                <h3 className="text-lg font-semibold text-white mb-2">Studio-Quality Results</h3>
+                <p className="text-sm text-white/80">
+                  Get professional, studio-quality photos without the expensive photoshoot.
+                </p>
+              </div>
             </div>
 
             {/* Feature 4 */}
