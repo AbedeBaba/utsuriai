@@ -85,7 +85,10 @@ export default function Landing() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-6 bg-cover bg-center bg-no-repeat rounded-3xl py-12" style={{ backgroundImage: `linear-gradient(rgba(181, 170, 207, 0.85), rgba(181, 170, 207, 0.85)), url(${modelRealBg})` }}>
+        <div className="relative max-w-7xl mx-auto px-6 rounded-3xl py-12 overflow-hidden">
+          {/* Blurred gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(280,60%,85%)] via-[hsl(300,50%,85%)] to-[hsl(330,60%,85%)] blur-xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(280,60%,85%)] via-[hsl(300,50%,85%)] to-[hsl(330,60%,85%)] opacity-90" />
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left">
