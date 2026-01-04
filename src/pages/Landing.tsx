@@ -106,11 +106,11 @@ export default function Landing() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-6 rounded-3xl py-12 overflow-hidden">
+        <div className="relative max-w-[90rem] mx-auto px-8 lg:px-16 rounded-3xl py-16 lg:py-20 overflow-hidden">
           {/* Blurred lavender gradient background */}
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] blur-xl" />
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] opacity-90" />
-          <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+          <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm mb-8">
@@ -118,11 +118,11 @@ export default function Landing() {
                 <span className="text-foreground">AI-Powered Fashion Photography</span>
               </div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground mb-8 leading-tight">
                 Create <span className="italic text-primary">stunning</span> fashion photos with AI generated models
               </h1>
               
-              <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0">
+              <p className="text-lg lg:text-xl text-muted-foreground mb-12 max-w-xl mx-auto lg:mx-0">
                 Perfect for fashion brands that value quality, speed, and flexibility. 
                 Bring your products to life at a fraction of the cost.
               </p>
@@ -142,9 +142,9 @@ export default function Landing() {
 
             {/* Right content - Before/After Example */}
             <div className="relative">
-              <div className="flex gap-4 items-center justify-center">
+              <div className="flex gap-6 items-center justify-center">
                 {/* Product Image */}
-                <div className="relative flex-1 max-w-[200px] lg:max-w-[240px]">
+                <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-border">
                     <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/e6ac3d98-a0e4-443b-8c82-cd40f4ba0aa7.jpg" />
                   </div>
@@ -154,15 +154,15 @@ export default function Landing() {
                 </div>
 
                 {/* Arrow */}
-                <div className="flex flex-col items-center gap-2 px-2">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Wand2 className="w-6 h-6 text-primary" />
+                <div className="flex flex-col items-center gap-2 px-4">
+                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Wand2 className="w-7 h-7 text-primary" />
                   </div>
-                  <ArrowRight className="w-6 h-6 text-primary" />
+                  <ArrowRight className="w-7 h-7 text-primary" />
                 </div>
 
                 {/* Model Image */}
-                <div className="relative flex-1 max-w-[200px] lg:max-w-[240px]">
+                <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
                     <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/8ddcbf82-c9e2-4152-a3d7-c569be0b9c8b.jpg" />
                     {/* Decorative badge */}
