@@ -48,22 +48,12 @@ export default function Landing() {
           </nav>
 
           <div className="flex items-center gap-4">
-            {!loading && user && (
-              <button 
-                onClick={() => navigate('/dashboard')} 
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
+            {!loading && user && <button onClick={() => navigate('/dashboard')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Dashboard
-              </button>
-            )}
-            {!loading && !user && (
-              <button 
-                onClick={() => navigate('/auth')} 
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
+              </button>}
+            {!loading && !user && <button onClick={() => navigate('/auth')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Login
-              </button>
-            )}
+              </button>}
             
             <Button onClick={handleStart} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
               Try Now
@@ -73,10 +63,9 @@ export default function Landing() {
       </header>
 
       {/* Full-Screen Hero Banner */}
-      <section 
-        className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center"
-        style={{ backgroundImage: `url(${heroBanner})` }}
-      >
+      <section className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center" style={{
+      backgroundImage: `url(${heroBanner})`
+    }}>
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/40" />
         
@@ -206,23 +195,17 @@ export default function Landing() {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" className="py-24 mt-12 relative overflow-hidden" style={{ backgroundColor: '#c4bfab' }}>
+      <section id="how-it-works" className="py-24 mt-12 relative overflow-hidden" style={{
+      backgroundColor: '#c4bfab'
+    }}>
         {/* Left decorative image */}
         <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-[280px] xl:w-[360px] h-[500px] xl:h-[600px]">
-          <img 
-            src={howItWorksLeft} 
-            alt="" 
-            className="w-full h-full object-cover rounded-r-2xl shadow-xl"
-          />
+          <img src={howItWorksLeft} alt="" className="w-full h-full object-cover rounded-r-2xl shadow-xl" />
         </div>
         
         {/* Right decorative image */}
         <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[280px] xl:w-[360px] h-[500px] xl:h-[600px]">
-          <img 
-            src={howItWorksRight} 
-            alt="" 
-            className="w-full h-full object-cover rounded-l-2xl shadow-xl"
-          />
+          <img alt="" className="w-full h-full object-cover rounded-l-2xl shadow-xl" src="/lovable-uploads/e3f5fe17-d0be-4617-bcc0-2d660cd05de9.jpg" />
         </div>
 
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -296,11 +279,12 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section 
-        id="features" 
-        className="py-24 relative"
-        style={{ backgroundImage: `url(${aiSolutionsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
-      >
+      <section id="features" className="py-24 relative" style={{
+      backgroundImage: `url(${aiSolutionsBg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed'
+    }}>
         <div className="absolute inset-0 bg-black/60" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -315,10 +299,11 @@ export default function Landing() {
           {/* Top Row - Asymmetric 3-column grid with center empty */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {/* Instant Generation - Left aligned (above Studio-Quality) */}
-            <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
-              style={{ backgroundImage: `url(${instantGenerationBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-            >
+            <div className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group" style={{
+            backgroundImage: `url(${instantGenerationBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Instant Generation</h3>
@@ -332,10 +317,11 @@ export default function Landing() {
             <div className="hidden md:block" />
             
             {/* Diverse Model Portfolio - Right aligned */}
-            <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
-              style={{ backgroundImage: `url(${diverseModelsBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-            >
+            <div className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group" style={{
+            backgroundImage: `url(${diverseModelsBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Diverse Model Portfolio</h3>
@@ -349,10 +335,11 @@ export default function Landing() {
           {/* Bottom Row - 3 feature boxes */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Studio-Quality Results */}
-            <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
-              style={{ backgroundImage: `url(${studioQualityBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-            >
+            <div className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group" style={{
+            backgroundImage: `url(${studioQualityBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Studio-Quality Results</h3>
@@ -363,10 +350,11 @@ export default function Landing() {
             </div>
 
             {/* Multi-Angle Support */}
-            <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
-              style={{ backgroundImage: `url(${multiAngleBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-            >
+            <div className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group" style={{
+            backgroundImage: `url(${multiAngleBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Multi-Angle Support</h3>
@@ -377,10 +365,11 @@ export default function Landing() {
             </div>
 
             {/* Full Image Rights */}
-            <div 
-              className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group"
-              style={{ backgroundImage: `url(${fullImageRightsBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-            >
+            <div className="relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl overflow-hidden min-h-[200px] flex flex-col justify-end group" style={{
+            backgroundImage: `url(${fullImageRightsBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Full Image Rights</h3>
