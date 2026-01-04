@@ -86,9 +86,9 @@ export default function Landing() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 rounded-3xl py-12 overflow-hidden">
-          {/* Blurred gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(280,60%,85%)] via-[hsl(300,50%,85%)] to-[hsl(330,60%,85%)] blur-xl" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(280,60%,85%)] via-[hsl(300,50%,85%)] to-[hsl(330,60%,85%)] opacity-90" />
+          {/* Blurred lavender gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] blur-xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] opacity-90" />
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left">
