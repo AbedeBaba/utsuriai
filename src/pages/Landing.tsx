@@ -27,7 +27,7 @@ export default function Landing() {
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <Sparkles className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-xl text-foreground">Fashion AI</span>
+            <span className="font-bold text-xl text-foreground">Utsuri</span>
           </div>
           
           <nav className="hidden md:flex items-center gap-8">
@@ -62,10 +62,10 @@ export default function Landing() {
         {/* Text content - customize as needed */}
         <div className="relative z-10 text-center px-6 max-w-4xl">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            Your Headline Here
+            Transform Fashion with AI
           </h1>
           <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-            Add your subheadline or description text here
+            Create stunning AI-generated model photos for your fashion brand
           </p>
           <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-lg px-10 py-6 rounded-xl">
             Get Started
@@ -186,7 +186,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              How <span className="italic text-primary">Fashion AI</span> Works
+              How <span className="italic text-primary">Utsuri</span> Works
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               No creative skills required - just a few clicks and you've got realistic stunning photos.
@@ -341,7 +341,7 @@ export default function Landing() {
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Sparkles className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="font-bold text-xl text-foreground">Fashion AI</span>
+              <span className="font-bold text-xl text-foreground">Utsuri</span>
             </div>
             
             <p className="text-sm text-muted-foreground">
