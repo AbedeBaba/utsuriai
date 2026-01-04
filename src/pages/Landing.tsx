@@ -206,7 +206,7 @@ export default function Landing() {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" className="py-24 relative overflow-hidden" style={{ backgroundColor: '#ECEAF0' }}>
+      <section id="how-it-works" className="py-24 mt-12 relative overflow-hidden" style={{ backgroundColor: '#c4bfab' }}>
         {/* Left decorative image */}
         <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-[280px] xl:w-[360px] h-[500px] xl:h-[600px]">
           <img 
