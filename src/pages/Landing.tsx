@@ -48,9 +48,22 @@ export default function Landing() {
           </nav>
 
           <div className="flex items-center gap-4">
-            {!loading && !user && <button onClick={() => navigate('/auth')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            {!loading && user && (
+              <button 
+                onClick={() => navigate('/dashboard')} 
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Dashboard
+              </button>
+            )}
+            {!loading && !user && (
+              <button 
+                onClick={() => navigate('/auth')} 
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Login
-              </button>}
+              </button>
+            )}
             
             <Button onClick={handleStart} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
               Try Now
