@@ -136,7 +136,7 @@ export default function Landing() {
                 {/* Product Image */}
                 <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
-                    <img alt="Product photo" src="/lovable-uploads/e6ac3d98-a0e4-443b-8c82-cd40f4ba0aa7.jpg" className="w-full h-full object-cover" />
+                    <img alt="Product photo" className="w-full h-full object-cover" src="https://tempfile.aiquickdraw.com/workers/nano/image_1767701683790_2obf46_1x1_1024x1024.png" />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted text-sm font-medium text-muted-foreground whitespace-nowrap">
                     Product Photo
