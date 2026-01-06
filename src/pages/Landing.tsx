@@ -135,8 +135,8 @@ export default function Landing() {
               <div className="flex gap-6 items-center justify-center">
                 {/* Product Image */}
                 <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
-                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-border">
-                    <img alt="Product photo" src="/lovable-uploads/e6ac3d98-a0e4-443b-8c82-cd40f4ba0aa7.jpg" className="w-full h-full object-cover border border-primary" />
+                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
+                    <img alt="Product photo" src="/lovable-uploads/e6ac3d98-a0e4-443b-8c82-cd40f4ba0aa7.jpg" className="w-full h-full object-cover" />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted text-sm font-medium text-muted-foreground whitespace-nowrap">
                     Product Photo
