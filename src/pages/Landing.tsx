@@ -280,12 +280,12 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 relative" style={{
-      backgroundImage: `url(${aiSolutionsBg})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed'
-    }}>
+      <section id="features" className="py-24 relative">
+        {/* Background image container - works on all devices including mobile */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat md:bg-fixed"
+          style={{ backgroundImage: `url(${aiSolutionsBg})` }}
+        />
         <div className="absolute inset-0 bg-black/60" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
