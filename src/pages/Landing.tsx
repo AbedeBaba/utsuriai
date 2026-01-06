@@ -136,7 +136,7 @@ export default function Landing() {
                 {/* Product Image */}
                 <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-border">
-                    <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/e6ac3d98-a0e4-443b-8c82-cd40f4ba0aa7.jpg" />
+                    <img alt="Product photo" src="/lovable-uploads/e6ac3d98-a0e4-443b-8c82-cd40f4ba0aa7.jpg" className="w-full h-full object-cover border-primary" />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted text-sm font-medium text-muted-foreground whitespace-nowrap">
                     Product Photo
@@ -282,10 +282,9 @@ export default function Landing() {
       {/* Features Section */}
       <section id="features" className="py-24 relative">
         {/* Background image container - works on all devices including mobile */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat md:bg-fixed"
-          style={{ backgroundImage: `url(${aiSolutionsBg})` }}
-        />
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat md:bg-fixed" style={{
+        backgroundImage: `url(${aiSolutionsBg})`
+      }} />
         <div className="absolute inset-0 bg-black/60" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
@@ -385,10 +384,9 @@ export default function Landing() {
 
       {/* CTA Section */}
       <section className="mt-12 py-24 relative overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${ctaBackground})` }}
-        />
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{
+        backgroundImage: `url(${ctaBackground})`
+      }} />
         <div className="absolute inset-0 bg-background/70" />
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
