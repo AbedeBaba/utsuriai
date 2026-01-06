@@ -15,6 +15,9 @@ import aiSolutionsBg from '@/assets/ai-solutions-bg.jpg';
 import howItWorksLeft from '@/assets/how-it-works-left.jpg';
 import howItWorksRight from '@/assets/how-it-works-right.jpg';
 import ctaBackground from '@/assets/cta-background.jpg';
+import howItWorks1 from '@/assets/how-it-works-1.jpg';
+import howItWorks2 from '@/assets/how-it-works-2.jpg';
+import howItWorks3 from '@/assets/how-it-works-3.jpg';
 export default function Landing() {
   const navigate = useNavigate();
   const {
@@ -223,49 +226,61 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Step 1 */}
             <div className="relative group">
-              <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary">
+              <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary z-10">
                 1
               </div>
-              <div className="bg-card border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-                  <Upload className="w-8 h-8 text-primary" />
+              <div className="relative border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden min-h-[320px]">
+                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${howItWorks1})` }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
+                    <Upload className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-3">Upload</h3>
+                  <p className="text-white/80">
+                    Upload images of your clothing, accessories, or jewelry from any angle.
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">Upload</h3>
-                <p className="text-muted-foreground">
-                  Upload images of your clothing, accessories, or jewelry from any angle.
-                </p>
               </div>
             </div>
 
             {/* Step 2 */}
             <div className="relative group">
-              <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary">
+              <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary z-10">
                 2
               </div>
-              <div className="bg-card border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-                  <Wand2 className="w-8 h-8 text-primary" />
+              <div className="relative border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden min-h-[320px]">
+                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${howItWorks2})` }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
+                    <Wand2 className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-3">Transform</h3>
+                  <p className="text-white/80">
+                    Select model characteristics - ethnicity, body type, hair, and more.
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">Transform</h3>
-                <p className="text-muted-foreground">
-                  Select model characteristics - ethnicity, body type, hair, and more.
-                </p>
               </div>
             </div>
 
             {/* Step 3 */}
             <div className="relative group">
-              <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary">
+              <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary z-10">
                 3
               </div>
-              <div className="bg-card border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-                  <Download className="w-8 h-8 text-primary" />
+              <div className="relative border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden min-h-[320px]">
+                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${howItWorks3})` }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
+                    <Download className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-3">Download</h3>
+                  <p className="text-white/80">
+                    Get your professional AI-generated fashion photos ready for any platform.
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">Download</h3>
-                <p className="text-muted-foreground">
-                  Get your professional AI-generated fashion photos ready for any platform.
-                </p>
               </div>
             </div>
           </div>
