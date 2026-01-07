@@ -39,7 +39,7 @@ export function FilterStepLayout({
       {/* Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 pb-12">
         <div className="text-center mb-6 animate-fade-in">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">{title}</h1>
+          <h1 className="text-3xl font-semibold mb-2 text-primary-foreground">{title}</h1>
           {subtitle && <p className="text-primary-foreground">{subtitle}</p>}
         </div>
 
