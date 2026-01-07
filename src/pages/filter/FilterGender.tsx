@@ -31,7 +31,6 @@ export default function FilterGender() {
     setSelectedId(gender);
     updateConfig('gender', gender);
     
-    // Clear beard type if switching from male to female
     if (gender === 'Female') {
       updateConfig('beardType', '');
     }
@@ -42,85 +41,100 @@ export default function FilterGender() {
   }, [isAnimating, navigate, updateConfig]);
 
   return (
-    <FilterStepLayout 
-      title="Select Gender"
-      subtitle="Choose the gender for your fashion model"
-      onBack={() => navigate('/')}
-    >
-      {/* Male Model Photo - Left Half */}
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Male Model - Left Side */}
       <div 
         className={cn(
-          "fixed left-0 top-0 h-screen w-1/2 overflow-hidden pointer-events-none z-0 transition-all duration-500",
-          hoveredGender === 'Male' ? "opacity-100" : "opacity-50"
+          "fixed left-0 top-0 h-screen z-0 transition-all duration-700 ease-out",
+          "w-[25vw] lg:w-[30vw] xl:w-[28vw]",
+          hoveredGender === 'Male' ? "opacity-100" : "opacity-60"
         )}
       >
-        <img 
-          src={maleModel} 
-          alt="Male model"
-          className={cn(
-            "h-full w-full object-cover object-center transition-all duration-500",
-            hoveredGender === 'Male' && "scale-110 brightness-125"
-          )}
-        />
-        {/* Shine overlay */}
-        <div 
-          className={cn(
-            "absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transition-opacity duration-500",
-            hoveredGender === 'Male' ? "opacity-100 animate-pulse" : "opacity-0"
-          )}
-        />
-        {/* Right edge fade to blend with center */}
-        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent" />
+        <div className="relative h-full w-full overflow-hidden">
+          <img 
+            src={maleModel} 
+            alt="Male model"
+            className={cn(
+              "h-full w-auto max-w-none object-contain object-top transition-all duration-700",
+              "absolute left-0 top-0",
+              hoveredGender === 'Male' && "scale-105 brightness-110"
+            )}
+            style={{ objectPosition: 'left top' }}
+          />
+          {/* Shine effect */}
+          <div 
+            className={cn(
+              "absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent transition-opacity duration-500",
+              hoveredGender === 'Male' ? "opacity-100" : "opacity-0"
+            )}
+          />
+          {/* Right fade */}
+          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent" />
+        </div>
       </div>
 
-      {/* Female Model Photo - Right Half */}
+      {/* Female Model - Right Side */}
       <div 
         className={cn(
-          "fixed right-0 top-0 h-screen w-1/2 overflow-hidden pointer-events-none z-0 transition-all duration-500",
-          hoveredGender === 'Female' ? "opacity-100" : "opacity-50"
+          "fixed right-0 top-0 h-screen z-0 transition-all duration-700 ease-out",
+          "w-[25vw] lg:w-[30vw] xl:w-[28vw]",
+          hoveredGender === 'Female' ? "opacity-100" : "opacity-60"
         )}
       >
-        <img 
-          src={femaleModel} 
-          alt="Female model"
-          className={cn(
-            "h-full w-full object-cover object-center transition-all duration-500",
-            hoveredGender === 'Female' && "scale-110 brightness-125"
-          )}
-        />
-        {/* Shine overlay */}
-        <div 
-          className={cn(
-            "absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transition-opacity duration-500",
-            hoveredGender === 'Female' ? "opacity-100 animate-pulse" : "opacity-0"
-          )}
-        />
-        {/* Left edge fade to blend with center */}
-        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent" />
+        <div className="relative h-full w-full overflow-hidden">
+          <img 
+            src={femaleModel} 
+            alt="Female model"
+            className={cn(
+              "h-full w-auto max-w-none object-contain object-top transition-all duration-700",
+              "absolute right-0 top-0",
+              hoveredGender === 'Female' && "scale-105 brightness-110"
+            )}
+            style={{ objectPosition: 'right top' }}
+          />
+          {/* Shine effect */}
+          <div 
+            className={cn(
+              "absolute inset-0 bg-gradient-to-bl from-white/20 via-transparent to-transparent transition-opacity duration-500",
+              hoveredGender === 'Female' ? "opacity-100" : "opacity-0"
+            )}
+          />
+          {/* Left fade */}
+          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent" />
+        </div>
       </div>
 
-      {/* Backdrop */}
-      <div className={cn("selection-backdrop", isAnimating && "active")} />
-      
-      <div className="grid grid-cols-2 gap-6 max-w-md mx-auto relative z-10">
-        {genderOptions.map((option, index) => (
-          <div
-            key={option.id}
-            onMouseEnter={() => setHoveredGender(option.id)}
-            onMouseLeave={() => setHoveredGender(null)}
-          >
-            <SelectionCard
-              title={option.label}
-              icon={option.icon}
-              selected={config.gender === option.id}
-              onClick={() => handleSelect(option.id)}
-              isAnimating={selectedId === option.id}
-              isFadingOut={isAnimating && selectedId !== option.id}
-              animationDelay={index * 50}
-            />
+      {/* Main Content - Above the visuals */}
+      <div className="relative z-10">
+        <FilterStepLayout 
+          title="Select Gender"
+          subtitle="Choose the gender for your fashion model"
+          onBack={() => navigate('/')}
+        >
+          {/* Backdrop */}
+          <div className={cn("selection-backdrop", isAnimating && "active")} />
+          
+          <div className="grid grid-cols-2 gap-6 max-w-md mx-auto relative">
+            {genderOptions.map((option, index) => (
+              <div
+                key={option.id}
+                onMouseEnter={() => setHoveredGender(option.id)}
+                onMouseLeave={() => setHoveredGender(null)}
+              >
+                <SelectionCard
+                  title={option.label}
+                  icon={option.icon}
+                  selected={config.gender === option.id}
+                  onClick={() => handleSelect(option.id)}
+                  isAnimating={selectedId === option.id}
+                  isFadingOut={isAnimating && selectedId !== option.id}
+                  animationDelay={index * 50}
+                />
+              </div>
+            ))}
           </div>
-        ))}
+        </FilterStepLayout>
       </div>
-    </FilterStepLayout>
+    </div>
   );
 }
