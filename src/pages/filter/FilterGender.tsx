@@ -42,69 +42,76 @@ export default function FilterGender() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Male Model - Left Side */}
+      {/* Male Model - Left Side - Behind content */}
       <div 
         className={cn(
-          "fixed left-0 top-0 h-screen z-0 transition-all duration-700 ease-out",
-          "w-[25vw] lg:w-[30vw] xl:w-[28vw]",
-          hoveredGender === 'Male' ? "opacity-100" : "opacity-60"
+          "fixed left-0 bottom-0 z-0 transition-all duration-700 ease-out flex items-end justify-start",
+          "h-[85vh] md:h-[90vh] lg:h-[95vh]",
+          "w-auto",
+          hoveredGender === 'Male' ? "opacity-100" : "opacity-70"
         )}
       >
-        <div className="relative h-full w-full overflow-hidden">
-          <img 
-            src={maleModel} 
-            alt="Male model"
-            className={cn(
-              "h-full w-auto max-w-none object-contain object-top transition-all duration-700",
-              "absolute left-0 top-0",
-              hoveredGender === 'Male' && "scale-105 brightness-110"
-            )}
-            style={{ objectPosition: 'left top' }}
-          />
-          {/* Shine effect */}
-          <div 
-            className={cn(
-              "absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent transition-opacity duration-500",
-              hoveredGender === 'Male' ? "opacity-100" : "opacity-0"
-            )}
-          />
-          {/* Right fade */}
-          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent" />
-        </div>
+        <img 
+          src={maleModel} 
+          alt="Male model"
+          className={cn(
+            "h-full w-auto object-contain transition-all duration-700",
+            hoveredGender === 'Male' && "scale-[1.02] brightness-110"
+          )}
+          style={{ 
+            objectPosition: 'left bottom',
+            maxWidth: '35vw'
+          }}
+        />
+        {/* Shine overlay */}
+        <div 
+          className={cn(
+            "absolute inset-0 bg-gradient-to-br from-white/15 via-transparent to-transparent transition-opacity duration-500 pointer-events-none",
+            hoveredGender === 'Male' ? "opacity-100" : "opacity-0"
+          )}
+        />
+        {/* Right edge fade for smooth blend */}
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background via-background/50 to-transparent pointer-events-none" />
       </div>
 
-      {/* Female Model - Right Side */}
+      {/* Female Model - Right Side - Behind content */}
       <div 
         className={cn(
-          "fixed right-0 top-0 h-screen z-0 transition-all duration-700 ease-out",
-          "w-[25vw] lg:w-[30vw] xl:w-[28vw]",
-          hoveredGender === 'Female' ? "opacity-100" : "opacity-60"
+          "fixed right-0 bottom-0 z-0 transition-all duration-700 ease-out flex items-end justify-end",
+          "h-[85vh] md:h-[90vh] lg:h-[95vh]",
+          "w-auto",
+          hoveredGender === 'Female' ? "opacity-100" : "opacity-70"
         )}
       >
-        <div className="relative h-full w-full overflow-hidden">
-          <img 
-            src={femaleModel} 
-            alt="Female model"
-            className={cn(
-              "h-full w-auto max-w-none object-contain object-top transition-all duration-700",
-              "absolute right-0 top-0",
-              hoveredGender === 'Female' && "scale-105 brightness-110"
-            )}
-            style={{ objectPosition: 'right top' }}
-          />
-          {/* Shine effect */}
-          <div 
-            className={cn(
-              "absolute inset-0 bg-gradient-to-bl from-white/20 via-transparent to-transparent transition-opacity duration-500",
-              hoveredGender === 'Female' ? "opacity-100" : "opacity-0"
-            )}
-          />
-          {/* Left fade */}
-          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent" />
-        </div>
+        <img 
+          src={femaleModel} 
+          alt="Female model"
+          className={cn(
+            "h-full w-auto object-contain transition-all duration-700",
+            hoveredGender === 'Female' && "scale-[1.02] brightness-110"
+          )}
+          style={{ 
+            objectPosition: 'right bottom',
+            maxWidth: '35vw'
+          }}
+        />
+        {/* Shine overlay */}
+        <div 
+          className={cn(
+            "absolute inset-0 bg-gradient-to-bl from-white/15 via-transparent to-transparent transition-opacity duration-500 pointer-events-none",
+            hoveredGender === 'Female' ? "opacity-100" : "opacity-0"
+          )}
+        />
+        {/* Left edge fade for smooth blend */}
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background via-background/50 to-transparent pointer-events-none" />
       </div>
 
-      {/* Main Content - Above the visuals */}
+      {/* Center content area with subtle background for card readability */}
+      <div className="fixed inset-0 z-[1] pointer-events-none flex items-center justify-center">
+        <div className="w-full max-w-2xl h-full bg-gradient-to-r from-transparent via-background/80 to-transparent" />
+      </div>
+
+      {/* Main Content - On top of everything */}
       <div className="relative z-10">
         <FilterStepLayout 
           title="Select Gender"
