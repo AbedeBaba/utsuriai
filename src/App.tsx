@@ -19,8 +19,18 @@ import ClothingSelection from "./pages/ClothingSelection";
 import Result from "./pages/Result";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import { useEffect } from "react";
+import { supabase } from "./supabaseClient";
 
-const queryClient = new QueryClient();
+useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    if (data.session) {
+      console.log("LOGIN OK", data.session);
+    } else {
+      console.log("NO SESSION");
+    }
+  });
+}, []);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
