@@ -25,7 +25,7 @@ export function FilterStepLayout({
   const { currentStep, totalSteps } = useModelConfig();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-6">
         {showBack && onBack ? (
