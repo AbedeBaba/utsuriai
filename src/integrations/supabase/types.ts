@@ -19,9 +19,11 @@ export type Database = {
           background: string | null
           beard_type: string | null
           body_type: string
+          category: string | null
           clothing_bottom: string | null
           clothing_top: string | null
           created_at: string
+          custom_name: string | null
           ethnicity: string
           eye_color: string
           gender: string
@@ -40,9 +42,11 @@ export type Database = {
           background?: string | null
           beard_type?: string | null
           body_type: string
+          category?: string | null
           clothing_bottom?: string | null
           clothing_top?: string | null
           created_at?: string
+          custom_name?: string | null
           ethnicity: string
           eye_color: string
           gender: string
@@ -61,9 +65,11 @@ export type Database = {
           background?: string | null
           beard_type?: string | null
           body_type?: string
+          category?: string | null
           clothing_bottom?: string | null
           clothing_top?: string | null
           created_at?: string
+          custom_name?: string | null
           ethnicity?: string
           eye_color?: string
           gender?: string
