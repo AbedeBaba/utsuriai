@@ -41,12 +41,11 @@ export default function FilterGender() {
   }, [isAnimating, navigate, updateConfig]);
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Male Model - Left Side - Original size, clipped at center */}
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Male Model - Left Side */}
       <div 
         className={cn(
-          "fixed left-0 top-0 bottom-0 z-0 overflow-hidden transition-opacity duration-500",
-          "w-[calc(50%-14rem)]", // Stop before the cards (cards are max-w-md = 28rem, so half is 14rem from center)
+          "fixed left-0 top-0 bottom-0 w-[40%] z-0 transition-all duration-500",
           hoveredGender === 'Male' ? "opacity-100" : "opacity-80"
         )}
       >
@@ -54,24 +53,23 @@ export default function FilterGender() {
           src={maleModel} 
           alt="Male model"
           className={cn(
-            "h-full w-auto min-w-full object-cover object-left transition-all duration-500",
-            hoveredGender === 'Male' && "brightness-110"
+            "h-full w-auto object-contain object-left transition-all duration-500",
+            hoveredGender === 'Male' && "brightness-125 scale-[1.02]"
           )}
         />
         {/* Shine overlay */}
         <div 
           className={cn(
-            "absolute inset-0 bg-gradient-to-r from-white/10 via-white/5 to-transparent transition-opacity duration-500 pointer-events-none",
+            "absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transition-opacity duration-500 pointer-events-none",
             hoveredGender === 'Male' ? "opacity-100" : "opacity-0"
           )}
         />
       </div>
 
-      {/* Female Model - Right Side - Original size, clipped at center */}
+      {/* Female Model - Right Side */}
       <div 
         className={cn(
-          "fixed right-0 top-0 bottom-0 z-0 overflow-hidden transition-opacity duration-500",
-          "w-[calc(50%-14rem)]", // Stop before the cards
+          "fixed right-0 top-0 bottom-0 w-[40%] z-0 flex justify-end transition-all duration-500",
           hoveredGender === 'Female' ? "opacity-100" : "opacity-80"
         )}
       >
@@ -79,21 +77,21 @@ export default function FilterGender() {
           src={femaleModel} 
           alt="Female model"
           className={cn(
-            "h-full w-auto min-w-full object-cover object-right transition-all duration-500",
-            hoveredGender === 'Female' && "brightness-110"
+            "h-full w-auto object-contain object-right transition-all duration-500",
+            hoveredGender === 'Female' && "brightness-125 scale-[1.02]"
           )}
         />
         {/* Shine overlay */}
         <div 
           className={cn(
-            "absolute inset-0 bg-gradient-to-l from-white/10 via-white/5 to-transparent transition-opacity duration-500 pointer-events-none",
+            "absolute inset-0 bg-gradient-to-l from-white/20 to-transparent transition-opacity duration-500 pointer-events-none",
             hoveredGender === 'Female' ? "opacity-100" : "opacity-0"
           )}
         />
       </div>
 
-      {/* Main Content - On top */}
-      <div className="relative z-10">
+      {/* Main Content - On top with dark theme */}
+      <div className="relative z-10 min-h-screen">
         <FilterStepLayout 
           title="Select Gender"
           subtitle="Choose the gender for your fashion model"
