@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { ModelConfigProvider } from "@/context/ModelConfigContext";
 import Landing from "./pages/Landing";
+import Pricing from "./pages/Pricing";
 import Auth from "./pages/Auth";
 import FilterGender from "./pages/filter/FilterGender";
 import FilterEthnicity from "./pages/filter/FilterEthnicity";
@@ -32,6 +33,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Landing />} />
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/filter/gender" element={<FilterGender />} />
