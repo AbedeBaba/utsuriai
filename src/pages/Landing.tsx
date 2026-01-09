@@ -49,6 +49,9 @@ export default function Landing() {
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Features
             </a>
+            <button onClick={() => navigate('/pricing')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Pricing
+            </button>
           </nav>
 
           <div className="flex items-center gap-4">
