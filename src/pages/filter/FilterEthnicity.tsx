@@ -13,7 +13,7 @@ const ethnicityOptions = [
   { id: 'Latin', label: 'Latin' },
   { id: 'Scandinavian', label: 'Scandinavian' },
   { id: 'Australian', label: 'Australian' },
-  { id: 'Hindu', label: 'Hindu' },
+  { id: 'Indian', label: 'Indian' },
   { id: 'Local American', label: 'Local American' },
   { id: 'Afro American', label: 'Afro American' },
   { id: 'Italian', label: 'Italian' },
