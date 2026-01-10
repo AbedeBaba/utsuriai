@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
 import { useEffect, useState, useCallback } from 'react';
@@ -15,6 +16,7 @@ const modestOptions = [
 export default function FilterModestOption() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { t } = useLanguage();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -36,8 +38,8 @@ export default function FilterModestOption() {
 
   return (
     <FilterStepLayout 
-      title="Select Coverage Option"
-      subtitle="Choose the coverage style for your model"
+      title={t('filter.selectCoverage')}
+      subtitle={t('filter.coverageSubtitle')}
       onBack={() => config.gender === 'Male' ? navigate('/filter/beard-type') : navigate('/filter/hair-style')}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
 import { useEffect, useState, useCallback } from 'react';
@@ -20,6 +21,7 @@ const skinToneOptions = [
 export default function FilterSkinTone() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { t } = useLanguage();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -41,8 +43,8 @@ export default function FilterSkinTone() {
 
   return (
     <FilterStepLayout 
-      title="Select Skin Tone"
-      subtitle="Choose the skin tone for your model"
+      title={t('filter.selectSkinTone')}
+      subtitle={t('filter.skinToneSubtitle')}
       onBack={() => navigate('/filter/ethnicity')}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />

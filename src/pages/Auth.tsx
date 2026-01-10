@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Sparkles, ArrowLeft, Loader2 } from 'lucide-react';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { z } from 'zod';
 
 const signInSchema = z.object({
@@ -23,6 +25,7 @@ const signUpSchema = z.object({
 export default function Auth() {
   const navigate = useNavigate();
   const { user, signIn, signUp, signInWithGoogle } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   
   const [isSignUp, setIsSignUp] = useState(false);
@@ -143,7 +146,7 @@ export default function Auth() {
           <span className="font-medium text-foreground italic">Utsuri</span>
         </div>
         
-        <div className="w-10" />
+        <LanguageSwitcher />
       </header>
 
       {/* Form */}
@@ -151,12 +154,12 @@ export default function Auth() {
         <div className="w-full max-w-sm animate-fade-in">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-semibold text-foreground mb-2">
-              {isSignUp ? 'Create Account' : 'Welcome Back'}
+              {isSignUp ? t('auth.createAccount') : t('auth.welcomeBack')}
             </h1>
             <p className="text-muted-foreground">
               {isSignUp 
-                ? 'Sign up to start creating AI fashion models' 
-                : 'Sign in to continue your creative journey'}
+                ? t('auth.startCreating') 
+                : t('auth.signInToContinue')}
             </p>
           </div>
 
@@ -190,7 +193,7 @@ export default function Auth() {
                 />
               </svg>
             )}
-            Continue with Google
+            {t('auth.continueWithGoogle')}
           </Button>
 
           <div className="relative mb-6">
@@ -198,7 +201,7 @@ export default function Auth() {
               <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
+              <span className="bg-background px-2 text-muted-foreground">{t('auth.orContinueWith')}</span>
             </div>
           </div>
 
@@ -206,7 +209,7 @@ export default function Auth() {
             {isSignUp && (
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName">{t('auth.firstName')}</Label>
                   <Input
                     id="firstName"
                     type="text"
@@ -220,7 +223,7 @@ export default function Auth() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName">{t('auth.lastName')}</Label>
                   <Input
                     id="lastName"
                     type="text"
@@ -272,7 +275,7 @@ export default function Auth() {
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isSignUp ? 'Create Account' : 'Sign In'}
+              {isSignUp ? t('auth.createAccount') : t('common.login')}
             </Button>
           </form>
 
@@ -288,8 +291,8 @@ export default function Auth() {
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {isSignUp 
-                ? 'Already have an account? Sign in' 
-                : "Don't have an account? Sign up"}
+                ? t('auth.haveAccount')
+                : t('auth.noAccount')}
             </button>
           </div>
         </div>

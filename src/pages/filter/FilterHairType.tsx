@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
 import { useEffect, useState, useCallback } from 'react';
@@ -19,6 +20,7 @@ const hairTypeOptions = [
 export default function FilterHairType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { t } = useLanguage();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -40,8 +42,8 @@ export default function FilterHairType() {
 
   return (
     <FilterStepLayout 
-      title="Select Hair Type"
-      subtitle="Choose the hair type for your model"
+      title={t('filter.selectHairType')}
+      subtitle={t('filter.hairTypeSubtitle')}
       onBack={() => navigate('/filter/body-type')}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
