@@ -142,7 +142,13 @@ export default function ClothingSelection() {
     { label: 'Eye Color', value: config.eyeColor },
     { label: 'Body Type', value: config.bodyType },
     { label: 'Hair Type', value: config.hairType },
+    { label: 'Hair Style', value: config.hairStyle },
     ...(config.beardType ? [{ label: 'Beard Type', value: config.beardType }] : []),
+    { label: 'Coverage', value: config.modestOption },
+    { label: 'Pose', value: config.pose },
+    { label: 'Background', value: config.background },
+    { label: 'Face Type', value: config.faceType },
+    { label: 'Expression', value: config.facialExpression },
   ].filter(item => item.value);
 
   return (

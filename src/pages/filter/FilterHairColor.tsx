@@ -7,14 +7,15 @@ import { cn } from '@/lib/utils';
 
 const hairColorOptions = [
   { id: 'Black', label: 'Black', color: '#1C1C1C' },
-  { id: 'Dark Brown', label: 'Dark Brown', color: '#3D2314' },
+  { id: 'White', label: 'White', color: '#F5F5F5' },
   { id: 'Brown', label: 'Brown', color: '#6A4E42' },
-  { id: 'Light Brown', label: 'Light Brown', color: '#A67B5B' },
-  { id: 'Blonde', label: 'Blonde', color: '#E8D5B5' },
-  { id: 'Platinum', label: 'Platinum', color: '#F5F5DC' },
   { id: 'Red', label: 'Red', color: '#922B21' },
-  { id: 'Auburn', label: 'Auburn', color: '#8B4513' },
-  { id: 'Gray', label: 'Gray', color: '#A0A0A0' },
+  { id: 'Blonde', label: 'Blonde', color: '#E8D5B5' },
+  { id: 'Dark Blonde', label: 'Dark Blonde', color: '#B89B72' },
+  { id: 'Blue', label: 'Blue', color: '#4A90D9' },
+  { id: 'Purple', label: 'Purple', color: '#7B4B8A' },
+  { id: 'Green', label: 'Green', color: '#4A7C59' },
+  { id: 'Platinum', label: 'Platinum', color: '#E5E4E2' },
 ];
 
 export default function FilterHairColor() {
@@ -47,7 +48,7 @@ export default function FilterHairColor() {
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
-      <div className="grid grid-cols-3 gap-4 relative">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
         {hairColorOptions.map((option, index) => (
           <SelectionCard
             key={option.id}

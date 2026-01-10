@@ -7,14 +7,12 @@ import { cn } from '@/lib/utils';
 
 const eyeColorOptions = [
   { id: 'Brown', label: 'Brown', color: '#634E34' },
-  { id: 'Dark Brown', label: 'Dark Brown', color: '#3D2314' },
-  { id: 'Hazel', label: 'Hazel', color: '#8E7618' },
-  { id: 'Green', label: 'Green', color: '#3D6B4F' },
   { id: 'Blue', label: 'Blue', color: '#4682B4' },
-  { id: 'Light Blue', label: 'Light Blue', color: '#87CEEB' },
-  { id: 'Gray', label: 'Gray', color: '#808080' },
-  { id: 'Amber', label: 'Amber', color: '#CF9B52' },
+  { id: 'Hazel', label: 'Hazel', color: '#8E7618' },
   { id: 'Black', label: 'Black', color: '#1C1C1C' },
+  { id: 'Green', label: 'Green', color: '#3D6B4F' },
+  { id: 'Amber', label: 'Amber', color: '#CF9B52' },
+  { id: 'Grey', label: 'Grey', color: '#808080' },
 ];
 
 export default function FilterEyeColor() {
@@ -47,7 +45,7 @@ export default function FilterEyeColor() {
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
-      <div className="grid grid-cols-3 gap-4 relative">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
         {eyeColorOptions.map((option, index) => (
           <SelectionCard
             key={option.id}
