@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Sparkles, Loader2, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { MultiImageUpload, UploadedImage } from '@/components/MultiImageUpload';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 // Backend-ready data structure for API communication
 interface GenerationPayload {
@@ -30,6 +32,7 @@ export default function ClothingSelection() {
   const navigate = useNavigate();
   const { config, setCurrentStep, totalSteps } = useModelConfig();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
@@ -166,17 +169,17 @@ export default function ClothingSelection() {
         
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          <span className="font-medium text-foreground">Final Step</span>
+          <span className="font-medium text-foreground">{t('clothing.title')}</span>
         </div>
         
-        <div className="w-10" />
+        <LanguageSwitcher />
       </header>
 
       {/* Content */}
       <main className="flex-1 flex flex-col items-center justify-start px-6 pb-12 pt-4">
         <div className="text-center mb-6 animate-fade-in">
-          <h1 className="text-3xl font-semibold text-foreground mb-2">Ready to Generate</h1>
-          <p className="text-muted-foreground">Upload clothing, accessories, and jewelry images</p>
+          <h1 className="text-3xl font-semibold text-foreground mb-2">{t('clothing.title')}</h1>
+          <p className="text-muted-foreground">{t('clothing.subtitle')}</p>
         </div>
 
         <div className="w-full max-w-lg space-y-6">
@@ -217,12 +220,12 @@ export default function ClothingSelection() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Preparing Generation...
+                {t('common.loading')}
               </>
             ) : (
               <>
                 <Sparkles className="mr-2 h-5 w-5" />
-                Generate Model Image
+                {t('clothing.generate')}
               </>
             )}
           </Button>

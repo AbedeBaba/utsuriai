@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
 import { useEffect, useState, useCallback } from 'react';
@@ -18,6 +19,7 @@ const eyeColorOptions = [
 export default function FilterEyeColor() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { t } = useLanguage();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -39,8 +41,8 @@ export default function FilterEyeColor() {
 
   return (
     <FilterStepLayout 
-      title="Select Eye Color"
-      subtitle="Choose the eye color for your model"
+      title={t('filter.selectEyeColor')}
+      subtitle={t('filter.eyeColorSubtitle')}
       onBack={() => navigate('/filter/hair-color')}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />

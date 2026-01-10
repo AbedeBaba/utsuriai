@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useModelConfig } from '@/context/ModelConfigContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Download, RefreshCw, Sparkles, Loader2, ImageIcon, LayoutDashboard } from 'lucide-react';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 interface GenerationData {
   id: string;
   status: string;
@@ -32,6 +34,7 @@ export default function Result() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { resetConfig } = useModelConfig();
+  const { t } = useLanguage();
   const { toast } = useToast();
   
   const [generation, setGeneration] = useState<GenerationData | null>(null);
@@ -178,7 +181,7 @@ export default function Result() {
             className="text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
-            New Model
+            {t('result.newModel')}
           </Button>
           
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
@@ -193,8 +196,9 @@ export default function Result() {
               className="hidden sm:flex items-center gap-2"
             >
               <LayoutDashboard className="h-4 w-4" />
-              Dashboard
+              {t('common.dashboard')}
             </Button>
+            <LanguageSwitcher />
             <ProfileDropdown />
           </div>
         </div>
@@ -208,7 +212,7 @@ export default function Result() {
             {generating ? (
               <div className="w-full h-full flex flex-col items-center justify-center gap-4">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <p className="text-muted-foreground">Generating your model...</p>
+                <p className="text-muted-foreground">{t('result.generating')}</p>
               </div>
             ) : generation?.image_url ? (
               <img 
@@ -219,7 +223,7 @@ export default function Result() {
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-muted-foreground">
                 <ImageIcon className="h-16 w-16" />
-                <p>Image generation pending</p>
+                <p>{t('result.pending')}</p>
                 <p className="text-sm text-center px-8">
                   The AI integration is prepared but not yet active. 
                   Your configuration has been saved.
@@ -231,7 +235,7 @@ export default function Result() {
           {/* Model Details */}
           {generation && (
             <div className="bg-card rounded-xl border p-6 mb-8">
-              <h3 className="font-semibold text-foreground mb-4">Model Configuration</h3>
+              <h3 className="font-semibold text-foreground mb-4">{t('result.modelConfig')}</h3>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div><span className="text-muted-foreground">Gender:</span> {generation.gender}</div>
                 <div><span className="text-muted-foreground">Ethnicity:</span> {generation.ethnicity}</div>
@@ -256,7 +260,7 @@ export default function Result() {
               className="flex-1"
             >
               <RefreshCw className="mr-2 h-4 w-4" />
-              Regenerate
+              {t('result.regenerate')}
             </Button>
             
             <Button
@@ -265,7 +269,7 @@ export default function Result() {
               className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Download className="mr-2 h-4 w-4" />
-              Download
+              {t('result.download')}
             </Button>
           </div>
 
@@ -274,7 +278,7 @@ export default function Result() {
             onClick={handleCreateNew}
             className="w-full mt-4 text-muted-foreground"
           >
-            Create Another Model
+            {t('result.createAnother')}
           </Button>
         </div>
       </main>

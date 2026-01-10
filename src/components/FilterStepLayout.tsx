@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProgressIndicator } from './ProgressIndicator';
 import { RandomFilterButton } from './RandomFilterButton';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { useModelConfig } from '@/context/ModelConfigContext';
 interface FilterStepLayoutProps {
   title: string;
@@ -33,7 +34,7 @@ export function FilterStepLayout({
         
         <ProgressIndicator currentStep={currentStep} totalSteps={totalSteps} />
         
-        <div className="w-10" />
+        <LanguageSwitcher />
       </header>
 
       {/* Content */}
