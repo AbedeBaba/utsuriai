@@ -15,7 +15,13 @@ import FilterHairColor from "./pages/filter/FilterHairColor";
 import FilterEyeColor from "./pages/filter/FilterEyeColor";
 import FilterBodyType from "./pages/filter/FilterBodyType";
 import FilterHairType from "./pages/filter/FilterHairType";
+import FilterHairStyle from "./pages/filter/FilterHairStyle";
 import FilterBeardType from "./pages/filter/FilterBeardType";
+import FilterModestOption from "./pages/filter/FilterModestOption";
+import FilterPose from "./pages/filter/FilterPose";
+import FilterBackground from "./pages/filter/FilterBackground";
+import FilterFaceType from "./pages/filter/FilterFaceType";
+import FilterExpression from "./pages/filter/FilterExpression";
 import ClothingSelection from "./pages/ClothingSelection";
 import Result from "./pages/Result";
 import Dashboard from "./pages/Dashboard";
@@ -43,7 +49,13 @@ const App = () => (
               <Route path="/filter/eye-color" element={<FilterEyeColor />} />
               <Route path="/filter/body-type" element={<FilterBodyType />} />
               <Route path="/filter/hair-type" element={<FilterHairType />} />
+              <Route path="/filter/hair-style" element={<FilterHairStyle />} />
               <Route path="/filter/beard-type" element={<FilterBeardType />} />
+              <Route path="/filter/modest-option" element={<FilterModestOption />} />
+              <Route path="/filter/pose" element={<FilterPose />} />
+              <Route path="/filter/background" element={<FilterBackground />} />
+              <Route path="/filter/face-type" element={<FilterFaceType />} />
+              <Route path="/filter/expression" element={<FilterExpression />} />
               <Route path="/clothing" element={<ClothingSelection />} />
               <Route path="/result/:id" element={<Result />} />
               <Route path="*" element={<NotFound />} />

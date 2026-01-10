@@ -4,55 +4,56 @@ import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { User, Camera, ArrowDown, ArrowUp, Armchair, Lock } from 'lucide-react';
 
-const hairTypeOptions = [
-  { id: 'Straight', label: 'Straight', subtitle: 'Sleek and smooth' },
-  { id: 'Wavy', label: 'Wavy', subtitle: 'Soft waves' },
-  { id: 'Curly', label: 'Curly', subtitle: 'Defined curls' },
-  { id: 'Coily', label: 'Coily', subtitle: 'Tight coils' },
-  { id: 'Kinky', label: 'Kinky', subtitle: 'Dense texture' },
-  { id: 'Bald', label: 'Bald', subtitle: 'Clean shaved' },
-  { id: 'Short', label: 'Short', subtitle: 'Cropped style' },
-  { id: 'Long', label: 'Long', subtitle: 'Flowing length' },
+const poseOptions = [
+  { id: 'Face Close-up', label: 'Face Close-up', subtitle: 'Portrait shot' },
+  { id: 'Standing', label: 'Standing', subtitle: 'Full body upright' },
+  { id: 'Sitting', label: 'Sitting', subtitle: 'Seated position' },
+  { id: 'Leaning', label: 'Leaning', subtitle: 'Casual lean' },
+  { id: 'Top-down', label: 'Top-down', subtitle: 'Overhead view' },
+  { id: 'Arms Crossed', label: 'Arms Crossed', subtitle: 'Confident pose' },
+  { id: 'Back View', label: 'Back View', subtitle: 'Rear angle' },
+  { id: 'Low-angle', label: 'Low-angle', subtitle: 'Dramatic upward' },
 ];
 
-export default function FilterHairType() {
+export default function FilterPose() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setCurrentStep(7);
-  }, [setCurrentStep]);
+    setCurrentStep(config.gender === 'Male' ? 11 : 10);
+  }, [setCurrentStep, config.gender]);
 
-  const handleSelect = useCallback((hairType: string) => {
+  const handleSelect = useCallback((pose: string) => {
     if (isAnimating) return;
     
     setIsAnimating(true);
-    setSelectedId(hairType);
-    updateConfig('hairType', hairType);
+    setSelectedId(pose);
+    updateConfig('pose', pose);
 
     setTimeout(() => {
-      navigate('/filter/hair-style');
+      navigate('/filter/background');
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
   return (
     <FilterStepLayout 
-      title="Select Hair Type"
-      subtitle="Choose the hair type for your model"
-      onBack={() => navigate('/filter/body-type')}
+      title="Select Pose"
+      subtitle="Choose the model's pose and camera angle"
+      onBack={() => navigate('/filter/modest-option')}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
-        {hairTypeOptions.map((option, index) => (
+        {poseOptions.map((option, index) => (
           <SelectionCard
             key={option.id}
             title={option.label}
             subtitle={option.subtitle}
-            selected={config.hairType === option.id}
+            selected={config.pose === option.id}
             onClick={() => handleSelect(option.id)}
             isAnimating={selectedId === option.id}
             isFadingOut={isAnimating && selectedId !== option.id}
