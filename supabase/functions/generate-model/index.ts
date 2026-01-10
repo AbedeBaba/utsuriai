@@ -164,58 +164,131 @@ interface ReferenceImage {
 }
 
 function buildPrompt(config: any, referenceImages: ReferenceImage[] | null): string {
-  const parts: string[] = [];
+  // =============================================
+  // STATIC BASE PROMPT (NEVER CHANGES)
+  // =============================================
+  const staticBasePrompt = `
+Generate a hyper-realistic, high-resolution fashion photography image featuring a model.
+
+CRITICAL CLOTHING PRESERVATION RULES (ABSOLUTE REQUIREMENTS):
+- The clothing, outfit, and all garments shown in the reference images MUST be reproduced EXACTLY as they appear.
+- Do NOT alter, reinterpret, stylize, or modify the clothing in any way.
+- Preserve ALL original details: fabric texture, material type, weave pattern, stitching, seams, buttons, zippers, embroidery, prints, patterns, logos, and embellishments.
+- Maintain EXACT colors, color gradients, shading, and tonal values of the clothing.
+- Keep the EXACT garment cut, silhouette, fit, drape, and shape.
+- Preserve lighting reflections, shadows, and fabric behavior exactly as shown.
+- If jewelry or accessories are provided in reference images, include them exactly as shown without modification.
+- The clothing must look identical to the reference - as if it's the same physical garment photographed on the model.
+
+PHOTOREALISM REQUIREMENTS:
+- Ultra-high resolution, 8K quality, professional fashion photography.
+- Studio-grade lighting with natural skin tones and fabric rendering.
+- Sharp focus, professional depth of field.
+- Magazine-quality editorial fashion photography aesthetic.
+- Natural, realistic skin texture and details.
+`.trim();
+
+  // =============================================
+  // DYNAMIC FILTER SECTION (USER SELECTIONS ONLY)
+  // =============================================
+  const dynamicFilters: string[] = [];
   
-  // Base description
-  parts.push('Generate a high-quality, photorealistic fashion model image.');
-  
-  // Physical attributes
-  parts.push(`The model is a ${config.gender?.toLowerCase() || 'person'}`);
-  if (config.ethnicity) parts.push(`with ${config.ethnicity} ethnicity`);
-  if (config.skinTone) parts.push(`and ${config.skinTone.toLowerCase()} skin tone.`);
-  
-  // Hair
-  if (config.hairColor || config.hairType) {
-    parts.push(`Hair: ${config.hairColor || ''} ${config.hairType || ''}.`.trim());
+  // Model physical attributes
+  if (config.gender) {
+    dynamicFilters.push(`Model gender: ${config.gender}`);
   }
   
-  // Eyes
+  if (config.ethnicity) {
+    dynamicFilters.push(`Model ethnicity: ${config.ethnicity}`);
+  }
+  
+  if (config.skinTone) {
+    dynamicFilters.push(`Skin tone: ${config.skinTone}`);
+  }
+  
+  // Hair attributes
+  if (config.hairColor) {
+    dynamicFilters.push(`Hair color: ${config.hairColor}`);
+  }
+  
+  if (config.hairType) {
+    dynamicFilters.push(`Hair type/style: ${config.hairType}`);
+  }
+  
+  if (config.hairStyle) {
+    dynamicFilters.push(`Hair styling: ${config.hairStyle}`);
+  }
+  
+  // Eye color
   if (config.eyeColor) {
-    parts.push(`Eye color: ${config.eyeColor}.`);
+    dynamicFilters.push(`Eye color: ${config.eyeColor}`);
+  }
+  
+  // Face attributes
+  if (config.faceType) {
+    dynamicFilters.push(`Face shape: ${config.faceType}`);
+  }
+  
+  if (config.facialExpression) {
+    dynamicFilters.push(`Facial expression: ${config.facialExpression}`);
+  }
+  
+  // Beard (for male models)
+  if (config.beardType) {
+    dynamicFilters.push(`Facial hair: ${config.beardType}`);
   }
   
   // Body type
   if (config.bodyType) {
-    parts.push(`Body type: ${config.bodyType}.`);
+    dynamicFilters.push(`Body type: ${config.bodyType}`);
   }
   
-  // Beard (for males)
-  if (config.beardType) {
-    parts.push(`Facial hair: ${config.beardType}.`);
+  // Pose and framing
+  if (config.pose) {
+    dynamicFilters.push(`Model pose: ${config.pose}`);
   }
   
-  // Reference images instruction
+  // Background
+  if (config.background) {
+    dynamicFilters.push(`Background setting: ${config.background}`);
+  }
+  
+  // Modest/coverage option
+  if (config.modestOption) {
+    dynamicFilters.push(`Coverage style: ${config.modestOption}`);
+  }
+
+  // Build dynamic section
+  const dynamicSection = dynamicFilters.length > 0 
+    ? `\n\nMODEL ATTRIBUTES (Apply these characteristics to the model):\n${dynamicFilters.map(f => `- ${f}`).join('\n')}`
+    : '';
+
+  // Reference image handling
+  let referenceSection = '';
   if (referenceImages && referenceImages.length > 0) {
-    const outfits = referenceImages.filter(img => img.type === 'outfit');
-    const jewelry = referenceImages.filter(img => img.type === 'jewelry');
-    const accessories = referenceImages.filter(img => img.type === 'accessory');
+    const imageTypes = referenceImages.map(img => img.type);
+    const hasOutfit = imageTypes.some(t => t === 'outfit');
+    const hasJewelry = imageTypes.some(t => t === 'jewelry');
+    const hasAccessory = imageTypes.some(t => t === 'accessory');
     
-    if (outfits.length > 0) {
-      parts.push(`The model should be wearing the outfit/clothing shown in the reference images.`);
-    }
-    if (jewelry.length > 0) {
-      parts.push(`The model should be wearing the jewelry shown in the reference images (necklaces, earrings, rings, bracelets, etc.).`);
-    }
-    if (accessories.length > 0) {
-      parts.push(`Include the accessories shown in the reference images (bags, hats, scarves, watches, etc.).`);
-    }
-    parts.push('Combine all the referenced items into a cohesive fashion look.');
-  } else {
-    parts.push('The model should be wearing stylish, professional fashion attire.');
+    const referenceItems: string[] = [];
+    if (hasOutfit) referenceItems.push('clothing/outfit');
+    if (hasJewelry) referenceItems.push('jewelry');
+    if (hasAccessory) referenceItems.push('accessories');
+    
+    referenceSection = `
+
+REFERENCE IMAGES PROVIDED:
+The attached reference images contain ${referenceItems.join(', ')} that MUST be reproduced exactly.
+- Copy every detail from the reference images with 100% accuracy.
+- Do not add, remove, or modify any aspect of the referenced items.
+- The model should be wearing/displaying these exact items as shown.`;
   }
-  
-  // Quality instructions
-  parts.push('Studio lighting, high resolution, professional fashion photography, full body shot, clean background, magazine quality.');
-  
-  return parts.join(' ');
+
+  // Combine static + dynamic + reference sections
+  const fullPrompt = `${staticBasePrompt}${dynamicSection}${referenceSection}
+
+FINAL INSTRUCTION: Generate the image with the model wearing the EXACT clothing from the reference images (if provided), applying only the specified model attributes above. Never modify the clothing or outfit in any way.`;
+
+  return fullPrompt;
 }
