@@ -1,113 +1,120 @@
-import { Check, Sparkles, Crown, Zap, Star, Lock, Image, Camera, Palette, User, Hand, Footprints, ArrowDown } from "lucide-react";
+import { Check, Sparkles, Crown, Zap, Star, Lock, Image } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/context/LanguageContext";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 interface PlanFeature {
-  text: string;
+  textKey: string;
   included: boolean;
   isUltra?: boolean;
   isLocked?: boolean;
 }
 
 interface PricingPlan {
-  name: string;
+  nameKey: string;
   price: string;
-  period?: string;
-  description: string;
-  credits?: string;
+  periodKey?: string;
+  descriptionKey: string;
+  creditsKey?: string;
+  creditsValue?: string;
   features: PlanFeature[];
-  badge?: string;
+  badgeKey?: string;
   badgeType?: "popular" | "powerful" | "trial";
-  buttonText: string;
+  buttonTextKey: string;
   highlighted?: boolean;
 }
 
 const plans: PricingPlan[] = [
   {
-    name: "Trial",
+    nameKey: "pricing.trial",
     price: "Free",
-    description: "Test the platform",
-    credits: "5 generations total",
-    badge: "Demo",
+    descriptionKey: "pricing.testPlatform",
+    creditsKey: "pricing.generationsTotal",
+    badgeKey: "pricing.demo",
     badgeType: "trial",
-    buttonText: "Start Free Trial",
+    buttonTextKey: "pricing.startFreeTrial",
     features: [
-      { text: "5 image generations", included: true },
-      { text: "2 images at Utsuri Pro quality", included: true },
-      { text: "Basic ethnicity & appearance", included: true },
-      { text: "Backgrounds & poses", included: false, isLocked: true },
-      { text: "Camera angles", included: false, isLocked: true },
-      { text: "Body parts (hands, feet, etc.)", included: false, isLocked: true },
-      { text: "Face types & expressions", included: false, isLocked: true },
-      { text: "Save & reuse models", included: false, isLocked: true },
+      { textKey: "pricing.feature.5generations", included: true },
+      { textKey: "pricing.feature.2proQuality", included: true },
+      { textKey: "pricing.feature.basicEthnicity", included: true },
+      { textKey: "pricing.feature.backgroundsPoses", included: false, isLocked: true },
+      { textKey: "pricing.feature.cameraAngles", included: false, isLocked: true },
+      { textKey: "pricing.feature.bodyParts", included: false, isLocked: true },
+      { textKey: "pricing.feature.faceTypes", included: false, isLocked: true },
+      { textKey: "pricing.feature.saveReuse", included: false, isLocked: true },
     ],
   },
   {
-    name: "Starter",
+    nameKey: "pricing.starter",
     price: "$13.99",
-    period: "/ month",
-    description: "Entry-level plan",
-    credits: "100 credits/month",
-    buttonText: "Get Started",
+    periodKey: "pricing.perMonth",
+    descriptionKey: "pricing.entryLevel",
+    creditsValue: "100",
+    creditsKey: "pricing.creditsPerMonth",
+    buttonTextKey: "pricing.getStarted",
     features: [
-      { text: "100 credits per month", included: true },
-      { text: "Utsuri Pro quality", included: true },
-      { text: "All ethnicities & appearances", included: true },
-      { text: "Basic hair & eye colors", included: true },
-      { text: "Backgrounds & poses", included: false, isLocked: true },
-      { text: "Camera angles", included: false, isLocked: true },
-      { text: "Body parts (hands, feet, etc.)", included: false, isLocked: true },
-      { text: "Face types & expressions", included: false, isLocked: true },
-      { text: "Save & reuse models", included: false, isLocked: true },
+      { textKey: "pricing.feature.100credits", included: true },
+      { textKey: "pricing.feature.proQuality", included: true },
+      { textKey: "pricing.feature.allEthnicities", included: true },
+      { textKey: "pricing.feature.basicHairEye", included: true },
+      { textKey: "pricing.feature.backgroundsPoses", included: false, isLocked: true },
+      { textKey: "pricing.feature.cameraAngles", included: false, isLocked: true },
+      { textKey: "pricing.feature.bodyParts", included: false, isLocked: true },
+      { textKey: "pricing.feature.faceTypes", included: false, isLocked: true },
+      { textKey: "pricing.feature.saveReuse", included: false, isLocked: true },
     ],
   },
   {
-    name: "Pro",
+    nameKey: "pricing.pro",
     price: "$29.99",
-    period: "/ month",
-    description: "Professional features",
-    credits: "250 credits/month",
-    badge: "Popular",
+    periodKey: "pricing.perMonth",
+    descriptionKey: "pricing.professionalFeatures",
+    creditsValue: "250",
+    creditsKey: "pricing.creditsPerMonth",
+    badgeKey: "pricing.popular",
     badgeType: "popular",
-    buttonText: "Upgrade to Pro",
+    buttonTextKey: "pricing.upgradeToPro",
     highlighted: true,
     features: [
-      { text: "250 credits per month", included: true },
-      { text: "Utsuri Pro quality", included: true },
-      { text: "All ethnicities & appearances", included: true },
-      { text: "All hair & eye color options", included: true },
-      { text: "All backgrounds", included: true },
-      { text: "All poses & camera angles", included: true },
-      { text: "Body parts (hands, feet, neck, back, legs)", included: true },
-      { text: "Face types & expressions", included: false, isLocked: true },
-      { text: "Save & reuse models", included: false, isLocked: true },
+      { textKey: "pricing.feature.250credits", included: true },
+      { textKey: "pricing.feature.proQuality", included: true },
+      { textKey: "pricing.feature.allEthnicities", included: true },
+      { textKey: "pricing.feature.allHairEye", included: true },
+      { textKey: "pricing.feature.allBackgrounds", included: true },
+      { textKey: "pricing.feature.allPosesAngles", included: true },
+      { textKey: "pricing.feature.bodyPartsDetailed", included: true },
+      { textKey: "pricing.feature.faceTypes", included: false, isLocked: true },
+      { textKey: "pricing.feature.saveReuse", included: false, isLocked: true },
     ],
   },
   {
-    name: "Creator",
+    nameKey: "pricing.creator",
     price: "$39.99",
-    period: "/ month",
-    description: "Ultimate creative power",
-    credits: "500 credits/month",
-    badge: "Most Powerful",
+    periodKey: "pricing.perMonth",
+    descriptionKey: "pricing.ultimatePower",
+    creditsValue: "500",
+    creditsKey: "pricing.creditsPerMonth",
+    badgeKey: "pricing.mostPowerful",
     badgeType: "powerful",
-    buttonText: "Go Creator",
+    buttonTextKey: "pricing.goCreator",
     features: [
-      { text: "500 credits per month", included: true },
-      { text: "Utsuri Pro quality", included: true },
-      { text: "All ethnicities & appearances", included: true },
-      { text: "All hair & eye color options", included: true },
-      { text: "All backgrounds", included: true },
-      { text: "All poses & camera angles", included: true },
-      { text: "Body parts (hands, feet, neck, back, legs)", included: true },
-      { text: "Face types & facial expressions", included: true },
-      { text: "Save & reuse models with any outfit", included: true, isUltra: true },
+      { textKey: "pricing.feature.500credits", included: true },
+      { textKey: "pricing.feature.proQuality", included: true },
+      { textKey: "pricing.feature.allEthnicities", included: true },
+      { textKey: "pricing.feature.allHairEye", included: true },
+      { textKey: "pricing.feature.allBackgrounds", included: true },
+      { textKey: "pricing.feature.allPosesAngles", included: true },
+      { textKey: "pricing.feature.bodyPartsDetailed", included: true },
+      { textKey: "pricing.feature.faceTypesExpressions", included: true },
+      { textKey: "pricing.feature.saveReuseOutfit", included: true, isUltra: true },
     ],
   },
 ];
 
 const Pricing = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleSelectPlan = (planName: string) => {
     navigate("/auth");
@@ -116,13 +123,18 @@ const Pricing = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a0a0f] via-[#12121a] to-[#0a0a0f] py-20 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Language Switcher */}
+        <div className="absolute top-4 right-4">
+          <LanguageSwitcher />
+        </div>
+
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">
-            Choose Your Plan
+            {t('pricing.title')}
           </h1>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Unlock the power of AI fashion photography. Select the plan that fits your creative needs.
+            {t('pricing.subtitle')}
           </p>
         </div>
 
@@ -130,7 +142,7 @@ const Pricing = () => {
         <div className="flex justify-center mb-12">
           <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10">
             <Image className="w-5 h-5 text-primary" />
-            <span className="text-sm text-gray-300">1 credit = 1 AI-generated image</span>
+            <span className="text-sm text-gray-300">{t('pricing.creditExplanation')}</span>
           </div>
         </div>
 
@@ -138,7 +150,7 @@ const Pricing = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
           {plans.map((plan) => (
             <div
-              key={plan.name}
+              key={plan.nameKey}
               className={`relative rounded-2xl p-6 transition-all duration-300 flex flex-col ${
                 plan.highlighted
                   ? "bg-gradient-to-b from-[#2a2a3a] to-[#1a1a25] border-2 border-primary/50 shadow-[0_0_40px_rgba(155,135,245,0.15)] scale-[1.02] lg:scale-105"
@@ -146,7 +158,7 @@ const Pricing = () => {
               }`}
             >
               {/* Badge */}
-              {plan.badge && (
+              {plan.badgeKey && (
                 <div
                   className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-semibold ${
                     plan.badgeType === "popular"
@@ -158,22 +170,24 @@ const Pricing = () => {
                 >
                   {plan.badgeType === "popular" && <Star className="inline w-3 h-3 mr-1" />}
                   {plan.badgeType === "powerful" && <Crown className="inline w-3 h-3 mr-1" />}
-                  {plan.badge}
+                  {t(plan.badgeKey)}
                 </div>
               )}
 
               {/* Plan Header */}
               <div className="text-center mb-4 pt-2">
-                <h3 className="text-xl font-semibold text-white mb-2">{plan.name}</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">{t(plan.nameKey)}</h3>
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-4xl font-bold text-white">{plan.price}</span>
-                  {plan.period && <span className="text-gray-500">{plan.period}</span>}
+                  {plan.periodKey && <span className="text-gray-500">{t(plan.periodKey)}</span>}
                 </div>
-                <p className="text-sm text-gray-400 mt-2">{plan.description}</p>
-                {plan.credits && (
+                <p className="text-sm text-gray-400 mt-2">{t(plan.descriptionKey)}</p>
+                {plan.creditsKey && (
                   <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
                     <Zap className="w-3 h-3 text-primary" />
-                    <span className="text-xs font-medium text-primary">{plan.credits}</span>
+                    <span className="text-xs font-medium text-primary">
+                      {plan.creditsValue ? `${plan.creditsValue} ${t(plan.creditsKey)}` : t(plan.creditsKey)}
+                    </span>
                   </div>
                 )}
               </div>
@@ -209,7 +223,7 @@ const Pricing = () => {
                           : "text-gray-600"
                       }`}
                     >
-                      {feature.text}
+                      {t(feature.textKey)}
                       {feature.isUltra && (
                         <span className="ml-2 text-[10px] uppercase tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full">
                           Ultra
@@ -222,7 +236,7 @@ const Pricing = () => {
 
               {/* CTA Button */}
               <Button
-                onClick={() => handleSelectPlan(plan.name)}
+                onClick={() => handleSelectPlan(t(plan.nameKey))}
                 className={`w-full py-6 font-semibold transition-all duration-300 ${
                   plan.highlighted
                     ? "bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 text-white shadow-lg shadow-primary/25"
@@ -234,7 +248,7 @@ const Pricing = () => {
                 }`}
               >
                 {plan.badgeType === "powerful" && <Zap className="w-4 h-4 mr-2" />}
-                {plan.buttonText}
+                {t(plan.buttonTextKey)}
               </Button>
             </div>
           ))}
@@ -242,56 +256,56 @@ const Pricing = () => {
 
         {/* Feature Comparison */}
         <div className="mt-20">
-          <h2 className="text-2xl font-bold text-white text-center mb-8">Feature Comparison</h2>
+          <h2 className="text-2xl font-bold text-white text-center mb-8">{t('pricing.featureComparison')}</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="text-left py-4 px-4 text-gray-400 font-medium">Feature</th>
-                  <th className="text-center py-4 px-4 text-gray-400 font-medium">Trial</th>
-                  <th className="text-center py-4 px-4 text-gray-400 font-medium">Starter</th>
-                  <th className="text-center py-4 px-4 text-primary font-medium">Pro</th>
-                  <th className="text-center py-4 px-4 text-amber-400 font-medium">Creator</th>
+                  <th className="text-left py-4 px-4 text-gray-400 font-medium">{t('pricing.feature')}</th>
+                  <th className="text-center py-4 px-4 text-gray-400 font-medium">{t('pricing.trial')}</th>
+                  <th className="text-center py-4 px-4 text-gray-400 font-medium">{t('pricing.starter')}</th>
+                  <th className="text-center py-4 px-4 text-primary font-medium">{t('pricing.pro')}</th>
+                  <th className="text-center py-4 px-4 text-amber-400 font-medium">{t('pricing.creator')}</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
                 <tr className="border-b border-white/5">
-                  <td className="py-3 px-4 text-gray-300">Monthly Credits</td>
-                  <td className="py-3 px-4 text-center text-gray-400">5 total</td>
+                  <td className="py-3 px-4 text-gray-300">{t('pricing.monthlyCredits')}</td>
+                  <td className="py-3 px-4 text-center text-gray-400">5 {t('pricing.total')}</td>
                   <td className="py-3 px-4 text-center text-gray-300">100</td>
                   <td className="py-3 px-4 text-center text-primary">250</td>
                   <td className="py-3 px-4 text-center text-amber-400">500</td>
                 </tr>
                 <tr className="border-b border-white/5">
-                  <td className="py-3 px-4 text-gray-300">Utsuri Pro Quality</td>
-                  <td className="py-3 px-4 text-center text-gray-400">2 images only</td>
+                  <td className="py-3 px-4 text-gray-300">{t('pricing.feature.proQuality')}</td>
+                  <td className="py-3 px-4 text-center text-gray-400">2 {t('pricing.imagesOnly')}</td>
                   <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-primary mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-primary mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-amber-400 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-white/5">
-                  <td className="py-3 px-4 text-gray-300">Backgrounds & Poses</td>
-                  <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-primary mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-amber-400 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-white/5">
-                  <td className="py-3 px-4 text-gray-300">Camera Angles</td>
+                  <td className="py-3 px-4 text-gray-300">{t('pricing.feature.backgroundsPoses')}</td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-primary mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-amber-400 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-white/5">
-                  <td className="py-3 px-4 text-gray-300">Body Parts (hands, feet, neck, back, legs)</td>
+                  <td className="py-3 px-4 text-gray-300">{t('pricing.feature.cameraAngles')}</td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-primary mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-amber-400 mx-auto" /></td>
                 </tr>
                 <tr className="border-b border-white/5">
-                  <td className="py-3 px-4 text-gray-300">Face Types & Expressions</td>
+                  <td className="py-3 px-4 text-gray-300">{t('pricing.feature.bodyPartsDetailed')}</td>
+                  <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-primary mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-amber-400 mx-auto" /></td>
+                </tr>
+                <tr className="border-b border-white/5">
+                  <td className="py-3 px-4 text-gray-300">{t('pricing.feature.faceTypes')}</td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
@@ -299,7 +313,7 @@ const Pricing = () => {
                 </tr>
                 <tr className="border-b border-white/5">
                   <td className="py-3 px-4 text-gray-300 flex items-center gap-2">
-                    Save & Reuse Models
+                    {t('pricing.feature.saveReuse')}
                     <span className="text-[10px] uppercase tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full">Ultra</span>
                   </td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
@@ -314,7 +328,7 @@ const Pricing = () => {
 
         {/* Bottom Note */}
         <p className="text-center text-gray-500 text-sm mt-12">
-          All plans include secure payments and can be cancelled anytime. Credits reset monthly.
+          {t('pricing.bottomNote')}
         </p>
       </div>
     </div>

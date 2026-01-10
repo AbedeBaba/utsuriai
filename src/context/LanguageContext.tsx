@@ -147,18 +147,81 @@ export const translations: Translations = {
   
   // Pricing
   'pricing.title': { en: 'Choose Your Plan', tr: 'Planınızı Seçin' },
-  'pricing.subtitle': { en: 'Start with our trial or choose a plan that fits your needs', tr: 'Deneme ile başlayın veya ihtiyaçlarınıza uygun bir plan seçin' },
+  'pricing.subtitle': { en: 'Unlock the power of AI fashion photography. Select the plan that fits your creative needs.', tr: 'AI moda fotoğrafçılığının gücünü açın. Yaratıcı ihtiyaçlarınıza uygun planı seçin.' },
+  'pricing.creditExplanation': { en: '1 credit = 1 AI-generated image', tr: '1 kredi = 1 AI tarafından oluşturulan görsel' },
+  'pricing.featureComparison': { en: 'Feature Comparison', tr: 'Özellik Karşılaştırması' },
+  'pricing.feature': { en: 'Feature', tr: 'Özellik' },
+  'pricing.bottomNote': { en: 'All plans include secure payments and can be cancelled anytime. Credits reset monthly.', tr: 'Tüm planlar güvenli ödeme içerir ve istediğiniz zaman iptal edilebilir. Krediler aylık olarak sıfırlanır.' },
+  
+  // Plan names
   'pricing.trial': { en: 'Trial', tr: 'Deneme' },
   'pricing.starter': { en: 'Starter', tr: 'Başlangıç' },
   'pricing.pro': { en: 'Pro', tr: 'Pro' },
   'pricing.creator': { en: 'Creator', tr: 'Yaratıcı' },
+  
+  // Badges
+  'pricing.demo': { en: 'Demo', tr: 'Demo' },
   'pricing.popular': { en: 'Popular', tr: 'Popüler' },
   'pricing.mostPowerful': { en: 'Most Powerful', tr: 'En Güçlü' },
-  'pricing.perMonth': { en: '/month', tr: '/ay' },
-  'pricing.generations': { en: 'generations', tr: 'oluşturma' },
-  'pricing.credits': { en: 'credits', tr: 'kredi' },
-  'pricing.startTrial': { en: 'Start Trial', tr: 'Denemeye Başla' },
+  
+  // Descriptions
+  'pricing.testPlatform': { en: 'Test the platform', tr: 'Platformu test edin' },
+  'pricing.entryLevel': { en: 'Entry-level plan', tr: 'Giriş seviyesi plan' },
+  'pricing.professionalFeatures': { en: 'Professional features', tr: 'Profesyonel özellikler' },
+  'pricing.ultimatePower': { en: 'Ultimate creative power', tr: 'Üstün yaratıcı güç' },
+  
+  // Credits
+  'pricing.generationsTotal': { en: '5 generations total', tr: 'Toplam 5 oluşturma' },
+  'pricing.creditsPerMonth': { en: 'credits/month', tr: 'kredi/ay' },
+  'pricing.perMonth': { en: '/ month', tr: '/ ay' },
+  
+  // Button texts
+  'pricing.startFreeTrial': { en: 'Start Free Trial', tr: 'Ücretsiz Denemeye Başla' },
   'pricing.getStarted': { en: 'Get Started', tr: 'Başla' },
+  'pricing.upgradeToPro': { en: 'Upgrade to Pro', tr: "Pro'ya Yükselt" },
+  'pricing.goCreator': { en: 'Go Creator', tr: 'Yaratıcı Ol' },
+  
+  // Features
+  'pricing.imageGenerations': { en: 'image generations', tr: 'görsel oluşturma' },
+  'pricing.imagesAtProQuality': { en: 'images at Utsuri Pro quality', tr: 'Utsuri Pro kalitesinde görsel' },
+  'pricing.basicEthnicity': { en: 'Basic ethnicity & appearance', tr: 'Temel etnik köken ve görünüm' },
+  'pricing.backgroundsPoses': { en: 'Backgrounds & poses', tr: 'Arka planlar ve pozlar' },
+  'pricing.cameraAngles': { en: 'Camera angles', tr: 'Kamera açıları' },
+  'pricing.bodyParts': { en: 'Body parts (hands, feet, etc.)', tr: 'Vücut parçaları (eller, ayaklar, vb.)' },
+  'pricing.faceTypesExpressions': { en: 'Face types & expressions', tr: 'Yüz tipleri ve ifadeler' },
+  'pricing.saveReuseModels': { en: 'Save & reuse models', tr: 'Modelleri kaydet ve yeniden kullan' },
+  'pricing.creditsPerMonthFeature': { en: 'credits per month', tr: 'aylık kredi' },
+  'pricing.utsuriProQuality': { en: 'Utsuri Pro quality', tr: 'Utsuri Pro kalitesi' },
+  'pricing.allEthnicities': { en: 'All ethnicities & appearances', tr: 'Tüm etnik kökenler ve görünümler' },
+  'pricing.basicHairEye': { en: 'Basic hair & eye colors', tr: 'Temel saç ve göz renkleri' },
+  'pricing.allHairEye': { en: 'All hair & eye color options', tr: 'Tüm saç ve göz rengi seçenekleri' },
+  'pricing.allBackgrounds': { en: 'All backgrounds', tr: 'Tüm arka planlar' },
+  'pricing.allPosesAngles': { en: 'All poses & camera angles', tr: 'Tüm pozlar ve kamera açıları' },
+  'pricing.feature.5generations': { en: '5 image generations', tr: '5 görsel oluşturma' },
+  'pricing.feature.2proQuality': { en: '2 images at Utsuri Pro quality', tr: 'Utsuri Pro kalitesinde 2 görsel' },
+  'pricing.feature.basicEthnicity': { en: 'Basic ethnicity & appearance', tr: 'Temel etnik köken ve görünüm' },
+  'pricing.feature.backgroundsPoses': { en: 'Backgrounds & poses', tr: 'Arka planlar ve pozlar' },
+  'pricing.feature.cameraAngles': { en: 'Camera angles', tr: 'Kamera açıları' },
+  'pricing.feature.bodyParts': { en: 'Body parts (hands, feet, etc.)', tr: 'Vücut parçaları (eller, ayaklar, vb.)' },
+  'pricing.feature.faceTypes': { en: 'Face types & expressions', tr: 'Yüz tipleri ve ifadeler' },
+  'pricing.feature.saveReuse': { en: 'Save & reuse models', tr: 'Modelleri kaydet ve yeniden kullan' },
+  'pricing.feature.100credits': { en: '100 credits per month', tr: 'Ayda 100 kredi' },
+  'pricing.feature.proQuality': { en: 'Utsuri Pro quality', tr: 'Utsuri Pro kalitesi' },
+  'pricing.feature.allEthnicities': { en: 'All ethnicities & appearances', tr: 'Tüm etnik kökenler ve görünümler' },
+  'pricing.feature.basicHairEye': { en: 'Basic hair & eye colors', tr: 'Temel saç ve göz renkleri' },
+  'pricing.feature.250credits': { en: '250 credits per month', tr: 'Ayda 250 kredi' },
+  'pricing.feature.allHairEye': { en: 'All hair & eye color options', tr: 'Tüm saç ve göz rengi seçenekleri' },
+  'pricing.feature.allBackgrounds': { en: 'All backgrounds', tr: 'Tüm arka planlar' },
+  'pricing.feature.allPosesAngles': { en: 'All poses & camera angles', tr: 'Tüm pozlar ve kamera açıları' },
+  'pricing.feature.bodyPartsDetailed': { en: 'Body parts (hands, feet, neck, back, legs)', tr: 'Vücut parçaları (eller, ayaklar, boyun, sırt, bacaklar)' },
+  'pricing.feature.500credits': { en: '500 credits per month', tr: 'Ayda 500 kredi' },
+  'pricing.feature.faceTypesExpressions': { en: 'Face types & facial expressions', tr: 'Yüz tipleri ve yüz ifadeleri' },
+  'pricing.feature.saveReuseOutfit': { en: 'Save & reuse models with any outfit', tr: 'Modelleri herhangi bir kıyafetle kaydet ve yeniden kullan' },
+  
+  // Comparison table
+  'pricing.monthlyCredits': { en: 'Monthly Credits', tr: 'Aylık Krediler' },
+  'pricing.total': { en: 'total', tr: 'toplam' },
+  'pricing.imagesOnly': { en: 'images only', tr: 'sadece görsel' },
   
   // Language
   'language.english': { en: 'English', tr: 'İngilizce' },
