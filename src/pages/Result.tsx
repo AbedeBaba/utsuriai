@@ -5,8 +5,8 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Download, RefreshCw, Sparkles, Loader2, ImageIcon } from 'lucide-react';
-
+import { ArrowLeft, Download, RefreshCw, Sparkles, Loader2, ImageIcon, LayoutDashboard } from 'lucide-react';
+import { ProfileDropdown } from '@/components/ProfileDropdown';
 interface GenerationData {
   id: string;
   status: string;
@@ -170,22 +170,34 @@ export default function Result() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between p-6">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={handleCreateNew}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <span className="font-medium text-foreground">Your Model</span>
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+        <div className="flex items-center justify-between px-6 py-4">
+          <Button 
+            variant="ghost" 
+            onClick={handleCreateNew}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-5 w-5 mr-2" />
+            New Model
+          </Button>
+          
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+            <Sparkles className="h-5 w-5 text-primary" />
+            <span className="text-xl font-semibold text-foreground italic">Utsuri</span>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/dashboard')}
+              className="hidden sm:flex items-center gap-2"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
+            </Button>
+            <ProfileDropdown />
+          </div>
         </div>
-        
-        <div className="w-10" />
       </header>
 
       {/* Content */}

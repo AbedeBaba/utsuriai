@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, ArrowRight, Clock, Trash2, Download, LogOut, Plus, Pencil, Check, X } from 'lucide-react';
+import { Sparkles, ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, differenceInHours, addHours } from 'date-fns';
 import {
@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ProfileDropdown } from '@/components/ProfileDropdown';
 
 type Category = 'Bottomwear' | 'Topwear' | 'Shoes' | 'Dresses';
 
@@ -32,7 +33,7 @@ const CATEGORIES: Category[] = ['Topwear', 'Bottomwear', 'Shoes', 'Dresses'];
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, profile, loading, signOut } = useAuth();
+  const { user, profile, loading } = useAuth();
   const { toast } = useToast();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(true);
@@ -170,10 +171,7 @@ export default function Dashboard() {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
+  // handleSignOut moved to ProfileDropdown component
 
   const displayName = profile?.first_name || user?.email?.split('@')[0] || 'there';
 
@@ -212,14 +210,7 @@ export default function Dashboard() {
               <Plus className="h-4 w-4 mr-2" />
               New Model
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleSignOut}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
+            <ProfileDropdown />
           </div>
         </div>
       </header>
