@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Sparkles, Upload, Wand2, Download, ArrowRight, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useLanguage } from '@/context/LanguageContext';
 import exampleProduct from '@/assets/example-product.jpeg';
 import exampleModel from '@/assets/example-model.jpeg';
 import modelRealBg from '@/assets/modelreal.jpg';
@@ -20,10 +22,8 @@ import howItWorks2 from '@/assets/how-it-works-2.jpg';
 import howItWorks3 from '@/assets/how-it-works-3.jpg';
 export default function Landing() {
   const navigate = useNavigate();
-  const {
-    user,
-    loading
-  } = useAuth();
+  const { user, loading } = useAuth();
+  const { t } = useLanguage();
   const handleStart = () => {
     if (user) {
       navigate('/filter/gender');
@@ -56,14 +56,16 @@ export default function Landing() {
 
           <div className="flex items-center gap-4">
             {!loading && user && <button onClick={() => navigate('/dashboard')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Dashboard
+                {t('common.dashboard')}
               </button>}
             {!loading && !user && <button onClick={() => navigate('/auth')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Login
+                {t('common.login')}
               </button>}
             
+            <LanguageSwitcher />
+            
             <Button onClick={handleStart} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
-              Try Now
+              {t('common.getStarted')}
             </Button>
           </div>
         </div>

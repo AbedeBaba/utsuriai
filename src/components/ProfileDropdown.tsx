@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { User, Settings, LogOut } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { Settings, LogOut } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 export function ProfileDropdown() {
   const navigate = useNavigate();
   const { user, profile, signOut } = useAuth();
+  const { t } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut();
@@ -73,7 +75,7 @@ export function ProfileDropdown() {
             className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-accent"
           >
             <Settings className="h-4 w-4 text-muted-foreground" />
-            <span>Account Settings</span>
+            <span>{t('profile.accountSettings')}</span>
           </DropdownMenuItem>
           
           <DropdownMenuSeparator className="bg-border" />
@@ -83,7 +85,7 @@ export function ProfileDropdown() {
             className="flex items-center gap-2 px-3 py-2 cursor-pointer text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="h-4 w-4" />
-            <span>Log Out</span>
+            <span>{t('profile.logOut')}</span>
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>

@@ -10,6 +10,8 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { Sparkles, ArrowLeft, User, Mail, Calendar, Loader2, Save, Lock, Eye, EyeOff, AlertTriangle, Trash2 } from 'lucide-react';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useLanguage } from '@/context/LanguageContext';
 import { format } from 'date-fns';
 import {
   AlertDialog,
@@ -26,6 +28,7 @@ import {
 export default function AccountSettings() {
   const navigate = useNavigate();
   const { user, profile, loading } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   
   const [firstName, setFirstName] = useState('');
@@ -239,16 +242,19 @@ export default function AccountSettings() {
             </div>
           </div>
           
-          <ProfileDropdown />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ProfileDropdown />
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-2xl mx-auto px-6 py-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Account Settings</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">{t('account.title')}</h1>
           <p className="text-muted-foreground">
-            Manage your profile information and account preferences.
+            {t('account.subtitle')}
           </p>
         </div>
 

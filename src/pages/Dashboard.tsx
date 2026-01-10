@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useLanguage } from '@/context/LanguageContext';
 
 type Category = 'Bottomwear' | 'Topwear' | 'Shoes' | 'Dresses';
 
@@ -34,6 +36,7 @@ const CATEGORIES: Category[] = ['Topwear', 'Bottomwear', 'Shoes', 'Dresses'];
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, profile, loading } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(true);
@@ -208,8 +211,9 @@ export default function Dashboard() {
               className="btn-gold"
             >
               <Plus className="h-4 w-4 mr-2" />
-              New Model
+              {t('dashboard.newModel')}
             </Button>
+            <LanguageSwitcher />
             <ProfileDropdown />
           </div>
         </div>
