@@ -21,6 +21,12 @@ interface GenerationPayload {
     body_type: string;
     hair_type: string;
     beard_type?: string;
+    pose?: string;
+    background?: string;
+    facial_expression?: string;
+    face_type?: string;
+    hair_style?: string;
+    modest_option?: string;
   };
   reference_images?: {
     type: string;
@@ -55,6 +61,12 @@ export default function ClothingSelection() {
         body_type: config.bodyType,
         hair_type: config.hairType,
         ...(config.beardType && { beard_type: config.beardType }),
+        ...(config.pose && { pose: config.pose }),
+        ...(config.background && { background: config.background }),
+        ...(config.facialExpression && { facial_expression: config.facialExpression }),
+        ...(config.faceType && { face_type: config.faceType }),
+        ...(config.hairStyle && { hair_style: config.hairStyle }),
+        ...(config.modestOption && { modest_option: config.modestOption }),
       },
       reference_images: uploadedImages.length > 0 
         ? uploadedImages.map(img => ({ type: img.type, data: img.preview }))
@@ -116,6 +128,8 @@ export default function ClothingSelection() {
           body_type: payload.filters.body_type,
           hair_type: payload.filters.hair_type,
           beard_type: payload.filters.beard_type || null,
+          pose: payload.filters.pose || null,
+          background: payload.filters.background || null,
           reference_image: referenceImageData,
           status: 'pending',
         })
