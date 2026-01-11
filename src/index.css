@@ -264,14 +264,16 @@
   /* Backdrop blur for selection animation - slow cinematic */
   .selection-backdrop {
     @apply fixed inset-0 z-40 pointer-events-none;
-    background: hsl(var(--background) / 0);
+    background: transparent;
     backdrop-filter: blur(0px);
     transition: all 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none !important;
+    border: none !important;
   }
 
   .selection-backdrop.active {
     @apply pointer-events-auto;
-    background: hsl(var(--background) / 0.9);
+    background: hsl(220 20% 10% / 0.85);
     backdrop-filter: blur(12px);
   }
 
@@ -433,9 +435,11 @@
   }
 }
 
-/* Remove focus/click outline on gender cards */
+/* Remove focus/click outline on gender cards and all clickable elements */
 .gender-card,
-.gender-card * {
+.gender-card *,
+.group,
+.group * {
   outline: none !important;
   -webkit-tap-highlight-color: transparent !important;
 }
@@ -443,7 +447,10 @@
 .gender-card:focus,
 .gender-card:active,
 .gender-card:focus-visible,
-.gender-card:focus-within {
+.gender-card:focus-within,
+.group:focus,
+.group:active,
+.group:focus-visible {
   outline: none !important;
   --tw-ring-shadow: 0 0 #0000 !important;
   --tw-ring-color: transparent !important;
@@ -463,4 +470,15 @@ div:active {
   outline: none !important;
   --tw-ring-shadow: 0 0 #0000 !important;
   --tw-ring-offset-shadow: 0 0 #0000 !important;
+}
+
+/* Ensure no visible focus states on grid and wrapper elements */
+.grid:focus,
+.grid:focus-visible,
+[class*="max-w"]:focus,
+[class*="max-w"]:focus-visible,
+.perspective-1000:focus,
+.perspective-1000:focus-visible {
+  outline: none !important;
+  border-color: inherit !important;
 }

@@ -51,7 +51,7 @@ export function FilterStepLayout({
             <RandomFilterButton onClick={onRandom} />
           </div>}
 
-        <div className="w-full max-w-3xl animate-slide-up" style={{
+        <div className="w-full max-w-3xl animate-slide-up outline-none" tabIndex={-1} style={{
         animationDelay: '0.1s'
       }}>
           {children}
