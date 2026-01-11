@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Download, RefreshCw, Sparkles, Loader2, ImageIcon, LayoutDashboard } from 'lucide-react';
+import { ArrowLeft, Download, RefreshCw, Sparkles, Loader2, ImageIcon, LayoutDashboard, Crown } from 'lucide-react';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 interface GenerationData {
@@ -31,6 +31,8 @@ interface GenerationData {
 
 export default function Result() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const isProMode = searchParams.get('pro') === 'true';
   const navigate = useNavigate();
   const { user } = useAuth();
   const { resetConfig } = useModelConfig();
@@ -65,7 +67,7 @@ export default function Result() {
 
       // If pending, trigger generation
       if (data.status === 'pending') {
-        generateImage(data);
+        generateImage(data, isProMode);
       }
     } catch (error) {
       console.error('Error fetching generation:', error);
@@ -79,7 +81,7 @@ export default function Result() {
     }
   };
 
-  const generateImage = async (data: GenerationData) => {
+  const generateImage = async (data: GenerationData, usePro: boolean = false) => {
     setGenerating(true);
 
     try {
@@ -103,6 +105,7 @@ export default function Result() {
             background: data.background,
           },
           referenceImage: data.reference_image,
+          usePro: usePro, // Pass Pro mode flag
         },
       });
 
@@ -113,7 +116,9 @@ export default function Result() {
 
       toast({
         title: 'Success!',
-        description: 'Your fashion model has been generated.',
+        description: usePro 
+          ? 'Your Utsuri Pro fashion model has been generated.' 
+          : 'Your fashion model has been generated.',
       });
     } catch (error) {
       console.error('Error generating image:', error);
@@ -130,7 +135,7 @@ export default function Result() {
 
   const handleRegenerate = () => {
     if (generation) {
-      generateImage(generation);
+      generateImage(generation, isProMode);
     }
   };
 
@@ -208,11 +213,20 @@ export default function Result() {
       <main className="flex-1 flex flex-col items-center justify-center px-6 pb-12">
         <div className="w-full max-w-2xl animate-fade-in">
           {/* Image Display */}
-          <div className="aspect-[3/4] bg-card rounded-2xl border overflow-hidden mb-8 shadow-lg">
+          <div className="relative aspect-[3/4] bg-card rounded-2xl border overflow-hidden mb-8 shadow-lg">
+            {/* Pro Badge */}
+            {isProMode && (
+              <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold shadow-lg">
+                <Crown className="h-4 w-4" />
+                Utsuri Pro
+              </div>
+            )}
             {generating ? (
               <div className="w-full h-full flex flex-col items-center justify-center gap-4">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <p className="text-muted-foreground">{t('result.generating')}</p>
+                <p className="text-muted-foreground">
+                  {isProMode ? 'Generating with Utsuri Pro...' : t('result.generating')}
+                </p>
               </div>
             ) : generation?.image_url ? (
               <img 
