@@ -24,10 +24,13 @@ import maleTurkishImg from '@/assets/ethnicities/male-turkish.png';
 import maleRussianImg from '@/assets/ethnicities/male-russian.png';
 import maleAsianImg from '@/assets/ethnicities/male-asian.png';
 import maleLatinImg from '@/assets/ethnicities/male-latin.png';
+import maleScandinavianImg from '@/assets/ethnicities/male-scandinavian.png';
 import maleAustralianImg from '@/assets/ethnicities/male-australian.png';
 import maleIndianImg from '@/assets/ethnicities/male-indian.png';
 import maleLocalAmericanImg from '@/assets/ethnicities/male-local-american.png';
 import maleAfroAmericanImg from '@/assets/ethnicities/male-afro-american.png';
+import maleItalianImg from '@/assets/ethnicities/male-italian.png';
+import maleEuropeanImg from '@/assets/ethnicities/male-european.png';
 
 const femaleEthnicityOptions = [
   { id: 'Arabic', label: 'Arabic', image: arabicImg },
@@ -50,13 +53,13 @@ const maleEthnicityOptions = [
   { id: 'Russian', label: 'Russian', image: maleRussianImg },
   { id: 'Asian', label: 'Asian', image: maleAsianImg },
   { id: 'Latin', label: 'Latin', image: maleLatinImg },
-  { id: 'Scandinavian', label: 'Scandinavian', image: scandinavianImg },
+  { id: 'Scandinavian', label: 'Scandinavian', image: maleScandinavianImg },
   { id: 'Australian', label: 'Australian', image: maleAustralianImg },
   { id: 'Indian', label: 'Indian', image: maleIndianImg },
   { id: 'Local American', label: 'Local American', image: maleLocalAmericanImg },
   { id: 'Afro American', label: 'Afro American', image: maleAfroAmericanImg },
-  { id: 'Italian', label: 'Italian', image: italianImg },
-  { id: 'European', label: 'European', image: europeanImg },
+  { id: 'Italian', label: 'Italian', image: maleItalianImg },
+  { id: 'European', label: 'European', image: maleEuropeanImg },
 ];
 
 const skinToneOptions = ['Fair', 'Light', 'Medium Light', 'Medium', 'Medium Dark', 'Dark', 'Deep', 'Ebony', 'Olive'];
