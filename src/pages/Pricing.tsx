@@ -123,8 +123,15 @@ const Pricing = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a0a0f] via-[#12121a] to-[#0a0a0f] py-20 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Language Switcher */}
-        <div className="absolute top-4 right-4">
+        {/* Top Navigation */}
+        <div className="absolute top-4 right-4 flex items-center gap-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/dashboard")}
+            className="text-gray-300 hover:text-white hover:bg-white/10"
+          >
+            {t('nav.dashboard')}
+          </Button>
           <LanguageSwitcher />
         </div>
 
