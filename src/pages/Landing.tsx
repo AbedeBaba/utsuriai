@@ -14,12 +14,7 @@ import studioQualityBg from '@/assets/studio-quality-bg.jpg';
 import fullImageRightsBg from '@/assets/full-image-rights-bg.jpg';
 import multiAngleBg from '@/assets/multi-angle-bg.jpg';
 import aiSolutionsBg from '@/assets/ai-solutions-bg.jpg';
-import howItWorksLeft from '@/assets/how-it-works-left.jpg';
-import howItWorksRight from '@/assets/how-it-works-right.jpg';
 import ctaBackground from '@/assets/cta-background.jpg';
-import howItWorks1 from '@/assets/how-it-works-1.jpg';
-import howItWorks2 from '@/assets/how-it-works-2.jpg';
-import howItWorks3 from '@/assets/how-it-works-3.jpg';
 export default function Landing() {
   const navigate = useNavigate();
   const {
@@ -209,94 +204,82 @@ export default function Landing() {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" className="py-24 mt-12 relative overflow-hidden" style={{
+      <section id="how-it-works" className="py-28 mt-12 relative overflow-hidden" style={{
       backgroundColor: '#c4bfab'
     }}>
-        {/* Left decorative image */}
-        <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-[280px] xl:w-[360px] h-[500px] xl:h-[600px]">
-          <img src={howItWorksLeft} alt="" className="w-full h-full object-cover rounded-r-2xl shadow-xl" />
-        </div>
-        
-        {/* Right decorative image */}
-        <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[280px] xl:w-[360px] h-[500px] xl:h-[600px]">
-          <img alt="" className="w-full h-full object-cover rounded-l-2xl shadow-xl" src="/lovable-uploads/e3f5fe17-d0be-4617-bcc0-2d660cd05de9.jpg" />
-        </div>
-
-        <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
               How <span className="italic text-primary">Utsuri</span> Works
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Create Fashion Models Without a Studio - Upload your product, choose a model, and get realistic AI fashion photos in minutes.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Step 1 */}
+          <div className="grid md:grid-cols-3 gap-10">
+            {/* Step 1 - Transform */}
             <div className="relative group">
-              <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary z-10">
+              <div className="absolute -left-3 -top-3 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground z-10 shadow-lg">
                 1
               </div>
-              <div className="relative border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden min-h-[320px]">
-                <div className="absolute inset-0 bg-cover bg-center" style={{
-                backgroundImage: `url(${howItWorks1})`
-              }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
-                    <Upload className="w-8 h-8 text-white" />
+              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
+                <div className="flex-1" />
+                <div className="relative z-10 p-10 pt-0">
+                  <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center mb-5 absolute top-6 left-6">
+                    <Wand2 className="w-7 h-7 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Upload</h3>
-                  <p className="text-white/80">Upload your product photos in seconds.</p>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">Transform</h3>
+                  <p className="text-muted-foreground text-base">Choose model, pose & environment with AI.</p>
                 </div>
               </div>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 2 - Upload */}
             <div className="relative group">
-              <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary z-10">
+              <div className="absolute -left-3 -top-3 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground z-10 shadow-lg">
                 2
               </div>
-              <div className="relative border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden min-h-[320px]">
-                <div className="absolute inset-0 bg-cover bg-center" style={{
-                backgroundImage: `url(${howItWorks2})`
-              }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
-                    <Wand2 className="w-8 h-8 text-white" />
+              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
+                <div className="flex-1" />
+                <div className="relative z-10 p-10 pt-0">
+                  <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center mb-5 absolute top-6 left-6">
+                    <Upload className="w-7 h-7 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Transform</h3>
-                  <p className="text-white/80">Choose model, pose & environment with AI.</p>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">Upload</h3>
+                  <p className="text-muted-foreground text-base">Upload your product photos in seconds.</p>
                 </div>
               </div>
             </div>
 
-            {/* Step 3 */}
+            {/* Step 3 - Download */}
             <div className="relative group">
-              <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary z-10">
+              <div className="absolute -left-3 -top-3 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground z-10 shadow-lg">
                 3
               </div>
-              <div className="relative border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden min-h-[320px]">
-                <div className="absolute inset-0 bg-cover bg-center" style={{
-                backgroundImage: `url(${howItWorks3})`
-              }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
-                    <Download className="w-8 h-8 text-white" />
+              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
+                <div className="flex-1" />
+                <div className="relative z-10 p-10 pt-0">
+                  <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center mb-5 absolute top-6 left-6">
+                    <Download className="w-7 h-7 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Download</h3>
-                  <p className="text-white/80">Get studio-quality images instantly.</p>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">Download</h3>
+                  <p className="text-muted-foreground text-base">Get studio-quality images instantly.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="text-center mt-12">
-            <Button onClick={handleStart} size="lg" className="btn-gold text-lg px-8 py-6 rounded-xl">
-              Try Now
-              <ArrowRight className="ml-2 h-5 w-5" />
+          <div className="text-center mt-16 flex flex-col items-center gap-3">
+            <Button 
+              onClick={handleStart} 
+              size="lg" 
+              className="relative bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/90 hover:via-primary hover:to-primary text-primary-foreground text-xl font-bold px-12 py-8 rounded-2xl shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300 animate-glow-pulse"
+            >
+              <span className="relative z-10 flex items-center gap-3">
+                Start for Free!
+                <ArrowRight className="h-6 w-6" />
+              </span>
             </Button>
+            <span className="text-sm text-muted-foreground font-medium">No credit card required</span>
           </div>
         </div>
       </section>
