@@ -1,23 +1,34 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { SelectionCard } from '@/components/SelectionCard';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
+// Import ethnicity images
+import arabicImg from '@/assets/ethnicities/arabic.png';
+import turkishImg from '@/assets/ethnicities/turkish.png';
+import russianImg from '@/assets/ethnicities/russian.png';
+import asianImg from '@/assets/ethnicities/asian.png';
+import latinImg from '@/assets/ethnicities/latin.png';
+import scandinavianImg from '@/assets/ethnicities/scandinavian.png';
+import australianImg from '@/assets/ethnicities/australian.png';
+import indianImg from '@/assets/ethnicities/indian.png';
+import localAmericanImg from '@/assets/ethnicities/local-american.png';
+import afroAmericanImg from '@/assets/ethnicities/afro-american.png';
+
 const ethnicityOptions = [
-  { id: 'Arabic', label: 'Arabic' },
-  { id: 'Turkish', label: 'Turkish' },
-  { id: 'Russian', label: 'Russian' },
-  { id: 'Asian', label: 'Asian' },
-  { id: 'Latin', label: 'Latin' },
-  { id: 'Scandinavian', label: 'Scandinavian' },
-  { id: 'Australian', label: 'Australian' },
-  { id: 'Indian', label: 'Indian' },
-  { id: 'Local American', label: 'Local American' },
-  { id: 'Afro American', label: 'Afro American' },
-  { id: 'Italian', label: 'Italian' },
-  { id: 'European', label: 'European' },
+  { id: 'Arabic', label: 'Arabic', image: arabicImg },
+  { id: 'Turkish', label: 'Turkish', image: turkishImg },
+  { id: 'Russian', label: 'Russian', image: russianImg },
+  { id: 'Asian', label: 'Asian', image: asianImg },
+  { id: 'Latin', label: 'Latin', image: latinImg },
+  { id: 'Scandinavian', label: 'Scandinavian', image: scandinavianImg },
+  { id: 'Australian', label: 'Australian', image: australianImg },
+  { id: 'Indian', label: 'Indian', image: indianImg },
+  { id: 'Local American', label: 'Local American', image: localAmericanImg },
+  { id: 'Afro American', label: 'Afro American', image: afroAmericanImg },
+  { id: 'Italian', label: 'Italian', image: null },
+  { id: 'European', label: 'European', image: null },
 ];
 
 const skinToneOptions = ['Fair', 'Light', 'Medium Light', 'Medium', 'Medium Dark', 'Dark', 'Deep', 'Ebony', 'Olive'];
@@ -108,19 +119,46 @@ export default function FilterEthnicity() {
       onBack={() => navigate('/filter/gender')}
       onRandom={handleRandomAll}
     >
-      <div className={cn("selection-backdrop", isAnimating && "active")} />
-      
       <div className="grid grid-cols-3 md:grid-cols-4 gap-4 relative">
         {ethnicityOptions.map((option, index) => (
-          <SelectionCard
+          <div
             key={option.id}
-            title={option.label}
-            selected={config.ethnicity === option.id}
             onClick={() => handleSelect(option.id)}
-            isAnimating={selectedId === option.id}
-            isFadingOut={isAnimating && selectedId !== option.id}
-            animationDelay={index * 30}
-          />
+            className={cn(
+              "relative flex flex-col items-center justify-end gap-3 min-h-[180px] aspect-[3/4] rounded-2xl cursor-pointer overflow-hidden",
+              "transition-all duration-500 ease-out",
+              "bg-gradient-to-b from-white/[0.08] to-white/[0.04] backdrop-blur-xl",
+              "border border-white/20 hover:border-violet-300/50",
+              "shadow-[0_4px_24px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_40px_rgba(139,92,246,0.2)]",
+              "hover:scale-[1.02] hover:-translate-y-1",
+              "outline-none ring-0",
+              config.ethnicity === option.id && "border-violet-400/70 ring-2 ring-violet-400/50",
+              selectedId === option.id && isAnimating && "scale-105 z-10",
+              isAnimating && selectedId !== option.id && "opacity-30 scale-95"
+            )}
+            style={{ 
+              animationDelay: `${index * 30}ms`,
+            }}
+            tabIndex={-1}
+          >
+            {/* Background Image */}
+            {option.image && (
+              <div className="absolute inset-0">
+                <img 
+                  src={option.image} 
+                  alt={option.label}
+                  className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
+                />
+                {/* Gradient overlay for text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              </div>
+            )}
+            
+            {/* Label */}
+            <div className="relative z-10 text-center pb-4 px-2">
+              <p className="font-semibold text-lg text-white drop-shadow-lg">{option.label}</p>
+            </div>
+          </div>
         ))}
       </div>
     </FilterStepLayout>
