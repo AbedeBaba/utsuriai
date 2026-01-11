@@ -210,6 +210,7 @@ export const translations: Translations = {
   'pricing.feature.allEthnicities': { en: 'All ethnicities & appearances', tr: 'Tüm etnik kökenler ve görünümler' },
   'pricing.feature.basicHairEye': { en: 'Basic hair & eye colors', tr: 'Temel saç ve göz renkleri' },
   'pricing.feature.250credits': { en: '250 credits per month', tr: 'Ayda 250 kredi' },
+  'pricing.feature.400credits': { en: '400 credits per month', tr: 'Ayda 400 kredi' },
   'pricing.feature.allHairEye': { en: 'All hair & eye color options', tr: 'Tüm saç ve göz rengi seçenekleri' },
   'pricing.feature.allBackgrounds': { en: 'All backgrounds', tr: 'Tüm arka planlar' },
   'pricing.feature.allPosesAngles': { en: 'All poses & camera angles', tr: 'Tüm pozlar ve kamera açıları' },
@@ -222,6 +223,13 @@ export const translations: Translations = {
   'pricing.monthlyCredits': { en: 'Monthly Credits', tr: 'Aylık Krediler' },
   'pricing.total': { en: 'total', tr: 'toplam' },
   'pricing.imagesOnly': { en: 'images only', tr: 'sadece görsel' },
+  
+  // Credit Packs
+  'pricing.creditPacks.title': { en: 'Need More Credits?', tr: 'Daha Fazla Krediye mi İhtiyacınız Var?' },
+  'pricing.creditPacks.subtitle': { en: 'Purchase additional credits without a subscription. No expiration date.', tr: 'Abonelik olmadan ek kredi satın alın. Son kullanma tarihi yok.' },
+  'pricing.credits': { en: 'credits', tr: 'kredi' },
+  'pricing.perCredit': { en: 'credit', tr: 'kredi' },
+  'pricing.buy': { en: 'Buy', tr: 'Satın Al' },
   
   // Language
   'language.english': { en: 'English', tr: 'İngilizce' },

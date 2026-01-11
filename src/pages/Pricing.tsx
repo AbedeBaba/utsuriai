@@ -1,4 +1,4 @@
-import { Check, Sparkles, Crown, Zap, Star, Lock, Image } from "lucide-react";
+import { Check, Sparkles, Crown, Zap, Star, Lock, Image, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
@@ -24,6 +24,20 @@ interface PricingPlan {
   buttonTextKey: string;
   highlighted?: boolean;
 }
+
+interface CreditPack {
+  credits: number;
+  price: string;
+  priceValue: number;
+}
+
+const creditPacks: CreditPack[] = [
+  { credits: 50, price: "$5.50", priceValue: 5.5 },
+  { credits: 100, price: "$10", priceValue: 10 },
+  { credits: 200, price: "$15", priceValue: 15 },
+  { credits: 500, price: "$25", priceValue: 25 },
+  { credits: 1000, price: "$40", priceValue: 40 },
+];
 
 const plans: PricingPlan[] = [
   {
@@ -70,14 +84,14 @@ const plans: PricingPlan[] = [
     price: "$39.99",
     periodKey: "pricing.perMonth",
     descriptionKey: "pricing.professionalFeatures",
-    creditsValue: "250",
+    creditsValue: "400",
     creditsKey: "pricing.creditsPerMonth",
     badgeKey: "pricing.popular",
     badgeType: "popular",
     buttonTextKey: "pricing.upgradeToPro",
     highlighted: true,
     features: [
-      { textKey: "pricing.feature.250credits", included: true },
+      { textKey: "pricing.feature.400credits", included: true },
       { textKey: "pricing.feature.proQuality", included: true },
       { textKey: "pricing.feature.allEthnicities", included: true },
       { textKey: "pricing.feature.allHairEye", included: true },
@@ -273,7 +287,7 @@ const Pricing = () => {
                   <td className="py-3 px-4 text-gray-300">{t('pricing.monthlyCredits')}</td>
                   <td className="py-3 px-4 text-center text-gray-400">5 {t('pricing.total')}</td>
                   <td className="py-3 px-4 text-center text-gray-300">100</td>
-                  <td className="py-3 px-4 text-center text-primary">250</td>
+                  <td className="py-3 px-4 text-center text-primary">400</td>
                   <td className="py-3 px-4 text-center text-amber-400">500</td>
                 </tr>
                 <tr className="border-b border-white/5">
@@ -323,6 +337,44 @@ const Pricing = () => {
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* Credit Packs Section */}
+        <div className="mt-20">
+          <h2 className="text-2xl font-bold text-white text-center mb-4">{t('pricing.creditPacks.title')}</h2>
+          <p className="text-gray-400 text-center mb-8 max-w-xl mx-auto">
+            {t('pricing.creditPacks.subtitle')}
+          </p>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
+            {creditPacks.map((pack) => (
+              <div
+                key={pack.credits}
+                className="relative rounded-xl p-5 bg-gradient-to-b from-[#1a1a25] to-[#12121a] border border-white/10 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(155,135,245,0.1)] group"
+              >
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 mb-2">
+                    <Zap className="w-4 h-4 text-primary" />
+                    <span className="text-2xl font-bold text-white">{pack.credits}</span>
+                  </div>
+                  <p className="text-xs text-gray-400 mb-3">{t('pricing.credits')}</p>
+                  <p className="text-xl font-semibold text-primary">{pack.price}</p>
+                  <p className="text-[10px] text-gray-500 mt-1">
+                    ${(pack.priceValue / pack.credits * 100).toFixed(1)}¢ / {t('pricing.perCredit')}
+                  </p>
+                </div>
+                
+                <Button
+                  onClick={() => handleSelectPlan(`${pack.credits} credits`)}
+                  size="sm"
+                  className="w-full mt-4 bg-white/5 hover:bg-primary/20 text-white border border-white/10 hover:border-primary/50 transition-all"
+                >
+                  <Plus className="w-3 h-3 mr-1" />
+                  {t('pricing.buy')}
+                </Button>
+              </div>
+            ))}
           </div>
         </div>
 
