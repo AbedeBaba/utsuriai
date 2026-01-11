@@ -28,7 +28,7 @@ export function FilterStepLayout({
   return <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-6">
-        {showBack && onBack ? <Button variant="ghost" size="icon" onClick={onBack} className="text-white/60 hover:text-white hover:bg-white/10 border border-white/20 backdrop-blur-md rounded-xl transition-all duration-500 hover:border-violet-300/40 hover:shadow-[0_0_20px_rgba(167,139,250,0.15)]">
+        {showBack && onBack ? <Button variant="ghost" size="icon" onClick={onBack} className="text-white hover:text-white hover:bg-white/20 border border-white/40 backdrop-blur-md rounded-xl transition-all duration-500 hover:border-violet-300/60 hover:shadow-[0_0_20px_rgba(167,139,250,0.25)] bg-white/10">
             <ArrowLeft className="h-5 w-5" />
           </Button> : <div className="w-10" />}
         
