@@ -261,20 +261,20 @@
     @apply bg-primary;
   }
 
-  /* Backdrop blur for selection animation - slow cinematic */
+  /* Backdrop blur for selection animation - disabled for cleaner UX */
   .selection-backdrop {
     @apply fixed inset-0 z-40 pointer-events-none;
     background: transparent;
     backdrop-filter: blur(0px);
-    transition: all 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease-out;
     outline: none !important;
     border: none !important;
   }
 
   .selection-backdrop.active {
-    @apply pointer-events-auto;
-    background: hsl(220 20% 10% / 0.85);
-    backdrop-filter: blur(12px);
+    @apply pointer-events-none;
+    background: transparent;
+    backdrop-filter: blur(0px);
   }
 
   /* Centered selected card during animation */
