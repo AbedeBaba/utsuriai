@@ -42,84 +42,85 @@ export default function FilterGender() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Premium gradient background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-950 via-purple-950/40 to-slate-900" />
-      <div className="fixed inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
+      {/* Softer premium gradient background */}
+      <div className="fixed inset-0 bg-gradient-to-b from-slate-900 via-slate-800/95 to-slate-900" />
       
-      {/* Subtle pattern overlay */}
-      <div className="fixed inset-0 opacity-5" style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-        backgroundSize: '40px 40px'
-      }} />
-
-      {/* Male Model - Left Side */}
+      {/* Male Model - Left Side with vignette fade */}
       <div 
         className={cn(
-          "fixed left-0 top-0 bottom-0 w-[35%] z-[2] transition-all duration-700 flex items-center",
-          hoveredGender === 'Male' ? "opacity-100" : "opacity-75"
+          "fixed left-0 top-0 bottom-0 w-[32%] z-[2] transition-all duration-700 flex items-center",
+          hoveredGender === 'Male' ? "opacity-100" : "opacity-85"
         )}
       >
-        <div className="relative h-full w-full flex items-center justify-start pl-4">
+        <div className="relative h-full w-full flex items-center justify-start">
           <img 
             src={maleModel} 
             alt="Male model"
             className={cn(
-              "h-[90%] w-auto object-contain object-left transition-all duration-700 drop-shadow-2xl",
-              hoveredGender === 'Male' && "brightness-125 contrast-110 scale-[1.03]",
-              "brightness-110 contrast-105"
+              "h-full w-auto object-contain object-left transition-all duration-700",
+              hoveredGender === 'Male' && "brightness-[1.15] contrast-[1.05] scale-[1.02]",
+              "brightness-[1.1] contrast-[1.02]"
             )}
             style={{
               filter: hoveredGender === 'Male' 
-                ? 'drop-shadow(0 0 60px rgba(139, 92, 246, 0.4))' 
-                : 'drop-shadow(0 0 40px rgba(0, 0, 0, 0.5))'
+                ? 'drop-shadow(0 0 80px rgba(168, 139, 250, 0.3))' 
+                : 'drop-shadow(0 0 40px rgba(0, 0, 0, 0.4))'
             }}
           />
-          {/* Accent glow overlay */}
+          {/* Vignette fade toward center */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-slate-900/90 pointer-events-none" />
+          {/* Subtle accent glow on hover */}
           <div 
             className={cn(
-              "absolute inset-0 bg-gradient-to-r from-violet-500/20 via-transparent to-transparent transition-opacity duration-500 pointer-events-none",
+              "absolute inset-0 bg-gradient-to-r from-violet-400/10 via-transparent to-transparent transition-opacity duration-700 pointer-events-none",
               hoveredGender === 'Male' ? "opacity-100" : "opacity-0"
             )}
           />
         </div>
       </div>
 
-      {/* Female Model - Right Side */}
+      {/* Female Model - Right Side with vignette fade */}
       <div 
         className={cn(
-          "fixed right-0 top-0 bottom-0 w-[35%] z-[2] flex items-center justify-end transition-all duration-700",
-          hoveredGender === 'Female' ? "opacity-100" : "opacity-75"
+          "fixed right-0 top-0 bottom-0 w-[32%] z-[2] flex items-center justify-end transition-all duration-700",
+          hoveredGender === 'Female' ? "opacity-100" : "opacity-85"
         )}
       >
-        <div className="relative h-full w-full flex items-center justify-end pr-4">
+        <div className="relative h-full w-full flex items-center justify-end">
           <img 
             src={femaleModel} 
             alt="Female model"
             className={cn(
-              "h-[90%] w-auto object-contain object-right transition-all duration-700 drop-shadow-2xl",
-              hoveredGender === 'Female' && "brightness-125 contrast-110 scale-[1.03]",
-              "brightness-110 contrast-105"
+              "h-full w-auto object-contain object-right transition-all duration-700",
+              hoveredGender === 'Female' && "brightness-[1.15] contrast-[1.05] scale-[1.02]",
+              "brightness-[1.1] contrast-[1.02]"
             )}
             style={{
               filter: hoveredGender === 'Female' 
-                ? 'drop-shadow(0 0 60px rgba(139, 92, 246, 0.4))' 
-                : 'drop-shadow(0 0 40px rgba(0, 0, 0, 0.5))'
+                ? 'drop-shadow(0 0 80px rgba(168, 139, 250, 0.3))' 
+                : 'drop-shadow(0 0 40px rgba(0, 0, 0, 0.4))'
             }}
           />
-          {/* Accent glow overlay */}
+          {/* Vignette fade toward center */}
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-slate-900/90 pointer-events-none" />
+          {/* Subtle accent glow on hover */}
           <div 
             className={cn(
-              "absolute inset-0 bg-gradient-to-l from-violet-500/20 via-transparent to-transparent transition-opacity duration-500 pointer-events-none",
+              "absolute inset-0 bg-gradient-to-l from-violet-400/10 via-transparent to-transparent transition-opacity duration-700 pointer-events-none",
               hoveredGender === 'Female' ? "opacity-100" : "opacity-0"
             )}
           />
         </div>
       </div>
 
-      {/* Center content area with subtle vignette */}
-      <div className="fixed inset-0 z-[3] pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/70" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[50%] h-full bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950/80" />
+      {/* Center panel - lighter gradient for content separation */}
+      <div className="fixed inset-0 z-[3] pointer-events-none flex justify-center">
+        <div className="w-[45%] h-full bg-gradient-to-b from-slate-800/60 via-slate-700/40 to-slate-800/60 backdrop-blur-sm" />
+      </div>
+      
+      {/* Soft radial glow in center */}
+      <div className="fixed inset-0 z-[4] pointer-events-none flex items-center justify-center">
+        <div className="w-[600px] h-[600px] rounded-full bg-violet-500/5 blur-3xl" />
       </div>
 
       {/* Main Content */}
@@ -132,55 +133,69 @@ export default function FilterGender() {
           {/* Backdrop */}
           <div className={cn("selection-backdrop", isAnimating && "active")} />
           
-          <div className="grid grid-cols-2 gap-10 max-w-xl mx-auto relative">
+          <div className="grid grid-cols-2 gap-8 max-w-lg mx-auto relative">
             {genderOptions.map((option, index) => (
               <div
                 key={option.id}
                 onMouseEnter={() => setHoveredGender(option.id)}
                 onMouseLeave={() => setHoveredGender(null)}
-                className="group"
+                className="group perspective-1000"
               >
                 <div
                   onClick={() => handleSelect(option.id)}
                   className={cn(
-                    "relative flex flex-col items-center justify-center gap-4 min-h-[200px] rounded-2xl cursor-pointer transition-all duration-500",
-                    "bg-gradient-to-br from-white/[0.12] to-white/[0.04] backdrop-blur-xl",
-                    "border border-white/20 hover:border-violet-400/60",
-                    "shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_16px_48px_rgba(139,92,246,0.25)]",
-                    config.gender === option.id && "border-violet-400 bg-gradient-to-br from-violet-500/20 to-purple-600/10",
+                    "gender-card relative flex flex-col items-center justify-center gap-5 min-h-[220px] rounded-2xl cursor-pointer",
+                    "transition-all duration-500 ease-out",
+                    "bg-gradient-to-b from-white/[0.15] to-white/[0.08] backdrop-blur-xl",
+                    "border border-white/25 hover:border-violet-300/50",
+                    "shadow-[0_4px_24px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(139,92,246,0.15)]",
+                    config.gender === option.id && "border-violet-400/70 bg-gradient-to-b from-violet-500/20 to-violet-600/10",
                     isAnimating && selectedId === option.id && "scale-105",
                     isAnimating && selectedId !== option.id && "opacity-30 scale-95"
                   )}
                 >
-                  {/* Glow effect on hover */}
+                  {/* Bottom-to-top glow sweep on hover */}
                   <div className={cn(
-                    "absolute inset-0 rounded-2xl transition-opacity duration-500 opacity-0 group-hover:opacity-100",
-                    "bg-gradient-to-br from-violet-500/10 via-transparent to-purple-500/10"
+                    "absolute inset-0 rounded-2xl overflow-hidden pointer-events-none",
+                    "before:absolute before:inset-0 before:bg-gradient-to-t before:from-violet-400/20 before:via-violet-300/5 before:to-transparent",
+                    "before:translate-y-full before:transition-transform before:duration-700 before:ease-out",
+                    "group-hover:before:translate-y-0"
                   )} />
                   
-                  {/* Inner highlight */}
-                  <div className="absolute inset-[1px] rounded-2xl bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
-                  
-                  {/* Icon */}
+                  {/* Top highlight reflection */}
                   <div className={cn(
-                    "relative z-10 p-4 rounded-xl bg-gradient-to-br from-violet-500/30 to-purple-600/20 transition-all duration-300",
-                    "group-hover:from-violet-500/50 group-hover:to-purple-600/30 group-hover:scale-110",
-                    "shadow-lg shadow-violet-500/20"
+                    "absolute top-0 left-4 right-4 h-[1px] rounded-full transition-all duration-500",
+                    "bg-gradient-to-r from-transparent via-white/30 to-transparent",
+                    "group-hover:via-violet-300/50 group-hover:shadow-[0_0_12px_rgba(167,139,250,0.4)]"
+                  )} />
+                  
+                  {/* Inner surface highlight */}
+                  <div className="absolute inset-[1px] rounded-2xl bg-gradient-to-b from-white/10 via-transparent to-transparent pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Icon container */}
+                  <div className={cn(
+                    "relative z-10 p-4 rounded-xl transition-all duration-500 ease-out",
+                    "bg-gradient-to-br from-violet-500/25 to-purple-600/15",
+                    "group-hover:from-violet-400/40 group-hover:to-purple-500/25",
+                    "group-hover:scale-110 group-hover:shadow-[0_8px_24px_rgba(139,92,246,0.3)]",
+                    "border border-violet-400/20 group-hover:border-violet-300/40"
                   )}>
-                    {option.icon}
+                    <div className="text-violet-300 group-hover:text-violet-200 transition-colors duration-500">
+                      {option.icon}
+                    </div>
                   </div>
                   
                   {/* Label */}
                   <span className={cn(
-                    "relative z-10 text-xl font-semibold tracking-wide transition-all duration-300",
-                    "text-white/90 group-hover:text-white"
+                    "relative z-10 text-xl font-medium tracking-wide transition-all duration-500",
+                    "text-white/80 group-hover:text-white"
                   )}>
                     {option.label}
                   </span>
                   
                   {/* Selection indicator */}
                   {config.gender === option.id && (
-                    <div className="absolute top-3 right-3 w-3 h-3 rounded-full bg-violet-400 shadow-lg shadow-violet-400/50 animate-pulse" />
+                    <div className="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-violet-400 shadow-[0_0_12px_rgba(167,139,250,0.6)]" />
                   )}
                 </div>
               </div>
