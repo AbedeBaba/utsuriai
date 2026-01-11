@@ -4,12 +4,13 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Loader2, CheckCircle, LayoutDashboard } from 'lucide-react';
+import { ArrowLeft, Sparkles, Loader2, CheckCircle, LayoutDashboard, Crown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { MultiImageUpload, UploadedImage } from '@/components/MultiImageUpload';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ProgressIndicator } from '@/components/ProgressIndicator';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Backend-ready data structure for API communication
 interface GenerationPayload {
@@ -41,7 +42,9 @@ export default function ClothingSelection() {
   const { user } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { subscription, hasProAccess, loading: subscriptionLoading } = useSubscription();
   const [loading, setLoading] = useState(false);
+  const [proLoading, setProLoading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 
   setCurrentStep(totalSteps);
@@ -91,7 +94,7 @@ export default function ClothingSelection() {
     return true;
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (usePro: boolean = false) => {
     if (!user) {
       toast({
         title: 'Not authenticated',
@@ -106,11 +109,25 @@ export default function ClothingSelection() {
       return;
     }
 
-    setLoading(true);
+    // Check subscription for Pro access
+    if (usePro && !hasProAccess) {
+      toast({
+        title: 'Pro access required',
+        description: 'Upgrade to Starter, Pro, or Creator plan to use Utsuri Pro quality.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (usePro) {
+      setProLoading(true);
+    } else {
+      setLoading(true);
+    }
 
     try {
       const payload = buildPayload();
-      console.log('Generation payload:', payload);
+      console.log('Generation payload:', payload, 'Pro mode:', usePro);
 
       // Serialize reference images to JSON string for storage
       const referenceImageData = payload.reference_images 
@@ -139,7 +156,8 @@ export default function ClothingSelection() {
 
       if (error) throw error;
 
-      navigate(`/result/${data.id}`);
+      // Navigate with Pro mode flag
+      navigate(`/result/${data.id}${usePro ? '?pro=true' : ''}`);
     } catch (error) {
       console.error('Error saving generation:', error);
       toast({
@@ -149,6 +167,7 @@ export default function ClothingSelection() {
       });
     } finally {
       setLoading(false);
+      setProLoading(false);
     }
   };
 
@@ -220,26 +239,50 @@ export default function ClothingSelection() {
             />
           </div>
 
-          {/* Generate Button */}
-          <Button
-            onClick={handleGenerate}
-            disabled={loading}
-            size="lg"
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg font-medium animate-fade-in"
-            style={{ animationDelay: '200ms' }}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                {t('common.loading')}
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-5 w-5" />
-                {t('clothing.generate')}
-              </>
+          {/* Generate Buttons */}
+          <div className="space-y-3 animate-fade-in" style={{ animationDelay: '200ms' }}>
+            {/* Standard Generate Button */}
+            <Button
+              onClick={() => handleGenerate(false)}
+              disabled={loading || proLoading}
+              size="lg"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg font-medium"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  {t('common.loading')}
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  {t('clothing.generate')}
+                </>
+              )}
+            </Button>
+
+            {/* Pro Generate Button - Only show for paid plans */}
+            {hasProAccess && (
+              <Button
+                onClick={() => handleGenerate(true)}
+                disabled={loading || proLoading}
+                size="lg"
+                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-500/90 hover:to-orange-500/90 text-white py-6 text-lg font-medium shadow-lg shadow-amber-500/25"
+              >
+                {proLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    {t('common.loading')}
+                  </>
+                ) : (
+                  <>
+                    <Crown className="mr-2 h-5 w-5" />
+                    Generate Model With Utsuri Pro
+                  </>
+                )}
+              </Button>
             )}
-          </Button>
+          </div>
 
           <p className="text-xs text-center text-muted-foreground animate-fade-in" style={{ animationDelay: '300ms' }}>
             Add different angles, accessories, and jewelry - the AI will dress your model accordingly

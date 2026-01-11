@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { generationId, config, referenceImage } = await req.json();
+    const { generationId, config, referenceImage, usePro = false } = await req.json();
     
     // Parse reference images - could be JSON string of array or single base64 string
     let referenceImages: { type: string; data: string }[] | null = null;
@@ -30,20 +30,47 @@ serve(async (req) => {
     console.log('Generation request received:', { 
       generationId, 
       config, 
-      imageCount: referenceImages?.length || 0 
+      imageCount: referenceImages?.length || 0,
+      usePro
     });
 
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      console.error('LOVABLE_API_KEY is not configured');
-      return new Response(
-        JSON.stringify({ error: 'AI API key not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    // Choose API key based on Pro mode
+    let apiKey: string | undefined;
+    let apiEndpoint: string;
+    let model: string;
+
+    if (usePro) {
+      // Use Nano Banana Pro API
+      apiKey = Deno.env.get('NANO_BANANA_PRO_API_KEY');
+      apiEndpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
+      model = "google/gemini-3-pro-image-preview"; // Pro model
+      
+      if (!apiKey) {
+        console.error('NANO_BANANA_PRO_API_KEY is not configured');
+        return new Response(
+          JSON.stringify({ error: 'Pro API key not configured' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log('Using Nano Banana Pro API');
+    } else {
+      // Use standard Lovable API
+      apiKey = Deno.env.get('LOVABLE_API_KEY');
+      apiEndpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
+      model = "google/gemini-2.5-flash-image-preview"; // Standard model
+      
+      if (!apiKey) {
+        console.error('LOVABLE_API_KEY is not configured');
+        return new Response(
+          JSON.stringify({ error: 'AI API key not configured' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log('Using standard Lovable API');
     }
 
     // Build the prompt for the AI model
-    const prompt = buildPrompt(config, referenceImages);
+    const prompt = buildPrompt(config, referenceImages, usePro);
     console.log('Generated prompt:', prompt);
 
     // Prepare content array with text and all images
@@ -67,17 +94,17 @@ serve(async (req) => {
       }
     ];
 
-    console.log('Calling Lovable AI Gateway with Nano Banana model...');
+    console.log(`Calling ${usePro ? 'Nano Banana Pro' : 'Nano Banana'} API with model: ${model}...`);
 
-    // Call Lovable AI Gateway with Nano Banana (image generation model)
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    // Call AI Gateway
+    const aiResponse = await fetch(apiEndpoint, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-image-preview",
+        model: model,
         messages: messages,
         modalities: ["image", "text"],
       }),
@@ -121,7 +148,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Image generated successfully');
+    console.log('Image generated successfully with', usePro ? 'Pro' : 'Standard', 'quality');
 
     // Update the database with the generated image
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -145,6 +172,7 @@ serve(async (req) => {
         success: true,
         generationId,
         imageUrl: generatedImageUrl,
+        quality: usePro ? 'pro' : 'standard',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -163,10 +191,14 @@ interface ReferenceImage {
   data: string;
 }
 
-function buildPrompt(config: any, referenceImages: ReferenceImage[] | null): string {
+function buildPrompt(config: any, referenceImages: ReferenceImage[] | null, usePro: boolean = false): string {
   // =============================================
   // STATIC BASE PROMPT (NEVER CHANGES)
   // =============================================
+  const qualityLevel = usePro 
+    ? 'ULTRA-PREMIUM 16K QUALITY, magazine cover ready, award-winning fashion photography' 
+    : 'Ultra-high resolution, 8K quality, professional fashion photography';
+
   const staticBasePrompt = `
 Generate a hyper-realistic, high-resolution fashion photography image featuring a model.
 
@@ -181,11 +213,12 @@ CRITICAL CLOTHING PRESERVATION RULES (ABSOLUTE REQUIREMENTS):
 - The clothing must look identical to the reference - as if it's the same physical garment photographed on the model.
 
 PHOTOREALISM REQUIREMENTS:
-- Ultra-high resolution, 8K quality, professional fashion photography.
+- ${qualityLevel}.
 - Studio-grade lighting with natural skin tones and fabric rendering.
 - Sharp focus, professional depth of field.
 - Magazine-quality editorial fashion photography aesthetic.
 - Natural, realistic skin texture and details.
+${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ultra-detailed fabric rendering with visible thread textures.\n- Professional color grading with rich, vibrant tones.' : ''}
 `.trim();
 
   // =============================================
