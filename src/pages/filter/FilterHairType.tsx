@@ -14,14 +14,23 @@ import femaleBald from '@/assets/hair-types/female-bald.png';
 import femaleShort from '@/assets/hair-types/female-short.png';
 import femaleLong from '@/assets/hair-types/female-long.png';
 
+// Male hair type images
+import maleStraight from '@/assets/hair-types/male-straight.png';
+import maleWavy from '@/assets/hair-types/male-wavy.png';
+import maleCurly from '@/assets/hair-types/male-curly.png';
+import maleCoily from '@/assets/hair-types/male-coily.png';
+import maleBald from '@/assets/hair-types/male-bald.png';
+import maleShort from '@/assets/hair-types/male-short.png';
+import maleLong from '@/assets/hair-types/male-long.png';
+
 const hairTypeOptions = [
-  { id: 'Straight', label: 'Straight', subtitle: 'Sleek and smooth', femaleImage: femaleStraight },
-  { id: 'Wavy', label: 'Wavy', subtitle: 'Soft waves', femaleImage: femaleWavy },
-  { id: 'Curly', label: 'Curly', subtitle: 'Defined curls', femaleImage: femaleCurly },
-  { id: 'Coily', label: 'Coily', subtitle: 'Tight coils', femaleImage: femaleCoily },
-  { id: 'Bald', label: 'Bald', subtitle: 'Clean shaved', femaleImage: femaleBald },
-  { id: 'Short', label: 'Short', subtitle: 'Cropped style', femaleImage: femaleShort },
-  { id: 'Long', label: 'Long', subtitle: 'Flowing length', femaleImage: femaleLong },
+  { id: 'Straight', label: 'Straight', subtitle: 'Sleek and smooth', femaleImage: femaleStraight, maleImage: maleStraight },
+  { id: 'Wavy', label: 'Wavy', subtitle: 'Soft waves', femaleImage: femaleWavy, maleImage: maleWavy },
+  { id: 'Curly', label: 'Curly', subtitle: 'Defined curls', femaleImage: femaleCurly, maleImage: maleCurly },
+  { id: 'Coily', label: 'Coily', subtitle: 'Tight coils', femaleImage: femaleCoily, maleImage: maleCoily },
+  { id: 'Bald', label: 'Bald', subtitle: 'Clean shaved', femaleImage: femaleBald, maleImage: maleBald },
+  { id: 'Short', label: 'Short', subtitle: 'Cropped style', femaleImage: femaleShort, maleImage: maleShort },
+  { id: 'Long', label: 'Long', subtitle: 'Flowing length', femaleImage: femaleLong, maleImage: maleLong },
 ];
 
 export default function FilterHairType() {
@@ -53,7 +62,7 @@ export default function FilterHairType() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
-  const infoText = isFemale ? "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters." : undefined;
+  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
     <FilterStepLayout 
@@ -86,10 +95,10 @@ export default function FilterHairType() {
             tabIndex={-1}
           >
             {/* Background Image */}
-            {isFemale && option.femaleImage ? (
+            {(isFemale ? option.femaleImage : option.maleImage) ? (
               <div className="absolute inset-0">
                 <img 
-                  src={option.femaleImage} 
+                  src={isFemale ? option.femaleImage : option.maleImage} 
                   alt={option.label}
                   className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                 />
@@ -106,16 +115,10 @@ export default function FilterHairType() {
             
             {/* Label with enhanced styling */}
             <div className="relative z-10 text-center pb-5 px-3 w-full">
-              <p className={cn(
-                "font-bold text-lg md:text-xl tracking-wide",
-                isFemale ? "text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" : "text-foreground"
-              )}>
+              <p className="font-bold text-lg md:text-xl tracking-wide text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                 {option.label}
               </p>
-              <p className={cn(
-                "text-sm mt-1",
-                isFemale ? "text-white/70 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]" : "text-muted-foreground"
-              )}>
+              <p className="text-sm mt-1 text-white/70 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
                 {option.subtitle}
               </p>
             </div>
