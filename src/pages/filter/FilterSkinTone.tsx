@@ -136,14 +136,14 @@ export default function FilterSkinTone() {
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
-      <div className="grid grid-cols-3 gap-4 md:gap-5 relative max-w-xl mx-auto">
+      <div className="grid grid-cols-3 gap-4 md:gap-6 relative max-w-2xl mx-auto">
         {skinToneOptions.map((option, index) => (
           <div
             key={option.id}
             onClick={() => handleSelect(option.id)}
             className={cn(
               "group relative flex flex-col items-center justify-end rounded-2xl cursor-pointer overflow-hidden",
-              "h-[110px] md:h-[130px]",
+              "h-[130px] sm:h-[150px] md:h-[170px]",
               "transition-all duration-500 ease-out",
               "bg-black/30 backdrop-blur-sm",
               "border border-white/20 hover:border-violet-400/50",
