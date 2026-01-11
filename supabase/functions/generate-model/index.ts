@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const NANO_BANANA_API_BASE = 'https://api.nanobananaapi.ai';
+const NANO_BANANA_API_BASE = 'https://api.meshy.ai';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -70,18 +70,31 @@ serve(async (req) => {
       });
     }
 
-    // Step 1: Create generation task
-    const createTaskResponse = await fetch(`${NANO_BANANA_API_BASE}/api/v1/generate-or-edit`, {
+    // Step 1: Create generation task - use image-to-image endpoint when reference images exist
+    const hasReferenceImages = imageUrls.length > 0;
+    const endpoint = hasReferenceImages 
+      ? `${NANO_BANANA_API_BASE}/openapi/v1/image-to-image`
+      : `${NANO_BANANA_API_BASE}/openapi/v1/text-to-image`;
+    
+    // Build request body based on endpoint
+    const requestBody: any = {
+      ai_model: usePro ? 'nano-banana-pro' : 'nano-banana',
+      prompt: prompt,
+    };
+    
+    if (hasReferenceImages) {
+      requestBody.reference_image_urls = imageUrls;
+    }
+
+    console.log(`Using endpoint: ${endpoint}`);
+    
+    const createTaskResponse = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        prompt: prompt,
-        image_urls: imageUrls.length > 0 ? imageUrls : undefined,
-        quality: quality,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!createTaskResponse.ok) {
@@ -116,7 +129,8 @@ serve(async (req) => {
     }
 
     const taskData = await createTaskResponse.json();
-    const taskId = taskData.task_id;
+    // NanoBanana returns task id in "result" field
+    const taskId = taskData.result || taskData.task_id;
     console.log('NanoBanana task created:', taskId);
 
     if (!taskId) {
@@ -131,11 +145,16 @@ serve(async (req) => {
     let generatedImageUrl: string | undefined;
     const maxAttempts = 60; // Max 2 minutes of polling (60 * 2 seconds)
     const pollInterval = 2000; // 2 seconds
+    
+    // Use the same endpoint type for polling
+    const pollEndpoint = hasReferenceImages 
+      ? `${NANO_BANANA_API_BASE}/openapi/v1/image-to-image/${taskId}`
+      : `${NANO_BANANA_API_BASE}/openapi/v1/text-to-image/${taskId}`;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       await new Promise(resolve => setTimeout(resolve, pollInterval));
       
-      const taskStatusResponse = await fetch(`${NANO_BANANA_API_BASE}/api/v1/task/${taskId}`, {
+      const taskStatusResponse = await fetch(pollEndpoint, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
@@ -150,14 +169,14 @@ serve(async (req) => {
       const taskStatus = await taskStatusResponse.json();
       console.log(`Task ${taskId} status:`, taskStatus.status);
 
-      if (taskStatus.status === 'completed') {
-        // Get the generated image URL from the result
-        if (taskStatus.result?.image_urls && taskStatus.result.image_urls.length > 0) {
-          generatedImageUrl = taskStatus.result.image_urls[0];
+      if (taskStatus.status === 'SUCCEEDED') {
+        // Get the generated image URL from the result - NanoBanana uses output_urls
+        if (taskStatus.output_urls && taskStatus.output_urls.length > 0) {
+          generatedImageUrl = taskStatus.output_urls[0];
           console.log('Image generation completed successfully');
         }
         break;
-      } else if (taskStatus.status === 'failed') {
+      } else if (taskStatus.status === 'FAILED' || taskStatus.status === 'EXPIRED') {
         console.error('Task failed:', taskStatus);
         return new Response(
           JSON.stringify({ error: 'Image generation failed', details: taskStatus.error || 'Unknown error' }),
