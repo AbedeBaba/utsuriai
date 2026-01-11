@@ -432,3 +432,17 @@
     filter: blur(8px);
   }
 }
+
+/* Remove focus/click outline on gender cards */
+.gender-card,
+.gender-card * {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.gender-card:focus,
+.gender-card:active,
+.gender-card:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}

@@ -43,7 +43,7 @@ export default function FilterGender() {
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Softer premium gradient background */}
-      <div className="fixed inset-0 bg-gradient-to-b from-slate-900 via-slate-800/95 to-slate-900" />
+      <div className="fixed inset-0 bg-gradient-to-b from-slate-800 via-slate-700/95 to-slate-800" />
       
       {/* Male Model - Left Side with vignette fade */}
       <div 
@@ -58,13 +58,13 @@ export default function FilterGender() {
             alt="Male model"
             className={cn(
               "h-full w-auto object-contain object-left transition-all duration-700",
-              hoveredGender === 'Male' && "brightness-[1.15] contrast-[1.05] scale-[1.02]",
-              "brightness-[1.1] contrast-[1.02]"
+              hoveredGender === 'Male' && "brightness-[1.35] contrast-[1.08] scale-[1.02]",
+              "brightness-[1.25] contrast-[1.05]"
             )}
             style={{
               filter: hoveredGender === 'Male' 
-                ? 'drop-shadow(0 0 80px rgba(168, 139, 250, 0.3))' 
-                : 'drop-shadow(0 0 40px rgba(0, 0, 0, 0.4))'
+                ? 'drop-shadow(0 0 100px rgba(168, 139, 250, 0.4))' 
+                : 'drop-shadow(0 0 60px rgba(139, 92, 246, 0.2))'
             }}
           />
           {/* Vignette fade toward center */}
@@ -92,13 +92,13 @@ export default function FilterGender() {
             alt="Female model"
             className={cn(
               "h-full w-auto object-contain object-right transition-all duration-700",
-              hoveredGender === 'Female' && "brightness-[1.15] contrast-[1.05] scale-[1.02]",
-              "brightness-[1.1] contrast-[1.02]"
+              hoveredGender === 'Female' && "brightness-[1.35] contrast-[1.08] scale-[1.02]",
+              "brightness-[1.25] contrast-[1.05]"
             )}
             style={{
               filter: hoveredGender === 'Female' 
-                ? 'drop-shadow(0 0 80px rgba(168, 139, 250, 0.3))' 
-                : 'drop-shadow(0 0 40px rgba(0, 0, 0, 0.4))'
+                ? 'drop-shadow(0 0 100px rgba(168, 139, 250, 0.4))' 
+                : 'drop-shadow(0 0 60px rgba(139, 92, 246, 0.2))'
             }}
           />
           {/* Vignette fade toward center */}
@@ -115,12 +115,12 @@ export default function FilterGender() {
 
       {/* Center panel - lighter gradient for content separation */}
       <div className="fixed inset-0 z-[3] pointer-events-none flex justify-center">
-        <div className="w-[45%] h-full bg-gradient-to-b from-slate-800/60 via-slate-700/40 to-slate-800/60 backdrop-blur-sm" />
+        <div className="w-[45%] h-full bg-gradient-to-b from-slate-700/50 via-slate-600/35 to-slate-700/50 backdrop-blur-sm" />
       </div>
       
       {/* Soft radial glow in center */}
       <div className="fixed inset-0 z-[4] pointer-events-none flex items-center justify-center">
-        <div className="w-[600px] h-[600px] rounded-full bg-violet-500/5 blur-3xl" />
+        <div className="w-[600px] h-[600px] rounded-full bg-violet-400/8 blur-3xl" />
       </div>
 
       {/* Main Content */}
@@ -144,11 +144,12 @@ export default function FilterGender() {
                 <div
                   onClick={() => handleSelect(option.id)}
                   className={cn(
-                    "gender-card relative flex flex-col items-center justify-center gap-5 min-h-[220px] rounded-2xl cursor-pointer",
+                    "gender-card relative flex flex-col items-center justify-center gap-5 min-h-[220px] rounded-2xl cursor-pointer select-none",
                     "transition-all duration-500 ease-out",
-                    "bg-gradient-to-b from-white/[0.15] to-white/[0.08] backdrop-blur-xl",
-                    "border border-white/25 hover:border-violet-300/50",
+                    "bg-gradient-to-b from-white/[0.18] to-white/[0.10] backdrop-blur-xl",
+                    "border border-white/30 hover:border-violet-300/50",
                     "shadow-[0_4px_24px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(139,92,246,0.15)]",
+                    "focus:outline-none active:outline-none",
                     config.gender === option.id && "border-violet-400/70 bg-gradient-to-b from-violet-500/20 to-violet-600/10",
                     isAnimating && selectedId === option.id && "scale-105",
                     isAnimating && selectedId !== option.id && "opacity-30 scale-95"
