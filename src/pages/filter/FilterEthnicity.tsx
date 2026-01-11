@@ -121,13 +121,13 @@ export default function FilterEthnicity() {
       onBack={() => navigate('/filter/gender')}
       onRandom={handleRandomAll}
     >
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-5 relative max-w-4xl mx-auto">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-5 relative max-w-5xl mx-auto">
         {ethnicityOptions.map((option, index) => (
           <div
             key={option.id}
             onClick={() => handleSelect(option.id)}
             className={cn(
-              "relative flex flex-col items-center justify-end gap-3 aspect-square min-w-[140px] md:min-w-[160px] rounded-2xl cursor-pointer overflow-hidden",
+              "relative flex flex-col items-center justify-end gap-3 aspect-square min-w-[160px] md:min-w-[200px] rounded-2xl cursor-pointer overflow-hidden",
               "transition-all duration-500 ease-out",
               "bg-gradient-to-b from-white/[0.08] to-white/[0.04] backdrop-blur-xl",
               "border border-white/20 hover:border-violet-300/50",
