@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { generationId, config, referenceImage, usePro = false } = await req.json();
+    const { generationId, config, referenceImage, usePro = false, userId } = await req.json();
     
     // Parse reference images - could be JSON string of array or single base64 string
     let referenceImages: { type: string; data: string }[] | null = null;
@@ -165,6 +165,31 @@ serve(async (req) => {
 
     if (updateError) {
       console.error('Database update error:', updateError);
+    }
+
+    // If this was a Pro generation and user is on trial plan, decrement their pro_generations_remaining
+    if (usePro && userId) {
+      // First, get the user's subscription to check if they're on trial
+      const { data: subscription, error: subError } = await supabase
+        .from('user_subscriptions')
+        .select('plan, pro_generations_remaining')
+        .eq('user_id', userId)
+        .single();
+
+      if (!subError && subscription?.plan === 'trial' && subscription.pro_generations_remaining > 0) {
+        const { error: decrementError } = await supabase
+          .from('user_subscriptions')
+          .update({ 
+            pro_generations_remaining: subscription.pro_generations_remaining - 1 
+          })
+          .eq('user_id', userId);
+
+        if (decrementError) {
+          console.error('Error decrementing pro generations:', decrementError);
+        } else {
+          console.log(`Decremented pro_generations_remaining for trial user ${userId}. Remaining: ${subscription.pro_generations_remaining - 1}`);
+        }
+      }
     }
 
     return new Response(
