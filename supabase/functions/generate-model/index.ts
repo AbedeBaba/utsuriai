@@ -7,8 +7,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Direct Gemini API endpoint
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+// Lovable AI Gateway (NanoBanana)
+const LOVABLE_AI_GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 // Allowed values for input validation
 const ALLOWED_VALUES = {
@@ -232,28 +232,26 @@ serve(async (req) => {
     const prompt = buildPrompt(sanitizedConfig, referenceImages, usePro);
     console.log('Generated prompt:', prompt.substring(0, 500) + '...');
 
-    // Get your own Gemini API key
-    const apiKey = Deno.env.get('GEMINI_API_KEY');
+    // Get NanoBanana API key
+    const apiKey = Deno.env.get('NANOBANANA_API_KEY');
     
     if (!apiKey) {
-      console.error('GEMINI_API_KEY is not configured');
+      console.error('NANOBANANA_API_KEY is not configured');
       return new Response(
-        JSON.stringify({ error: 'Gemini API key not configured. Please add GEMINI_API_KEY secret.' }),
+        JSON.stringify({ error: 'NanoBanana API key not configured. Please add NANOBANANA_API_KEY secret.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Select model based on quality mode
-    // Using Gemini 2.0 Flash for image generation (Imagen 3)
-    const model = usePro 
-      ? 'gemini-2.0-flash-exp'
-      : 'gemini-2.0-flash-exp';
+    // Select model based on quality mode - using image generation model
+    const model = 'google/gemini-2.5-flash-image-preview';
     
-    console.log(`Using Gemini model: ${model} with your own API key`);
+    console.log(`Using model: ${model} via NanoBanana gateway`);
 
-    // Build message parts for Gemini API format
-    const parts: any[] = [
+    // Build message content for the API
+    const messageContent: any[] = [
       {
+        type: 'text',
         text: prompt
       }
     ];
@@ -261,49 +259,38 @@ serve(async (req) => {
     // Add reference images to the message if provided
     if (referenceImages && referenceImages.length > 0) {
       referenceImages.forEach((img, index) => {
-        // Extract base64 data and mime type
-        let base64Data = img.data;
-        let mimeType = 'image/jpeg';
-        
-        if (img.data.startsWith('data:')) {
-          const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
-          if (matches) {
-            mimeType = matches[1];
-            base64Data = matches[2];
-          }
-        }
-        
-        parts.push({
-          inline_data: {
-            mime_type: mimeType,
-            data: base64Data
+        messageContent.push({
+          type: 'image_url',
+          image_url: {
+            url: img.data
           }
         });
         console.log(`Added reference image ${index + 1} (type: ${img.type})`);
       });
     }
 
-    // Call the Google Gemini API directly
-    const response = await fetch(`${GEMINI_API_URL}/${model}:generateContent?key=${apiKey}`, {
+    // Call the Lovable AI Gateway
+    const response = await fetch(LOVABLE_AI_GATEWAY, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [
+        model: model,
+        messages: [
           {
-            parts: parts
+            role: 'user',
+            content: messageContent
           }
         ],
-        generationConfig: {
-          responseModalities: ['TEXT', 'IMAGE']
-        }
+        modalities: ['image', 'text']
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error:', response.status, errorText);
+      console.error('NanoBanana API error:', response.status, errorText);
       
       if (response.status === 429) {
         return new Response(
@@ -312,9 +299,16 @@ serve(async (req) => {
         );
       }
       
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'Not enough credits. Please add credits to your account.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
       if (response.status === 401 || response.status === 403) {
         return new Response(
-          JSON.stringify({ error: 'Invalid Gemini API key. Please check your GEMINI_API_KEY.' }),
+          JSON.stringify({ error: 'Invalid API key. Please check your NANOBANANA_API_KEY.' }),
           { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -326,30 +320,21 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('Gemini API response received');
+    console.log('NanoBanana API response received');
 
-    // Extract the generated image from the Gemini API response format
-    // Gemini returns images as inline_data with base64 in the parts array
+    // Extract the generated image from the response
+    // NanoBanana returns images in choices[0].message.images array
     let generatedImageUrl: string | null = null;
     
-    const candidates = data.candidates;
-    if (candidates && candidates.length > 0) {
-      const content = candidates[0].content;
-      if (content && content.parts) {
-        for (const part of content.parts) {
-          if (part.inline_data && part.inline_data.data) {
-            const mimeType = part.inline_data.mime_type || 'image/png';
-            generatedImageUrl = `data:${mimeType};base64,${part.inline_data.data}`;
-            break;
-          }
-        }
-      }
+    const images = data.choices?.[0]?.message?.images;
+    if (images && images.length > 0) {
+      generatedImageUrl = images[0]?.image_url?.url;
     }
 
     if (!generatedImageUrl) {
       console.error('No image in response:', JSON.stringify(data).substring(0, 1000));
       return new Response(
-        JSON.stringify({ error: 'Image generation failed - no image returned. The model may not support image generation.' }),
+        JSON.stringify({ error: 'Image generation failed - no image returned.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
