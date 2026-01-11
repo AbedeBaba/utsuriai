@@ -37,7 +37,7 @@ export default function FilterPose() {
   const isFemale = config.gender === 'Female';
 
   useEffect(() => {
-    setCurrentStep(config.gender === 'Male' ? 11 : 10);
+    setCurrentStep(config.gender === 'Male' ? 9 : 9);
   }, [setCurrentStep, config.gender]);
 
   // Handle scroll/swipe
@@ -158,11 +158,14 @@ export default function FilterPose() {
     };
   };
 
+  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+
   return (
     <FilterStepLayout 
       title="Select Pose"
       subtitle="Scroll left or right to choose the pose"
-      onBack={() => navigate('/filter/modest-option')}
+      onBack={() => config.gender === 'Male' ? navigate('/filter/beard-type') : navigate('/filter/hair-type')}
+      infoText={infoText}
     >
       {/* Carousel Container */}
       <div 

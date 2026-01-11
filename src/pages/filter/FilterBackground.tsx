@@ -32,8 +32,8 @@ export default function FilterBackground() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setCurrentStep(config.gender === 'Male' ? 12 : 11);
-  }, [setCurrentStep, config.gender]);
+    setCurrentStep(10);
+  }, [setCurrentStep]);
 
   const handleSelect = useCallback((background: string) => {
     if (isAnimating) return;
@@ -47,11 +47,14 @@ export default function FilterBackground() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+
   return (
     <FilterStepLayout 
       title="Select Background"
       subtitle="Choose the background scene for your image"
       onBack={() => navigate('/filter/pose')}
+      infoText={infoText}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       

@@ -8,7 +8,6 @@ export interface ModelConfig {
   eyeColor: string;
   bodyType: string;
   hairType: string;
-  hairStyle: string;
   beardType?: string;
   clothingTop?: string;
   clothingBottom?: string;
@@ -37,7 +36,6 @@ const initialConfig: ModelConfig = {
   eyeColor: '',
   bodyType: '',
   hairType: '',
-  hairStyle: '',
   beardType: '',
   clothingTop: '',
   clothingBottom: '',
@@ -55,9 +53,9 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<ModelConfig>(initialConfig);
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Total steps: Gender, Ethnicity, Skin Tone, Hair Color, Eye Color, Body Type, Hair Type/Style, 
-  // Beard (male only), Modest Option, Pose, Background, Face Type, Facial Expression, Clothing
-  const totalSteps = config.gender === 'Male' ? 14 : 13;
+  // Total steps: Gender, Coverage (female only), Ethnicity, Skin Tone, Hair Color, Eye Color, Body Type, Hair Type, 
+  // Beard (male only), Pose, Background, Face Type, Facial Expression, Clothing
+  const totalSteps = config.gender === 'Male' ? 12 : 12;
 
   const updateConfig = (key: keyof ModelConfig, value: string) => {
     setConfig(prev => ({ ...prev, [key]: value }));

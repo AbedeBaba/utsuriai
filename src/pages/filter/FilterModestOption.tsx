@@ -9,7 +9,6 @@ import { User, Heart } from 'lucide-react';
 
 const modestOptions = [
   { id: 'Standard', label: 'Standard', subtitle: 'Regular appearance', icon: <User className="h-6 w-6" /> },
-  { id: 'Modest', label: 'Modest', subtitle: 'Conservative styling', icon: <User className="h-6 w-6" /> },
   { id: 'Hijab', label: 'Hijab', subtitle: 'Head covering', icon: <Heart className="h-6 w-6" /> },
 ];
 
@@ -21,8 +20,16 @@ export default function FilterModestOption() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setCurrentStep(config.gender === 'Male' ? 10 : 9);
-  }, [setCurrentStep, config.gender]);
+    // Coverage is step 2 for females only
+    setCurrentStep(2);
+  }, [setCurrentStep]);
+
+  // Redirect males to ethnicity
+  useEffect(() => {
+    if (config.gender === 'Male') {
+      navigate('/filter/ethnicity');
+    }
+  }, [config.gender, navigate]);
 
   const handleSelect = useCallback((modestOption: string) => {
     if (isAnimating) return;
@@ -32,7 +39,7 @@ export default function FilterModestOption() {
     updateConfig('modestOption', modestOption);
 
     setTimeout(() => {
-      navigate('/filter/pose');
+      navigate('/filter/ethnicity');
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
@@ -40,11 +47,11 @@ export default function FilterModestOption() {
     <FilterStepLayout 
       title={t('filter.selectCoverage')}
       subtitle={t('filter.coverageSubtitle')}
-      onBack={() => config.gender === 'Male' ? navigate('/filter/beard-type') : navigate('/filter/hair-style')}
+      onBack={() => navigate('/filter/gender')}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
-      <div className="grid grid-cols-3 gap-4 relative">
+      <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto relative">
         {modestOptions.map((option, index) => (
           <SelectionCard
             key={option.id}

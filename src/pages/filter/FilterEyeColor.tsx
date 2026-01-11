@@ -32,8 +32,8 @@ export default function FilterEyeColor() {
   const isFemale = config.gender === 'Female';
 
   useEffect(() => {
-    setCurrentStep(5);
-  }, [setCurrentStep]);
+    setCurrentStep(config.gender === 'Female' ? 6 : 5);
+  }, [setCurrentStep, config.gender]);
 
   const handleSelect = useCallback((eyeColor: string) => {
     if (isAnimating) return;
@@ -47,11 +47,14 @@ export default function FilterEyeColor() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const infoText = isFemale ? "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters." : undefined;
+
   return (
     <FilterStepLayout 
       title="Select Eye Color"
       subtitle="Choose the eye color for your model"
       onBack={() => navigate('/filter/hair-color')}
+      infoText={infoText}
     >
       <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">
         {eyeColorOptions.map((option, index) => (
