@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
 // Female hair color images
@@ -16,17 +16,40 @@ import femalePurple from '@/assets/hair-colors/female-purple.png';
 import femaleGreen from '@/assets/hair-colors/female-green.png';
 import femalePlatinum from '@/assets/hair-colors/female-platinum.png';
 
-const hairColorOptions = [
-  { id: 'Black', label: 'Black', color: '#1C1C1C', femaleImage: femaleBlack },
-  { id: 'White', label: 'White', color: '#F5F5F5', femaleImage: femaleWhite },
-  { id: 'Brown', label: 'Brown', color: '#6A4E42', femaleImage: femaleBrown },
-  { id: 'Red', label: 'Red', color: '#922B21', femaleImage: femaleRed },
-  { id: 'Blonde', label: 'Blonde', color: '#E8D5B5', femaleImage: femaleBlonde },
-  { id: 'Dark Blonde', label: 'Dark Blonde', color: '#B89B72', femaleImage: femaleDarkBlonde },
-  { id: 'Blue', label: 'Blue', color: '#4A90D9', femaleImage: femaleBlue },
-  { id: 'Purple', label: 'Purple', color: '#7B4B8A', femaleImage: femalePurple },
-  { id: 'Green', label: 'Green', color: '#4A7C59', femaleImage: femaleGreen },
-  { id: 'Platinum', label: 'Platinum', color: '#E5E4E2', femaleImage: femalePlatinum },
+// Male hair color images
+import maleBlack from '@/assets/hair-colors/male-black.png';
+import maleWhite from '@/assets/hair-colors/male-white.png';
+import maleBrown from '@/assets/hair-colors/male-brown.png';
+import maleRed from '@/assets/hair-colors/male-red.png';
+import maleBlonde from '@/assets/hair-colors/male-blonde.png';
+import maleDarkBlonde from '@/assets/hair-colors/male-dark-blonde.png';
+import maleBlue from '@/assets/hair-colors/male-blue.png';
+import malePurple from '@/assets/hair-colors/male-purple.png';
+import maleGreen from '@/assets/hair-colors/male-green.png';
+
+const femaleHairColorOptions = [
+  { id: 'Black', label: 'Black', color: '#1C1C1C', image: femaleBlack },
+  { id: 'White', label: 'White', color: '#F5F5F5', image: femaleWhite },
+  { id: 'Brown', label: 'Brown', color: '#6A4E42', image: femaleBrown },
+  { id: 'Red', label: 'Red', color: '#922B21', image: femaleRed },
+  { id: 'Blonde', label: 'Blonde', color: '#E8D5B5', image: femaleBlonde },
+  { id: 'Dark Blonde', label: 'Dark Blonde', color: '#B89B72', image: femaleDarkBlonde },
+  { id: 'Blue', label: 'Blue', color: '#4A90D9', image: femaleBlue },
+  { id: 'Purple', label: 'Purple', color: '#7B4B8A', image: femalePurple },
+  { id: 'Green', label: 'Green', color: '#4A7C59', image: femaleGreen },
+  { id: 'Platinum', label: 'Platinum', color: '#E5E4E2', image: femalePlatinum },
+];
+
+const maleHairColorOptions = [
+  { id: 'Black', label: 'Black', color: '#1C1C1C', image: maleBlack },
+  { id: 'White', label: 'White', color: '#F5F5F5', image: maleWhite },
+  { id: 'Brown', label: 'Brown', color: '#6A4E42', image: maleBrown },
+  { id: 'Red', label: 'Red', color: '#922B21', image: maleRed },
+  { id: 'Blonde', label: 'Blonde', color: '#E8D5B5', image: maleBlonde },
+  { id: 'Dark Blonde', label: 'Dark Blonde', color: '#B89B72', image: maleDarkBlonde },
+  { id: 'Blue', label: 'Blue', color: '#4A90D9', image: maleBlue },
+  { id: 'Purple', label: 'Purple', color: '#7B4B8A', image: malePurple },
+  { id: 'Green', label: 'Green', color: '#4A7C59', image: maleGreen },
 ];
 
 export default function FilterHairColor() {
@@ -36,6 +59,11 @@ export default function FilterHairColor() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const isFemale = config.gender === 'Female';
+
+  // Select hair color options based on gender
+  const hairColorOptions = useMemo(() => {
+    return isFemale ? femaleHairColorOptions : maleHairColorOptions;
+  }, [isFemale]);
 
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 5 : 4);
@@ -53,7 +81,7 @@ export default function FilterHairColor() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
-  const infoText = isFemale ? "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters." : undefined;
+  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
     <FilterStepLayout 
@@ -85,11 +113,11 @@ export default function FilterHairColor() {
             }}
             tabIndex={-1}
           >
-            {/* Background Image or Color Swatch */}
-            {isFemale && option.femaleImage ? (
+            {/* Background Image */}
+            {option.image && (
               <div className="absolute inset-0">
                 <img 
-                  src={option.femaleImage} 
+                  src={option.image} 
                   alt={option.label}
                   className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
                 />
@@ -98,21 +126,11 @@ export default function FilterHairColor() {
                 {/* Hover glow effect */}
                 <div className="absolute inset-0 bg-violet-500/0 group-hover:bg-violet-500/10 transition-colors duration-500" />
               </div>
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div 
-                  className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white/30 shadow-lg transition-transform duration-300 group-hover:scale-110"
-                  style={{ backgroundColor: option.color }}
-                />
-              </div>
             )}
             
             {/* Label with enhanced styling */}
             <div className="relative z-10 text-center pb-5 px-3 w-full">
-              <p className={cn(
-                "font-bold text-lg md:text-xl tracking-wide",
-                isFemale ? "text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" : "text-foreground"
-              )}>
+              <p className="font-bold text-lg md:text-xl text-white tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                 {option.label}
               </p>
             </div>
