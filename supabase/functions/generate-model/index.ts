@@ -34,23 +34,38 @@ serve(async (req) => {
       usePro
     });
 
-    // Use Lovable API for all generations - different models for standard vs pro
-    const apiKey = Deno.env.get('LOVABLE_API_KEY');
+    // Choose API key and model based on Pro mode
+    let apiKey: string | undefined;
+    let model: string;
     const apiEndpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
-    
-    // Choose model based on Pro mode
-    const model = usePro 
-      ? "google/gemini-2.5-flash-image-preview"  // Pro uses same model with enhanced prompts
-      : "google/gemini-2.5-flash-image-preview"; // Standard model
-    
-    if (!apiKey) {
-      console.error('LOVABLE_API_KEY is not configured');
-      return new Response(
-        JSON.stringify({ error: 'AI API key not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+
+    if (usePro) {
+      // Use dedicated Pro API key for Pro generations
+      apiKey = Deno.env.get('NANO_BANANA_PRO_API_KEY');
+      model = "google/gemini-2.5-flash-image-preview"; // Pro model with enhanced prompts
+      
+      if (!apiKey) {
+        console.error('NANO_BANANA_PRO_API_KEY is not configured');
+        return new Response(
+          JSON.stringify({ error: 'Pro API key not configured' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log('Using Pro API key for enhanced quality generation');
+    } else {
+      // Use Lovable API for standard generations
+      apiKey = Deno.env.get('LOVABLE_API_KEY');
+      model = "google/gemini-2.5-flash-image-preview"; // Standard model
+      
+      if (!apiKey) {
+        console.error('LOVABLE_API_KEY is not configured');
+        return new Response(
+          JSON.stringify({ error: 'AI API key not configured' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log('Using Lovable API for standard generation');
     }
-    console.log(`Using Lovable API with ${usePro ? 'Pro' : 'Standard'} quality settings`);
 
     // Build the prompt for the AI model
     const prompt = buildPrompt(config, referenceImages, usePro);
