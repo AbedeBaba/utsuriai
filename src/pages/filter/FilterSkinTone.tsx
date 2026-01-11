@@ -107,10 +107,11 @@ const BrushStrokePattern = ({ color, darkColor, seed }: { color: string; darkCol
 
 export default function FilterSkinTone() {
   const navigate = useNavigate();
-  const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
   const { t } = useLanguage();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [hoverDisabled, setHoverDisabled] = useState(false);
 
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 4 : 3);
@@ -121,6 +122,7 @@ export default function FilterSkinTone() {
     
     setIsAnimating(true);
     setSelectedId(skinTone);
+    setHoverDisabled(true);
     updateConfig('skinTone', skinTone);
 
     setTimeout(() => {
@@ -134,9 +136,21 @@ export default function FilterSkinTone() {
   }, [isAnimating, navigate, updateConfig, config.modestOption]);
 
   const handleRandomSingle = useCallback(() => {
+    if (isAnimating) return;
+    
     const randomSkinTone = skinToneOptions[Math.floor(Math.random() * skinToneOptions.length)];
+    setIsAnimating(true);
+    setSelectedId(randomSkinTone.id);
+    setHoverDisabled(true);
     updateConfig('skinTone', randomSkinTone.id);
-  }, [updateConfig]);
+
+    setTimeout(() => {
+      const nextPath = getNextStepPath('skinTone');
+      if (nextPath) {
+        navigate(nextPath);
+      }
+    }, 800);
+  }, [isAnimating, updateConfig, navigate, getNextStepPath]);
 
   return (
     <FilterStepLayout 
@@ -147,7 +161,10 @@ export default function FilterSkinTone() {
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
-      <div className="grid grid-cols-3 gap-4 md:gap-6 relative max-w-2xl mx-auto">
+      <div className={cn(
+        "grid grid-cols-3 gap-4 md:gap-6 relative max-w-2xl mx-auto",
+        hoverDisabled && "pointer-events-none"
+      )}>
         {skinToneOptions.map((option, index) => (
           <div
             key={option.id}
@@ -157,10 +174,10 @@ export default function FilterSkinTone() {
               "h-[130px] sm:h-[150px] md:h-[170px]",
               "transition-all duration-500 ease-out",
               "bg-black/30 backdrop-blur-sm",
-              "border border-white/20 hover:border-violet-400/50",
-              "shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_12px_32px_rgba(139,92,246,0.3)]",
-              "hover:scale-[1.04] hover:-translate-y-1",
+              "border border-white/20",
+              "shadow-[0_4px_20px_rgba(0,0,0,0.25)]",
               "outline-none ring-0",
+              !hoverDisabled && "hover:border-violet-400/50 hover:shadow-[0_12px_32px_rgba(139,92,246,0.3)] hover:scale-[1.04] hover:-translate-y-1",
               config.skinTone === option.id && "border-violet-400 ring-2 ring-violet-400/40 shadow-[0_0_24px_rgba(139,92,246,0.35)]",
               selectedId === option.id && isAnimating && "scale-[1.02] z-10 shadow-[0_0_30px_rgba(139,92,246,0.5)]",
               isAnimating && selectedId !== option.id && "opacity-30 scale-[0.98]"
@@ -169,7 +186,10 @@ export default function FilterSkinTone() {
             tabIndex={-1}
           >
             {/* Horizontal brush stroke background */}
-            <div className="absolute inset-0 opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+            <div className={cn(
+              "absolute inset-0 opacity-90 transition-opacity duration-300",
+              !hoverDisabled && "group-hover:opacity-100"
+            )}>
               <BrushStrokePattern color={option.color} darkColor={option.darkColor} seed={index * 7 + 13} />
             </div>
             
