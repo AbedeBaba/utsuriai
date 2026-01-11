@@ -42,7 +42,7 @@ export default function ClothingSelection() {
   const { user } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { subscription, hasProAccess, loading: subscriptionLoading } = useSubscription();
+  const { subscription, hasProAccess, canUseProGeneration, loading: subscriptionLoading } = useSubscription();
   const [loading, setLoading] = useState(false);
   const [proLoading, setProLoading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
@@ -110,10 +110,10 @@ export default function ClothingSelection() {
     }
 
     // Check subscription for Pro access
-    if (usePro && !hasProAccess) {
+    if (usePro && !canUseProGeneration) {
       toast({
-        title: 'Pro access required',
-        description: 'Upgrade to Starter, Pro, or Creator plan to use Utsuri Pro quality.',
+        title: 'Pro generations exhausted',
+        description: 'You have used all your Pro generations. Upgrade your plan for unlimited Pro access.',
         variant: 'destructive',
       });
       return;
@@ -261,8 +261,8 @@ export default function ClothingSelection() {
               )}
             </Button>
 
-            {/* Pro Generate Button - Only show for paid plans */}
-            {hasProAccess && (
+            {/* Pro Generate Button - Show for paid plans and Trial users with remaining pro generations */}
+            {canUseProGeneration && (
               <Button
                 onClick={() => handleGenerate(true)}
                 disabled={loading || proLoading}
@@ -278,6 +278,11 @@ export default function ClothingSelection() {
                   <>
                     <Crown className="mr-2 h-5 w-5" />
                     Generate Model With Utsuri Pro
+                    {subscription?.plan === 'trial' && (
+                      <span className="ml-2 text-sm opacity-80">
+                        ({subscription.pro_generations_remaining} left)
+                      </span>
+                    )}
                   </>
                 )}
               </Button>

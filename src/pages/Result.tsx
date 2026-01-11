@@ -89,6 +89,7 @@ export default function Result() {
       const { data: result, error } = await supabase.functions.invoke('generate-model', {
         body: {
           generationId: data.id,
+          userId: user?.id, // Pass user ID for trial pro generation tracking
           config: {
             gender: data.gender,
             ethnicity: data.ethnicity,
