@@ -22,8 +22,13 @@ import howItWorks2 from '@/assets/how-it-works-2.jpg';
 import howItWorks3 from '@/assets/how-it-works-3.jpg';
 export default function Landing() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
-  const { t } = useLanguage();
+  const {
+    user,
+    loading
+  } = useAuth();
+  const {
+    t
+  } = useLanguage();
   const handleStart = () => {
     if (user) {
       navigate('/filter/gender');
@@ -222,10 +227,7 @@ export default function Landing() {
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               How <span className="italic text-primary">Utsuri</span> Works
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              No creative skills required - just a few clicks and you've got realistic stunning photos.
-              Experience the magic of AI-powered fashion photography today.
-            </p>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Create Fashion Models Without a Studio - Upload your product, choose a model, and get realistic AI fashion photos in minutes.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -235,16 +237,16 @@ export default function Landing() {
                 1
               </div>
               <div className="relative border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden min-h-[320px]">
-                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${howItWorks1})` }} />
+                <div className="absolute inset-0 bg-cover bg-center" style={{
+                backgroundImage: `url(${howItWorks1})`
+              }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
                 <div className="relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
                     <Upload className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-3">Upload</h3>
-                  <p className="text-white/80">
-                    Upload images of your clothing, accessories, or jewelry from any angle.
-                  </p>
+                  <p className="text-white/80">Upload your product photos in seconds.</p>
                 </div>
               </div>
             </div>
@@ -255,16 +257,16 @@ export default function Landing() {
                 2
               </div>
               <div className="relative border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden min-h-[320px]">
-                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${howItWorks2})` }} />
+                <div className="absolute inset-0 bg-cover bg-center" style={{
+                backgroundImage: `url(${howItWorks2})`
+              }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
                 <div className="relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
                     <Wand2 className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-3">Transform</h3>
-                  <p className="text-white/80">
-                    Select model characteristics - ethnicity, body type, hair, and more.
-                  </p>
+                  <p className="text-white/80">Choose model, pose & environment with AI.</p>
                 </div>
               </div>
             </div>
@@ -275,16 +277,16 @@ export default function Landing() {
                 3
               </div>
               <div className="relative border border-border rounded-2xl p-8 pt-12 h-full transition-all duration-300 hover:shadow-lg hover:border-primary/30 overflow-hidden min-h-[320px]">
-                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${howItWorks3})` }} />
+                <div className="absolute inset-0 bg-cover bg-center" style={{
+                backgroundImage: `url(${howItWorks3})`
+              }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
                 <div className="relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6">
                     <Download className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-3">Download</h3>
-                  <p className="text-white/80">
-                    Get your professional AI-generated fashion photos ready for any platform.
-                  </p>
+                  <p className="text-white/80">Get studio-quality images instantly.</p>
                 </div>
               </div>
             </div>
