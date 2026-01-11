@@ -1,3 +1,4 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 
@@ -6,7 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const NANO_BANANA_API_BASE = 'https://api.meshy.ai';
+const LOVABLE_AI_GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -38,87 +39,88 @@ serve(async (req) => {
 
     // Build the prompt for the AI model
     const prompt = buildPrompt(config, referenceImages, usePro);
-    console.log('Generated prompt:', prompt);
+    console.log('Generated prompt:', prompt.substring(0, 500) + '...');
 
-    // Select API key based on quality mode
-    // Standard Utsuri uses NANO_BANANA_API_KEY
-    // Utsuri Pro uses NANO_BANANA_PRO_API_KEY
-    const apiKey = usePro 
-      ? Deno.env.get('NANO_BANANA_PRO_API_KEY') 
-      : Deno.env.get('NANO_BANANA_API_KEY');
+    // Get the Gemini API key
+    const apiKey = Deno.env.get('GEMINI_API_KEY');
     
     if (!apiKey) {
-      const keyName = usePro ? 'NANO_BANANA_PRO_API_KEY' : 'NANO_BANANA_API_KEY';
-      console.error(`${keyName} is not configured`);
+      console.error('GEMINI_API_KEY is not configured');
       return new Response(
         JSON.stringify({ error: 'AI API key not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    
-    // Select quality mode for NanoBanana API
-    const quality = usePro ? 'pro' : 'standard';
-    console.log(`Using NanoBanana API with quality: ${quality}`);
 
-    // Prepare image URLs from base64 data URLs
-    const imageUrls: string[] = [];
+    // Select model based on quality mode
+    // Standard uses gemini-2.5-flash-image-preview
+    // Pro uses gemini-3-pro-image-preview
+    const model = usePro 
+      ? 'google/gemini-3-pro-image-preview' 
+      : 'google/gemini-2.5-flash-image-preview';
+    
+    console.log(`Using Gemini model: ${model}`);
+
+    // Build message content - text prompt + reference images
+    const messageContent: any[] = [
+      {
+        type: 'text',
+        text: prompt
+      }
+    ];
+
+    // Add reference images to the message if provided
     if (referenceImages && referenceImages.length > 0) {
       referenceImages.forEach((img, index) => {
-        // NanoBanana API accepts data URLs directly
-        imageUrls.push(img.data);
+        // Check if the data is already a data URL or raw base64
+        const imageUrl = img.data.startsWith('data:') 
+          ? img.data 
+          : `data:image/jpeg;base64,${img.data}`;
+        
+        messageContent.push({
+          type: 'image_url',
+          image_url: {
+            url: imageUrl
+          }
+        });
         console.log(`Added reference image ${index + 1} (type: ${img.type})`);
       });
     }
 
-    // Step 1: Create generation task - use image-to-image endpoint when reference images exist
-    const hasReferenceImages = imageUrls.length > 0;
-    const endpoint = hasReferenceImages 
-      ? `${NANO_BANANA_API_BASE}/openapi/v1/image-to-image`
-      : `${NANO_BANANA_API_BASE}/openapi/v1/text-to-image`;
-    
-    // Build request body based on endpoint
-    const requestBody: any = {
-      ai_model: usePro ? 'nano-banana-pro' : 'nano-banana',
-      prompt: prompt,
-    };
-    
-    if (hasReferenceImages) {
-      requestBody.reference_image_urls = imageUrls;
-    }
-
-    console.log(`Using endpoint: ${endpoint}`);
-    
-    const createTaskResponse = await fetch(endpoint, {
-      method: "POST",
+    // Call the Lovable AI Gateway with Gemini model
+    const response = await fetch(LOVABLE_AI_GATEWAY, {
+      method: 'POST',
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        model: model,
+        messages: [
+          {
+            role: 'user',
+            content: messageContent
+          }
+        ],
+        modalities: ['image', 'text']
+      }),
     });
 
-    if (!createTaskResponse.ok) {
-      const errorText = await createTaskResponse.text();
-      console.error('NanoBanana API error:', createTaskResponse.status, errorText);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Lovable AI Gateway error:', response.status, errorText);
       
-      if (createTaskResponse.status === 429) {
+      if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
-      if (createTaskResponse.status === 401 || createTaskResponse.status === 403) {
+      if (response.status === 401 || response.status === 403) {
         return new Response(
-          JSON.stringify({ error: 'Invalid API key. Please check your NanoBanana API key.' }),
+          JSON.stringify({ error: 'Invalid API key. Please check your Gemini API key.' }),
           { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      if (createTaskResponse.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'Insufficient credits. Please add credits to your NanoBanana account.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
@@ -128,68 +130,16 @@ serve(async (req) => {
       );
     }
 
-    const taskData = await createTaskResponse.json();
-    // NanoBanana returns task id in "result" field
-    const taskId = taskData.result || taskData.task_id;
-    console.log('NanoBanana task created:', taskId);
+    const data = await response.json();
+    console.log('Gemini API response received');
 
-    if (!taskId) {
-      console.error('No task_id in response:', taskData);
-      return new Response(
-        JSON.stringify({ error: 'Failed to create generation task' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Step 2: Poll for task completion
-    let generatedImageUrl: string | undefined;
-    const maxAttempts = 60; // Max 2 minutes of polling (60 * 2 seconds)
-    const pollInterval = 2000; // 2 seconds
-    
-    // Use the same endpoint type for polling
-    const pollEndpoint = hasReferenceImages 
-      ? `${NANO_BANANA_API_BASE}/openapi/v1/image-to-image/${taskId}`
-      : `${NANO_BANANA_API_BASE}/openapi/v1/text-to-image/${taskId}`;
-
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      await new Promise(resolve => setTimeout(resolve, pollInterval));
-      
-      const taskStatusResponse = await fetch(pollEndpoint, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-        },
-      });
-
-      if (!taskStatusResponse.ok) {
-        console.error('Error checking task status:', taskStatusResponse.status);
-        continue;
-      }
-
-      const taskStatus = await taskStatusResponse.json();
-      console.log(`Task ${taskId} status:`, taskStatus.status);
-
-      if (taskStatus.status === 'SUCCEEDED') {
-        // Get the generated image URL from the result - NanoBanana uses output_urls
-        if (taskStatus.output_urls && taskStatus.output_urls.length > 0) {
-          generatedImageUrl = taskStatus.output_urls[0];
-          console.log('Image generation completed successfully');
-        }
-        break;
-      } else if (taskStatus.status === 'FAILED' || taskStatus.status === 'EXPIRED') {
-        console.error('Task failed:', taskStatus);
-        return new Response(
-          JSON.stringify({ error: 'Image generation failed', details: taskStatus.error || 'Unknown error' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      // Status is 'pending' or 'processing', continue polling
-    }
+    // Extract the generated image from the response
+    const generatedImageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
 
     if (!generatedImageUrl) {
-      console.error('No image URL after polling completed');
+      console.error('No image in response:', JSON.stringify(data).substring(0, 500));
       return new Response(
-        JSON.stringify({ error: 'Image generation timed out or failed' }),
+        JSON.stringify({ error: 'Image generation failed - no image returned' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
