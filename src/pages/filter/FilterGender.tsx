@@ -149,7 +149,8 @@ export default function FilterGender() {
                     "bg-gradient-to-b from-white/[0.18] to-white/[0.10] backdrop-blur-xl",
                     "border border-white/30 hover:border-violet-300/50",
                     "shadow-[0_4px_24px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(139,92,246,0.15)]",
-                    "focus:outline-none active:outline-none",
+                    "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0",
+                    "ring-0 outline-none",
                     config.gender === option.id && "border-violet-400/70 bg-gradient-to-b from-violet-500/20 to-violet-600/10",
                     isAnimating && selectedId === option.id && "scale-105",
                     isAnimating && selectedId !== option.id && "opacity-30 scale-95"
@@ -165,9 +166,9 @@ export default function FilterGender() {
                   
                   {/* Top highlight reflection */}
                   <div className={cn(
-                    "absolute top-0 left-4 right-4 h-[1px] rounded-full transition-all duration-500",
-                    "bg-gradient-to-r from-transparent via-white/30 to-transparent",
-                    "group-hover:via-violet-300/50 group-hover:shadow-[0_0_12px_rgba(167,139,250,0.4)]"
+                    "absolute top-0 left-4 right-4 h-[1px] rounded-full transition-all duration-500 pointer-events-none",
+                    "bg-gradient-to-r from-transparent via-white/20 to-transparent",
+                    "group-hover:via-violet-300/40"
                   )} />
                   
                   {/* Inner surface highlight */}

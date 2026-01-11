@@ -442,7 +442,25 @@
 
 .gender-card:focus,
 .gender-card:active,
-.gender-card:focus-visible {
+.gender-card:focus-visible,
+.gender-card:focus-within {
   outline: none !important;
-  box-shadow: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-color: transparent !important;
+}
+
+/* Global removal of focus rings on all interactive elements */
+*:focus,
+*:focus-visible {
+  outline: none !important;
+}
+
+div:focus,
+div:focus-visible,
+div:active {
+  outline: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
 }
