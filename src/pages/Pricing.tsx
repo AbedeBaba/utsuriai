@@ -144,9 +144,9 @@ const Pricing = () => {
             onClick={() => navigate("/dashboard")}
             className="text-gray-300 hover:text-white hover:bg-white/10"
           >
-            {t('nav.dashboard')}
+            Dashboard
           </Button>
-          <LanguageSwitcher />
+          <LanguageSwitcher className="text-white" />
         </div>
 
         {/* Header */}
