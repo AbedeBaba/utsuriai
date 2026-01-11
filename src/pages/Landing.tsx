@@ -162,7 +162,7 @@ export default function Landing() {
                 {/* Model Image */}
                 <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
-                    <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/8ddcbf82-c9e2-4152-a3d7-c569be0b9c8b.jpg" />
+                    <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/5212774f-8c09-42bf-b019-8f7f544f3c3b.png" />
                     {/* Decorative badge */}
                     <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/90 backdrop-blur-sm text-xs">
                       <Sparkles className="w-3 h-3 text-primary" />
