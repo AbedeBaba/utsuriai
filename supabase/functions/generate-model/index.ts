@@ -6,6 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const NANO_BANANA_API_BASE = 'https://api.nanobananaapi.ai';
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -38,79 +40,72 @@ serve(async (req) => {
     const prompt = buildPrompt(config, referenceImages, usePro);
     console.log('Generated prompt:', prompt);
 
-    let generatedImageUrl: string | undefined;
-
-    // Use Google AI API directly with NANO_BANANA_PRO_API_KEY
-    const apiKey = Deno.env.get('NANO_BANANA_PRO_API_KEY');
+    // Select API key based on quality mode
+    // Standard Utsuri uses NANO_BANANA_API_KEY
+    // Utsuri Pro uses NANO_BANANA_PRO_API_KEY
+    const apiKey = usePro 
+      ? Deno.env.get('NANO_BANANA_PRO_API_KEY') 
+      : Deno.env.get('NANO_BANANA_API_KEY');
     
     if (!apiKey) {
-      console.error('NANO_BANANA_PRO_API_KEY is not configured');
+      const keyName = usePro ? 'NANO_BANANA_PRO_API_KEY' : 'NANO_BANANA_API_KEY';
+      console.error(`${keyName} is not configured`);
       return new Response(
         JSON.stringify({ error: 'AI API key not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
     
-    // Select model based on quality mode
-    const model = usePro 
-      ? "gemini-2.0-flash-exp-image-generation"  // Premium model for Pro
-      : "gemini-2.0-flash-exp-image-generation";  // Standard model (same for now, can differentiate later)
-    
-    const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    
-    console.log(`Using Google AI API with model: ${model}`);
+    // Select quality mode for NanoBanana API
+    const quality = usePro ? 'pro' : 'standard';
+    console.log(`Using NanoBanana API with quality: ${quality}`);
 
-    // Build content parts for Google AI API format
-    const parts: any[] = [{ text: prompt }];
-    
+    // Prepare image URLs from base64 data URLs
+    const imageUrls: string[] = [];
     if (referenceImages && referenceImages.length > 0) {
       referenceImages.forEach((img, index) => {
-        // Extract base64 data and mime type from data URL
-        const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
-        if (matches) {
-          parts.push({
-            inline_data: {
-              mime_type: matches[1],
-              data: matches[2]
-            }
-          });
-          console.log(`Added reference image ${index + 1} (type: ${img.type})`);
-        }
+        // NanoBanana API accepts data URLs directly
+        imageUrls.push(img.data);
+        console.log(`Added reference image ${index + 1} (type: ${img.type})`);
       });
     }
 
-    const requestBody = {
-      contents: [{
-        parts: parts
-      }],
-      generationConfig: {
-        responseModalities: ["TEXT", "IMAGE"]
-      }
-    };
-
-    const aiResponse = await fetch(apiEndpoint, {
+    // Step 1: Create generation task
+    const createTaskResponse = await fetch(`${NANO_BANANA_API_BASE}/api/v1/nanobanana/generate-or-edit`, {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        prompt: prompt,
+        image_urls: imageUrls.length > 0 ? imageUrls : undefined,
+        quality: quality,
+      }),
     });
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error('Google AI API error:', aiResponse.status, errorText);
+    if (!createTaskResponse.ok) {
+      const errorText = await createTaskResponse.text();
+      console.error('NanoBanana API error:', createTaskResponse.status, errorText);
       
-      if (aiResponse.status === 429) {
+      if (createTaskResponse.status === 429) {
         return new Response(
           JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
-      if (aiResponse.status === 401 || aiResponse.status === 403) {
+      if (createTaskResponse.status === 401 || createTaskResponse.status === 403) {
         return new Response(
-          JSON.stringify({ error: 'Invalid API key. Please check your Google AI API key.' }),
+          JSON.stringify({ error: 'Invalid API key. Please check your NanoBanana API key.' }),
           { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      if (createTaskResponse.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'Insufficient credits. Please add credits to your NanoBanana account.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
@@ -120,25 +115,62 @@ serve(async (req) => {
       );
     }
 
-    const aiData = await aiResponse.json();
-    console.log('Google AI response received');
+    const taskData = await createTaskResponse.json();
+    const taskId = taskData.task_id;
+    console.log('NanoBanana task created:', taskId);
 
-    // Extract the generated image from Google AI response format
-    const candidates = aiData.candidates;
-    if (candidates && candidates[0]?.content?.parts) {
-      for (const part of candidates[0].content.parts) {
-        if (part.inlineData) {
-          generatedImageUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-          break;
-        }
-      }
+    if (!taskId) {
+      console.error('No task_id in response:', taskData);
+      return new Response(
+        JSON.stringify({ error: 'Failed to create generation task' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    
+    // Step 2: Poll for task completion
+    let generatedImageUrl: string | undefined;
+    const maxAttempts = 60; // Max 2 minutes of polling (60 * 2 seconds)
+    const pollInterval = 2000; // 2 seconds
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      await new Promise(resolve => setTimeout(resolve, pollInterval));
+      
+      const taskStatusResponse = await fetch(`${NANO_BANANA_API_BASE}/api/v1/nanobanana/task/${taskId}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+        },
+      });
+
+      if (!taskStatusResponse.ok) {
+        console.error('Error checking task status:', taskStatusResponse.status);
+        continue;
+      }
+
+      const taskStatus = await taskStatusResponse.json();
+      console.log(`Task ${taskId} status:`, taskStatus.status);
+
+      if (taskStatus.status === 'completed') {
+        // Get the generated image URL from the result
+        if (taskStatus.result?.image_urls && taskStatus.result.image_urls.length > 0) {
+          generatedImageUrl = taskStatus.result.image_urls[0];
+          console.log('Image generation completed successfully');
+        }
+        break;
+      } else if (taskStatus.status === 'failed') {
+        console.error('Task failed:', taskStatus);
+        return new Response(
+          JSON.stringify({ error: 'Image generation failed', details: taskStatus.error || 'Unknown error' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      // Status is 'pending' or 'processing', continue polling
+    }
+
     if (!generatedImageUrl) {
-      console.error('No image in AI response');
+      console.error('No image URL after polling completed');
       return new Response(
-        JSON.stringify({ error: 'AI did not generate an image' }),
+        JSON.stringify({ error: 'Image generation timed out or failed' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
