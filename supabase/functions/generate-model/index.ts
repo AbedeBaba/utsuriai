@@ -9,36 +9,222 @@ const corsHeaders = {
 
 const LOVABLE_AI_GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
+// Allowed values for input validation
+const ALLOWED_VALUES = {
+  gender: ['Male', 'Female'],
+  ethnicity: ['Afro-American', 'Arabic', 'Asian', 'Australian', 'European', 'Indian', 'Italian', 'Latin', 'Local American', 'Russian', 'Scandinavian', 'Turkish'],
+  skinTone: ['Fair', 'Light', 'Medium', 'Olive', 'Tan', 'Brown', 'Dark Brown', 'Ebony'],
+  hairColor: ['Black', 'Brown', 'Blonde', 'Dark Blonde', 'Red', 'White', 'Platinum', 'Blue', 'Green', 'Purple'],
+  eyeColor: ['Brown', 'Blue', 'Green', 'Hazel', 'Grey', 'Amber', 'Black'],
+  bodyType: ['Slim', 'Athletic', 'Average', 'Curvy', 'Muscular', 'Petite', 'Tall', 'Plus Size', 'Hourglass'],
+  hairType: ['Straight', 'Wavy', 'Curly', 'Coily', 'Short', 'Long', 'Bald'],
+  beardType: ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard', 'Goatee', 'Mustache', 'Van Dyke', 'Circle Beard', 'Mutton Chops', null],
+  pose: ['Face Close-up', 'Standing', 'Sitting', 'Leaning', 'Arms Crossed', 'Back View', 'Low-Angle', 'Hands on Hips'],
+  background: ['Fashion White', 'City', 'Beach', 'Forest', 'Mountain', 'Cafe', 'Snowy', 'Underwater'],
+  faceType: ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'],
+  facialExpression: ['Neutral', 'Smile', 'Serious', 'Confident'],
+  modestOption: ['Standard', 'Hijab', null]
+};
+
+// Validate and sanitize a config value
+function sanitizeConfigValue(key: string, value: any): string | null {
+  if (value === null || value === undefined) return null;
+  
+  const strValue = String(value).slice(0, 50); // Max 50 chars
+  const allowedList = ALLOWED_VALUES[key as keyof typeof ALLOWED_VALUES];
+  
+  if (allowedList && !allowedList.includes(strValue) && strValue !== '') {
+    console.warn(`Invalid value for ${key}: ${strValue}`);
+    return null;
+  }
+  
+  return strValue;
+}
+
+// Sanitize entire config object
+function sanitizeConfig(config: any): Record<string, string | null> {
+  return {
+    gender: sanitizeConfigValue('gender', config?.gender),
+    ethnicity: sanitizeConfigValue('ethnicity', config?.ethnicity),
+    skinTone: sanitizeConfigValue('skinTone', config?.skinTone),
+    hairColor: sanitizeConfigValue('hairColor', config?.hairColor),
+    eyeColor: sanitizeConfigValue('eyeColor', config?.eyeColor),
+    bodyType: sanitizeConfigValue('bodyType', config?.bodyType),
+    hairType: sanitizeConfigValue('hairType', config?.hairType),
+    beardType: sanitizeConfigValue('beardType', config?.beardType),
+    pose: sanitizeConfigValue('pose', config?.pose),
+    background: sanitizeConfigValue('background', config?.background),
+    faceType: sanitizeConfigValue('faceType', config?.faceType),
+    facialExpression: sanitizeConfigValue('facialExpression', config?.facialExpression),
+    modestOption: sanitizeConfigValue('modestOption', config?.modestOption),
+  };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { generationId, config, referenceImage, usePro = false, userId } = await req.json();
+    // ==========================================
+    // AUTHENTICATION - Verify JWT token
+    // ==========================================
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     
-    // Parse reference images - could be JSON string of array or single base64 string
+    // Create client with user's JWT to verify identity
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+    
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    
+    if (userError || !user) {
+      console.error('Authentication error:', userError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const authenticatedUserId = user.id;
+    console.log('Authenticated user:', authenticatedUserId);
+
+    // ==========================================
+    // INPUT VALIDATION
+    // ==========================================
+    const { generationId, config, referenceImage, usePro = false } = await req.json();
+    
+    // Validate generationId
+    if (!generationId || typeof generationId !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid generationId' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Validate reference image size (max 10MB per image)
+    const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+    if (referenceImage && referenceImage.length > MAX_IMAGE_SIZE) {
+      return new Response(
+        JSON.stringify({ error: 'Reference image too large (max 10MB)' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Parse and validate reference images
     let referenceImages: { type: string; data: string }[] | null = null;
     
     if (referenceImage) {
       try {
-        // Try parsing as JSON array first
         referenceImages = JSON.parse(referenceImage);
+        
+        // Validate array length (max 10 images)
+        if (Array.isArray(referenceImages) && referenceImages.length > 10) {
+          return new Response(
+            JSON.stringify({ error: 'Too many reference images (max 10)' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
       } catch {
-        // If not JSON, treat as single base64 image
         referenceImages = [{ type: 'outfit', data: referenceImage }];
       }
     }
     
-    console.log('Generation request received:', { 
+    // Sanitize config values
+    const sanitizedConfig = sanitizeConfig(config);
+    
+    // Create service role client for database operations
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // ==========================================
+    // VERIFY GENERATION OWNERSHIP
+    // ==========================================
+    const { data: generation, error: genError } = await supabase
+      .from('model_generations')
+      .select('user_id')
+      .eq('id', generationId)
+      .single();
+    
+    if (genError || !generation) {
+      return new Response(
+        JSON.stringify({ error: 'Generation not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    if (generation.user_id !== authenticatedUserId) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized access to generation' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // ==========================================
+    // SERVER-SIDE SUBSCRIPTION VERIFICATION
+    // ==========================================
+    if (usePro) {
+      const { data: subscription, error: subError } = await supabase
+        .from('user_subscriptions')
+        .select('plan, pro_generations_remaining')
+        .eq('user_id', authenticatedUserId)
+        .single();
+      
+      if (subError) {
+        console.error('Subscription check error:', subError);
+        return new Response(
+          JSON.stringify({ error: 'Unable to verify subscription' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      // Check if user has Pro access
+      const hasProAccess = ['starter', 'pro', 'creator'].includes(subscription.plan);
+      const hasTrialPro = subscription.plan === 'trial' && subscription.pro_generations_remaining > 0;
+      
+      if (!hasProAccess && !hasTrialPro) {
+        return new Response(
+          JSON.stringify({ error: 'Pro access required. Please upgrade your plan or you have exhausted your trial Pro generations.' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      // Decrement trial pro generations BEFORE generation (prevent race conditions)
+      if (subscription.plan === 'trial') {
+        const { error: decrementError } = await supabase
+          .from('user_subscriptions')
+          .update({ 
+            pro_generations_remaining: subscription.pro_generations_remaining - 1 
+          })
+          .eq('user_id', authenticatedUserId);
+        
+        if (decrementError) {
+          console.error('Error decrementing pro generations:', decrementError);
+        } else {
+          console.log(`Pre-decremented pro_generations_remaining for trial user ${authenticatedUserId}. Remaining: ${subscription.pro_generations_remaining - 1}`);
+        }
+      }
+    }
+    
+    console.log('Generation request validated:', { 
       generationId, 
-      config, 
+      config: sanitizedConfig, 
       imageCount: referenceImages?.length || 0,
-      usePro
+      usePro,
+      userId: authenticatedUserId
     });
 
     // Build the prompt for the AI model
-    const prompt = buildPrompt(config, referenceImages, usePro);
+    const prompt = buildPrompt(sanitizedConfig, referenceImages, usePro);
     console.log('Generated prompt:', prompt.substring(0, 500) + '...');
 
     // Get the Lovable API key (automatically provided by Lovable Cloud)
@@ -53,8 +239,6 @@ serve(async (req) => {
     }
 
     // Select model based on quality mode
-    // Standard uses gemini-2.5-flash-image-preview
-    // Pro uses gemini-3-pro-image-preview
     const model = usePro 
       ? 'google/gemini-3-pro-image-preview' 
       : 'google/gemini-2.5-flash-image-preview';
@@ -72,7 +256,6 @@ serve(async (req) => {
     // Add reference images to the message if provided
     if (referenceImages && referenceImages.length > 0) {
       referenceImages.forEach((img, index) => {
-        // Check if the data is already a data URL or raw base64
         const imageUrl = img.data.startsWith('data:') 
           ? img.data 
           : `data:image/jpeg;base64,${img.data}`;
@@ -117,10 +300,17 @@ serve(async (req) => {
         );
       }
       
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'AI credits exhausted. Please add more credits.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
       if (response.status === 401 || response.status === 403) {
         return new Response(
-          JSON.stringify({ error: 'Invalid API key. Please check your Gemini API key.' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: 'AI service authentication error.' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
@@ -147,10 +337,6 @@ serve(async (req) => {
     console.log('Image generated successfully with', usePro ? 'Pro' : 'Standard', 'quality');
 
     // Update the database with the generated image
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
     const { error: updateError } = await supabase
       .from('model_generations')
       .update({ 
@@ -161,31 +347,6 @@ serve(async (req) => {
 
     if (updateError) {
       console.error('Database update error:', updateError);
-    }
-
-    // If this was a Pro generation and user is on trial plan, decrement their pro_generations_remaining
-    if (usePro && userId) {
-      // First, get the user's subscription to check if they're on trial
-      const { data: subscription, error: subError } = await supabase
-        .from('user_subscriptions')
-        .select('plan, pro_generations_remaining')
-        .eq('user_id', userId)
-        .single();
-
-      if (!subError && subscription?.plan === 'trial' && subscription.pro_generations_remaining > 0) {
-        const { error: decrementError } = await supabase
-          .from('user_subscriptions')
-          .update({ 
-            pro_generations_remaining: subscription.pro_generations_remaining - 1 
-          })
-          .eq('user_id', userId);
-
-        if (decrementError) {
-          console.error('Error decrementing pro generations:', decrementError);
-        } else {
-          console.log(`Decremented pro_generations_remaining for trial user ${userId}. Remaining: ${subscription.pro_generations_remaining - 1}`);
-        }
-      }
     }
 
     return new Response(
@@ -213,9 +374,6 @@ interface ReferenceImage {
 }
 
 function buildPrompt(config: any, referenceImages: ReferenceImage[] | null, usePro: boolean = false): string {
-  // =============================================
-  // STATIC BASE PROMPT (NEVER CHANGES)
-  // =============================================
   const qualityLevel = usePro 
     ? 'ULTRA-PREMIUM 16K QUALITY, magazine cover ready, award-winning fashion photography' 
     : 'Ultra-high resolution, 8K quality, professional fashion photography';
@@ -242,82 +400,26 @@ PHOTOREALISM REQUIREMENTS:
 ${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ultra-detailed fabric rendering with visible thread textures.\n- Professional color grading with rich, vibrant tones.' : ''}
 `.trim();
 
-  // =============================================
-  // DYNAMIC FILTER SECTION (USER SELECTIONS ONLY)
-  // =============================================
   const dynamicFilters: string[] = [];
   
-  // Model physical attributes
-  if (config.gender) {
-    dynamicFilters.push(`Model gender: ${config.gender}`);
-  }
-  
-  if (config.ethnicity) {
-    dynamicFilters.push(`Model ethnicity: ${config.ethnicity}`);
-  }
-  
-  if (config.skinTone) {
-    dynamicFilters.push(`Skin tone: ${config.skinTone}`);
-  }
-  
-  // Hair attributes
-  if (config.hairColor) {
-    dynamicFilters.push(`Hair color: ${config.hairColor}`);
-  }
-  
-  if (config.hairType) {
-    dynamicFilters.push(`Hair type/style: ${config.hairType}`);
-  }
-  
-  if (config.hairStyle) {
-    dynamicFilters.push(`Hair styling: ${config.hairStyle}`);
-  }
-  
-  // Eye color
-  if (config.eyeColor) {
-    dynamicFilters.push(`Eye color: ${config.eyeColor}`);
-  }
-  
-  // Face attributes
-  if (config.faceType) {
-    dynamicFilters.push(`Face shape: ${config.faceType}`);
-  }
-  
-  if (config.facialExpression) {
-    dynamicFilters.push(`Facial expression: ${config.facialExpression}`);
-  }
-  
-  // Beard (for male models)
-  if (config.beardType) {
-    dynamicFilters.push(`Facial hair: ${config.beardType}`);
-  }
-  
-  // Body type
-  if (config.bodyType) {
-    dynamicFilters.push(`Body type: ${config.bodyType}`);
-  }
-  
-  // Pose and framing
-  if (config.pose) {
-    dynamicFilters.push(`Model pose: ${config.pose}`);
-  }
-  
-  // Background
-  if (config.background) {
-    dynamicFilters.push(`Background setting: ${config.background}`);
-  }
-  
-  // Modest/coverage option
-  if (config.modestOption) {
-    dynamicFilters.push(`Coverage style: ${config.modestOption}`);
-  }
+  if (config.gender) dynamicFilters.push(`Model gender: ${config.gender}`);
+  if (config.ethnicity) dynamicFilters.push(`Model ethnicity: ${config.ethnicity}`);
+  if (config.skinTone) dynamicFilters.push(`Skin tone: ${config.skinTone}`);
+  if (config.hairColor) dynamicFilters.push(`Hair color: ${config.hairColor}`);
+  if (config.hairType) dynamicFilters.push(`Hair type/style: ${config.hairType}`);
+  if (config.eyeColor) dynamicFilters.push(`Eye color: ${config.eyeColor}`);
+  if (config.faceType) dynamicFilters.push(`Face shape: ${config.faceType}`);
+  if (config.facialExpression) dynamicFilters.push(`Facial expression: ${config.facialExpression}`);
+  if (config.beardType) dynamicFilters.push(`Facial hair: ${config.beardType}`);
+  if (config.bodyType) dynamicFilters.push(`Body type: ${config.bodyType}`);
+  if (config.pose) dynamicFilters.push(`Model pose: ${config.pose}`);
+  if (config.background) dynamicFilters.push(`Background setting: ${config.background}`);
+  if (config.modestOption) dynamicFilters.push(`Coverage style: ${config.modestOption}`);
 
-  // Build dynamic section
   const dynamicSection = dynamicFilters.length > 0 
     ? `\n\nMODEL ATTRIBUTES (Apply these characteristics to the model):\n${dynamicFilters.map(f => `- ${f}`).join('\n')}`
     : '';
 
-  // Reference image handling
   let referenceSection = '';
   if (referenceImages && referenceImages.length > 0) {
     const imageTypes = referenceImages.map(img => img.type);
@@ -339,7 +441,6 @@ The attached reference images contain ${referenceItems.join(', ')} that MUST be 
 - The model should be wearing/displaying these exact items as shown.`;
   }
 
-  // Combine static + dynamic + reference sections
   const fullPrompt = `${staticBasePrompt}${dynamicSection}${referenceSection}
 
 FINAL INSTRUCTION: Generate the image with the model wearing the EXACT clothing from the reference images (if provided), applying only the specified model attributes above. Never modify the clothing or outfit in any way.`;
