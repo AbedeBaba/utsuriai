@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -17,16 +17,26 @@ import femalePetite from '@/assets/body-types/female-petite.png';
 import femaleTall from '@/assets/body-types/female-tall.png';
 import femaleHourglass from '@/assets/body-types/female-hourglass.png';
 
-const bodyTypeOptions = [
-  { id: 'Slim', label: 'Slim', subtitle: 'Lean and slender', femaleImage: femaleSlim },
-  { id: 'Athletic', label: 'Athletic', subtitle: 'Toned and fit', femaleImage: femaleAthletic },
-  { id: 'Average', label: 'Average', subtitle: 'Balanced build', femaleImage: femaleAverage },
-  { id: 'Muscular', label: 'Muscular', subtitle: 'Strong and defined', femaleImage: femaleMuscular },
-  { id: 'Curvy', label: 'Curvy', subtitle: 'Full figured', femaleImage: femaleCurvy },
-  { id: 'Plus Size', label: 'Plus Size', subtitle: 'Full bodied', femaleImage: femalePlusSize },
-  { id: 'Petite', label: 'Petite', subtitle: 'Small and delicate', femaleImage: femalePetite },
-  { id: 'Tall', label: 'Tall', subtitle: 'Long and lean', femaleImage: femaleTall },
-  { id: 'Hourglass', label: 'Hourglass', subtitle: 'Balanced proportions', femaleImage: femaleHourglass },
+// Male body type images
+import maleSlim from '@/assets/body-types/male-slim.png';
+import maleAthletic from '@/assets/body-types/male-athletic.png';
+import maleAverage from '@/assets/body-types/male-average.png';
+import maleMuscular from '@/assets/body-types/male-muscular.png';
+import maleCurvy from '@/assets/body-types/male-curvy.png';
+import malePlusSize from '@/assets/body-types/male-plus-size.png';
+import malePetite from '@/assets/body-types/male-petite.png';
+import maleTall from '@/assets/body-types/male-tall.png';
+
+const allBodyTypeOptions = [
+  { id: 'Slim', label: 'Slim', subtitle: 'Lean and slender', femaleImage: femaleSlim, maleImage: maleSlim },
+  { id: 'Athletic', label: 'Athletic', subtitle: 'Toned and fit', femaleImage: femaleAthletic, maleImage: maleAthletic },
+  { id: 'Average', label: 'Average', subtitle: 'Balanced build', femaleImage: femaleAverage, maleImage: maleAverage },
+  { id: 'Muscular', label: 'Muscular', subtitle: 'Strong and defined', femaleImage: femaleMuscular, maleImage: maleMuscular },
+  { id: 'Curvy', label: 'Curvy', subtitle: 'Full figured', femaleImage: femaleCurvy, maleImage: maleCurvy },
+  { id: 'Plus Size', label: 'Plus Size', subtitle: 'Full bodied', femaleImage: femalePlusSize, maleImage: malePlusSize },
+  { id: 'Petite', label: 'Petite', subtitle: 'Small and delicate', femaleImage: femalePetite, maleImage: malePetite },
+  { id: 'Tall', label: 'Tall', subtitle: 'Long and lean', femaleImage: femaleTall, maleImage: maleTall },
+  { id: 'Hourglass', label: 'Hourglass', subtitle: 'Balanced proportions', femaleImage: femaleHourglass, maleImage: null, femaleOnly: true },
 ];
 
 export default function FilterBodyType() {
@@ -37,6 +47,14 @@ export default function FilterBodyType() {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const isFemale = config.gender === 'Female';
+
+  // Filter options based on gender - exclude Hourglass for males
+  const bodyTypeOptions = useMemo(() => {
+    if (isFemale) {
+      return allBodyTypeOptions;
+    }
+    return allBodyTypeOptions.filter(option => !option.femaleOnly);
+  }, [isFemale]);
 
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 7 : 6);
@@ -57,7 +75,7 @@ export default function FilterBodyType() {
         setIsTransitioning(false);
       }, 400);
     }
-  }, [activeIndex, isTransitioning]);
+  }, [activeIndex, isTransitioning, bodyTypeOptions.length]);
 
   const handlePrev = useCallback(() => {
     scrollToIndex(activeIndex - 1);
@@ -74,7 +92,7 @@ export default function FilterBodyType() {
     setTimeout(() => {
       navigate('/filter/hair-type');
     }, 300);
-  }, [activeIndex, navigate, updateConfig]);
+  }, [activeIndex, navigate, updateConfig, bodyTypeOptions]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -208,7 +226,7 @@ export default function FilterBodyType() {
           {bodyTypeOptions.map((option, index) => {
             const style = getCardStyle(index);
             const isActive = index === activeIndex;
-            const imageToShow = isFemale ? option.femaleImage : option.femaleImage; // Add male images later
+            const imageToShow = isFemale ? option.femaleImage : option.maleImage;
             
             return (
               <div
@@ -238,7 +256,7 @@ export default function FilterBodyType() {
                 >
                   {/* Image */}
                   <img
-                    src={imageToShow}
+                    src={imageToShow || ''}
                     alt={option.label}
                     className="w-full h-full object-cover object-top"
                   />
