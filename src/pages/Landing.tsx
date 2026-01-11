@@ -222,11 +222,13 @@ export default function Landing() {
                 1
               </div>
               <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
-                <div className="absolute top-6 left-6 w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                  <Wand2 className="w-7 h-7 text-primary" />
+                <div className="p-8 pt-10">
+                  <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
+                    <Wand2 className="w-7 h-7 text-primary" />
+                  </div>
                 </div>
                 <div className="flex-1" />
-                <div className="relative z-10 p-10 pt-0">
+                <div className="relative z-10 p-8 pt-0">
                   <h3 className="text-2xl font-bold text-foreground mb-3">Transform</h3>
                   <p className="text-muted-foreground text-base">Choose model, pose & environment with AI.</p>
                 </div>
@@ -239,11 +241,13 @@ export default function Landing() {
                 2
               </div>
               <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
-                <div className="absolute top-6 left-6 w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                  <Upload className="w-7 h-7 text-primary" />
+                <div className="p-8 pt-10">
+                  <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
+                    <Upload className="w-7 h-7 text-primary" />
+                  </div>
                 </div>
                 <div className="flex-1" />
-                <div className="relative z-10 p-10 pt-0">
+                <div className="relative z-10 p-8 pt-0">
                   <h3 className="text-2xl font-bold text-foreground mb-3">Upload</h3>
                   <p className="text-muted-foreground text-base">Upload your product photos in seconds.</p>
                 </div>
@@ -256,11 +260,13 @@ export default function Landing() {
                 3
               </div>
               <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
-                <div className="absolute top-6 left-6 w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                  <Download className="w-7 h-7 text-primary" />
+                <div className="p-8 pt-10">
+                  <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
+                    <Download className="w-7 h-7 text-primary" />
+                  </div>
                 </div>
                 <div className="flex-1" />
-                <div className="relative z-10 p-10 pt-0">
+                <div className="relative z-10 p-8 pt-0">
                   <h3 className="text-2xl font-bold text-foreground mb-3">Download</h3>
                   <p className="text-muted-foreground text-base">Get studio-quality images instantly.</p>
                 </div>
