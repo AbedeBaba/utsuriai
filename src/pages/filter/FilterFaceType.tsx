@@ -13,13 +13,21 @@ import femaleHeart from '@/assets/face-types/female-heart.png';
 import femaleOblong from '@/assets/face-types/female-oblong.png';
 import femaleDiamond from '@/assets/face-types/female-diamond.png';
 
+// Male face type images
+import maleOval from '@/assets/face-types/male-oval.png';
+import maleRound from '@/assets/face-types/male-round.png';
+import maleSquare from '@/assets/face-types/male-square.png';
+import maleHeart from '@/assets/face-types/male-heart.png';
+import maleOblong from '@/assets/face-types/male-oblong.png';
+import maleDiamond from '@/assets/face-types/male-diamond.png';
+
 const faceTypeOptions = [
-  { id: 'Oval', label: 'Oval', subtitle: 'Balanced proportions', icon: <Circle className="h-6 w-6" />, femaleImage: femaleOval },
-  { id: 'Round', label: 'Round', subtitle: 'Soft curves', icon: <Circle className="h-6 w-6" />, femaleImage: femaleRound },
-  { id: 'Square', label: 'Square', subtitle: 'Strong jawline', icon: <Square className="h-6 w-6" />, femaleImage: femaleSquare },
-  { id: 'Heart', label: 'Heart', subtitle: 'Pointed chin', icon: <Heart className="h-6 w-6" />, femaleImage: femaleHeart },
-  { id: 'Oblong', label: 'Oblong', subtitle: 'Elongated shape', icon: <Hexagon className="h-6 w-6" />, femaleImage: femaleOblong },
-  { id: 'Diamond', label: 'Diamond', subtitle: 'Angular features', icon: <Diamond className="h-6 w-6" />, femaleImage: femaleDiamond },
+  { id: 'Oval', label: 'Oval', subtitle: 'Balanced proportions', icon: <Circle className="h-6 w-6" />, femaleImage: femaleOval, maleImage: maleOval },
+  { id: 'Round', label: 'Round', subtitle: 'Soft curves', icon: <Circle className="h-6 w-6" />, femaleImage: femaleRound, maleImage: maleRound },
+  { id: 'Square', label: 'Square', subtitle: 'Strong jawline', icon: <Square className="h-6 w-6" />, femaleImage: femaleSquare, maleImage: maleSquare },
+  { id: 'Heart', label: 'Heart', subtitle: 'Pointed chin', icon: <Heart className="h-6 w-6" />, femaleImage: femaleHeart, maleImage: maleHeart },
+  { id: 'Oblong', label: 'Oblong', subtitle: 'Elongated shape', icon: <Hexagon className="h-6 w-6" />, femaleImage: femaleOblong, maleImage: maleOblong },
+  { id: 'Diamond', label: 'Diamond', subtitle: 'Angular features', icon: <Diamond className="h-6 w-6" />, femaleImage: femaleDiamond, maleImage: maleDiamond },
 ];
 
 export default function FilterFaceType() {
@@ -46,7 +54,7 @@ export default function FilterFaceType() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
-  const infoText = isFemale ? "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters." : undefined;
+  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
     <FilterStepLayout 
@@ -78,38 +86,24 @@ export default function FilterFaceType() {
             }}
             tabIndex={-1}
           >
-            {/* Background Image or Icon */}
-            {isFemale && option.femaleImage ? (
-              <div className="absolute inset-0">
-                <img 
-                  src={option.femaleImage} 
-                  alt={option.label}
-                  className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-                />
-                {/* Premium gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-violet-500/0 group-hover:bg-violet-500/10 transition-colors duration-500" />
-              </div>
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-primary text-4xl md:text-5xl transition-transform duration-300 group-hover:scale-110">
-                  {option.icon}
-                </div>
-              </div>
-            )}
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <img 
+                src={isFemale ? option.femaleImage : option.maleImage} 
+                alt={option.label}
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+              />
+              {/* Premium gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              {/* Hover glow effect */}
+              <div className="absolute inset-0 bg-violet-500/0 group-hover:bg-violet-500/10 transition-colors duration-500" />
+            </div>
             
             {/* Label with enhanced styling */}
             <div className="relative z-10 text-center pb-5 px-3 w-full">
-              <p className={cn(
-                "font-bold text-lg md:text-xl tracking-wide",
-                isFemale ? "text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" : "text-foreground"
-              )}>
+              <p className="font-bold text-lg md:text-xl tracking-wide text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                 {option.label}
               </p>
-              {!isFemale && option.subtitle && (
-                <p className="text-sm text-muted-foreground mt-1">{option.subtitle}</p>
-              )}
             </div>
 
             {/* Selection indicator */}
