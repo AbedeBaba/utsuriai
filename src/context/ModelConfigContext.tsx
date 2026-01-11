@@ -56,6 +56,7 @@ interface ModelConfigContextType {
   getVisibleSteps: () => FilterStep[];
   isStepCompleted: (stepId: string) => boolean;
   isStepRequired: (stepId: string) => boolean;
+  getNextStepPath: (currentStepId: string) => string | null;
 }
 
 const initialConfig: ModelConfig = {
@@ -105,6 +106,14 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
     const step = FILTER_STEPS.find(s => s.id === stepId);
     return step?.isCore ?? false;
   }, []);
+
+  // Get the next step path from current step
+  const getNextStepPath = useCallback((currentStepId: string): string | null => {
+    const visibleSteps = getVisibleSteps();
+    const currentIndex = visibleSteps.findIndex(s => s.id === currentStepId);
+    if (currentIndex === -1 || currentIndex >= visibleSteps.length - 1) return null;
+    return visibleSteps[currentIndex + 1].path;
+  }, [getVisibleSteps]);
 
   // Reset filters that come after the specified key
   const resetSubsequentFilters = useCallback((fromKey: keyof ModelConfig) => {
@@ -177,6 +186,7 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
       getVisibleSteps,
       isStepCompleted,
       isStepRequired,
+      getNextStepPath,
     }}>
       {children}
     </ModelConfigContext.Provider>

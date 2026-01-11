@@ -75,9 +75,10 @@ const modestOptions = ['Standard', 'Hijab'];
 
 export default function FilterEthnicity() {
   const navigate = useNavigate();
-  const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [hoverDisabled, setHoverDisabled] = useState(false);
 
   // Select ethnicity options based on gender
   const ethnicityOptions = useMemo(() => {
@@ -94,6 +95,7 @@ export default function FilterEthnicity() {
     
     setIsAnimating(true);
     setSelectedId(ethnicity);
+    setHoverDisabled(true);
     updateConfig('ethnicity', ethnicity);
 
     setTimeout(() => {
@@ -105,6 +107,7 @@ export default function FilterEthnicity() {
     if (isAnimating) return;
     
     setIsAnimating(true);
+    setHoverDisabled(true);
     
     // Randomly select all filters
     const randomEthnicity = ethnicityOptions[Math.floor(Math.random() * ethnicityOptions.length)].id;
@@ -140,9 +143,22 @@ export default function FilterEthnicity() {
   }, [isAnimating, navigate, updateConfig, ethnicityOptions]);
 
   const handleRandomSingle = useCallback(() => {
+    if (isAnimating) return;
+    
     const randomEthnicity = ethnicityOptions[Math.floor(Math.random() * ethnicityOptions.length)];
+    setIsAnimating(true);
+    setSelectedId(randomEthnicity.id);
+    setHoverDisabled(true);
     updateConfig('ethnicity', randomEthnicity.id);
-  }, [updateConfig, ethnicityOptions]);
+
+    // Navigate to next step after selection
+    setTimeout(() => {
+      const nextPath = getNextStepPath('ethnicity');
+      if (nextPath) {
+        navigate(nextPath);
+      }
+    }, 800);
+  }, [isAnimating, updateConfig, ethnicityOptions, navigate, getNextStepPath]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
@@ -155,7 +171,10 @@ export default function FilterEthnicity() {
       onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
-      <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">
+      <div className={cn(
+        "grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4",
+        hoverDisabled && "pointer-events-none"
+      )}>
         {ethnicityOptions.map((option, index) => (
           <div
             key={option.id}
@@ -165,10 +184,11 @@ export default function FilterEthnicity() {
               "h-[180px] sm:h-[220px] md:h-[260px] lg:h-[280px]",
               "transition-all duration-500 ease-out",
               "bg-gradient-to-b from-white/[0.08] to-white/[0.04] backdrop-blur-xl",
-              "border-2 border-white/20 hover:border-violet-400/60",
-              "shadow-[0_8px_32px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_60px_rgba(139,92,246,0.35)]",
-              "hover:scale-[1.03] hover:-translate-y-2",
+              "border-2 border-white/20",
+              "shadow-[0_8px_32px_rgba(0,0,0,0.25)]",
               "outline-none ring-0",
+              // Hover effects only when not disabled
+              !hoverDisabled && "hover:border-violet-400/60 hover:shadow-[0_20px_60px_rgba(139,92,246,0.35)] hover:scale-[1.03] hover:-translate-y-2",
               config.ethnicity === option.id && "border-violet-400 ring-4 ring-violet-400/40 shadow-[0_0_40px_rgba(139,92,246,0.4)]",
               selectedId === option.id && isAnimating && "scale-110 z-10",
               isAnimating && selectedId !== option.id && "opacity-20 scale-90 blur-[1px]"
@@ -184,12 +204,18 @@ export default function FilterEthnicity() {
                 <img 
                   src={option.image} 
                   alt={option.label}
-                  className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                  className={cn(
+                    "w-full h-full object-cover object-top transition-transform duration-700",
+                    !hoverDisabled && "group-hover:scale-110"
+                  )}
                 />
                 {/* Premium gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-violet-500/0 group-hover:bg-violet-500/10 transition-colors duration-500" />
+                <div className={cn(
+                  "absolute inset-0 bg-violet-500/0 transition-colors duration-500",
+                  !hoverDisabled && "group-hover:bg-violet-500/10"
+                )} />
               </div>
             )}
             
