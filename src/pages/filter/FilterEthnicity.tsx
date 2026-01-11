@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
-// Import ethnicity images
+// Import female ethnicity images
 import arabicImg from '@/assets/ethnicities/arabic.png';
 import turkishImg from '@/assets/ethnicities/turkish.png';
 import russianImg from '@/assets/ethnicities/russian.png';
@@ -18,7 +18,18 @@ import afroAmericanImg from '@/assets/ethnicities/afro-american.png';
 import italianImg from '@/assets/ethnicities/italian.png';
 import europeanImg from '@/assets/ethnicities/european.png';
 
-const ethnicityOptions = [
+// Import male ethnicity images
+import maleArabicImg from '@/assets/ethnicities/male-arabic.jpg';
+import maleTurkishImg from '@/assets/ethnicities/male-turkish.png';
+import maleRussianImg from '@/assets/ethnicities/male-russian.png';
+import maleAsianImg from '@/assets/ethnicities/male-asian.png';
+import maleLatinImg from '@/assets/ethnicities/male-latin.png';
+import maleAustralianImg from '@/assets/ethnicities/male-australian.png';
+import maleIndianImg from '@/assets/ethnicities/male-indian.png';
+import maleLocalAmericanImg from '@/assets/ethnicities/male-local-american.png';
+import maleAfroAmericanImg from '@/assets/ethnicities/male-afro-american.png';
+
+const femaleEthnicityOptions = [
   { id: 'Arabic', label: 'Arabic', image: arabicImg },
   { id: 'Turkish', label: 'Turkish', image: turkishImg },
   { id: 'Russian', label: 'Russian', image: russianImg },
@@ -29,6 +40,21 @@ const ethnicityOptions = [
   { id: 'Indian', label: 'Indian', image: indianImg },
   { id: 'Local American', label: 'Local American', image: localAmericanImg },
   { id: 'Afro American', label: 'Afro American', image: afroAmericanImg },
+  { id: 'Italian', label: 'Italian', image: italianImg },
+  { id: 'European', label: 'European', image: europeanImg },
+];
+
+const maleEthnicityOptions = [
+  { id: 'Arabic', label: 'Arabic', image: maleArabicImg },
+  { id: 'Turkish', label: 'Turkish', image: maleTurkishImg },
+  { id: 'Russian', label: 'Russian', image: maleRussianImg },
+  { id: 'Asian', label: 'Asian', image: maleAsianImg },
+  { id: 'Latin', label: 'Latin', image: maleLatinImg },
+  { id: 'Scandinavian', label: 'Scandinavian', image: scandinavianImg },
+  { id: 'Australian', label: 'Australian', image: maleAustralianImg },
+  { id: 'Indian', label: 'Indian', image: maleIndianImg },
+  { id: 'Local American', label: 'Local American', image: maleLocalAmericanImg },
+  { id: 'Afro American', label: 'Afro American', image: maleAfroAmericanImg },
   { id: 'Italian', label: 'Italian', image: italianImg },
   { id: 'European', label: 'European', image: europeanImg },
 ];
@@ -49,6 +75,11 @@ export default function FilterEthnicity() {
   const { config, updateConfig, setCurrentStep } = useModelConfig();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Select ethnicity options based on gender
+  const ethnicityOptions = useMemo(() => {
+    return config.gender === 'Male' ? maleEthnicityOptions : femaleEthnicityOptions;
+  }, [config.gender]);
 
   useEffect(() => {
     // For females: step 3 (after gender, coverage). For males: step 2 (after gender)
