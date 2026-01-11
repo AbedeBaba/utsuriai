@@ -97,7 +97,6 @@ const plans: PricingPlan[] = [
       { textKey: "pricing.feature.allHairEye", included: true },
       { textKey: "pricing.feature.allBackgrounds", included: true },
       { textKey: "pricing.feature.allPosesAngles", included: true },
-      { textKey: "pricing.feature.bodyPartsDetailed", included: true },
       { textKey: "pricing.feature.faceTypes", included: false, isLocked: true },
       { textKey: "pricing.feature.saveReuse", included: false, isLocked: true },
     ],
@@ -119,7 +118,6 @@ const plans: PricingPlan[] = [
       { textKey: "pricing.feature.allHairEye", included: true },
       { textKey: "pricing.feature.allBackgrounds", included: true },
       { textKey: "pricing.feature.allPosesAngles", included: true },
-      { textKey: "pricing.feature.bodyPartsDetailed", included: true },
       { textKey: "pricing.feature.faceTypesExpressions", included: true },
       { textKey: "pricing.feature.saveReuseOutfit", included: true, isUltra: true },
     ],
@@ -306,13 +304,6 @@ const Pricing = () => {
                 </tr>
                 <tr className="border-b border-white/5">
                   <td className="py-3 px-4 text-gray-300">{t('pricing.feature.cameraAngles')}</td>
-                  <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-primary mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-amber-400 mx-auto" /></td>
-                </tr>
-                <tr className="border-b border-white/5">
-                  <td className="py-3 px-4 text-gray-300">{t('pricing.feature.bodyPartsDetailed')}</td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Check className="w-4 h-4 text-primary mx-auto" /></td>
