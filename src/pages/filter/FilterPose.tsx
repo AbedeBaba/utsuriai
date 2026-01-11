@@ -16,15 +16,25 @@ import femaleBackView from '@/assets/poses/female-back-view.png';
 import femaleLowAngle from '@/assets/poses/female-low-angle.png';
 import femaleHandsOnHips from '@/assets/poses/female-hands-on-hips.png';
 
+// Male pose images
+import maleFaceCloseup from '@/assets/poses/male-face-closeup.png';
+import maleStanding from '@/assets/poses/male-standing.png';
+import maleSitting from '@/assets/poses/male-sitting.png';
+import maleLeaning from '@/assets/poses/male-leaning.png';
+import maleArmsCrossed from '@/assets/poses/male-arms-crossed.png';
+import maleBackView from '@/assets/poses/male-back-view.png';
+import maleLowAngle from '@/assets/poses/male-low-angle.png';
+import maleHandsOnHips from '@/assets/poses/male-hands-on-hips.png';
+
 const poseOptions = [
-  { id: 'Face Close-up', label: 'Face Close-up', subtitle: 'Portrait shot', femaleImage: femaleFaceCloseup },
-  { id: 'Standing', label: 'Standing', subtitle: 'Full body upright', femaleImage: femaleStanding },
-  { id: 'Sitting', label: 'Sitting', subtitle: 'Seated position', femaleImage: femaleSitting },
-  { id: 'Leaning', label: 'Leaning', subtitle: 'Casual lean', femaleImage: femaleLeaning },
-  { id: 'Arms Crossed', label: 'Arms Crossed', subtitle: 'Confident pose', femaleImage: femaleArmsCrossed },
-  { id: 'Back View', label: 'Back View', subtitle: 'Rear angle', femaleImage: femaleBackView },
-  { id: 'Low-angle', label: 'Low-angle', subtitle: 'Dramatic upward', femaleImage: femaleLowAngle },
-  { id: 'Hands on Hips', label: 'Hands on Hips', subtitle: 'Power stance', femaleImage: femaleHandsOnHips },
+  { id: 'Face Close-up', label: 'Face Close-up', subtitle: 'Portrait shot', femaleImage: femaleFaceCloseup, maleImage: maleFaceCloseup },
+  { id: 'Standing', label: 'Standing', subtitle: 'Full body upright', femaleImage: femaleStanding, maleImage: maleStanding },
+  { id: 'Sitting', label: 'Sitting', subtitle: 'Seated position', femaleImage: femaleSitting, maleImage: maleSitting },
+  { id: 'Leaning', label: 'Leaning', subtitle: 'Casual lean', femaleImage: femaleLeaning, maleImage: maleLeaning },
+  { id: 'Arms Crossed', label: 'Arms Crossed', subtitle: 'Confident pose', femaleImage: femaleArmsCrossed, maleImage: maleArmsCrossed },
+  { id: 'Back View', label: 'Back View', subtitle: 'Rear angle', femaleImage: femaleBackView, maleImage: maleBackView },
+  { id: 'Low-angle', label: 'Low-angle', subtitle: 'Dramatic upward', femaleImage: femaleLowAngle, maleImage: maleLowAngle },
+  { id: 'Hands on Hips', label: 'Hands on Hips', subtitle: 'Power stance', femaleImage: femaleHandsOnHips, maleImage: maleHandsOnHips },
 ];
 
 export default function FilterPose() {
@@ -206,7 +216,7 @@ export default function FilterPose() {
           {poseOptions.map((option, index) => {
             const style = getCardStyle(index);
             const isActive = index === activeIndex;
-            const imageToShow = isFemale ? option.femaleImage : option.femaleImage; // Add male images later
+            const imageToShow = isFemale ? option.femaleImage : option.maleImage;
             
             return (
               <div
