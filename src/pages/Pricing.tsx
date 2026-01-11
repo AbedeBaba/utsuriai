@@ -145,13 +145,6 @@ const Pricing = () => {
           </p>
         </div>
 
-        {/* Credit explanation */}
-        <div className="flex justify-center mb-12">
-          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-            <Image className="w-5 h-5 text-primary" />
-            <span className="text-sm text-gray-300">{t('pricing.creditExplanation')}</span>
-          </div>
-        </div>
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
