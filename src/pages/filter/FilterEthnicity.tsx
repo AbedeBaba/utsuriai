@@ -15,6 +15,8 @@ import australianImg from '@/assets/ethnicities/australian.png';
 import indianImg from '@/assets/ethnicities/indian.png';
 import localAmericanImg from '@/assets/ethnicities/local-american.png';
 import afroAmericanImg from '@/assets/ethnicities/afro-american.png';
+import italianImg from '@/assets/ethnicities/italian.png';
+import europeanImg from '@/assets/ethnicities/european.png';
 
 const ethnicityOptions = [
   { id: 'Arabic', label: 'Arabic', image: arabicImg },
@@ -27,8 +29,8 @@ const ethnicityOptions = [
   { id: 'Indian', label: 'Indian', image: indianImg },
   { id: 'Local American', label: 'Local American', image: localAmericanImg },
   { id: 'Afro American', label: 'Afro American', image: afroAmericanImg },
-  { id: 'Italian', label: 'Italian', image: null },
-  { id: 'European', label: 'European', image: null },
+  { id: 'Italian', label: 'Italian', image: italianImg },
+  { id: 'European', label: 'European', image: europeanImg },
 ];
 
 const skinToneOptions = ['Fair', 'Light', 'Medium Light', 'Medium', 'Medium Dark', 'Dark', 'Deep', 'Ebony', 'Olive'];
