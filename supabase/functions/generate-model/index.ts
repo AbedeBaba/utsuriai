@@ -40,146 +40,95 @@ serve(async (req) => {
 
     let generatedImageUrl: string | undefined;
 
-    if (usePro) {
-      // Use OpenAI's gpt-image-1 for Pro generations
-      const openaiApiKey = Deno.env.get('NANO_BANANA_PRO_API_KEY');
-      
-      if (!openaiApiKey) {
-        console.error('NANO_BANANA_PRO_API_KEY is not configured');
-        return new Response(
-          JSON.stringify({ error: 'Pro API key not configured' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      console.log('Using OpenAI gpt-image-1 for Pro quality generation');
-
-      const openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-image-1',
-          prompt: prompt,
-          n: 1,
-          size: '1024x1536',
-          quality: 'high',
-        }),
-      });
-
-      if (!openaiResponse.ok) {
-        const errorText = await openaiResponse.text();
-        console.error('OpenAI API error:', openaiResponse.status, errorText);
-        
-        if (openaiResponse.status === 429) {
-          return new Response(
-            JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-            { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-        
-        if (openaiResponse.status === 401) {
-          return new Response(
-            JSON.stringify({ error: 'Invalid OpenAI API key. Please check your API key.' }),
-            { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-        
-        return new Response(
-          JSON.stringify({ error: 'Pro AI generation failed', details: errorText }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      const openaiData = await openaiResponse.json();
-      console.log('OpenAI response received');
-
-      // gpt-image-1 returns base64 data by default
-      const base64Image = openaiData.data?.[0]?.b64_json;
-      if (base64Image) {
-        generatedImageUrl = `data:image/png;base64,${base64Image}`;
-      }
-    } else {
-      // Use Lovable API for standard generations
-      const apiKey = Deno.env.get('LOVABLE_API_KEY');
-      const apiEndpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
-      
-      if (!apiKey) {
-        console.error('LOVABLE_API_KEY is not configured');
-        return new Response(
-          JSON.stringify({ error: 'AI API key not configured' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      console.log('Using Lovable API with model: google/gemini-2.5-flash-image-preview');
-
-      // Prepare content array with text and all images
-      const contentParts: any[] = [{ type: "text", text: prompt }];
-      
-      if (referenceImages && referenceImages.length > 0) {
-        referenceImages.forEach((img, index) => {
-          contentParts.push({
-            type: "image_url",
-            image_url: { url: img.data }
-          });
-          console.log(`Added reference image ${index + 1} (type: ${img.type})`);
-        });
-      }
-
-      // Prepare messages for AI request
-      const messages: any[] = [
-        {
-          role: "user",
-          content: contentParts.length > 1 ? contentParts : prompt
-        }
-      ];
-
-      const aiResponse = await fetch(apiEndpoint, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash-image-preview",
-          messages: messages,
-          modalities: ["image", "text"],
-        }),
-      });
-
-      if (!aiResponse.ok) {
-        const errorText = await aiResponse.text();
-        console.error('AI Gateway error:', aiResponse.status, errorText);
-        
-        if (aiResponse.status === 429) {
-          return new Response(
-            JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-            { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-        
-        if (aiResponse.status === 402) {
-          return new Response(
-            JSON.stringify({ error: 'AI credits exhausted. Please add credits to continue.' }),
-            { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-        
-        return new Response(
-          JSON.stringify({ error: 'AI generation failed', details: errorText }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      const aiData = await aiResponse.json();
-      console.log('AI response received');
-
-      // Extract the generated image from the response
-      generatedImageUrl = aiData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    // Use NANO_BANANA_PRO_API_KEY for all generations (LOVABLE_API_KEY is out of credits)
+    const apiKey = Deno.env.get('NANO_BANANA_PRO_API_KEY');
+    const apiEndpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
+    
+    if (!apiKey) {
+      console.error('NANO_BANANA_PRO_API_KEY is not configured');
+      return new Response(
+        JSON.stringify({ error: 'AI API key not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
+    
+    // Select model based on quality mode
+    const model = usePro 
+      ? "google/gemini-3-pro-image-preview"  // Premium model for Pro
+      : "google/gemini-2.5-flash-image-preview";  // Standard model
+    
+    console.log(`Using Nano Banana API with model: ${model}`);
+
+    // Prepare content array with text and all images
+    const contentParts: any[] = [{ type: "text", text: prompt }];
+    
+    if (referenceImages && referenceImages.length > 0) {
+      referenceImages.forEach((img, index) => {
+        contentParts.push({
+          type: "image_url",
+          image_url: { url: img.data }
+        });
+        console.log(`Added reference image ${index + 1} (type: ${img.type})`);
+      });
+    }
+
+    // Prepare messages for AI request
+    const messages: any[] = [
+      {
+        role: "user",
+        content: contentParts.length > 1 ? contentParts : prompt
+      }
+    ];
+
+    const aiResponse = await fetch(apiEndpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: messages,
+        modalities: ["image", "text"],
+      }),
+    });
+
+    if (!aiResponse.ok) {
+      const errorText = await aiResponse.text();
+      console.error('AI Gateway error:', aiResponse.status, errorText);
+      
+      if (aiResponse.status === 429) {
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      if (aiResponse.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'AI credits exhausted. Please add credits to continue.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      if (aiResponse.status === 401) {
+        return new Response(
+          JSON.stringify({ error: 'Invalid API key. Please check your API key.' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      return new Response(
+        JSON.stringify({ error: 'AI generation failed', details: errorText }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const aiData = await aiResponse.json();
+    console.log('AI response received');
+
+    // Extract the generated image from the response
+    generatedImageUrl = aiData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
 
     
     if (!generatedImageUrl) {
