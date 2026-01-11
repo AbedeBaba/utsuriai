@@ -65,7 +65,7 @@ export default function ClothingSelection() {
         ...(config.background && { background: config.background }),
         ...(config.facialExpression && { facial_expression: config.facialExpression }),
         ...(config.faceType && { face_type: config.faceType }),
-        ...(config.hairStyle && { hair_style: config.hairStyle }),
+        ...(config.modestOption && { modest_option: config.modestOption }),
         ...(config.modestOption && { modest_option: config.modestOption }),
       },
       reference_images: uploadedImages.length > 0 
@@ -159,7 +159,6 @@ export default function ClothingSelection() {
     { label: 'Eye Color', value: config.eyeColor },
     { label: 'Body Type', value: config.bodyType },
     { label: 'Hair Type', value: config.hairType },
-    { label: 'Hair Style', value: config.hairStyle },
     ...(config.beardType ? [{ label: 'Beard Type', value: config.beardType }] : []),
     { label: 'Coverage', value: config.modestOption },
     { label: 'Pose', value: config.pose },

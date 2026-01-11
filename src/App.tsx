@@ -16,7 +16,7 @@ import FilterHairColor from "./pages/filter/FilterHairColor";
 import FilterEyeColor from "./pages/filter/FilterEyeColor";
 import FilterBodyType from "./pages/filter/FilterBodyType";
 import FilterHairType from "./pages/filter/FilterHairType";
-import FilterHairStyle from "./pages/filter/FilterHairStyle";
+
 import FilterBeardType from "./pages/filter/FilterBeardType";
 import FilterModestOption from "./pages/filter/FilterModestOption";
 import FilterPose from "./pages/filter/FilterPose";
@@ -53,7 +53,7 @@ const App = () => (
               <Route path="/filter/eye-color" element={<FilterEyeColor />} />
               <Route path="/filter/body-type" element={<FilterBodyType />} />
               <Route path="/filter/hair-type" element={<FilterHairType />} />
-              <Route path="/filter/hair-style" element={<FilterHairStyle />} />
+              
               <Route path="/filter/beard-type" element={<FilterBeardType />} />
               <Route path="/filter/modest-option" element={<FilterModestOption />} />
               <Route path="/filter/pose" element={<FilterPose />} />

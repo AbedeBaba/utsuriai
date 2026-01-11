@@ -24,12 +24,12 @@ export default function FilterBeardType() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setCurrentStep(9);
+    setCurrentStep(8);
   }, [setCurrentStep]);
 
   useEffect(() => {
     if (config.gender !== 'Male') {
-      navigate('/filter/modest-option');
+      navigate('/filter/pose');
     }
   }, [config.gender, navigate]);
 
@@ -41,7 +41,7 @@ export default function FilterBeardType() {
     updateConfig('beardType', beardType);
 
     setTimeout(() => {
-      navigate('/filter/modest-option');
+      navigate('/filter/pose');
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
@@ -49,7 +49,7 @@ export default function FilterBeardType() {
     <FilterStepLayout 
       title="Select Beard Type"
       subtitle="Choose the facial hair style for your model"
-      onBack={() => navigate('/filter/hair-style')}
+      onBack={() => navigate('/filter/hair-type')}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       

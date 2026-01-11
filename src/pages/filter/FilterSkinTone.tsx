@@ -113,8 +113,8 @@ export default function FilterSkinTone() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setCurrentStep(3);
-  }, [setCurrentStep]);
+    setCurrentStep(config.gender === 'Female' ? 4 : 3);
+  }, [setCurrentStep, config.gender]);
 
   const handleSelect = useCallback((skinTone: string) => {
     if (isAnimating) return;

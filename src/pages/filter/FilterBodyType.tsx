@@ -39,8 +39,8 @@ export default function FilterBodyType() {
   const isFemale = config.gender === 'Female';
 
   useEffect(() => {
-    setCurrentStep(6);
-  }, [setCurrentStep]);
+    setCurrentStep(config.gender === 'Female' ? 7 : 6);
+  }, [setCurrentStep, config.gender]);
 
   // Handle scroll/swipe
   const scrollToIndex = useCallback((index: number) => {
@@ -160,11 +160,14 @@ export default function FilterBodyType() {
     };
   };
 
+  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+
   return (
     <FilterStepLayout 
       title="Select Body Type"
       subtitle="Scroll left or right to choose the body type"
       onBack={() => navigate('/filter/eye-color')}
+      infoText={infoText}
     >
       {/* Carousel Container */}
       <div 

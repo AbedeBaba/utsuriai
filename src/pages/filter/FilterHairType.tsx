@@ -34,8 +34,8 @@ export default function FilterHairType() {
   const isFemale = config.gender === 'Female';
 
   useEffect(() => {
-    setCurrentStep(7);
-  }, [setCurrentStep]);
+    setCurrentStep(config.gender === 'Female' ? 8 : 7);
+  }, [setCurrentStep, config.gender]);
 
   const handleSelect = useCallback((hairType: string) => {
     if (isAnimating) return;
@@ -45,15 +45,22 @@ export default function FilterHairType() {
     updateConfig('hairType', hairType);
 
     setTimeout(() => {
-      navigate('/filter/hair-style');
+      if (config.gender === 'Male') {
+        navigate('/filter/beard-type');
+      } else {
+        navigate('/filter/pose');
+      }
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
+
+  const infoText = isFemale ? "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters." : undefined;
 
   return (
     <FilterStepLayout 
       title={t('filter.selectHairType')}
       subtitle={t('filter.hairTypeSubtitle')}
       onBack={() => navigate('/filter/body-type')}
+      infoText={infoText}
     >
       <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">
         {hairTypeOptions.map((option, index) => (

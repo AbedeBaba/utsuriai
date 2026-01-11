@@ -36,7 +36,11 @@ export default function FilterGender() {
     }
 
     setTimeout(() => {
-      navigate('/filter/ethnicity');
+      if (gender === 'Female') {
+        navigate('/filter/modest-option');
+      } else {
+        navigate('/filter/ethnicity');
+      }
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 

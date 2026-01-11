@@ -13,6 +13,7 @@ interface FilterStepLayoutProps {
   showBack?: boolean;
   onRandom?: () => void;
   hideSubtitleBackground?: boolean;
+  infoText?: string;
 }
 export function FilterStepLayout({
   title,
@@ -21,7 +22,8 @@ export function FilterStepLayout({
   onBack,
   showBack = true,
   onRandom,
-  hideSubtitleBackground = false
+  hideSubtitleBackground = false,
+  infoText
 }: FilterStepLayoutProps) {
   const {
     currentStep,
@@ -58,6 +60,15 @@ export function FilterStepLayout({
       }}>
           {children}
         </div>
+
+        {/* Info Text */}
+        {infoText && (
+          <div className="mt-6 px-4 text-center">
+            <p className="text-xs md:text-sm text-white/60 max-w-2xl mx-auto leading-relaxed">
+              {infoText}
+            </p>
+          </div>
+        )}
       </main>
     </div>;
 }

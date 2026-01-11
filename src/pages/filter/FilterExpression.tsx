@@ -26,8 +26,8 @@ export default function FilterExpression() {
   const isFemale = config.gender === 'Female';
 
   useEffect(() => {
-    setCurrentStep(config.gender === 'Male' ? 14 : 13);
-  }, [setCurrentStep, config.gender]);
+    setCurrentStep(12);
+  }, [setCurrentStep]);
 
   const handleSelect = useCallback((expression: string) => {
     if (isAnimating) return;
@@ -41,11 +41,14 @@ export default function FilterExpression() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const infoText = isFemale ? "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters." : undefined;
+
   return (
     <FilterStepLayout 
       title="Select Expression"
       subtitle="Choose the facial expression for your model"
       onBack={() => navigate('/filter/face-type')}
+      infoText={infoText}
     >
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">
         {expressionOptions.map((option, index) => (
