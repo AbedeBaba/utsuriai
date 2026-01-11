@@ -25,11 +25,15 @@ const backgroundOptions = [
   { id: 'Underwater', label: 'Underwater', subtitle: 'Aquatic theme', image: underwaterBg },
 ];
 
+const faceTypeOptions = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
+const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
+
 export default function FilterBackground() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [hoverDisabled, setHoverDisabled] = useState(false);
 
   useEffect(() => {
     setCurrentStep(10);
@@ -40,6 +44,7 @@ export default function FilterBackground() {
     
     setIsAnimating(true);
     setSelectedId(background);
+    setHoverDisabled(true);
     updateConfig('background', background);
 
     setTimeout(() => {
@@ -48,9 +53,32 @@ export default function FilterBackground() {
   }, [isAnimating, navigate, updateConfig]);
 
   const handleRandomSingle = useCallback(() => {
+    if (isAnimating) return;
+    
     const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+    setIsAnimating(true);
+    setSelectedId(randomBackground.id);
+    setHoverDisabled(true);
     updateConfig('background', randomBackground.id);
-  }, [updateConfig]);
+    
+    setTimeout(() => {
+      navigate('/filter/face-type');
+    }, 600);
+  }, [isAnimating, updateConfig, navigate]);
+
+  const handleRandomAll = useCallback(() => {
+    // Select random for this filter and all remaining ones
+    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+    
+    updateConfig('background', randomBackground.id);
+    updateConfig('faceType', randomFaceType);
+    updateConfig('facialExpression', randomExpression);
+    
+    // Navigate to clothing (final step before generation)
+    navigate('/clothing');
+  }, [updateConfig, navigate]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
@@ -59,6 +87,7 @@ export default function FilterBackground() {
       title="Select Background"
       subtitle="Choose the background scene for your image"
       onBack={() => navigate('/filter/pose')}
+      onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
@@ -74,9 +103,9 @@ export default function FilterBackground() {
               "w-[calc(50%-0.5rem)] md:w-[calc(33.333%-1rem)] h-[140px] sm:h-[180px] md:h-[220px] lg:h-[260px]",
               "transition-all duration-500 ease-out",
               "bg-gradient-to-b from-white/[0.08] to-white/[0.04] backdrop-blur-xl",
-              "border-2 border-white/20 hover:border-violet-400/60",
-              "shadow-[0_8px_32px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_60px_rgba(139,92,246,0.35)]",
-              "hover:scale-[1.03] hover:-translate-y-2",
+              "border-2 border-white/20",
+              !hoverDisabled && "hover:border-violet-400/60 hover:shadow-[0_20px_60px_rgba(139,92,246,0.35)] hover:scale-[1.03] hover:-translate-y-2",
+              "shadow-[0_8px_32px_rgba(0,0,0,0.25)]",
               "outline-none ring-0",
               config.background === option.id && "border-violet-400 ring-4 ring-violet-400/40 shadow-[0_0_40px_rgba(139,92,246,0.4)]",
               selectedId === option.id && isAnimating && "scale-110 z-10",
@@ -92,12 +121,18 @@ export default function FilterBackground() {
               <img 
                 src={option.image} 
                 alt={option.label}
-                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                className={cn(
+                  "w-full h-full object-cover object-center transition-transform duration-700",
+                  !hoverDisabled && "group-hover:scale-110"
+                )}
               />
               {/* Premium gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               {/* Hover glow effect */}
-              <div className="absolute inset-0 bg-violet-500/0 group-hover:bg-violet-500/10 transition-colors duration-500" />
+              <div className={cn(
+                "absolute inset-0 transition-colors duration-500",
+                !hoverDisabled ? "bg-violet-500/0 group-hover:bg-violet-500/10" : "bg-transparent"
+              )} />
             </div>
             
             {/* Label with enhanced styling */}
