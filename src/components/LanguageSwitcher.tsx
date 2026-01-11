@@ -8,7 +8,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
 
-export function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  className?: string;
+}
+
+export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
   const { language, setLanguage, t } = useLanguage();
 
   return (
@@ -17,7 +21,7 @@ export function LanguageSwitcher() {
         <Button 
           variant="ghost" 
           size="icon"
-          className="h-9 w-9 text-muted-foreground hover:text-foreground"
+          className={`h-9 w-9 text-muted-foreground hover:text-foreground ${className || ''}`}
         >
           <Globe className="h-5 w-5" />
         </Button>
