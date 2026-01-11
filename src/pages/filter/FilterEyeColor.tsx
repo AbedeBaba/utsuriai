@@ -70,6 +70,11 @@ export default function FilterEyeColor() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandomSingle = useCallback(() => {
+    const randomEyeColor = eyeColorOptions[Math.floor(Math.random() * eyeColorOptions.length)];
+    updateConfig('eyeColor', randomEyeColor.id);
+  }, [updateConfig, eyeColorOptions]);
+
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   // Handle back navigation - skip hair color if Hijab is selected
@@ -86,6 +91,7 @@ export default function FilterEyeColor() {
       title="Select Eye Color"
       subtitle="Choose the eye color for your model"
       onBack={handleBack}
+      onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
       <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">

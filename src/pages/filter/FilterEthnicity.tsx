@@ -137,7 +137,12 @@ export default function FilterEthnicity() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, config.gender]);
+  }, [isAnimating, navigate, updateConfig, ethnicityOptions]);
+
+  const handleRandomSingle = useCallback(() => {
+    const randomEthnicity = ethnicityOptions[Math.floor(Math.random() * ethnicityOptions.length)];
+    updateConfig('ethnicity', randomEthnicity.id);
+  }, [updateConfig, ethnicityOptions]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
@@ -147,6 +152,7 @@ export default function FilterEthnicity() {
       subtitle="Choose the ethnicity for your model"
       onBack={() => config.gender === 'Female' ? navigate('/filter/modest-option') : navigate('/filter/gender')}
       onRandom={handleRandomAll}
+      onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
       <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">

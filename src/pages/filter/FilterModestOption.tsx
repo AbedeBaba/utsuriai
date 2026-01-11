@@ -48,6 +48,7 @@ export default function FilterModestOption() {
       title={t('filter.selectCoverage')}
       subtitle={t('filter.coverageSubtitle')}
       onBack={() => navigate('/filter/gender')}
+      isCorePage={true}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       

@@ -55,6 +55,11 @@ export default function FilterBeardType() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandomSingle = useCallback(() => {
+    const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)];
+    updateConfig('beardType', randomBeardType.id);
+  }, [updateConfig]);
+
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
@@ -62,6 +67,7 @@ export default function FilterBeardType() {
       title="Select Beard Type"
       subtitle="Choose the facial hair style for your model"
       onBack={() => navigate('/filter/hair-type')}
+      onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
       <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">

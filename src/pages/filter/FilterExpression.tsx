@@ -47,6 +47,11 @@ export default function FilterExpression() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandomSingle = useCallback(() => {
+    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+    updateConfig('facialExpression', randomExpression.id);
+  }, [updateConfig]);
+
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
@@ -54,6 +59,7 @@ export default function FilterExpression() {
       title="Select Expression"
       subtitle="Choose the facial expression for your model"
       onBack={() => navigate('/filter/face-type')}
+      onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">
