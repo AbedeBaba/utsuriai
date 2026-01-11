@@ -4,11 +4,12 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Loader2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Sparkles, Loader2, CheckCircle, LayoutDashboard } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { MultiImageUpload, UploadedImage } from '@/components/MultiImageUpload';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { ProgressIndicator } from '@/components/ProgressIndicator';
 
 // Backend-ready data structure for API communication
 interface GenerationPayload {
@@ -170,20 +171,17 @@ export default function ClothingSelection() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between p-6">
+      <header className="flex items-center justify-between p-4 md:p-6">
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={() => config.gender === 'Male' ? navigate('/filter/beard-type') : navigate('/filter/hair-type')}
-          className="text-muted-foreground hover:text-foreground"
+          onClick={() => navigate('/filter/expression')}
+          className="relative text-white hover:text-white hover:bg-violet-500/30 border-2 border-white/50 backdrop-blur-xl rounded-xl transition-all duration-300 hover:border-violet-400 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] bg-black/30 w-11 h-11 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
         
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <span className="font-medium text-foreground">{t('clothing.title')}</span>
-        </div>
+        <ProgressIndicator currentStep={totalSteps} totalSteps={totalSteps} />
         
         <LanguageSwitcher />
       </header>
@@ -246,6 +244,18 @@ export default function ClothingSelection() {
           <p className="text-xs text-center text-muted-foreground animate-fade-in" style={{ animationDelay: '300ms' }}>
             Add different angles, accessories, and jewelry - the AI will dress your model accordingly
           </p>
+
+          {/* Go to Dashboard Button */}
+          <Button
+            onClick={() => navigate('/dashboard')}
+            variant="outline"
+            size="lg"
+            className="w-full border-white/20 hover:border-violet-400/50 text-foreground hover:text-primary py-5 animate-fade-in"
+            style={{ animationDelay: '400ms' }}
+          >
+            <LayoutDashboard className="mr-2 h-5 w-5" />
+            Go to Dashboard
+          </Button>
         </div>
       </main>
     </div>

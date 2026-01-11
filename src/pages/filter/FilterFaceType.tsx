@@ -54,6 +54,11 @@ export default function FilterFaceType() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandomSingle = useCallback(() => {
+    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+    updateConfig('faceType', randomFaceType.id);
+  }, [updateConfig]);
+
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
@@ -61,6 +66,7 @@ export default function FilterFaceType() {
       title="Select Face Type"
       subtitle="Choose the face shape for your model"
       onBack={() => navigate('/filter/background')}
+      onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
       <div className="grid grid-cols-3 lg:grid-cols-3 gap-6 md:gap-8 relative w-full max-w-5xl mx-auto px-4">

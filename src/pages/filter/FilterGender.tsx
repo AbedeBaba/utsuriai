@@ -134,6 +134,7 @@ export default function FilterGender() {
           subtitle="Choose the gender for your fashion model"
           onBack={() => navigate('/')}
           hideSubtitleBackground={true}
+          isCorePage={true}
         >
           <div className="grid grid-cols-2 gap-8 max-w-lg mx-auto relative outline-none" tabIndex={-1}>
             {genderOptions.map((option, index) => (

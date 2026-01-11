@@ -88,6 +88,11 @@ export default function FilterHairColor() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandomSingle = useCallback(() => {
+    const randomHairColor = hairColorOptions[Math.floor(Math.random() * hairColorOptions.length)];
+    updateConfig('hairColor', randomHairColor.id);
+  }, [updateConfig, hairColorOptions]);
+
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
@@ -95,6 +100,7 @@ export default function FilterHairColor() {
       title="Select Hair Color"
       subtitle="Choose the hair color for your model"
       onBack={() => navigate('/filter/skin-tone')}
+      onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
       <div className="grid grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">

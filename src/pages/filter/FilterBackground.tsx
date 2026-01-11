@@ -47,6 +47,11 @@ export default function FilterBackground() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
+  const handleRandomSingle = useCallback(() => {
+    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+    updateConfig('background', randomBackground.id);
+  }, [updateConfig]);
+
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
@@ -54,6 +59,7 @@ export default function FilterBackground() {
       title="Select Background"
       subtitle="Choose the background scene for your image"
       onBack={() => navigate('/filter/pose')}
+      onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />

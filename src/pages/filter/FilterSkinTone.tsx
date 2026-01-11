@@ -133,11 +133,17 @@ export default function FilterSkinTone() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig, config.modestOption]);
 
+  const handleRandomSingle = useCallback(() => {
+    const randomSkinTone = skinToneOptions[Math.floor(Math.random() * skinToneOptions.length)];
+    updateConfig('skinTone', randomSkinTone.id);
+  }, [updateConfig]);
+
   return (
     <FilterStepLayout 
       title={t('filter.selectSkinTone')}
       subtitle={t('filter.skinToneSubtitle')}
       onBack={() => navigate('/filter/ethnicity')}
+      onRandomSingle={handleRandomSingle}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
