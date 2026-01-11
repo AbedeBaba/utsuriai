@@ -138,19 +138,19 @@ export default function FilterBodyType() {
       scale = 0.75;
       opacity = 0.7;
       zIndex = 8;
-      translateX = diff * 180;
+      translateX = diff * 234;
     } else if (absDiff === 2) {
       // Outer cards
       scale = 0.55;
       opacity = 0.4;
       zIndex = 6;
-      translateX = diff * 160;
+      translateX = diff * 208;
     } else {
       // Hidden cards
       scale = 0.4;
       opacity = 0;
       zIndex = 1;
-      translateX = diff * 140;
+      translateX = diff * 182;
     }
     
     return {
@@ -169,7 +169,7 @@ export default function FilterBodyType() {
       {/* Carousel Container */}
       <div 
         ref={containerRef}
-        className="relative flex items-center justify-center h-[500px] sm:h-[550px] md:h-[600px] overflow-hidden"
+        className="relative flex items-center justify-center h-[650px] sm:h-[715px] md:h-[780px] overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -225,8 +225,8 @@ export default function FilterBodyType() {
                 <div
                   className={cn(
                     "relative overflow-hidden rounded-2xl",
-                    "w-[160px] sm:w-[180px] md:w-[200px]",
-                    "h-[280px] sm:h-[340px] md:h-[380px]",
+                    "w-[208px] sm:w-[234px] md:w-[260px]",
+                    "h-[364px] sm:h-[442px] md:h-[494px]",
                     "border-2 transition-all duration-300",
                     isActive 
                       ? "border-primary shadow-2xl shadow-primary/20" 
