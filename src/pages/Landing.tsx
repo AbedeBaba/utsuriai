@@ -144,7 +144,7 @@ export default function Landing() {
                 {/* Product Image */}
                 <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
-                    <img alt="Product photo" className="w-full h-full object-cover" src="https://tempfile.aiquickdraw.com/workers/nano/image_1767701683790_2obf46_1x1_1024x1024.png" />
+                    <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/6405858d-fb79-4df0-bb36-a4eb202db04e.png" />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted text-sm font-medium text-muted-foreground whitespace-nowrap">
                     Product Photo
@@ -224,7 +224,7 @@ export default function Landing() {
               <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
                 <div className="p-8 pt-10">
                   <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Wand2 className="w-[80%] h-[80%] text-primary" />
+                    <Wand2 className="w-7 h-7 text-primary" />
                   </div>
                 </div>
                 <div className="flex-1" />
@@ -243,7 +243,7 @@ export default function Landing() {
               <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
                 <div className="p-8 pt-10">
                   <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Upload className="w-[80%] h-[80%] text-primary" />
+                    <Upload className="w-7 h-7 text-primary" />
                   </div>
                 </div>
                 <div className="flex-1" />
@@ -262,7 +262,7 @@ export default function Landing() {
               <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
                 <div className="p-8 pt-10">
                   <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Download className="w-[80%] h-[80%] text-primary" />
+                    <Download className="w-7 h-7 text-primary" />
                   </div>
                 </div>
                 <div className="flex-1" />
