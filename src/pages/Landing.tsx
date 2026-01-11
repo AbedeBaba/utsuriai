@@ -224,7 +224,7 @@ export default function Landing() {
               <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
                 <div className="p-8 pt-10">
                   <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Wand2 className="w-7 h-7 text-primary" />
+                    <Wand2 className="w-[80%] h-[80%] text-primary" />
                   </div>
                 </div>
                 <div className="flex-1" />
@@ -243,7 +243,7 @@ export default function Landing() {
               <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
                 <div className="p-8 pt-10">
                   <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Upload className="w-7 h-7 text-primary" />
+                    <Upload className="w-[80%] h-[80%] text-primary" />
                   </div>
                 </div>
                 <div className="flex-1" />
@@ -262,7 +262,7 @@ export default function Landing() {
               <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
                 <div className="p-8 pt-10">
                   <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Download className="w-7 h-7 text-primary" />
+                    <Download className="w-[80%] h-[80%] text-primary" />
                   </div>
                 </div>
                 <div className="flex-1" />
