@@ -144,7 +144,7 @@ export default function Landing() {
                 {/* Product Image */}
                 <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
-                    <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/6405858d-fb79-4df0-bb36-a4eb202db04e.png" />
+                    <img alt="Product photo" className="w-full h-full object-cover" src="https://tempfile.aiquickdraw.com/workers/nano/image_1767701683790_2obf46_1x1_1024x1024.png" />
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted text-sm font-medium text-muted-foreground whitespace-nowrap">
                     Product Photo
@@ -162,7 +162,7 @@ export default function Landing() {
                 {/* Model Image */}
                 <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
-                    <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/8ddcbf82-c9e2-4152-a3d7-c569be0b9c8b.jpg" />
+                    <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/00800019-96ef-4791-8673-afc45f067766.png" />
                     {/* Decorative badge */}
                     <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/90 backdrop-blur-sm text-xs">
                       <Sparkles className="w-3 h-3 text-primary" />
