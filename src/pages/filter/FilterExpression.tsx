@@ -10,11 +10,17 @@ import femaleSmile from '@/assets/expressions/female-smile.png';
 import femaleSerious from '@/assets/expressions/female-serious.png';
 import femaleConfident from '@/assets/expressions/female-confident.png';
 
+// Male expression images
+import maleNeutral from '@/assets/expressions/male-neutral.png';
+import maleSmile from '@/assets/expressions/male-smile.png';
+import maleSerious from '@/assets/expressions/male-serious.png';
+import maleConfident from '@/assets/expressions/male-confident.png';
+
 const expressionOptions = [
-  { id: 'Neutral', label: 'Neutral', femaleImage: femaleNeutral },
-  { id: 'Smile', label: 'Smile', femaleImage: femaleSmile },
-  { id: 'Serious', label: 'Serious', femaleImage: femaleSerious },
-  { id: 'Confident', label: 'Confident', femaleImage: femaleConfident },
+  { id: 'Neutral', label: 'Neutral', femaleImage: femaleNeutral, maleImage: maleNeutral },
+  { id: 'Smile', label: 'Smile', femaleImage: femaleSmile, maleImage: maleSmile },
+  { id: 'Serious', label: 'Serious', femaleImage: femaleSerious, maleImage: maleSerious },
+  { id: 'Confident', label: 'Confident', femaleImage: femaleConfident, maleImage: maleConfident },
 ];
 
 export default function FilterExpression() {
@@ -41,7 +47,7 @@ export default function FilterExpression() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
-  const infoText = isFemale ? "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters." : undefined;
+  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
     <FilterStepLayout 
@@ -74,10 +80,10 @@ export default function FilterExpression() {
             tabIndex={-1}
           >
             {/* Background Image */}
-            {isFemale && option.femaleImage ? (
+            {(isFemale ? option.femaleImage : option.maleImage) ? (
               <div className="absolute inset-0">
                 <img 
-                  src={option.femaleImage} 
+                  src={isFemale ? option.femaleImage : option.maleImage} 
                   alt={option.label}
                   className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
                 />
@@ -98,7 +104,7 @@ export default function FilterExpression() {
             <div className="relative z-10 text-center pb-5 px-3 w-full">
               <p className={cn(
                 "font-bold text-lg md:text-xl tracking-wide",
-                isFemale ? "text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" : "text-foreground"
+                "text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
               )}>
                 {option.label}
               </p>
