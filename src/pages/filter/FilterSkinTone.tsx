@@ -151,8 +151,8 @@ export default function FilterSkinTone() {
               "hover:scale-[1.04] hover:-translate-y-1",
               "outline-none ring-0",
               config.skinTone === option.id && "border-violet-400 ring-2 ring-violet-400/40 shadow-[0_0_24px_rgba(139,92,246,0.35)]",
-              selectedId === option.id && isAnimating && "scale-110 z-10",
-              isAnimating && selectedId !== option.id && "opacity-20 scale-90 blur-[1px]"
+              selectedId === option.id && isAnimating && "scale-[1.02] z-10 shadow-[0_0_30px_rgba(139,92,246,0.5)]",
+              isAnimating && selectedId !== option.id && "opacity-30 scale-[0.98]"
             )}
             style={{ animationDelay: `${index * 30}ms` }}
             tabIndex={-1}
