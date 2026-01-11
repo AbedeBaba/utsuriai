@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X } from 'lucide-react';
+import { Sparkles, ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, differenceInHours, addHours } from 'date-fns';
 import {
@@ -17,6 +17,7 @@ import {
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSubscription } from '@/hooks/useSubscription';
 
 type Category = 'Bottomwear' | 'Topwear' | 'Shoes' | 'Dresses';
 
@@ -38,11 +39,35 @@ export default function Dashboard() {
   const { user, profile, loading } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { subscription, loading: subscriptionLoading } = useSubscription();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(true);
   const [activeCategory, setActiveCategory] = useState<Category | 'All'>('All');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
+
+  const getPlanDisplayName = (plan: string | undefined) => {
+    switch (plan) {
+      case 'trial': return 'Trial';
+      case 'starter': return 'Starter';
+      case 'pro': return 'Pro';
+      case 'creator': return 'Creator';
+      default: return 'Trial';
+    }
+  };
+
+  const getPlanBadgeStyles = (plan: string | undefined) => {
+    switch (plan) {
+      case 'creator':
+        return 'bg-gradient-to-r from-amber-500 to-orange-500 text-white';
+      case 'pro':
+        return 'bg-gradient-to-r from-primary to-purple-500 text-white';
+      case 'starter':
+        return 'bg-primary/20 text-primary border border-primary/30';
+      default:
+        return 'bg-muted text-muted-foreground border border-border';
+    }
+  };
 
   useEffect(() => {
     if (!loading && !user) {
@@ -221,13 +246,55 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome back, <span className="text-primary">{displayName}</span>!
-          </h1>
-          <p className="text-muted-foreground">
-            Your generated images are stored for 24 hours. Download them before they expire.
-          </p>
+        {/* Welcome + Plan Section */}
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Welcome back, <span className="text-primary">{displayName}</span>!
+            </h1>
+            <p className="text-muted-foreground">
+              Your generated images are stored for 24 hours. Download them before they expire.
+            </p>
+          </div>
+
+          {/* Plan Card */}
+          {!subscriptionLoading && subscription && (
+            <div className="flex-shrink-0 bg-card border border-border rounded-xl p-4 min-w-[200px]">
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold ${getPlanBadgeStyles(subscription.plan)}`}>
+                  {subscription.plan === 'creator' && <Crown className="h-3.5 w-3.5" />}
+                  {subscription.plan === 'pro' && <Sparkles className="h-3.5 w-3.5" />}
+                  {getPlanDisplayName(subscription.plan)}
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Credits</span>
+                  <span className="font-medium text-foreground flex items-center gap-1">
+                    <Zap className="h-3.5 w-3.5 text-primary" />
+                    {subscription.credits_remaining}
+                  </span>
+                </div>
+                
+                {subscription.plan === 'trial' && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Pro Gens</span>
+                    <span className="font-medium text-foreground">{subscription.pro_generations_remaining}</span>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/pricing')}
+                className="w-full mt-3 text-xs"
+              >
+                {subscription.plan === 'trial' ? 'Upgrade Plan' : 'Manage Plan'}
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Category Tabs */}
