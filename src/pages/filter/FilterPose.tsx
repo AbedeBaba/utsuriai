@@ -1,63 +1,302 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { SelectionCard } from '@/components/SelectionCard';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { User, Camera, ArrowDown, ArrowUp, Armchair, Lock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+// Female pose images
+import femaleFaceCloseup from '@/assets/poses/female-face-closeup.png';
+import femaleStanding from '@/assets/poses/female-standing.png';
+import femaleSitting from '@/assets/poses/female-sitting.png';
+import femaleLeaning from '@/assets/poses/female-leaning.png';
+import femaleArmsCrossed from '@/assets/poses/female-arms-crossed.png';
+import femaleBackView from '@/assets/poses/female-back-view.png';
+import femaleLowAngle from '@/assets/poses/female-low-angle.png';
+import femaleHandsOnHips from '@/assets/poses/female-hands-on-hips.png';
 
 const poseOptions = [
-  { id: 'Face Close-up', label: 'Face Close-up', subtitle: 'Portrait shot' },
-  { id: 'Standing', label: 'Standing', subtitle: 'Full body upright' },
-  { id: 'Sitting', label: 'Sitting', subtitle: 'Seated position' },
-  { id: 'Leaning', label: 'Leaning', subtitle: 'Casual lean' },
-  { id: 'Top-down', label: 'Top-down', subtitle: 'Overhead view' },
-  { id: 'Arms Crossed', label: 'Arms Crossed', subtitle: 'Confident pose' },
-  { id: 'Back View', label: 'Back View', subtitle: 'Rear angle' },
-  { id: 'Low-angle', label: 'Low-angle', subtitle: 'Dramatic upward' },
+  { id: 'Face Close-up', label: 'Face Close-up', subtitle: 'Portrait shot', femaleImage: femaleFaceCloseup },
+  { id: 'Standing', label: 'Standing', subtitle: 'Full body upright', femaleImage: femaleStanding },
+  { id: 'Sitting', label: 'Sitting', subtitle: 'Seated position', femaleImage: femaleSitting },
+  { id: 'Leaning', label: 'Leaning', subtitle: 'Casual lean', femaleImage: femaleLeaning },
+  { id: 'Arms Crossed', label: 'Arms Crossed', subtitle: 'Confident pose', femaleImage: femaleArmsCrossed },
+  { id: 'Back View', label: 'Back View', subtitle: 'Rear angle', femaleImage: femaleBackView },
+  { id: 'Low-angle', label: 'Low-angle', subtitle: 'Dramatic upward', femaleImage: femaleLowAngle },
+  { id: 'Hands on Hips', label: 'Hands on Hips', subtitle: 'Power stance', femaleImage: femaleHandsOnHips },
 ];
 
 export default function FilterPose() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const isFemale = config.gender === 'Female';
 
   useEffect(() => {
     setCurrentStep(config.gender === 'Male' ? 11 : 10);
   }, [setCurrentStep, config.gender]);
 
-  const handleSelect = useCallback((pose: string) => {
-    if (isAnimating) return;
+  // Handle scroll/swipe
+  const scrollToIndex = useCallback((index: number) => {
+    if (isTransitioning) return;
     
-    setIsAnimating(true);
-    setSelectedId(pose);
-    updateConfig('pose', pose);
+    // Clamp index to valid range
+    const newIndex = Math.max(0, Math.min(poseOptions.length - 1, index));
+    
+    if (newIndex !== activeIndex) {
+      setIsTransitioning(true);
+      setActiveIndex(newIndex);
+      
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 400);
+    }
+  }, [activeIndex, isTransitioning]);
 
+  const handlePrev = useCallback(() => {
+    scrollToIndex(activeIndex - 1);
+  }, [activeIndex, scrollToIndex]);
+
+  const handleNext = useCallback(() => {
+    scrollToIndex(activeIndex + 1);
+  }, [activeIndex, scrollToIndex]);
+
+  const handleSelect = useCallback(() => {
+    const selectedOption = poseOptions[activeIndex];
+    updateConfig('pose', selectedOption.id);
+    
     setTimeout(() => {
       navigate('/filter/background');
-    }, 1000);
-  }, [isAnimating, navigate, updateConfig]);
+    }, 300);
+  }, [activeIndex, navigate, updateConfig]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        handlePrev();
+      } else if (e.key === 'ArrowRight') {
+        handleNext();
+      } else if (e.key === 'Enter') {
+        handleSelect();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handlePrev, handleNext, handleSelect]);
+
+  // Touch/swipe handling
+  const touchStartX = useRef<number | null>(null);
+  
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX;
+    
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+    }
+    
+    touchStartX.current = null;
+  };
+
+  // Calculate position and style for each card
+  const getCardStyle = (index: number) => {
+    const diff = index - activeIndex;
+    const absDiff = Math.abs(diff);
+    
+    // Base values for center card
+    let scale = 1;
+    let opacity = 1;
+    let zIndex = 10;
+    let translateX = 0;
+    
+    if (absDiff === 0) {
+      // Center (active) card
+      scale = 1;
+      opacity = 1;
+      zIndex = 10;
+      translateX = 0;
+    } else if (absDiff === 1) {
+      // Adjacent cards
+      scale = 0.75;
+      opacity = 0.7;
+      zIndex = 8;
+      translateX = diff * 351;
+    } else if (absDiff === 2) {
+      // Outer cards
+      scale = 0.55;
+      opacity = 0.4;
+      zIndex = 6;
+      translateX = diff * 312;
+    } else {
+      // Hidden cards
+      scale = 0.4;
+      opacity = 0;
+      zIndex = 1;
+      translateX = diff * 273;
+    }
+    
+    return {
+      transform: `translateX(${translateX}px) scale(${scale})`,
+      opacity,
+      zIndex,
+    };
+  };
 
   return (
     <FilterStepLayout 
       title="Select Pose"
-      subtitle="Choose the model's pose and camera angle"
+      subtitle="Scroll left or right to choose the pose"
       onBack={() => navigate('/filter/modest-option')}
     >
-      <div className={cn("selection-backdrop", isAnimating && "active")} />
-      
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
-        {poseOptions.map((option, index) => (
-          <SelectionCard
-            key={option.id}
-            title={option.label}
-            subtitle={option.subtitle}
-            selected={config.pose === option.id}
-            onClick={() => handleSelect(option.id)}
-            isAnimating={selectedId === option.id}
-            isFadingOut={isAnimating && selectedId !== option.id}
-            animationDelay={index * 30}
+      {/* Carousel Container */}
+      <div 
+        ref={containerRef}
+        className="relative flex items-center justify-center h-[975px] sm:h-[1073px] md:h-[1170px] overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Navigation Arrows */}
+        <button
+          onClick={handlePrev}
+          disabled={activeIndex === 0}
+          className={cn(
+            "absolute left-2 sm:left-4 z-20 p-2 sm:p-3 rounded-full",
+            "bg-background/80 backdrop-blur-sm border border-border/50",
+            "hover:bg-accent transition-all duration-200",
+            "disabled:opacity-30 disabled:cursor-not-allowed"
+          )}
+        >
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-foreground" />
+        </button>
+        
+        <button
+          onClick={handleNext}
+          disabled={activeIndex === poseOptions.length - 1}
+          className={cn(
+            "absolute right-2 sm:right-4 z-20 p-2 sm:p-3 rounded-full",
+            "bg-background/80 backdrop-blur-sm border border-border/50",
+            "hover:bg-accent transition-all duration-200",
+            "disabled:opacity-30 disabled:cursor-not-allowed"
+          )}
+        >
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-foreground" />
+        </button>
+
+        {/* Cards */}
+        <div className="relative flex items-center justify-center w-full h-full">
+          {poseOptions.map((option, index) => {
+            const style = getCardStyle(index);
+            const isActive = index === activeIndex;
+            const imageToShow = isFemale ? option.femaleImage : option.femaleImage; // Add male images later
+            
+            return (
+              <div
+                key={option.id}
+                className={cn(
+                  "absolute flex flex-col items-center",
+                  "transition-all duration-400 ease-out cursor-pointer"
+                )}
+                style={{
+                  transform: style.transform,
+                  opacity: style.opacity,
+                  zIndex: style.zIndex,
+                }}
+                onClick={() => !isActive && scrollToIndex(index)}
+              >
+                {/* Card */}
+                <div
+                  className={cn(
+                    "relative overflow-hidden rounded-2xl",
+                    "w-[312px] sm:w-[351px] md:w-[390px]",
+                    "h-[546px] sm:h-[663px] md:h-[741px]",
+                    "border-2 transition-all duration-300",
+                    isActive 
+                      ? "border-primary shadow-2xl shadow-primary/20" 
+                      : "border-border/30 shadow-lg"
+                  )}
+                >
+                  {/* Image */}
+                  <img
+                    src={imageToShow}
+                    alt={option.label}
+                    className="w-full h-full object-cover object-top"
+                  />
+                  
+                  {/* Gradient Overlay */}
+                  <div 
+                    className={cn(
+                      "absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent",
+                      "transition-opacity duration-300",
+                      isActive ? "opacity-80" : "opacity-60"
+                    )}
+                  />
+                  
+                  {/* Label */}
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                    <h3 className={cn(
+                      "font-semibold text-white text-center transition-all duration-300",
+                      isActive ? "text-lg sm:text-xl" : "text-sm sm:text-base"
+                    )}>
+                      {option.label}
+                    </h3>
+                    {isActive && (
+                      <p className="text-xs sm:text-sm text-white/80 text-center mt-1 animate-fade-in">
+                        {option.subtitle}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Select Button - Only for active card */}
+                {isActive && (
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelect();
+                    }}
+                    className={cn(
+                      "mt-4 px-8 py-2 animate-fade-in",
+                      "bg-primary hover:bg-primary/90 text-primary-foreground",
+                      "font-medium rounded-full shadow-lg shadow-primary/30"
+                    )}
+                  >
+                    Select
+                  </Button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Indicator Dots */}
+      <div className="flex justify-center gap-2 mt-4">
+        {poseOptions.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => scrollToIndex(index)}
+            className={cn(
+              "w-2 h-2 rounded-full transition-all duration-300",
+              index === activeIndex 
+                ? "w-6 bg-primary" 
+                : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+            )}
           />
         ))}
       </div>
