@@ -33,6 +33,13 @@ const hairTypeOptions = [
   { id: 'Long', label: 'Long', subtitle: 'Flowing length', femaleImage: femaleLong, maleImage: maleLong },
 ];
 
+// Options for random all
+const poseOptions = ['Face Close-up', 'Standing', 'Sitting', 'Leaning', 'Arms Crossed', 'Back View', 'Low-angle', 'Hands on Hips'];
+const backgroundOptions = ['City', 'Fashion White', 'Beach', 'Mountain', 'Forest', 'Snowy', 'Cafe', 'Underwater'];
+const faceTypeOptions = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
+const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
+const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard', 'Goatee', 'Mustache', 'Van Dyke', 'Circle Beard', 'Mutton Chops'];
+
 export default function FilterHairType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
@@ -81,6 +88,32 @@ export default function FilterHairType() {
     }, 800);
   }, [isAnimating, updateConfig, navigate, getNextStepPath]);
 
+  const handleRandomAll = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setHoverDisabled(true);
+    
+    const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)].id;
+    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+    
+    setSelectedId(randomHairType);
+    updateConfig('hairType', randomHairType);
+    updateConfig('pose', randomPose);
+    updateConfig('background', randomBackground);
+    updateConfig('faceType', randomFaceType);
+    updateConfig('facialExpression', randomExpression);
+    
+    if (config.gender === 'Male') {
+      const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)];
+      updateConfig('beardType', randomBeardType);
+    }
+
+    setTimeout(() => { navigate('/clothing'); }, 1000);
+  }, [isAnimating, navigate, updateConfig, config.gender]);
+
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
@@ -88,6 +121,7 @@ export default function FilterHairType() {
       title={t('filter.selectHairType')}
       subtitle={t('filter.hairTypeSubtitle')}
       onBack={() => navigate('/filter/body-type')}
+      onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >

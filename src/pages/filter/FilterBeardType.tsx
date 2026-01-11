@@ -27,6 +27,12 @@ const beardTypeOptions = [
   { id: 'Mutton Chops', label: 'Mutton Chops', subtitle: 'Side whiskers', image: muttonChopsImg },
 ];
 
+// Options for random all
+const poseOptions = ['Face Close-up', 'Standing', 'Sitting', 'Leaning', 'Arms Crossed', 'Back View', 'Low-angle', 'Hands on Hips'];
+const backgroundOptions = ['City', 'Fashion White', 'Beach', 'Mountain', 'Forest', 'Snowy', 'Cafe', 'Underwater'];
+const faceTypeOptions = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
+const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
+
 export default function FilterBeardType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
@@ -59,20 +65,37 @@ export default function FilterBeardType() {
 
   const handleRandomSingle = useCallback(() => {
     if (isAnimating) return;
-    
     const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)];
     setIsAnimating(true);
     setSelectedId(randomBeardType.id);
     setHoverDisabled(true);
     updateConfig('beardType', randomBeardType.id);
-
     setTimeout(() => {
       const nextPath = getNextStepPath('beardType');
-      if (nextPath) {
-        navigate(nextPath);
-      }
+      if (nextPath) { navigate(nextPath); }
     }, 800);
   }, [isAnimating, updateConfig, navigate, getNextStepPath]);
+
+  const handleRandomAll = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setHoverDisabled(true);
+    
+    const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)].id;
+    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+    
+    setSelectedId(randomBeardType);
+    updateConfig('beardType', randomBeardType);
+    updateConfig('pose', randomPose);
+    updateConfig('background', randomBackground);
+    updateConfig('faceType', randomFaceType);
+    updateConfig('facialExpression', randomExpression);
+
+    setTimeout(() => { navigate('/clothing'); }, 1000);
+  }, [isAnimating, navigate, updateConfig]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
@@ -81,6 +104,7 @@ export default function FilterBeardType() {
       title="Select Beard Type"
       subtitle="Choose the facial hair style for your model"
       onBack={() => navigate('/filter/hair-type')}
+      onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >

@@ -17,6 +17,17 @@ const skinToneOptions = [
   { id: 'Olive', label: 'Olive', color: '#C4A77D', darkColor: '#a89068' },
 ];
 
+// Options for random all
+const hairColorOptions = ['Black', 'White', 'Brown', 'Red', 'Blonde', 'Dark Blonde', 'Blue', 'Purple', 'Green', 'Platinum'];
+const eyeColorOptions = ['Brown', 'Blue', 'Hazel', 'Black', 'Green', 'Amber', 'Grey'];
+const bodyTypeOptions = ['Slim', 'Athletic', 'Average', 'Muscular', 'Curvy', 'Plus Size', 'Petite', 'Tall', 'Hourglass'];
+const hairTypeOptions = ['Straight', 'Wavy', 'Curly', 'Coily', 'Bald', 'Short', 'Long'];
+const poseOptions = ['Face Close-up', 'Standing', 'Sitting', 'Leaning', 'Arms Crossed', 'Back View', 'Low-angle', 'Hands on Hips'];
+const backgroundOptions = ['City', 'Fashion White', 'Beach', 'Mountain', 'Forest', 'Snowy', 'Cafe', 'Underwater'];
+const faceTypeOptions = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
+const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
+const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard', 'Goatee', 'Mustache', 'Van Dyke', 'Circle Beard', 'Mutton Chops'];
+
 // Horizontal brush stroke pattern like paint strokes
 const BrushStrokePattern = ({ color, darkColor, seed }: { color: string; darkColor: string; seed: number }) => {
   // Create horizontal brush stroke lines with variation
@@ -152,11 +163,50 @@ export default function FilterSkinTone() {
     }, 800);
   }, [isAnimating, updateConfig, navigate, getNextStepPath]);
 
+  const handleRandomAll = useCallback(() => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setHoverDisabled(true);
+    
+    const randomSkinTone = skinToneOptions[Math.floor(Math.random() * skinToneOptions.length)].id;
+    const randomHairColor = hairColorOptions[Math.floor(Math.random() * hairColorOptions.length)];
+    const randomEyeColor = eyeColorOptions[Math.floor(Math.random() * eyeColorOptions.length)];
+    const randomBodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
+    const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
+    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+    
+    setSelectedId(randomSkinTone);
+    
+    updateConfig('skinTone', randomSkinTone);
+    updateConfig('hairColor', randomHairColor);
+    updateConfig('eyeColor', randomEyeColor);
+    updateConfig('bodyType', randomBodyType);
+    updateConfig('hairType', randomHairType);
+    updateConfig('pose', randomPose);
+    updateConfig('background', randomBackground);
+    updateConfig('faceType', randomFaceType);
+    updateConfig('facialExpression', randomExpression);
+    
+    if (config.gender === 'Male') {
+      const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)];
+      updateConfig('beardType', randomBeardType);
+    }
+
+    setTimeout(() => {
+      navigate('/clothing');
+    }, 1000);
+  }, [isAnimating, navigate, updateConfig, config.gender]);
+
   return (
     <FilterStepLayout 
       title={t('filter.selectSkinTone')}
       subtitle={t('filter.skinToneSubtitle')}
       onBack={() => navigate('/filter/ethnicity')}
+      onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />

@@ -30,6 +30,9 @@ const faceTypeOptions = [
   { id: 'Diamond', label: 'Diamond', subtitle: 'Angular features', icon: <Diamond className="h-6 w-6" />, femaleImage: femaleDiamond, maleImage: maleDiamond },
 ];
 
+// Options for random all
+const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
+
 export default function FilterFaceType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
@@ -58,20 +61,31 @@ export default function FilterFaceType() {
 
   const handleRandomSingle = useCallback(() => {
     if (isAnimating) return;
-    
     const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
     setIsAnimating(true);
     setSelectedId(randomFaceType.id);
     setHoverDisabled(true);
     updateConfig('faceType', randomFaceType.id);
-
     setTimeout(() => {
       const nextPath = getNextStepPath('faceType');
-      if (nextPath) {
-        navigate(nextPath);
-      }
+      if (nextPath) { navigate(nextPath); }
     }, 800);
   }, [isAnimating, updateConfig, navigate, getNextStepPath]);
+
+  const handleRandomAll = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setHoverDisabled(true);
+    
+    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)].id;
+    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+    
+    setSelectedId(randomFaceType);
+    updateConfig('faceType', randomFaceType);
+    updateConfig('facialExpression', randomExpression);
+
+    setTimeout(() => { navigate('/clothing'); }, 1000);
+  }, [isAnimating, navigate, updateConfig]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
@@ -80,6 +94,7 @@ export default function FilterFaceType() {
       title="Select Face Type"
       subtitle="Choose the face shape for your model"
       onBack={() => navigate('/filter/background')}
+      onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
