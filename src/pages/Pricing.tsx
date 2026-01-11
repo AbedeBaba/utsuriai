@@ -47,7 +47,7 @@ const plans: PricingPlan[] = [
   },
   {
     nameKey: "pricing.starter",
-    price: "$13.99",
+    price: "$9.99",
     periodKey: "pricing.perMonth",
     descriptionKey: "pricing.entryLevel",
     creditsValue: "100",
@@ -67,7 +67,7 @@ const plans: PricingPlan[] = [
   },
   {
     nameKey: "pricing.pro",
-    price: "$29.99",
+    price: "$39.99",
     periodKey: "pricing.perMonth",
     descriptionKey: "pricing.professionalFeatures",
     creditsValue: "250",
@@ -90,7 +90,7 @@ const plans: PricingPlan[] = [
   },
   {
     nameKey: "pricing.creator",
-    price: "$39.99",
+    price: "$49.99",
     periodKey: "pricing.perMonth",
     descriptionKey: "pricing.ultimatePower",
     creditsValue: "500",
