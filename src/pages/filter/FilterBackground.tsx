@@ -55,14 +55,14 @@ export default function FilterBackground() {
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative w-full max-w-[95vw] mx-auto px-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 relative w-full max-w-[95vw] mx-auto px-4">
         {backgroundOptions.map((option, index) => (
           <div
             key={option.id}
             onClick={() => handleSelect(option.id)}
             className={cn(
               "group relative flex flex-col items-center justify-end rounded-2xl cursor-pointer overflow-hidden",
-              "h-[120px] sm:h-[150px] md:h-[180px] lg:h-[220px]",
+              "h-[140px] sm:h-[180px] md:h-[220px] lg:h-[260px]",
               "transition-all duration-500 ease-out",
               "bg-gradient-to-b from-white/[0.08] to-white/[0.04] backdrop-blur-xl",
               "border-2 border-white/20 hover:border-violet-400/60",
