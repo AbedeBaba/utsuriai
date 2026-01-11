@@ -45,7 +45,7 @@ export function SelectionCard({
     >
       {colorSwatch && (
         <div 
-          className="w-12 h-12 rounded-full border-2 border-border shadow-sm transition-transform duration-300 group-hover:scale-110"
+          className="w-12 h-12 rounded-full border-2 border-white/30 shadow-sm transition-transform duration-300 group-hover:scale-110"
           style={{ backgroundColor: colorSwatch }}
         />
       )}
@@ -55,9 +55,9 @@ export function SelectionCard({
         </div>
       )}
       <div className="text-center">
-        <p className="font-medium text-foreground">{title}</p>
+        <p className="font-semibold text-lg text-inherit">{title}</p>
         {subtitle && (
-          <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+          <p className="text-sm opacity-70 mt-1">{subtitle}</p>
         )}
       </div>
     </div>
