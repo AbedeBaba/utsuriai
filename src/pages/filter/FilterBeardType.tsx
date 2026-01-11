@@ -64,24 +64,26 @@ export default function FilterBeardType() {
       onBack={() => navigate('/filter/hair-type')}
       infoText={infoText}
     >
-      <div className={cn("selection-backdrop", isAnimating && "active")} />
-      
-      <div className="grid grid-cols-3 gap-2 md:gap-3 relative">
+      <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">
         {beardTypeOptions.map((option, index) => (
-          <button
+          <div
             key={option.id}
             onClick={() => handleSelect(option.id)}
             className={cn(
-              "group relative rounded-2xl overflow-hidden transition-all duration-500 ease-out aspect-square w-full max-w-[180px] md:max-w-[200px] lg:max-w-[220px] mx-auto",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-              config.beardType === option.id
-                ? "ring-2 ring-primary shadow-lg scale-[1.02]"
-                : "hover:shadow-xl hover:scale-[1.01]",
-              selectedId === option.id && "selection-card-selected",
-              isAnimating && selectedId !== option.id && "selection-card-fade-out"
+              "group relative flex flex-col items-center justify-end rounded-3xl cursor-pointer overflow-hidden",
+              "h-[180px] sm:h-[220px] md:h-[260px] lg:h-[280px]",
+              "transition-all duration-500 ease-out",
+              "bg-gradient-to-b from-white/[0.08] to-white/[0.04] backdrop-blur-xl",
+              "border-2 border-white/20 hover:border-violet-400/60",
+              "shadow-[0_8px_32px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_60px_rgba(139,92,246,0.35)]",
+              "hover:scale-[1.03] hover:-translate-y-2",
+              "outline-none ring-0",
+              config.beardType === option.id && "border-violet-400 ring-4 ring-violet-400/40 shadow-[0_0_40px_rgba(139,92,246,0.4)]",
+              selectedId === option.id && isAnimating && "scale-110 z-10",
+              isAnimating && selectedId !== option.id && "opacity-20 scale-90 blur-[1px]"
             )}
-            style={{
-              animationDelay: isAnimating && selectedId !== option.id ? `${index * 30}ms` : '0ms'
+            style={{ 
+              animationDelay: `${index * 30}ms`,
             }}
             tabIndex={-1}
           >
@@ -92,21 +94,14 @@ export default function FilterBeardType() {
                 alt={option.label}
                 className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
               />
-              {/* Gradient overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              {/* Premium gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              {/* Hover glow effect */}
+              <div className="absolute inset-0 bg-violet-500/0 group-hover:bg-violet-500/10 transition-colors duration-500" />
             </div>
             
-            {/* Selection indicator */}
-            {config.beardType === option.id && (
-              <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-primary flex items-center justify-center z-20">
-                <svg className="w-4 h-4 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            )}
-            
             {/* Label with enhanced styling */}
-            <div className="absolute bottom-0 left-0 right-0 z-10 text-center pb-5 px-3 w-full">
+            <div className="relative z-10 text-center pb-5 px-3 w-full">
               <p className="font-bold text-lg md:text-xl tracking-wide text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                 {option.label}
               </p>
@@ -114,7 +109,16 @@ export default function FilterBeardType() {
                 {option.subtitle}
               </p>
             </div>
-          </button>
+
+            {/* Selection indicator */}
+            {config.beardType === option.id && (
+              <div className="absolute top-3 right-3 w-6 h-6 bg-violet-500 rounded-full flex items-center justify-center shadow-lg">
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </FilterStepLayout>
