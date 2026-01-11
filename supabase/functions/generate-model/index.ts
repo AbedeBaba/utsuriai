@@ -71,7 +71,7 @@ serve(async (req) => {
     }
 
     // Step 1: Create generation task
-    const createTaskResponse = await fetch(`${NANO_BANANA_API_BASE}/api/v1/nanobanana/generate-or-edit`, {
+    const createTaskResponse = await fetch(`${NANO_BANANA_API_BASE}/api/v1/generate-or-edit`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
@@ -135,7 +135,7 @@ serve(async (req) => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       await new Promise(resolve => setTimeout(resolve, pollInterval));
       
-      const taskStatusResponse = await fetch(`${NANO_BANANA_API_BASE}/api/v1/nanobanana/task/${taskId}`, {
+      const taskStatusResponse = await fetch(`${NANO_BANANA_API_BASE}/api/v1/task/${taskId}`, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
