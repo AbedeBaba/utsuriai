@@ -34,40 +34,23 @@ serve(async (req) => {
       usePro
     });
 
-    // Choose API key based on Pro mode
-    let apiKey: string | undefined;
-    let apiEndpoint: string;
-    let model: string;
-
-    if (usePro) {
-      // Use Nano Banana Pro API
-      apiKey = Deno.env.get('NANO_BANANA_PRO_API_KEY');
-      apiEndpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
-      model = "google/gemini-3-pro-image-preview"; // Pro model
-      
-      if (!apiKey) {
-        console.error('NANO_BANANA_PRO_API_KEY is not configured');
-        return new Response(
-          JSON.stringify({ error: 'Pro API key not configured' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      console.log('Using Nano Banana Pro API');
-    } else {
-      // Use standard Lovable API
-      apiKey = Deno.env.get('LOVABLE_API_KEY');
-      apiEndpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
-      model = "google/gemini-2.5-flash-image-preview"; // Standard model
-      
-      if (!apiKey) {
-        console.error('LOVABLE_API_KEY is not configured');
-        return new Response(
-          JSON.stringify({ error: 'AI API key not configured' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      console.log('Using standard Lovable API');
+    // Use Lovable API for all generations - different models for standard vs pro
+    const apiKey = Deno.env.get('LOVABLE_API_KEY');
+    const apiEndpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
+    
+    // Choose model based on Pro mode
+    const model = usePro 
+      ? "google/gemini-2.5-flash-image-preview"  // Pro uses same model with enhanced prompts
+      : "google/gemini-2.5-flash-image-preview"; // Standard model
+    
+    if (!apiKey) {
+      console.error('LOVABLE_API_KEY is not configured');
+      return new Response(
+        JSON.stringify({ error: 'AI API key not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
+    console.log(`Using Lovable API with ${usePro ? 'Pro' : 'Standard'} quality settings`);
 
     // Build the prompt for the AI model
     const prompt = buildPrompt(config, referenceImages, usePro);
