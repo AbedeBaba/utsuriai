@@ -40,9 +40,8 @@ serve(async (req) => {
 
     let generatedImageUrl: string | undefined;
 
-    // Use NANO_BANANA_PRO_API_KEY for all generations (LOVABLE_API_KEY is out of credits)
+    // Use Google AI API directly with NANO_BANANA_PRO_API_KEY
     const apiKey = Deno.env.get('NANO_BANANA_PRO_API_KEY');
-    const apiEndpoint = "https://ai.gateway.lovable.dev/v1/chat/completions";
     
     if (!apiKey) {
       console.error('NANO_BANANA_PRO_API_KEY is not configured');
@@ -54,48 +53,52 @@ serve(async (req) => {
     
     // Select model based on quality mode
     const model = usePro 
-      ? "google/gemini-3-pro-image-preview"  // Premium model for Pro
-      : "google/gemini-2.5-flash-image-preview";  // Standard model
+      ? "gemini-2.0-flash-exp-image-generation"  // Premium model for Pro
+      : "gemini-2.0-flash-exp-image-generation";  // Standard model (same for now, can differentiate later)
     
-    console.log(`Using Nano Banana API with model: ${model}`);
+    const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    
+    console.log(`Using Google AI API with model: ${model}`);
 
-    // Prepare content array with text and all images
-    const contentParts: any[] = [{ type: "text", text: prompt }];
+    // Build content parts for Google AI API format
+    const parts: any[] = [{ text: prompt }];
     
     if (referenceImages && referenceImages.length > 0) {
       referenceImages.forEach((img, index) => {
-        contentParts.push({
-          type: "image_url",
-          image_url: { url: img.data }
-        });
-        console.log(`Added reference image ${index + 1} (type: ${img.type})`);
+        // Extract base64 data and mime type from data URL
+        const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
+        if (matches) {
+          parts.push({
+            inline_data: {
+              mime_type: matches[1],
+              data: matches[2]
+            }
+          });
+          console.log(`Added reference image ${index + 1} (type: ${img.type})`);
+        }
       });
     }
 
-    // Prepare messages for AI request
-    const messages: any[] = [
-      {
-        role: "user",
-        content: contentParts.length > 1 ? contentParts : prompt
+    const requestBody = {
+      contents: [{
+        parts: parts
+      }],
+      generationConfig: {
+        responseModalities: ["TEXT", "IMAGE"]
       }
-    ];
+    };
 
     const aiResponse = await fetch(apiEndpoint, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: model,
-        messages: messages,
-        modalities: ["image", "text"],
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
-      console.error('AI Gateway error:', aiResponse.status, errorText);
+      console.error('Google AI API error:', aiResponse.status, errorText);
       
       if (aiResponse.status === 429) {
         return new Response(
@@ -104,16 +107,9 @@ serve(async (req) => {
         );
       }
       
-      if (aiResponse.status === 402) {
+      if (aiResponse.status === 401 || aiResponse.status === 403) {
         return new Response(
-          JSON.stringify({ error: 'AI credits exhausted. Please add credits to continue.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      if (aiResponse.status === 401) {
-        return new Response(
-          JSON.stringify({ error: 'Invalid API key. Please check your API key.' }),
+          JSON.stringify({ error: 'Invalid API key. Please check your Google AI API key.' }),
           { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -125,10 +121,18 @@ serve(async (req) => {
     }
 
     const aiData = await aiResponse.json();
-    console.log('AI response received');
+    console.log('Google AI response received');
 
-    // Extract the generated image from the response
-    generatedImageUrl = aiData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    // Extract the generated image from Google AI response format
+    const candidates = aiData.candidates;
+    if (candidates && candidates[0]?.content?.parts) {
+      for (const part of candidates[0].content.parts) {
+        if (part.inlineData) {
+          generatedImageUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+          break;
+        }
+      }
+    }
 
     
     if (!generatedImageUrl) {
