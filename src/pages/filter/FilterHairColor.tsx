@@ -69,6 +69,13 @@ export default function FilterHairColor() {
     setCurrentStep(config.gender === 'Female' ? 5 : 4);
   }, [setCurrentStep, config.gender]);
 
+  // Redirect to eye color if Hijab is selected (hair won't be visible)
+  useEffect(() => {
+    if (config.modestOption === 'Hijab') {
+      navigate('/filter/eye-color');
+    }
+  }, [config.modestOption, navigate]);
+
   const handleSelect = useCallback((hairColor: string) => {
     if (isAnimating) return;
     

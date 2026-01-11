@@ -72,11 +72,20 @@ export default function FilterEyeColor() {
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
+  // Handle back navigation - skip hair color if Hijab is selected
+  const handleBack = useCallback(() => {
+    if (config.modestOption === 'Hijab') {
+      navigate('/filter/skin-tone');
+    } else {
+      navigate('/filter/hair-color');
+    }
+  }, [navigate, config.modestOption]);
+
   return (
     <FilterStepLayout 
       title="Select Eye Color"
       subtitle="Choose the eye color for your model"
-      onBack={() => navigate('/filter/hair-color')}
+      onBack={handleBack}
       infoText={infoText}
     >
       <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">
