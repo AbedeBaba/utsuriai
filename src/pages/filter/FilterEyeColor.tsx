@@ -14,10 +14,10 @@ import femaleAmber from '@/assets/eye-colors/female-amber.png';
 import femaleGrey from '@/assets/eye-colors/female-grey.png';
 
 const eyeColorOptions = [
-  { id: 'Brown', label: 'Brown', color: '#634E34', femaleImage: femaleBrown },
   { id: 'Blue', label: 'Blue', color: '#4682B4', femaleImage: femaleBlue },
-  { id: 'Hazel', label: 'Hazel', color: '#8E7618', femaleImage: femaleHazel },
+  { id: 'Brown', label: 'Brown', color: '#634E34', femaleImage: femaleBrown },
   { id: 'Black', label: 'Black', color: '#1C1C1C', femaleImage: femaleBlack },
+  { id: 'Hazel', label: 'Hazel', color: '#8E7618', femaleImage: femaleHazel },
   { id: 'Green', label: 'Green', color: '#3D6B4F', femaleImage: femaleGreen },
   { id: 'Amber', label: 'Amber', color: '#CF9B52', femaleImage: femaleAmber },
   { id: 'Grey', label: 'Grey', color: '#808080', femaleImage: femaleGrey },
