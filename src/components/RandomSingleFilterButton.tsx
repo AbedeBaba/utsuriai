@@ -11,16 +11,16 @@ interface RandomSingleFilterButtonProps {
 export function RandomSingleFilterButton({ onClick, className, label = "Random for this filter" }: RandomSingleFilterButtonProps) {
   return (
     <Button
-      variant="ghost"
+      variant="outline"
       size="sm"
       onClick={onClick}
       className={cn(
-        "gap-2 text-white/70 hover:text-white hover:bg-violet-500/20 border border-white/20 hover:border-violet-400/50 transition-all duration-300",
+        "gap-2 text-muted-foreground hover:text-primary hover:border-primary/50",
         className
       )}
     >
-      <Shuffle className="h-3.5 w-3.5" />
-      <span className="text-xs">{label}</span>
+      <Shuffle className="h-4 w-4" />
+      {label}
     </Button>
   );
 }
