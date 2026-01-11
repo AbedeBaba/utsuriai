@@ -204,9 +204,9 @@ export default function Landing() {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" className="py-28 mt-12 relative overflow-hidden" style={{
+      <section id="how-it-works" style={{
       backgroundColor: '#c4bfab'
-    }}>
+    }} className="py-28 mt-12 relative overflow-hidden bg-[#6d625a]">
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
@@ -275,11 +275,7 @@ export default function Landing() {
           </div>
 
           <div className="text-center mt-16 flex flex-col items-center gap-3">
-            <Button 
-              onClick={handleStart} 
-              size="lg" 
-              className="relative bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/90 hover:via-primary hover:to-primary text-primary-foreground text-xl font-bold px-12 py-8 rounded-2xl shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300 animate-glow-pulse"
-            >
+            <Button onClick={handleStart} size="lg" className="relative bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/90 hover:via-primary hover:to-primary text-primary-foreground text-xl font-bold px-12 py-8 rounded-2xl shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300 animate-glow-pulse">
               <span className="relative z-10 flex items-center gap-3">
                 Start for Free!
                 <ArrowRight className="h-6 w-6" />
