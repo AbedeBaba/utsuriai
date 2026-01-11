@@ -39,6 +39,13 @@ const allBodyTypeOptions = [
   { id: 'Hourglass', label: 'Hourglass', subtitle: 'Balanced proportions', femaleImage: femaleHourglass, maleImage: null, femaleOnly: true },
 ];
 
+const hairTypeOptions = ['Straight', 'Wavy', 'Curly', 'Coily', 'Bald', 'Short', 'Long'];
+const poseOptions = ['Face Close-up', 'Standing', 'Sitting', 'Leaning', 'Arms Crossed', 'Back View', 'Low-angle', 'Hands on Hips'];
+const backgroundOptions = ['City', 'Fashion White', 'Beach', 'Mountain', 'Forest', 'Snowy', 'Cafe', 'Underwater'];
+const faceTypeOptions = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
+const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
+const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard', 'Goatee', 'Mustache', 'Van Dyke', 'Circle Beard', 'Mutton Chops'];
+
 export default function FilterBodyType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
@@ -93,6 +100,42 @@ export default function FilterBodyType() {
       navigate('/filter/hair-type');
     }, 300);
   }, [activeIndex, navigate, updateConfig, bodyTypeOptions]);
+
+  const handleRandomSingle = useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * bodyTypeOptions.length);
+    const randomBodyType = bodyTypeOptions[randomIndex];
+    updateConfig('bodyType', randomBodyType.id);
+    
+    setTimeout(() => {
+      navigate('/filter/hair-type');
+    }, 300);
+  }, [bodyTypeOptions, updateConfig, navigate]);
+
+  const handleRandomAll = useCallback(() => {
+    // Select random for this filter and all remaining ones
+    const randomBodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
+    const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
+    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+    
+    updateConfig('bodyType', randomBodyType.id);
+    updateConfig('hairType', randomHairType);
+    updateConfig('pose', randomPose);
+    updateConfig('background', randomBackground);
+    updateConfig('faceType', randomFaceType);
+    updateConfig('facialExpression', randomExpression);
+    
+    // For males, also set beard type
+    if (!isFemale) {
+      const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)];
+      updateConfig('beardType', randomBeardType);
+    }
+    
+    // Navigate to clothing (final step before generation)
+    navigate('/clothing');
+  }, [bodyTypeOptions, isFemale, updateConfig, navigate]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -185,6 +228,8 @@ export default function FilterBodyType() {
       title="Select Body Type"
       subtitle="Scroll left or right to choose the body type"
       onBack={() => navigate('/filter/eye-color')}
+      onRandom={handleRandomAll}
+      onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
       {/* Carousel Container */}

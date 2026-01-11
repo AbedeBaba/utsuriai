@@ -37,6 +37,10 @@ const poseOptions = [
   { id: 'Hands on Hips', label: 'Hands on Hips', subtitle: 'Power stance', femaleImage: femaleHandsOnHips, maleImage: maleHandsOnHips },
 ];
 
+const backgroundOptions = ['City', 'Fashion White', 'Beach', 'Mountain', 'Forest', 'Snowy', 'Cafe', 'Underwater'];
+const faceTypeOptions = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
+const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
+
 export default function FilterPose() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
@@ -83,6 +87,32 @@ export default function FilterPose() {
       navigate('/filter/background');
     }, 300);
   }, [activeIndex, navigate, updateConfig]);
+
+  const handleRandomSingle = useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * poseOptions.length);
+    const randomPose = poseOptions[randomIndex];
+    updateConfig('pose', randomPose.id);
+    
+    setTimeout(() => {
+      navigate('/filter/background');
+    }, 300);
+  }, [updateConfig, navigate]);
+
+  const handleRandomAll = useCallback(() => {
+    // Select random for this filter and all remaining ones
+    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+    
+    updateConfig('pose', randomPose.id);
+    updateConfig('background', randomBackground);
+    updateConfig('faceType', randomFaceType);
+    updateConfig('facialExpression', randomExpression);
+    
+    // Navigate to clothing (final step before generation)
+    navigate('/clothing');
+  }, [updateConfig, navigate]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -175,6 +205,8 @@ export default function FilterPose() {
       title="Select Pose"
       subtitle="Scroll left or right to choose the pose"
       onBack={() => config.gender === 'Male' ? navigate('/filter/beard-type') : navigate('/filter/hair-type')}
+      onRandom={handleRandomAll}
+      onRandomSingle={handleRandomSingle}
       infoText={infoText}
     >
       {/* Carousel Container */}
