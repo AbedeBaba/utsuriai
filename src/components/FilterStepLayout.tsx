@@ -43,11 +43,18 @@ export function FilterStepLayout({
 
       {/* Content */}
       <main className="flex-1 flex flex-col items-center px-4 md:px-6 pb-8 pt-2">
-        <div className="text-center mb-8 animate-fade-in">
+        <div className="text-center mb-4 animate-fade-in">
           <h1 className="text-4xl md:text-5xl font-bold mb-3 text-white tracking-tight" style={{
           textShadow: '0 2px 20px rgba(167, 139, 250, 0.3), 0 1px 4px rgba(0, 0, 0, 0.4)'
         }}>{title}</h1>
           {subtitle && <p className={`tracking-wide text-[#1010f4] mx-0 px-0 font-semibold text-base ${hideSubtitleBackground ? '' : 'bg-primary-foreground'}`}>{subtitle}</p>}
+          
+          {/* Info Text - positioned below subtitle */}
+          {infoText && (
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xl mx-auto leading-relaxed mt-3 px-4">
+              {infoText}
+            </p>
+          )}
         </div>
 
         {/* Random Button */}
@@ -60,15 +67,6 @@ export function FilterStepLayout({
       }}>
           {children}
         </div>
-
-        {/* Info Text */}
-        {infoText && (
-          <div className="mt-6 px-4 text-center">
-            <p className="text-xs md:text-sm text-white/60 max-w-2xl mx-auto leading-relaxed">
-              {infoText}
-            </p>
-          </div>
-        )}
       </main>
     </div>;
 }
