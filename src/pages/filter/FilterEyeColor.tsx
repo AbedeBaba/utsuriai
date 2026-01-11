@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
 // Female eye color images
@@ -13,14 +13,33 @@ import femaleGreen from '@/assets/eye-colors/female-green.png';
 import femaleAmber from '@/assets/eye-colors/female-amber.png';
 import femaleGrey from '@/assets/eye-colors/female-grey.png';
 
-const eyeColorOptions = [
-  { id: 'Blue', label: 'Blue', color: '#4682B4', femaleImage: femaleBlue },
-  { id: 'Brown', label: 'Brown', color: '#634E34', femaleImage: femaleBrown },
-  { id: 'Black', label: 'Black', color: '#1C1C1C', femaleImage: femaleBlack },
-  { id: 'Hazel', label: 'Hazel', color: '#8E7618', femaleImage: femaleHazel },
-  { id: 'Green', label: 'Green', color: '#3D6B4F', femaleImage: femaleGreen },
-  { id: 'Amber', label: 'Amber', color: '#CF9B52', femaleImage: femaleAmber },
-  { id: 'Grey', label: 'Grey', color: '#808080', femaleImage: femaleGrey },
+// Male eye color images
+import maleBlue from '@/assets/eye-colors/male-blue.png';
+import maleBrown from '@/assets/eye-colors/male-brown.png';
+import maleBlack from '@/assets/eye-colors/male-black.png';
+import maleHazel from '@/assets/eye-colors/male-hazel.png';
+import maleGreen from '@/assets/eye-colors/male-green.png';
+import maleAmber from '@/assets/eye-colors/male-amber.png';
+import maleGrey from '@/assets/eye-colors/male-grey.png';
+
+const femaleEyeColorOptions = [
+  { id: 'Blue', label: 'Blue', color: '#4682B4', image: femaleBlue },
+  { id: 'Brown', label: 'Brown', color: '#634E34', image: femaleBrown },
+  { id: 'Black', label: 'Black', color: '#1C1C1C', image: femaleBlack },
+  { id: 'Hazel', label: 'Hazel', color: '#8E7618', image: femaleHazel },
+  { id: 'Green', label: 'Green', color: '#3D6B4F', image: femaleGreen },
+  { id: 'Amber', label: 'Amber', color: '#CF9B52', image: femaleAmber },
+  { id: 'Grey', label: 'Grey', color: '#808080', image: femaleGrey },
+];
+
+const maleEyeColorOptions = [
+  { id: 'Blue', label: 'Blue', color: '#4682B4', image: maleBlue },
+  { id: 'Brown', label: 'Brown', color: '#634E34', image: maleBrown },
+  { id: 'Black', label: 'Black', color: '#1C1C1C', image: maleBlack },
+  { id: 'Hazel', label: 'Hazel', color: '#8E7618', image: maleHazel },
+  { id: 'Green', label: 'Green', color: '#3D6B4F', image: maleGreen },
+  { id: 'Amber', label: 'Amber', color: '#CF9B52', image: maleAmber },
+  { id: 'Grey', label: 'Grey', color: '#808080', image: maleGrey },
 ];
 
 export default function FilterEyeColor() {
@@ -30,6 +49,10 @@ export default function FilterEyeColor() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const isFemale = config.gender === 'Female';
+
+  const eyeColorOptions = useMemo(() => {
+    return isFemale ? femaleEyeColorOptions : maleEyeColorOptions;
+  }, [isFemale]);
 
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 6 : 5);
@@ -47,7 +70,7 @@ export default function FilterEyeColor() {
     }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
-  const infoText = isFemale ? "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters." : undefined;
+  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
   return (
     <FilterStepLayout 
@@ -79,34 +102,22 @@ export default function FilterEyeColor() {
             }}
             tabIndex={-1}
           >
-            {/* Background Image or Color Swatch */}
-            {isFemale && option.femaleImage ? (
-              <div className="absolute inset-0">
-                <img 
-                  src={option.femaleImage} 
-                  alt={option.label}
-                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
-                />
-                {/* Premium gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-violet-500/0 group-hover:bg-violet-500/10 transition-colors duration-500" />
-              </div>
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div 
-                  className="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-white/30 shadow-lg transition-transform duration-300 group-hover:scale-110"
-                  style={{ backgroundColor: option.color }}
-                />
-              </div>
-            )}
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <img 
+                src={option.image} 
+                alt={option.label}
+                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+              />
+              {/* Premium gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              {/* Hover glow effect */}
+              <div className="absolute inset-0 bg-violet-500/0 group-hover:bg-violet-500/10 transition-colors duration-500" />
+            </div>
             
             {/* Label with enhanced styling */}
             <div className="relative z-10 text-center pb-5 px-3 w-full">
-              <p className={cn(
-                "font-bold text-lg md:text-xl tracking-wide",
-                isFemale ? "text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" : "text-foreground"
-              )}>
+              <p className="font-bold text-lg md:text-xl tracking-wide text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                 {option.label}
               </p>
             </div>
