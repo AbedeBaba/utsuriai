@@ -124,9 +124,14 @@ export default function FilterSkinTone() {
     updateConfig('skinTone', skinTone);
 
     setTimeout(() => {
-      navigate('/filter/hair-color');
+      // Skip hair color if Hijab is selected (hair won't be visible)
+      if (config.modestOption === 'Hijab') {
+        navigate('/filter/eye-color');
+      } else {
+        navigate('/filter/hair-color');
+      }
     }, 1000);
-  }, [isAnimating, navigate, updateConfig]);
+  }, [isAnimating, navigate, updateConfig, config.modestOption]);
 
   return (
     <FilterStepLayout 
