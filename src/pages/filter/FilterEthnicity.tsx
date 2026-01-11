@@ -121,22 +121,23 @@ export default function FilterEthnicity() {
       onBack={() => navigate('/filter/gender')}
       onRandom={handleRandomAll}
     >
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-5 relative max-w-5xl mx-auto">
+      <div className="grid grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 relative w-full max-w-7xl mx-auto px-4">
         {ethnicityOptions.map((option, index) => (
           <div
             key={option.id}
             onClick={() => handleSelect(option.id)}
             className={cn(
-              "relative flex flex-col items-center justify-end gap-3 aspect-square min-w-[160px] md:min-w-[200px] rounded-2xl cursor-pointer overflow-hidden",
+              "group relative flex flex-col items-center justify-end rounded-3xl cursor-pointer overflow-hidden",
+              "h-[180px] sm:h-[220px] md:h-[260px] lg:h-[280px]",
               "transition-all duration-500 ease-out",
               "bg-gradient-to-b from-white/[0.08] to-white/[0.04] backdrop-blur-xl",
-              "border border-white/20 hover:border-violet-300/50",
-              "shadow-[0_4px_24px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_40px_rgba(139,92,246,0.2)]",
-              "hover:scale-[1.02] hover:-translate-y-1",
+              "border-2 border-white/20 hover:border-violet-400/60",
+              "shadow-[0_8px_32px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_60px_rgba(139,92,246,0.35)]",
+              "hover:scale-[1.03] hover:-translate-y-2",
               "outline-none ring-0",
-              config.ethnicity === option.id && "border-violet-400/70 ring-2 ring-violet-400/50",
-              selectedId === option.id && isAnimating && "scale-105 z-10",
-              isAnimating && selectedId !== option.id && "opacity-30 scale-95"
+              config.ethnicity === option.id && "border-violet-400 ring-4 ring-violet-400/40 shadow-[0_0_40px_rgba(139,92,246,0.4)]",
+              selectedId === option.id && isAnimating && "scale-110 z-10",
+              isAnimating && selectedId !== option.id && "opacity-20 scale-90 blur-[1px]"
             )}
             style={{ 
               animationDelay: `${index * 30}ms`,
@@ -149,17 +150,30 @@ export default function FilterEthnicity() {
                 <img 
                   src={option.image} 
                   alt={option.label}
-                  className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
                 />
-                {/* Gradient overlay for text readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                {/* Premium gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 bg-violet-500/0 group-hover:bg-violet-500/10 transition-colors duration-500" />
               </div>
             )}
             
-            {/* Label */}
-            <div className="relative z-10 text-center pb-4 px-2">
-              <p className="font-semibold text-lg text-white drop-shadow-lg">{option.label}</p>
+            {/* Label with enhanced styling */}
+            <div className="relative z-10 text-center pb-5 px-3 w-full">
+              <p className="font-bold text-xl md:text-2xl text-white tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                {option.label}
+              </p>
             </div>
+
+            {/* Selection indicator */}
+            {config.ethnicity === option.id && (
+              <div className="absolute top-3 right-3 w-6 h-6 bg-violet-500 rounded-full flex items-center justify-center shadow-lg">
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+            )}
           </div>
         ))}
       </div>

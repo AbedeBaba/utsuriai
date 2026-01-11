@@ -27,10 +27,17 @@ export function FilterStepLayout({
   } = useModelConfig();
   return <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between p-6">
-        {showBack && onBack ? <Button variant="ghost" size="icon" onClick={onBack} className="text-white hover:text-white hover:bg-white/20 border border-white/40 backdrop-blur-md rounded-xl transition-all duration-500 hover:border-violet-300/60 hover:shadow-[0_0_20px_rgba(167,139,250,0.25)] bg-white/10">
+      <header className="flex items-center justify-between p-4 md:p-6">
+        {showBack && onBack ? (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onBack} 
+            className="relative text-white hover:text-white hover:bg-violet-500/30 border-2 border-white/50 backdrop-blur-xl rounded-xl transition-all duration-300 hover:border-violet-400 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] bg-black/30 w-11 h-11 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+          >
             <ArrowLeft className="h-5 w-5" />
-          </Button> : <div className="w-10" />}
+          </Button>
+        ) : <div className="w-11" />}
         
         <ProgressIndicator currentStep={currentStep} totalSteps={totalSteps} />
         
@@ -38,12 +45,12 @@ export function FilterStepLayout({
       </header>
 
       {/* Content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 pb-12">
-        <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-5xl font-semibold mb-4 text-white tracking-tight" style={{
-            textShadow: '0 2px 20px rgba(167, 139, 250, 0.25), 0 1px 4px rgba(0, 0, 0, 0.3)'
+      <main className="flex-1 flex flex-col items-center px-4 md:px-6 pb-8 pt-2">
+        <div className="text-center mb-8 animate-fade-in">
+          <h1 className="text-4xl md:text-5xl font-bold mb-3 text-white tracking-tight" style={{
+            textShadow: '0 2px 20px rgba(167, 139, 250, 0.3), 0 1px 4px rgba(0, 0, 0, 0.4)'
           }}>{title}</h1>
-          {subtitle && <p className="text-white/50 text-lg font-light tracking-wide">{subtitle}</p>}
+          {subtitle && <p className="text-white/60 text-lg font-light tracking-wide">{subtitle}</p>}
         </div>
 
         {/* Random Button */}
@@ -51,7 +58,7 @@ export function FilterStepLayout({
             <RandomFilterButton onClick={onRandom} />
           </div>}
 
-        <div className="w-full max-w-3xl animate-slide-up outline-none" tabIndex={-1} style={{
+        <div className="w-full flex-1 animate-slide-up outline-none" tabIndex={-1} style={{
         animationDelay: '0.1s'
       }}>
           {children}
