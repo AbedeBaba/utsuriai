@@ -66,7 +66,7 @@ export default function FilterBeardType() {
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
-      <div className="grid grid-cols-3 gap-4 relative">
+      <div className="grid grid-cols-3 gap-2 md:gap-3 relative">
         {beardTypeOptions.map((option, index) => (
           <button
             key={option.id}
