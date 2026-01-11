@@ -41,12 +41,12 @@ export default function FilterGender() {
   }, [isAnimating, navigate, updateConfig]);
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-950 to-black relative overflow-hidden">
       {/* Male Model - Left Side */}
       <div 
         className={cn(
           "fixed left-0 top-0 bottom-0 w-[40%] z-0 transition-all duration-500",
-          hoveredGender === 'Male' ? "opacity-100" : "opacity-80"
+          hoveredGender === 'Male' ? "opacity-100" : "opacity-60"
         )}
       >
         <img 
@@ -54,13 +54,13 @@ export default function FilterGender() {
           alt="Male model"
           className={cn(
             "h-full w-auto object-contain object-left transition-all duration-500",
-            hoveredGender === 'Male' && "brightness-125 scale-[1.02]"
+            hoveredGender === 'Male' && "brightness-110 scale-[1.02]"
           )}
         />
         {/* Shine overlay */}
         <div 
           className={cn(
-            "absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transition-opacity duration-500 pointer-events-none",
+            "absolute inset-0 bg-gradient-to-r from-primary/30 to-transparent transition-opacity duration-500 pointer-events-none",
             hoveredGender === 'Male' ? "opacity-100" : "opacity-0"
           )}
         />
@@ -70,7 +70,7 @@ export default function FilterGender() {
       <div 
         className={cn(
           "fixed right-0 top-0 bottom-0 w-[40%] z-0 flex justify-end transition-all duration-500",
-          hoveredGender === 'Female' ? "opacity-100" : "opacity-80"
+          hoveredGender === 'Female' ? "opacity-100" : "opacity-60"
         )}
       >
         <img 
@@ -78,19 +78,25 @@ export default function FilterGender() {
           alt="Female model"
           className={cn(
             "h-full w-auto object-contain object-right transition-all duration-500",
-            hoveredGender === 'Female' && "brightness-125 scale-[1.02]"
+            hoveredGender === 'Female' && "brightness-110 scale-[1.02]"
           )}
         />
         {/* Shine overlay */}
         <div 
           className={cn(
-            "absolute inset-0 bg-gradient-to-l from-white/20 to-transparent transition-opacity duration-500 pointer-events-none",
+            "absolute inset-0 bg-gradient-to-l from-primary/30 to-transparent transition-opacity duration-500 pointer-events-none",
             hoveredGender === 'Female' ? "opacity-100" : "opacity-0"
           )}
         />
       </div>
 
-      {/* Main Content - On top with dark theme */}
+      {/* Center gradient overlay for better text readability */}
+      <div className="fixed inset-0 z-[1] pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/90 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
+      </div>
+
+      {/* Main Content - On top */}
       <div className="relative z-10 min-h-screen">
         <FilterStepLayout 
           title="Select Gender"
@@ -100,7 +106,7 @@ export default function FilterGender() {
           {/* Backdrop */}
           <div className={cn("selection-backdrop", isAnimating && "active")} />
           
-          <div className="grid grid-cols-2 gap-6 max-w-md mx-auto relative">
+          <div className="grid grid-cols-2 gap-8 max-w-lg mx-auto relative">
             {genderOptions.map((option, index) => (
               <div
                 key={option.id}
@@ -115,6 +121,7 @@ export default function FilterGender() {
                   isAnimating={selectedId === option.id}
                   isFadingOut={isAnimating && selectedId !== option.id}
                   animationDelay={index * 50}
+                  className="bg-white/10 backdrop-blur-md border-2 border-white/20 hover:border-primary/60 hover:bg-white/20 text-white min-h-[180px]"
                 />
               </div>
             ))}
