@@ -12,6 +12,7 @@ interface FilterStepLayoutProps {
   onBack?: () => void;
   showBack?: boolean;
   onRandom?: () => void;
+  hideSubtitleBackground?: boolean;
 }
 export function FilterStepLayout({
   title,
@@ -19,7 +20,8 @@ export function FilterStepLayout({
   children,
   onBack,
   showBack = true,
-  onRandom
+  onRandom,
+  hideSubtitleBackground = false
 }: FilterStepLayoutProps) {
   const {
     currentStep,
@@ -43,7 +45,7 @@ export function FilterStepLayout({
           <h1 className="text-4xl md:text-5xl font-bold mb-3 text-white tracking-tight" style={{
           textShadow: '0 2px 20px rgba(167, 139, 250, 0.3), 0 1px 4px rgba(0, 0, 0, 0.4)'
         }}>{title}</h1>
-          {subtitle && <p className="tracking-wide text-[#1010f4] bg-primary-foreground mx-0 px-0 font-semibold text-base">{subtitle}</p>}
+          {subtitle && <p className={`tracking-wide text-[#1010f4] mx-0 px-0 font-semibold text-base ${hideSubtitleBackground ? '' : 'bg-primary-foreground'}`}>{subtitle}</p>}
         </div>
 
         {/* Random Button */}
