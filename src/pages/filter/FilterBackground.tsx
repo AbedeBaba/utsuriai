@@ -62,7 +62,7 @@ export default function FilterBackground() {
             onClick={() => handleSelect(option.id)}
             className={cn(
               "group relative flex flex-col items-center justify-end rounded-2xl cursor-pointer overflow-hidden",
-              "h-[200px] sm:h-[260px] md:h-[320px] lg:h-[380px]",
+              "h-[120px] sm:h-[150px] md:h-[180px] lg:h-[220px]",
               "transition-all duration-500 ease-out",
               "bg-gradient-to-b from-white/[0.08] to-white/[0.04] backdrop-blur-xl",
               "border-2 border-white/20 hover:border-violet-400/60",
