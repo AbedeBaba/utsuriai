@@ -7,7 +7,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const LOVABLE_AI_GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
+// Direct Gemini API endpoint
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 // Allowed values for input validation
 const ALLOWED_VALUES = {
@@ -231,28 +232,28 @@ serve(async (req) => {
     const prompt = buildPrompt(sanitizedConfig, referenceImages, usePro);
     console.log('Generated prompt:', prompt.substring(0, 500) + '...');
 
-    // Get the Lovable API key (automatically provided by Lovable Cloud)
-    const apiKey = Deno.env.get('LOVABLE_API_KEY');
+    // Get your own Gemini API key
+    const apiKey = Deno.env.get('GEMINI_API_KEY');
     
     if (!apiKey) {
-      console.error('LOVABLE_API_KEY is not configured');
+      console.error('GEMINI_API_KEY is not configured');
       return new Response(
-        JSON.stringify({ error: 'AI API key not configured' }),
+        JSON.stringify({ error: 'Gemini API key not configured. Please add GEMINI_API_KEY secret.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // Select model based on quality mode
+    // Using Gemini 2.0 Flash for image generation (Imagen 3)
     const model = usePro 
-      ? 'google/gemini-3-pro-image-preview' 
-      : 'google/gemini-2.5-flash-image-preview';
+      ? 'gemini-2.0-flash-exp'
+      : 'gemini-2.0-flash-exp';
     
-    console.log(`Using Gemini model: ${model}`);
+    console.log(`Using Gemini model: ${model} with your own API key`);
 
-    // Build message content - text prompt + reference images
-    const messageContent: any[] = [
+    // Build message parts for Gemini API format
+    const parts: any[] = [
       {
-        type: 'text',
         text: prompt
       }
     ];
@@ -260,42 +261,49 @@ serve(async (req) => {
     // Add reference images to the message if provided
     if (referenceImages && referenceImages.length > 0) {
       referenceImages.forEach((img, index) => {
-        const imageUrl = img.data.startsWith('data:') 
-          ? img.data 
-          : `data:image/jpeg;base64,${img.data}`;
+        // Extract base64 data and mime type
+        let base64Data = img.data;
+        let mimeType = 'image/jpeg';
         
-        messageContent.push({
-          type: 'image_url',
-          image_url: {
-            url: imageUrl
+        if (img.data.startsWith('data:')) {
+          const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
+          if (matches) {
+            mimeType = matches[1];
+            base64Data = matches[2];
+          }
+        }
+        
+        parts.push({
+          inline_data: {
+            mime_type: mimeType,
+            data: base64Data
           }
         });
         console.log(`Added reference image ${index + 1} (type: ${img.type})`);
       });
     }
 
-    // Call the Lovable AI Gateway with Gemini model
-    const response = await fetch(LOVABLE_AI_GATEWAY, {
+    // Call the Google Gemini API directly
+    const response = await fetch(`${GEMINI_API_URL}/${model}:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: model,
-        messages: [
+        contents: [
           {
-            role: 'user',
-            content: messageContent
+            parts: parts
           }
         ],
-        modalities: ['image', 'text']
+        generationConfig: {
+          responseModalities: ['TEXT', 'IMAGE']
+        }
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Lovable AI Gateway error:', response.status, errorText);
+      console.error('Gemini API error:', response.status, errorText);
       
       if (response.status === 429) {
         return new Response(
@@ -304,17 +312,10 @@ serve(async (req) => {
         );
       }
       
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'AI credits exhausted. Please add more credits.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
       if (response.status === 401 || response.status === 403) {
         return new Response(
-          JSON.stringify({ error: 'AI service authentication error.' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: 'Invalid Gemini API key. Please check your GEMINI_API_KEY.' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
@@ -327,13 +328,28 @@ serve(async (req) => {
     const data = await response.json();
     console.log('Gemini API response received');
 
-    // Extract the generated image from the response
-    const generatedImageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    // Extract the generated image from the Gemini API response format
+    // Gemini returns images as inline_data with base64 in the parts array
+    let generatedImageUrl: string | null = null;
+    
+    const candidates = data.candidates;
+    if (candidates && candidates.length > 0) {
+      const content = candidates[0].content;
+      if (content && content.parts) {
+        for (const part of content.parts) {
+          if (part.inline_data && part.inline_data.data) {
+            const mimeType = part.inline_data.mime_type || 'image/png';
+            generatedImageUrl = `data:${mimeType};base64,${part.inline_data.data}`;
+            break;
+          }
+        }
+      }
+    }
 
     if (!generatedImageUrl) {
-      console.error('No image in response:', JSON.stringify(data).substring(0, 500));
+      console.error('No image in response:', JSON.stringify(data).substring(0, 1000));
       return new Response(
-        JSON.stringify({ error: 'Image generation failed - no image returned' }),
+        JSON.stringify({ error: 'Image generation failed - no image returned. The model may not support image generation.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
