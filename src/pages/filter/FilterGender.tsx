@@ -133,24 +133,25 @@ export default function FilterGender() {
           {/* Backdrop */}
           <div className={cn("selection-backdrop", isAnimating && "active")} />
           
-          <div className="grid grid-cols-2 gap-8 max-w-lg mx-auto relative">
+          <div className="grid grid-cols-2 gap-8 max-w-lg mx-auto relative outline-none" tabIndex={-1}>
             {genderOptions.map((option, index) => (
               <div
                 key={option.id}
                 onMouseEnter={() => setHoveredGender(option.id)}
                 onMouseLeave={() => setHoveredGender(null)}
-                className="group perspective-1000"
+                className="group perspective-1000 outline-none focus:outline-none"
+                tabIndex={-1}
               >
                 <div
                   onClick={() => handleSelect(option.id)}
+                  tabIndex={-1}
                   className={cn(
                     "gender-card relative flex flex-col items-center justify-center gap-5 min-h-[220px] rounded-2xl cursor-pointer select-none",
                     "transition-all duration-500 ease-out",
                     "bg-gradient-to-b from-white/[0.18] to-white/[0.10] backdrop-blur-xl",
                     "border border-white/30 hover:border-violet-300/50",
                     "shadow-[0_4px_24px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(139,92,246,0.15)]",
-                    "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0",
-                    "ring-0 outline-none",
+                    "outline-none ring-0",
                     config.gender === option.id && "border-violet-400/70 bg-gradient-to-b from-violet-500/20 to-violet-600/10",
                     isAnimating && selectedId === option.id && "scale-105",
                     isAnimating && selectedId !== option.id && "opacity-30 scale-95"
