@@ -72,7 +72,7 @@ export default function FilterBeardType() {
             key={option.id}
             onClick={() => handleSelect(option.id)}
             className={cn(
-              "group relative rounded-2xl overflow-hidden transition-all duration-500 ease-out aspect-square",
+              "group relative rounded-2xl overflow-hidden transition-all duration-500 ease-out aspect-square max-h-40 md:max-h-44 lg:max-h-48",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
               config.beardType === option.id
                 ? "ring-2 ring-primary shadow-lg scale-[1.02]"
