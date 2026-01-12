@@ -76,10 +76,10 @@ async function generateWithNanoBanana(
   console.log('Starting Nano Banana image generation...');
   
   // Step 1: Create generation task
-  // Image-to-Image mode with proper type value
+  // Image-to-Image mode - API uses "IMAGETOIAMGE" (intentional typo in API)
   const requestBody: Record<string, any> = {
     prompt,
-    type: 'Image-to-Image', // Correct format based on API docs
+    type: 'IMAGETOIAMGE', // Note: API has typo - IAMGE not IMAGE
     numImages: 1,
     imageUrls: imageUrls // Required for Image-to-Image
   };
