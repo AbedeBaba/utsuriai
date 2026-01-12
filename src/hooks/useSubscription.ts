@@ -93,6 +93,9 @@ export function useSubscription() {
   // Legacy: hasProAccess means user is on a paid plan
   const hasProAccess = isPaid;
 
+  // Trial Pro limit exhausted - used for feature restrictions
+  const isTrialProExhausted = isTrial && trialProRemaining <= 0;
+
   return {
     subscription,
     loading,
@@ -114,6 +117,8 @@ export function useSubscription() {
     canUseProGeneration,
     hasCredits,
     hasProAccess,
+    // Feature restrictions
+    isTrialProExhausted,
     refetch: fetchSubscription,
   };
 }

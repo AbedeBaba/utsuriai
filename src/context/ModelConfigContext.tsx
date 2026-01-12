@@ -26,6 +26,8 @@ export interface FilterStep {
   label: string;
   isCore: boolean;
   condition?: (config: ModelConfig) => boolean;
+  // Steps restricted for Trial users when Pro limit is exhausted
+  isProFeature?: boolean;
 }
 
 export const FILTER_STEPS: FilterStep[] = [
@@ -38,10 +40,10 @@ export const FILTER_STEPS: FilterStep[] = [
   { id: 'bodyType', path: '/filter/body-type', label: 'Body Type', isCore: false },
   { id: 'hairType', path: '/filter/hair-type', label: 'Hair Type', isCore: false, condition: (c) => c.modestOption !== 'Hijab' },
   { id: 'beardType', path: '/filter/beard-type', label: 'Beard Type', isCore: false, condition: (c) => c.gender === 'Male' },
-  { id: 'pose', path: '/filter/pose', label: 'Pose', isCore: false },
-  { id: 'background', path: '/filter/background', label: 'Background', isCore: false },
-  { id: 'faceType', path: '/filter/face-type', label: 'Face Type', isCore: false },
-  { id: 'facialExpression', path: '/filter/expression', label: 'Expression', isCore: false },
+  { id: 'pose', path: '/filter/pose', label: 'Pose', isCore: false, isProFeature: true },
+  { id: 'background', path: '/filter/background', label: 'Background', isCore: false, isProFeature: true },
+  { id: 'faceType', path: '/filter/face-type', label: 'Face Type', isCore: false, isProFeature: true },
+  { id: 'facialExpression', path: '/filter/expression', label: 'Expression', isCore: false, isProFeature: true },
   { id: 'clothing', path: '/clothing', label: 'Clothing', isCore: false },
 ];
 
@@ -53,10 +55,10 @@ interface ModelConfigContextType {
   currentStep: number;
   setCurrentStep: (step: number) => void;
   totalSteps: number;
-  getVisibleSteps: () => FilterStep[];
+  getVisibleSteps: (isTrialProExhausted?: boolean) => FilterStep[];
   isStepCompleted: (stepId: string) => boolean;
   isStepRequired: (stepId: string) => boolean;
-  getNextStepPath: (currentStepId: string) => string | null;
+  getNextStepPath: (currentStepId: string, isTrialProExhausted?: boolean) => string | null;
 }
 
 const initialConfig: ModelConfig = {
@@ -84,9 +86,11 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<ModelConfig>(initialConfig);
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Get visible steps based on current config
-  const getVisibleSteps = useCallback((): FilterStep[] => {
+  // Get visible steps based on current config and trial restrictions
+  const getVisibleSteps = useCallback((isTrialProExhausted: boolean = false): FilterStep[] => {
     return FILTER_STEPS.filter(step => {
+      // Filter out Pro features for Trial users with exhausted Pro limit
+      if (isTrialProExhausted && step.isProFeature) return false;
       if (!step.condition) return true;
       return step.condition(config);
     });
@@ -108,8 +112,8 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Get the next step path from current step
-  const getNextStepPath = useCallback((currentStepId: string): string | null => {
-    const visibleSteps = getVisibleSteps();
+  const getNextStepPath = useCallback((currentStepId: string, isTrialProExhausted: boolean = false): string | null => {
+    const visibleSteps = getVisibleSteps(isTrialProExhausted);
     const currentIndex = visibleSteps.findIndex(s => s.id === currentStepId);
     if (currentIndex === -1 || currentIndex >= visibleSteps.length - 1) return null;
     return visibleSteps[currentIndex + 1].path;

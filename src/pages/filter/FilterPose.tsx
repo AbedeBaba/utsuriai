@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Female pose images
 import femaleFaceCloseup from '@/assets/poses/female-face-closeup.png';
@@ -44,11 +45,19 @@ const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
 export default function FilterPose() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { isTrialProExhausted, loading } = useSubscription();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
   const isFemale = config.gender === 'Female';
+
+  // Redirect Trial users with exhausted Pro limit
+  useEffect(() => {
+    if (!loading && isTrialProExhausted) {
+      navigate('/clothing');
+    }
+  }, [isTrialProExhausted, loading, navigate]);
 
   useEffect(() => {
     setCurrentStep(config.gender === 'Male' ? 9 : 9);

@@ -3,6 +3,7 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Female expression images
 import femaleNeutral from '@/assets/expressions/female-neutral.png';
@@ -26,11 +27,19 @@ const expressionOptions = [
 export default function FilterExpression() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { isTrialProExhausted, loading } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
 
   const isFemale = config.gender === 'Female';
+
+  // Redirect Trial users with exhausted Pro limit
+  useEffect(() => {
+    if (!loading && isTrialProExhausted) {
+      navigate('/clothing');
+    }
+  }, [isTrialProExhausted, loading, navigate]);
 
   useEffect(() => {
     setCurrentStep(12);

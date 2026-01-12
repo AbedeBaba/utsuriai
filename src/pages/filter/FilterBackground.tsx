@@ -3,6 +3,7 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Background images
 import cityBg from '@/assets/backgrounds/city.jpg';
@@ -31,9 +32,17 @@ const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
 export default function FilterBackground() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { isTrialProExhausted, loading } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
+
+  // Redirect Trial users with exhausted Pro limit
+  useEffect(() => {
+    if (!loading && isTrialProExhausted) {
+      navigate('/clothing');
+    }
+  }, [isTrialProExhausted, loading, navigate]);
 
   useEffect(() => {
     setCurrentStep(10);
