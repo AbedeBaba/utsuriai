@@ -3,6 +3,7 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Import female ethnicity images
 import arabicImg from '@/assets/ethnicities/arabic.png';
@@ -76,6 +77,7 @@ const modestOptions = ['Standard', 'Hijab'];
 export default function FilterEthnicity() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
+  const { isTrialProExhausted } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -116,10 +118,6 @@ export default function FilterEthnicity() {
     const randomEyeColor = eyeColorOptions[Math.floor(Math.random() * eyeColorOptions.length)];
     const randomBodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
     const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
-    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
-    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
     const randomModest = modestOptions[Math.floor(Math.random() * modestOptions.length)];
     
     setSelectedId(randomEthnicity);
@@ -131,16 +129,24 @@ export default function FilterEthnicity() {
     updateConfig('eyeColor', randomEyeColor);
     updateConfig('bodyType', randomBodyType);
     updateConfig('hairType', randomHairType);
-    updateConfig('pose', randomPose);
-    updateConfig('background', randomBackground);
-    updateConfig('faceType', randomFaceType);
-    updateConfig('facialExpression', randomExpression);
     updateConfig('modestOption', randomModest);
+    
+    // Only set Pro features if not restricted
+    if (!isTrialProExhausted) {
+      const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+      const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+      updateConfig('pose', randomPose);
+      updateConfig('background', randomBackground);
+      updateConfig('faceType', randomFaceType);
+      updateConfig('facialExpression', randomExpression);
+    }
 
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, ethnicityOptions]);
+  }, [isAnimating, navigate, updateConfig, ethnicityOptions, isTrialProExhausted]);
 
   const handleRandomSingle = useCallback(() => {
     if (isAnimating) return;
@@ -153,12 +159,12 @@ export default function FilterEthnicity() {
 
     // Navigate to next step after selection
     setTimeout(() => {
-      const nextPath = getNextStepPath('ethnicity');
+      const nextPath = getNextStepPath('ethnicity', isTrialProExhausted);
       if (nextPath) {
         navigate(nextPath);
       }
     }, 800);
-  }, [isAnimating, updateConfig, ethnicityOptions, navigate, getNextStepPath]);
+  }, [isAnimating, updateConfig, ethnicityOptions, navigate, getNextStepPath, isTrialProExhausted]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 

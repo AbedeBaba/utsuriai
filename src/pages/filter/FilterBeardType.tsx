@@ -75,10 +75,10 @@ export default function FilterBeardType() {
     setHoverDisabled(true);
     updateConfig('beardType', randomBeardType.id);
     setTimeout(() => {
-      const nextPath = getNextStepPath('beardType');
+      const nextPath = getNextStepPath('beardType', isTrialProExhausted);
       if (nextPath) { navigate(nextPath); }
     }, 800);
-  }, [isAnimating, updateConfig, navigate, getNextStepPath]);
+  }, [isAnimating, updateConfig, navigate, getNextStepPath, isTrialProExhausted]);
 
   const handleRandomAll = useCallback(() => {
     if (isAnimating) return;

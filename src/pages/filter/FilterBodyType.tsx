@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Female body type images
 import femaleSlim from '@/assets/body-types/female-slim.png';
@@ -49,6 +50,7 @@ const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard'
 export default function FilterBodyType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { isTrialProExhausted } = useSubscription();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -115,17 +117,21 @@ export default function FilterBodyType() {
     // Select random for this filter and all remaining ones
     const randomBodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
     const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
-    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
-    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
     
     updateConfig('bodyType', randomBodyType.id);
     updateConfig('hairType', randomHairType);
-    updateConfig('pose', randomPose);
-    updateConfig('background', randomBackground);
-    updateConfig('faceType', randomFaceType);
-    updateConfig('facialExpression', randomExpression);
+    
+    // Only set Pro features if not restricted
+    if (!isTrialProExhausted) {
+      const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+      const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+      updateConfig('pose', randomPose);
+      updateConfig('background', randomBackground);
+      updateConfig('faceType', randomFaceType);
+      updateConfig('facialExpression', randomExpression);
+    }
     
     // For males, also set beard type
     if (!isFemale) {
@@ -135,7 +141,7 @@ export default function FilterBodyType() {
     
     // Navigate to clothing (final step before generation)
     navigate('/clothing');
-  }, [bodyTypeOptions, isFemale, updateConfig, navigate]);
+  }, [bodyTypeOptions, isFemale, updateConfig, navigate, isTrialProExhausted]);
 
   // Keyboard navigation
   useEffect(() => {

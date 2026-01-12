@@ -4,6 +4,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const skinToneOptions = [
   { id: 'Fair', label: 'Fair', color: '#FFE5D4', darkColor: '#e6cfc0' },
@@ -120,6 +121,7 @@ export default function FilterSkinTone() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
   const { t } = useLanguage();
+  const { isTrialProExhausted } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -156,12 +158,12 @@ export default function FilterSkinTone() {
     updateConfig('skinTone', randomSkinTone.id);
 
     setTimeout(() => {
-      const nextPath = getNextStepPath('skinTone');
+      const nextPath = getNextStepPath('skinTone', isTrialProExhausted);
       if (nextPath) {
         navigate(nextPath);
       }
     }, 800);
-  }, [isAnimating, updateConfig, navigate, getNextStepPath]);
+  }, [isAnimating, updateConfig, navigate, getNextStepPath, isTrialProExhausted]);
 
   const handleRandomAll = useCallback(() => {
     if (isAnimating) return;
@@ -174,10 +176,6 @@ export default function FilterSkinTone() {
     const randomEyeColor = eyeColorOptions[Math.floor(Math.random() * eyeColorOptions.length)];
     const randomBodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
     const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
-    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
-    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
     
     setSelectedId(randomSkinTone);
     
@@ -186,10 +184,18 @@ export default function FilterSkinTone() {
     updateConfig('eyeColor', randomEyeColor);
     updateConfig('bodyType', randomBodyType);
     updateConfig('hairType', randomHairType);
-    updateConfig('pose', randomPose);
-    updateConfig('background', randomBackground);
-    updateConfig('faceType', randomFaceType);
-    updateConfig('facialExpression', randomExpression);
+    
+    // Only set Pro features if not restricted
+    if (!isTrialProExhausted) {
+      const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+      const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+      updateConfig('pose', randomPose);
+      updateConfig('background', randomBackground);
+      updateConfig('faceType', randomFaceType);
+      updateConfig('facialExpression', randomExpression);
+    }
     
     if (config.gender === 'Male') {
       const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)];
@@ -199,7 +205,7 @@ export default function FilterSkinTone() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, config.gender]);
+  }, [isAnimating, navigate, updateConfig, config.gender, isTrialProExhausted]);
 
   return (
     <FilterStepLayout 
