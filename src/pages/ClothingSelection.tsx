@@ -126,8 +126,8 @@ export default function ClothingSelection() {
     // CRITICAL: Validate at least 1 clothing image is uploaded (Image-to-Image only)
     if (uploadedImages.length === 0) {
       toast({
-        title: 'Kıyafet görseli gerekli',
-        description: 'Model oluşturmak için en az 1 adet kıyafet görseli yüklemeniz gerekmektedir.',
+        title: 'Clothing image required',
+        description: 'Please upload at least 1 clothing image to generate a model.',
         variant: 'destructive',
       });
       return;
@@ -144,16 +144,16 @@ export default function ClothingSelection() {
     if (isTrial) {
       if (usePro && trialProRemaining <= 0) {
         toast({
-          title: 'Pro üretim hakkı doldu',
-          description: 'Deneme Pro üretim hakkınız dolmuştur',
+          title: 'Pro generation limit reached',
+          description: 'You have used all your trial Pro generations.',
           variant: 'destructive',
         });
         return;
       }
       if (!usePro && trialStandardRemaining <= 0) {
         toast({
-          title: 'Üretim hakkı doldu',
-          description: 'Deneme görsel üretim hakkınız dolmuştur',
+          title: 'Generation limit reached',
+          description: 'You have used all your trial generations.',
           variant: 'destructive',
         });
         return;
@@ -164,8 +164,8 @@ export default function ClothingSelection() {
       const requiredCredits = usePro ? 4 : 1;
       if (creditsRemaining < requiredCredits) {
         toast({
-          title: usePro ? 'Yetersiz kredi' : 'Yetersiz kredi',
-          description: usePro ? 'Pro görsel için yeterli krediniz yok' : 'Yetersiz kredi',
+          title: 'Insufficient credits',
+          description: usePro ? 'Pro generation requires 4 credits.' : 'Not enough credits.',
           variant: 'destructive',
         });
         return;
@@ -302,10 +302,10 @@ export default function ClothingSelection() {
               <div className="bg-card/50 border border-border rounded-lg p-3 text-sm">
                 {isTrial ? (
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Deneme Hakkı:</span>
+                    <span className="text-muted-foreground">Trial Remaining:</span>
                     <div className="flex gap-4">
                       <span className="text-foreground">
-                        Standart: <strong className={trialStandardRemaining > 0 ? 'text-green-500' : 'text-destructive'}>{trialStandardRemaining}/5</strong>
+                        Standard: <strong className={trialStandardRemaining > 0 ? 'text-green-500' : 'text-destructive'}>{trialStandardRemaining}/5</strong>
                       </span>
                       <span className="text-foreground">
                         Pro: <strong className={trialProRemaining > 0 ? 'text-amber-500' : 'text-destructive'}>{trialProRemaining}/2</strong>
@@ -314,9 +314,9 @@ export default function ClothingSelection() {
                   </div>
                 ) : isPaid ? (
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Utsuri Kredisi:</span>
+                    <span className="text-muted-foreground">Credits:</span>
                     <span className="text-foreground">
-                      <strong className={creditsRemaining >= 1 ? 'text-green-500' : 'text-destructive'}>{creditsRemaining}</strong> kredi
+                      <strong className={creditsRemaining >= 1 ? 'text-green-500' : 'text-destructive'}>{creditsRemaining}</strong> credits
                       <span className="text-xs text-muted-foreground ml-2">(Std: 1, Pro: 4)</span>
                     </span>
                   </div>
@@ -339,7 +339,7 @@ export default function ClothingSelection() {
               ) : !canGenerate ? (
                 <>
                   <Sparkles className="mr-2 h-5 w-5" />
-                  {isTrial ? 'Deneme hakkı doldu' : 'Yetersiz kredi'}
+                  {isTrial ? 'Trial limit reached' : 'Insufficient credits'}
                 </>
               ) : (
                 <>
@@ -347,12 +347,12 @@ export default function ClothingSelection() {
                   {t('clothing.generate')}
                   {isTrial && (
                     <span className="ml-2 text-sm opacity-80">
-                      ({trialStandardRemaining} kaldı)
+                      ({trialStandardRemaining} left)
                     </span>
                   )}
                   {isPaid && (
                     <span className="ml-2 text-sm opacity-80">
-                      (1 kredi)
+                      (1 credit)
                     </span>
                   )}
                 </>
@@ -374,7 +374,7 @@ export default function ClothingSelection() {
               ) : !canUseProGeneration ? (
                 <>
                   <Crown className="mr-2 h-5 w-5" />
-                  {isTrial ? 'Deneme Pro hakkı doldu' : 'Pro için yetersiz kredi (4 gerekli)'}
+                  {isTrial ? 'Trial Pro limit reached' : 'Insufficient credits (4 required)'}
                 </>
               ) : (
                 <>
@@ -382,12 +382,12 @@ export default function ClothingSelection() {
                   Generate Model With Utsuri Pro
                   {isTrial && (
                     <span className="ml-2 text-sm opacity-80">
-                      ({trialProRemaining} kaldı)
+                      ({trialProRemaining} left)
                     </span>
                   )}
                   {isPaid && (
                     <span className="ml-2 text-sm opacity-80">
-                      (4 kredi)
+                      (4 credits)
                     </span>
                   )}
                 </>

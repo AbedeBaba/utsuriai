@@ -6,10 +6,9 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Download, RefreshCw, Sparkles, Loader2, ImageIcon, LayoutDashboard, Crown, User, Palette, Eye, Shirt, Camera, MapPin } from 'lucide-react';
+import { ArrowLeft, Download, RefreshCw, Sparkles, Loader2, ImageIcon, LayoutDashboard, Crown } from 'lucide-react';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface GenerationData {
   id: string;
@@ -31,16 +30,6 @@ interface GenerationData {
   reference_image: string | null;
 }
 
-// Reusable config item component for displaying filter values
-function ConfigItem({ label, value }: { label: string; value: string | null }) {
-  if (!value) return null;
-  return (
-    <div className="flex flex-col gap-0.5 p-2 rounded-lg bg-background/50">
-      <span className="text-xs text-muted-foreground uppercase tracking-wide">{label}</span>
-      <span className="text-sm font-medium text-foreground">{value}</span>
-    </div>
-  );
-}
 
 export default function Result() {
   const { id } = useParams<{ id: string }>();
@@ -270,88 +259,81 @@ export default function Result() {
             )}
           </div>
 
-          {/* Model Configuration Section - Premium Card-Based Layout */}
+          {/* Selected Filters - Matching ClothingSelection design */}
           {generation && (
-            <div className="space-y-4 mb-8">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-semibold text-foreground">{t('result.modelConfig')}</h3>
+            <div className="bg-card border border-border rounded-xl p-4 mb-8">
+              <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Selected Filters
                 {isProMode && (
                   <span className="ml-auto flex items-center gap-1.5 px-2 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 text-xs font-medium border border-amber-500/30">
                     <Crown className="h-3 w-3" />
                     Pro Quality
                   </span>
                 )}
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                {generation.gender && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Gender</span>
+                    <span className="font-medium text-foreground">{generation.gender}</span>
+                  </div>
+                )}
+                {generation.ethnicity && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Ethnicity</span>
+                    <span className="font-medium text-foreground">{generation.ethnicity}</span>
+                  </div>
+                )}
+                {generation.skin_tone && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Skin Tone</span>
+                    <span className="font-medium text-foreground">{generation.skin_tone}</span>
+                  </div>
+                )}
+                {generation.hair_color && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Hair Color</span>
+                    <span className="font-medium text-foreground">{generation.hair_color}</span>
+                  </div>
+                )}
+                {generation.eye_color && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Eye Color</span>
+                    <span className="font-medium text-foreground">{generation.eye_color}</span>
+                  </div>
+                )}
+                {generation.body_type && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Body Type</span>
+                    <span className="font-medium text-foreground">{generation.body_type}</span>
+                  </div>
+                )}
+                {generation.hair_type && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Hair Type</span>
+                    <span className="font-medium text-foreground">{generation.hair_type}</span>
+                  </div>
+                )}
+                {generation.beard_type && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Beard Type</span>
+                    <span className="font-medium text-foreground">{generation.beard_type}</span>
+                  </div>
+                )}
+                {generation.pose && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Pose</span>
+                    <span className="font-medium text-foreground">{generation.pose}</span>
+                  </div>
+                )}
+                {generation.background && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Background</span>
+                    <span className="font-medium text-foreground">{generation.background}</span>
+                  </div>
+                )}
               </div>
-              
-              <p className="text-sm text-muted-foreground mb-4">
-                This image was generated using these exact selections:
-              </p>
-              
-              {/* Model Identity Card */}
-              <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-primary">
-                    <User className="h-4 w-4" />
-                    Model Identity
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-3">
-                  <ConfigItem label="Gender" value={generation.gender} />
-                  <ConfigItem label="Ethnicity" value={generation.ethnicity} />
-                  <ConfigItem label="Body Type" value={generation.body_type} />
-                  {generation.beard_type && <ConfigItem label="Beard Type" value={generation.beard_type} />}
-                </CardContent>
-              </Card>
-              
-              {/* Appearance Card */}
-              <Card className="border-violet-500/20 bg-gradient-to-br from-card to-violet-500/5">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2 text-violet-400">
-                    <Palette className="h-4 w-4" />
-                    Appearance
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-3">
-                  <ConfigItem label="Skin Tone" value={generation.skin_tone} />
-                  <ConfigItem label="Hair Color" value={generation.hair_color} />
-                  <ConfigItem label="Hair Type" value={generation.hair_type} />
-                  <ConfigItem label="Eye Color" value={generation.eye_color} />
-                </CardContent>
-              </Card>
-              
-              {/* Scene & Pose Card */}
-              {(generation.pose || generation.background) && (
-                <Card className="border-emerald-500/20 bg-gradient-to-br from-card to-emerald-500/5">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-emerald-400">
-                      <Camera className="h-4 w-4" />
-                      Scene & Pose
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-2 gap-3">
-                    {generation.pose && <ConfigItem label="Pose" value={generation.pose} />}
-                    {generation.background && <ConfigItem label="Background" value={generation.background} />}
-                  </CardContent>
-                </Card>
-              )}
-              
-              {/* Outfit Card */}
-              {(generation.clothing_top || generation.clothing_bottom || generation.shoes) && (
-                <Card className="border-rose-500/20 bg-gradient-to-br from-card to-rose-500/5">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2 text-rose-400">
-                      <Shirt className="h-4 w-4" />
-                      Outfit
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-2 gap-3">
-                    {generation.clothing_top && <ConfigItem label="Top" value={generation.clothing_top} />}
-                    {generation.clothing_bottom && <ConfigItem label="Bottom" value={generation.clothing_bottom} />}
-                    {generation.shoes && <ConfigItem label="Shoes" value={generation.shoes} />}
-                  </CardContent>
-                </Card>
-              )}
             </div>
           )}
 

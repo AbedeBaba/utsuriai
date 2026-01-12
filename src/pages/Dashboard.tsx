@@ -39,7 +39,7 @@ export default function Dashboard() {
   const { user, profile, loading } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { subscription, loading: subscriptionLoading } = useSubscription();
+  const { subscription, loading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(true);
   const [activeCategory, setActiveCategory] = useState<Category | 'All'>('All');
@@ -78,8 +78,9 @@ export default function Dashboard() {
   useEffect(() => {
     if (user) {
       fetchImages();
+      refetchSubscription(); // Always sync credits on mount/navigation
     }
-  }, [user]);
+  }, [user, refetchSubscription]);
 
   const fetchImages = async () => {
     setLoadingImages(true);
