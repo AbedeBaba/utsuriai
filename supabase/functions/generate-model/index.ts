@@ -7,8 +7,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Direct Google Gemini API (NanoBanana)
-const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
+// Nano Banana API Configuration
+const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
 
 // Allowed values for input validation
 const ALLOWED_VALUES = {
@@ -61,6 +61,94 @@ function sanitizeConfig(config: any): Record<string, string | null> {
   };
 }
 
+// Helper function to wait/sleep
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Generate image using Nano Banana API
+async function generateWithNanoBanana(
+  apiKey: string,
+  prompt: string,
+  imageUrls: string[] | null,
+  usePro: boolean
+): Promise<string> {
+  console.log('Starting Nano Banana image generation...');
+  
+  // Step 1: Create generation task
+  const generateResponse = await fetch(`${NANOBANANA_BASE_URL}/generate`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      prompt,
+      type: imageUrls && imageUrls.length > 0 ? 'IMAGETOIMAGE' : 'TEXTTOIMAGE',
+      numImages: 1,
+      imageUrls: imageUrls || undefined,
+      // Use pro model for higher quality if usePro is true
+      model: usePro ? 'pro' : 'standard'
+    })
+  });
+
+  const generateResult = await generateResponse.json();
+  console.log('Nano Banana generate response:', JSON.stringify(generateResult));
+  
+  if (!generateResponse.ok || generateResult.code !== 200) {
+    throw new Error(`Generation failed: ${generateResult.msg || generateResult.message || 'Unknown error'}`);
+  }
+  
+  const taskId = generateResult.data?.taskId;
+  if (!taskId) {
+    throw new Error('No taskId returned from Nano Banana API');
+  }
+  
+  console.log(`Task created with ID: ${taskId}. Polling for completion...`);
+  
+  // Step 2: Poll for completion (max 5 minutes)
+  const maxWaitTime = 300000; // 5 minutes
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < maxWaitTime) {
+    const statusResponse = await fetch(`${NANOBANANA_BASE_URL}/record-info?taskId=${taskId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`
+      }
+    });
+    
+    const statusResult = await statusResponse.json();
+    console.log(`Task status check: successFlag=${statusResult.successFlag}`);
+    
+    switch (statusResult.successFlag) {
+      case 0:
+        // Still generating
+        console.log('Task is generating...');
+        break;
+      case 1:
+        // Success!
+        console.log('Generation completed successfully!');
+        const imageUrl = statusResult.response?.resultImageUrl;
+        if (!imageUrl) {
+          throw new Error('No resultImageUrl in successful response');
+        }
+        return imageUrl;
+      case 2:
+      case 3:
+        // Failed
+        throw new Error(statusResult.errorMessage || 'Generation failed');
+      default:
+        console.log('Unknown status:', statusResult.successFlag);
+    }
+    
+    // Wait 3 seconds before next poll
+    await sleep(3000);
+  }
+  
+  throw new Error('Generation timeout - exceeded 5 minutes');
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -83,7 +171,6 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     
     // Extract token and use getUser with JWT
     const token = authHeader.replace('Bearer ', '');
@@ -101,7 +188,6 @@ serve(async (req) => {
     }
     
     const authenticatedUserId = user.id;
-    console.log('Authenticated user:', authenticatedUserId);
     console.log('Authenticated user:', authenticatedUserId);
 
     // ==========================================
@@ -232,7 +318,7 @@ serve(async (req) => {
     const prompt = buildPrompt(sanitizedConfig, referenceImages, usePro);
     console.log('Generated prompt:', prompt.substring(0, 500) + '...');
 
-    // Get NanoBanana API key (Gemini API Key)
+    // Get NanoBanana API key
     const apiKey = Deno.env.get('NANOBANANA_API_KEY');
     
     if (!apiKey) {
@@ -243,113 +329,26 @@ serve(async (req) => {
       );
     }
 
-    // Select model based on quality mode - using image generation models (Nano Banana)
-    const model = usePro ? 'gemini-3-pro-image-preview' : 'gemini-2.5-flash-image';
-    const apiUrl = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey}`;
-    
-    console.log(`Using model: ${model} via direct Gemini API`);
-
-    // Build parts for Gemini API format
-    const parts: any[] = [
-      { text: prompt }
-    ];
-
-    // Add reference images as inline_data if provided
+    // Convert base64 reference images to URLs if needed
+    // Nano Banana API expects URLs, so we need to handle base64 images differently
+    let imageUrls: string[] | null = null;
     if (referenceImages && referenceImages.length > 0) {
-      referenceImages.forEach((img, index) => {
-        // Extract base64 data and mime type from data URL
-        const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
-        if (matches) {
-          parts.push({
-            inline_data: {
-              mime_type: matches[1],
-              data: matches[2]
-            }
-          });
-          console.log(`Added reference image ${index + 1} (type: ${img.type}, mime: ${matches[1]})`);
-        }
-      });
+      // For now, we'll pass the base64 data directly if the API supports it
+      // Otherwise, images would need to be uploaded to storage first
+      imageUrls = referenceImages
+        .map(img => img.data)
+        .filter(data => data.startsWith('http') || data.startsWith('data:'));
+      
+      console.log(`Prepared ${imageUrls.length} reference images for Nano Banana API`);
     }
 
-    // Call the direct Gemini API
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: parts
-          }
-        ],
-        generationConfig: {
-          responseModalities: ['image', 'text']
-        }
-      }),
-    });
+    console.log(`Using Nano Banana API with ${usePro ? 'Pro' : 'Standard'} model`);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Gemini API error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      if (response.status === 400) {
-        return new Response(
-          JSON.stringify({ error: 'Invalid request. Please check your input.', details: errorText }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      if (response.status === 401 || response.status === 403) {
-        return new Response(
-          JSON.stringify({ error: 'Invalid API key. Please check your NANOBANANA_API_KEY.' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      return new Response(
-        JSON.stringify({ error: 'AI generation failed', details: errorText }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const data = await response.json();
-    console.log('Gemini API response received');
-
-    // Extract the generated image from Gemini response format
-    // Gemini returns images in candidates[0].content.parts[] as inline_data
-    let generatedImageUrl: string | null = null;
-    
-    const candidates = data.candidates;
-    if (candidates && candidates.length > 0) {
-      const parts = candidates[0].content?.parts || [];
-      for (const part of parts) {
-        if (part.inline_data) {
-          // Convert inline_data to base64 data URL
-          const mimeType = part.inline_data.mime_type || 'image/png';
-          const base64Data = part.inline_data.data;
-          generatedImageUrl = `data:${mimeType};base64,${base64Data}`;
-          break;
-        }
-      }
-    }
-
-    if (!generatedImageUrl) {
-      console.error('No image in response:', JSON.stringify(data).substring(0, 1000));
-      return new Response(
-        JSON.stringify({ error: 'Image generation failed - no image returned.' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    // Call the Nano Banana API
+    const generatedImageUrl = await generateWithNanoBanana(apiKey, prompt, imageUrls, usePro);
 
     console.log('Image generated successfully with', usePro ? 'Pro' : 'Standard', 'quality');
+    console.log('Generated image URL:', generatedImageUrl);
 
     // Update the database with the generated image
     const { error: updateError } = await supabase
@@ -427,38 +426,17 @@ ${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ult
   if (config.facialExpression) dynamicFilters.push(`Facial expression: ${config.facialExpression}`);
   if (config.beardType) dynamicFilters.push(`Facial hair: ${config.beardType}`);
   if (config.bodyType) dynamicFilters.push(`Body type: ${config.bodyType}`);
-  if (config.pose) dynamicFilters.push(`Model pose: ${config.pose}`);
-  if (config.background) dynamicFilters.push(`Background setting: ${config.background}`);
-  if (config.modestOption) dynamicFilters.push(`Coverage style: ${config.modestOption}`);
+  if (config.pose) dynamicFilters.push(`Pose: ${config.pose}`);
+  if (config.background) dynamicFilters.push(`Background: ${config.background}`);
+  if (config.modestOption === 'Hijab') dynamicFilters.push(`Wearing a hijab headscarf`);
 
-  const dynamicSection = dynamicFilters.length > 0 
-    ? `\n\nMODEL ATTRIBUTES (Apply these characteristics to the model):\n${dynamicFilters.map(f => `- ${f}`).join('\n')}`
+  const referenceSection = referenceImages && referenceImages.length > 0
+    ? `\nREFERENCE IMAGES PROVIDED:\n${referenceImages.map((img, i) => `- Reference ${i + 1}: ${img.type} - Copy this EXACTLY onto the model`).join('\n')}\n`
     : '';
 
-  let referenceSection = '';
-  if (referenceImages && referenceImages.length > 0) {
-    const imageTypes = referenceImages.map(img => img.type);
-    const hasOutfit = imageTypes.some(t => t === 'outfit');
-    const hasJewelry = imageTypes.some(t => t === 'jewelry');
-    const hasAccessory = imageTypes.some(t => t === 'accessory');
-    
-    const referenceItems: string[] = [];
-    if (hasOutfit) referenceItems.push('clothing/outfit');
-    if (hasJewelry) referenceItems.push('jewelry');
-    if (hasAccessory) referenceItems.push('accessories');
-    
-    referenceSection = `
+  const filtersSection = dynamicFilters.length > 0
+    ? `\nMODEL ATTRIBUTES:\n${dynamicFilters.join('\n')}`
+    : '';
 
-REFERENCE IMAGES PROVIDED:
-The attached reference images contain ${referenceItems.join(', ')} that MUST be reproduced exactly.
-- Copy every detail from the reference images with 100% accuracy.
-- Do not add, remove, or modify any aspect of the referenced items.
-- The model should be wearing/displaying these exact items as shown.`;
-  }
-
-  const fullPrompt = `${staticBasePrompt}${dynamicSection}${referenceSection}
-
-FINAL INSTRUCTION: Generate the image with the model wearing the EXACT clothing from the reference images (if provided), applying only the specified model attributes above. Never modify the clothing or outfit in any way.`;
-
-  return fullPrompt;
+  return `${staticBasePrompt}${filtersSection}${referenceSection}\n\nFINAL INSTRUCTION: Generate a photorealistic fashion image with the exact clothing from reference images (if provided) on a model with the specified attributes. The clothing must be identical to the reference.`;
 }
