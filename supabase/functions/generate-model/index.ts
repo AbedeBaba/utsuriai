@@ -76,20 +76,16 @@ async function generateWithNanoBanana(
   console.log('Starting Nano Banana image generation...');
   
   // Step 1: Create generation task
-  // Note: API uses 'TEXTTOIAMGE' (with typo) based on documentation
-  // For image-to-image, we also try the typo version 'IMAGETOIMAGEE' or just use the same typo pattern
+  // CRITICAL: Image-to-Image only mode - use IMAGETOIMAGE type
+  // Note: API documentation shows typos but we use the correct spelling
   const requestBody: Record<string, any> = {
     prompt,
-    type: imageUrls && imageUrls.length > 0 ? 'IMAGETOIAMGE' : 'TEXTTOIAMGE',
-    numImages: 1
+    type: 'IMAGETOIMAGE', // Always use Image-to-Image mode
+    numImages: 1,
+    imageUrls: imageUrls // Required for Image-to-Image
   };
   
-  // Only add imageUrls if provided
-  if (imageUrls && imageUrls.length > 0) {
-    requestBody.imageUrls = imageUrls;
-  }
-  
-  console.log('Nano Banana request body:', JSON.stringify(requestBody));
+  console.log('Nano Banana request body (Image-to-Image mode):', JSON.stringify(requestBody));
   
   const generateResponse = await fetch(`${NANOBANANA_BASE_URL}/generate`, {
     method: 'POST',
@@ -357,65 +353,79 @@ serve(async (req) => {
       );
     }
 
-    // Upload base64 images to storage and get public URLs
-    // Nano Banana API expects HTTP URLs, not base64 data
+    // CRITICAL: Enforce Image-to-Image only - block generation without reference images
     let imageUrls: string[] | null = null;
-    if (referenceImages && referenceImages.length > 0) {
-      console.log(`Uploading ${referenceImages.length} reference images to storage...`);
-      imageUrls = [];
+    if (!referenceImages || referenceImages.length === 0) {
+      console.error('No reference images provided - Image-to-Image mode required');
+      return new Response(
+        JSON.stringify({ error: 'Model oluşturmak için en az 1 adet kıyafet görseli yüklemeniz gerekmektedir.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    console.log(`Uploading ${referenceImages.length} reference images to storage...`);
+    imageUrls = [];
+    
+    for (let i = 0; i < referenceImages.length; i++) {
+      const img = referenceImages[i];
       
-      for (let i = 0; i < referenceImages.length; i++) {
-        const img = referenceImages[i];
-        
-        // If already an HTTP URL, use directly
-        if (img.data.startsWith('http')) {
-          imageUrls.push(img.data);
-          continue;
-        }
-        
-        // Convert base64 to blob and upload
-        if (img.data.startsWith('data:')) {
-          try {
-            const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
-            if (matches) {
-              const mimeType = matches[1];
-              const base64Data = matches[2];
-              const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-              
-              const extension = mimeType.split('/')[1] || 'png';
-              const fileName = `${generationId}/ref-${i}-${Date.now()}.${extension}`;
-              
-              // Upload to storage bucket
-              const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('generated-images')
-                .upload(fileName, binaryData, {
-                  contentType: mimeType,
-                  upsert: true
-                });
-              
-              if (uploadError) {
-                console.error(`Failed to upload reference image ${i}:`, uploadError);
-                continue;
-              }
-              
-              // Get public URL
-              const { data: urlData } = supabase.storage
-                .from('generated-images')
-                .getPublicUrl(fileName);
-              
-              if (urlData?.publicUrl) {
-                imageUrls.push(urlData.publicUrl);
-                console.log(`Uploaded reference image ${i}: ${urlData.publicUrl}`);
-              }
-            }
-          } catch (uploadErr) {
-            console.error(`Error processing reference image ${i}:`, uploadErr);
-          }
-        }
+      // If already an HTTP URL, use directly
+      if (img.data.startsWith('http')) {
+        imageUrls.push(img.data);
+        continue;
       }
       
-      console.log(`Prepared ${imageUrls.length} reference image URLs for Nano Banana API`);
+      // Convert base64 to blob and upload
+      if (img.data.startsWith('data:')) {
+        try {
+          const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
+          if (matches) {
+            const mimeType = matches[1];
+            const base64Data = matches[2];
+            const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+            
+            const extension = mimeType.split('/')[1] || 'png';
+            const fileName = `${generationId}/ref-${i}-${Date.now()}.${extension}`;
+            
+            // Upload to storage bucket
+            const { data: uploadData, error: uploadError } = await supabase.storage
+              .from('generated-images')
+              .upload(fileName, binaryData, {
+                contentType: mimeType,
+                upsert: true
+              });
+            
+            if (uploadError) {
+              console.error(`Failed to upload reference image ${i}:`, uploadError);
+              continue;
+            }
+            
+            // Get public URL
+            const { data: urlData } = supabase.storage
+              .from('generated-images')
+              .getPublicUrl(fileName);
+            
+            if (urlData?.publicUrl) {
+              imageUrls.push(urlData.publicUrl);
+              console.log(`Uploaded reference image ${i}: ${urlData.publicUrl}`);
+            }
+          }
+        } catch (uploadErr) {
+          console.error(`Error processing reference image ${i}:`, uploadErr);
+        }
+      }
     }
+    
+    // Final validation - must have at least one valid image URL
+    if (imageUrls.length === 0) {
+      console.error('Failed to process any reference images');
+      return new Response(
+        JSON.stringify({ error: 'Kıyafet görselleri işlenemedi. Lütfen tekrar deneyin.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    console.log(`Prepared ${imageUrls.length} reference image URLs for Nano Banana API (Image-to-Image mode)`);
 
     console.log(`Using Nano Banana API with ${usePro ? 'Pro' : 'Standard'} model`);
 
