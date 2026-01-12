@@ -182,13 +182,16 @@ const Pricing = () => {
             const shouldHighlightTrial = isTrialCard && isTrial && isTrialProExhausted;
             
             return (
-              key={plan.nameKey}
-              className={`relative rounded-2xl p-6 transition-all duration-300 flex flex-col ${
-                plan.highlighted
-                  ? "bg-gradient-to-b from-[#2a2a3a] to-[#1a1a25] border-2 border-primary/50 shadow-[0_0_40px_rgba(155,135,245,0.15)] scale-[1.02] lg:scale-105"
-                  : "bg-gradient-to-b from-[#1a1a25] to-[#12121a] border border-white/10 hover:border-white/20"
-              }`}
-            >
+              <div
+                key={plan.nameKey}
+                className={`relative rounded-2xl p-6 transition-all duration-300 flex flex-col ${
+                  shouldHighlightTrial
+                    ? "bg-gradient-to-b from-amber-500/20 to-[#1a1a25] border-2 border-amber-500/50 shadow-[0_0_40px_rgba(245,158,11,0.2)] ring-2 ring-amber-500/30"
+                    : plan.highlighted
+                    ? "bg-gradient-to-b from-[#2a2a3a] to-[#1a1a25] border-2 border-primary/50 shadow-[0_0_40px_rgba(155,135,245,0.15)] scale-[1.02] lg:scale-105"
+                    : "bg-gradient-to-b from-[#1a1a25] to-[#12121a] border border-white/10 hover:border-white/20"
+                }`}
+              >
               {/* Badge */}
               {(plan.badgeKey || shouldHighlightTrial) && (
                 <div
@@ -285,8 +288,8 @@ const Pricing = () => {
                 {plan.badgeType === "powerful" && <Zap className="w-4 h-4 mr-2" />}
                 {t(plan.buttonTextKey)}
               </Button>
-            </div>
-          );
+              </div>
+            );
           })}
         </div>
 
