@@ -3,6 +3,7 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Beard type images
 import cleanShavenImg from '@/assets/beard-types/clean-shaven.png';
@@ -36,6 +37,7 @@ const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
 export default function FilterBeardType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
+  const { isTrialProExhausted } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -46,9 +48,10 @@ export default function FilterBeardType() {
 
   useEffect(() => {
     if (config.gender !== 'Male') {
-      navigate('/filter/pose');
+      // Skip Pro features if Trial Pro exhausted
+      navigate(isTrialProExhausted ? '/clothing' : '/filter/pose');
     }
-  }, [config.gender, navigate]);
+  }, [config.gender, navigate, isTrialProExhausted]);
 
   const handleSelect = useCallback((beardType: string) => {
     if (isAnimating) return;
@@ -59,9 +62,10 @@ export default function FilterBeardType() {
     updateConfig('beardType', beardType);
 
     setTimeout(() => {
-      navigate('/filter/pose');
+      // Skip Pro features if Trial Pro exhausted
+      navigate(isTrialProExhausted ? '/clothing' : '/filter/pose');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig]);
+  }, [isAnimating, navigate, updateConfig, isTrialProExhausted]);
 
   const handleRandomSingle = useCallback(() => {
     if (isAnimating) return;
@@ -82,20 +86,23 @@ export default function FilterBeardType() {
     setHoverDisabled(true);
     
     const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)].id;
-    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
-    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
-    
     setSelectedId(randomBeardType);
     updateConfig('beardType', randomBeardType);
-    updateConfig('pose', randomPose);
-    updateConfig('background', randomBackground);
-    updateConfig('faceType', randomFaceType);
-    updateConfig('facialExpression', randomExpression);
+    
+    // Only set Pro features if not restricted
+    if (!isTrialProExhausted) {
+      const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+      const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+      updateConfig('pose', randomPose);
+      updateConfig('background', randomBackground);
+      updateConfig('faceType', randomFaceType);
+      updateConfig('facialExpression', randomExpression);
+    }
 
     setTimeout(() => { navigate('/clothing'); }, 1000);
-  }, [isAnimating, navigate, updateConfig]);
+  }, [isAnimating, navigate, updateConfig, isTrialProExhausted]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 

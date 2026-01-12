@@ -4,6 +4,7 @@ import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { Circle, Square, Diamond, Heart, Hexagon } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Female face type images
 import femaleOval from '@/assets/face-types/female-oval.png';
@@ -36,11 +37,19 @@ const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
 export default function FilterFaceType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
+  const { isTrialProExhausted, loading } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
 
   const isFemale = config.gender === 'Female';
+
+  // Redirect Trial users with exhausted Pro limit
+  useEffect(() => {
+    if (!loading && isTrialProExhausted) {
+      navigate('/clothing');
+    }
+  }, [isTrialProExhausted, loading, navigate]);
 
   useEffect(() => {
     setCurrentStep(11);

@@ -1,8 +1,9 @@
-import { Check, Sparkles, Crown, Zap, Star, Lock, Image, Plus } from "lucide-react";
+import { Check, Sparkles, Crown, Zap, Star, Lock, Image, Plus, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface PlanFeature {
   textKey: string;
@@ -127,6 +128,7 @@ const plans: PricingPlan[] = [
 const Pricing = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isTrial, isTrialProExhausted, trialStandardRemaining } = useSubscription();
 
   const handleSelectPlan = (planName: string) => {
     navigate("/auth");
@@ -157,11 +159,29 @@ const Pricing = () => {
           </p>
         </div>
 
+        {/* Trial Pro Exhausted Warning */}
+        {isTrial && isTrialProExhausted && (
+          <div className="mb-8 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 max-w-2xl mx-auto">
+            <div className="flex items-center gap-3 text-amber-400">
+              <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+              <div>
+                <p className="font-medium">Pro generation limit reached</p>
+                <p className="text-sm text-amber-400/80">
+                  You have {trialStandardRemaining} standard generations remaining. Upgrade to unlock all features.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
-          {plans.map((plan) => (
-            <div
+          {plans.map((plan) => {
+            // Highlight Trial card when Pro is exhausted
+            const isTrialCard = plan.nameKey === "pricing.trial";
+            const shouldHighlightTrial = isTrialCard && isTrial && isTrialProExhausted;
+            
+            return (
               key={plan.nameKey}
               className={`relative rounded-2xl p-6 transition-all duration-300 flex flex-col ${
                 plan.highlighted
@@ -170,19 +190,22 @@ const Pricing = () => {
               }`}
             >
               {/* Badge */}
-              {plan.badgeKey && (
+              {(plan.badgeKey || shouldHighlightTrial) && (
                 <div
                   className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-semibold ${
-                    plan.badgeType === "popular"
+                    shouldHighlightTrial
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+                      : plan.badgeType === "popular"
                       ? "bg-gradient-to-r from-primary to-purple-500 text-white"
                       : plan.badgeType === "powerful"
                       ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white"
                       : "bg-gray-700 text-gray-300"
                   }`}
                 >
+                  {shouldHighlightTrial && <AlertTriangle className="inline w-3 h-3 mr-1" />}
                   {plan.badgeType === "popular" && <Star className="inline w-3 h-3 mr-1" />}
                   {plan.badgeType === "powerful" && <Crown className="inline w-3 h-3 mr-1" />}
-                  {t(plan.badgeKey)}
+                  {shouldHighlightTrial ? "Upgrade Now" : t(plan.badgeKey!)}
                 </div>
               )}
 
@@ -263,7 +286,8 @@ const Pricing = () => {
                 {t(plan.buttonTextKey)}
               </Button>
             </div>
-          ))}
+          );
+          })}
         </div>
 
         {/* Feature Comparison */}
