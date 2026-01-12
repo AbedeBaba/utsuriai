@@ -76,20 +76,27 @@ async function generateWithNanoBanana(
   console.log('Starting Nano Banana image generation...');
   
   // Step 1: Create generation task
+  // Note: API uses 'TEXTTOIAMGE' (typo in their API) based on documentation
+  const requestBody: Record<string, any> = {
+    prompt,
+    type: imageUrls && imageUrls.length > 0 ? 'IMAGETOIMAGE' : 'TEXTTOIAMGE',
+    numImages: 1
+  };
+  
+  // Only add imageUrls if provided
+  if (imageUrls && imageUrls.length > 0) {
+    requestBody.imageUrls = imageUrls;
+  }
+  
+  console.log('Nano Banana request body:', JSON.stringify(requestBody));
+  
   const generateResponse = await fetch(`${NANOBANANA_BASE_URL}/generate`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      prompt,
-      type: imageUrls && imageUrls.length > 0 ? 'IMAGETOIMAGE' : 'TEXTTOIMAGE',
-      numImages: 1,
-      imageUrls: imageUrls || undefined,
-      // Use pro model for higher quality if usePro is true
-      model: usePro ? 'pro' : 'standard'
-    })
+    body: JSON.stringify(requestBody)
   });
 
   const generateResult = await generateResponse.json();
