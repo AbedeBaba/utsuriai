@@ -243,8 +243,8 @@ serve(async (req) => {
       );
     }
 
-    // Select model based on quality mode - using models that support image generation
-    const model = usePro ? 'gemini-2.0-flash-exp' : 'gemini-2.0-flash';
+    // Select model based on quality mode - using image generation models (Nano Banana)
+    const model = usePro ? 'gemini-3-pro-image-preview' : 'gemini-2.5-flash-image';
     const apiUrl = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey}`;
     
     console.log(`Using model: ${model} via direct Gemini API`);
