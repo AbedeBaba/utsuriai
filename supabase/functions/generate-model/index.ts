@@ -243,8 +243,8 @@ serve(async (req) => {
       );
     }
 
-    // Select model based on quality mode
-    const model = usePro ? 'gemini-2.5-pro-preview-06-05' : 'gemini-2.5-flash-preview-05-20';
+    // Select model based on quality mode - using models that support image generation
+    const model = usePro ? 'gemini-2.0-flash-exp' : 'gemini-2.0-flash';
     const apiUrl = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey}`;
     
     console.log(`Using model: ${model} via direct Gemini API`);
