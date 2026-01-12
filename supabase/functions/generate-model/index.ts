@@ -127,27 +127,47 @@ async function generateWithNanoBanana(
     });
     
     const statusResult = await statusResponse.json();
-    console.log(`Task status check: successFlag=${statusResult.successFlag}`);
+    console.log('Full status response:', JSON.stringify(statusResult));
     
-    switch (statusResult.successFlag) {
-      case 0:
-        // Still generating
-        console.log('Task is generating...');
-        break;
-      case 1:
-        // Success!
-        console.log('Generation completed successfully!');
-        const imageUrl = statusResult.response?.resultImageUrl;
-        if (!imageUrl) {
-          throw new Error('No resultImageUrl in successful response');
+    // Handle different API response structures
+    // The status might be in statusResult directly or in statusResult.data
+    const successFlag = statusResult.successFlag ?? statusResult.data?.successFlag ?? statusResult.data?.status;
+    const responseData = statusResult.response ?? statusResult.data?.response ?? statusResult.data;
+    
+    console.log(`Task status check: successFlag=${successFlag}, hasResponse=${!!responseData}`);
+    
+    // Check for completed status
+    if (successFlag === 1 || statusResult.code === 200 && responseData?.resultImageUrl) {
+      console.log('Generation completed successfully!');
+      const imageUrl = responseData?.resultImageUrl || responseData?.imageUrl || responseData?.url;
+      if (!imageUrl) {
+        // Try to find image URL in other locations
+        const possibleUrls = [
+          statusResult.resultImageUrl,
+          statusResult.imageUrl,
+          statusResult.data?.resultImageUrl,
+          statusResult.data?.imageUrl
+        ].filter(Boolean);
+        
+        if (possibleUrls.length > 0) {
+          return possibleUrls[0];
         }
-        return imageUrl;
-      case 2:
-      case 3:
-        // Failed
-        throw new Error(statusResult.errorMessage || 'Generation failed');
-      default:
-        console.log('Unknown status:', statusResult.successFlag);
+        console.error('Response structure:', JSON.stringify(statusResult));
+        throw new Error('No resultImageUrl in successful response');
+      }
+      return imageUrl;
+    }
+    
+    // Check for failed status
+    if (successFlag === 2 || successFlag === 3) {
+      throw new Error(statusResult.errorMessage || statusResult.data?.errorMessage || 'Generation failed');
+    }
+    
+    // Check if still generating (successFlag === 0 or undefined while still processing)
+    if (successFlag === 0) {
+      console.log('Task is still generating...');
+    } else if (successFlag === undefined || successFlag === null) {
+      console.log('Unknown/pending status, continuing to poll...');
     }
     
     // Wait 3 seconds before next poll
