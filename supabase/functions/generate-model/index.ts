@@ -76,10 +76,11 @@ async function generateWithNanoBanana(
   console.log('Starting Nano Banana image generation...');
   
   // Step 1: Create generation task
-  // Note: API uses 'TEXTTOIAMGE' (typo in their API) based on documentation
+  // Note: API uses 'TEXTTOIAMGE' (with typo) based on documentation
+  // For image-to-image, we also try the typo version 'IMAGETOIMAGEE' or just use the same typo pattern
   const requestBody: Record<string, any> = {
     prompt,
-    type: imageUrls && imageUrls.length > 0 ? 'IMAGETOIMAGE' : 'TEXTTOIAMGE',
+    type: imageUrls && imageUrls.length > 0 ? 'IMAGETOIAMGE' : 'TEXTTOIAMGE',
     numImages: 1
   };
   
