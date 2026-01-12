@@ -285,49 +285,109 @@ serve(async (req) => {
     }
     
     // ==========================================
-    // SERVER-SIDE SUBSCRIPTION VERIFICATION
+    // SERVER-SIDE SUBSCRIPTION & CREDIT VERIFICATION
     // ==========================================
-    if (usePro) {
-      const { data: subscription, error: subError } = await supabase
-        .from('user_subscriptions')
-        .select('plan, pro_generations_remaining')
-        .eq('user_id', authenticatedUserId)
-        .single();
-      
-      if (subError) {
-        console.error('Subscription check error:', subError);
-        return new Response(
-          JSON.stringify({ error: 'Unable to verify subscription' }),
-          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      // Check if user has Pro access
-      const hasProAccess = ['starter', 'pro', 'creator'].includes(subscription.plan);
-      const hasTrialPro = subscription.plan === 'trial' && subscription.pro_generations_remaining > 0;
-      
-      if (!hasProAccess && !hasTrialPro) {
-        return new Response(
-          JSON.stringify({ error: 'Pro access required. Please upgrade your plan or you have exhausted your trial Pro generations.' }),
-          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      // Decrement trial pro generations BEFORE generation (prevent race conditions)
-      if (subscription.plan === 'trial') {
-        const { error: decrementError } = await supabase
-          .from('user_subscriptions')
-          .update({ 
-            pro_generations_remaining: subscription.pro_generations_remaining - 1 
-          })
-          .eq('user_id', authenticatedUserId);
-        
-        if (decrementError) {
-          console.error('Error decrementing pro generations:', decrementError);
-        } else {
-          console.log(`Pre-decremented pro_generations_remaining for trial user ${authenticatedUserId}. Remaining: ${subscription.pro_generations_remaining - 1}`);
+    const { data: subscription, error: subError } = await supabase
+      .from('user_subscriptions')
+      .select('plan, credits_remaining, pro_generations_remaining, standard_generations_remaining')
+      .eq('user_id', authenticatedUserId)
+      .single();
+    
+    if (subError || !subscription) {
+      console.error('Subscription check error:', subError);
+      return new Response(
+        JSON.stringify({ error: 'Unable to verify subscription' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    console.log('Subscription data:', subscription);
+    
+    const isTrial = subscription.plan === 'trial';
+    const isPaid = ['starter', 'pro', 'creator'].includes(subscription.plan);
+    
+    // ==========================================
+    // TRIAL PACKAGE RULES (NO CREDITS)
+    // ==========================================
+    if (isTrial) {
+      if (usePro) {
+        // Trial Pro: Check pro_generations_remaining
+        if (subscription.pro_generations_remaining <= 0) {
+          console.error('Trial Pro generations exhausted');
+          return new Response(
+            JSON.stringify({ error: 'Deneme Pro üretim hakkınız dolmuştur' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      } else {
+        // Trial Standard: Check standard_generations_remaining
+        if (subscription.standard_generations_remaining <= 0) {
+          console.error('Trial Standard generations exhausted');
+          return new Response(
+            JSON.stringify({ error: 'Deneme görsel üretim hakkınız dolmuştur' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
         }
       }
+    }
+    
+    // ==========================================
+    // PAID PACKAGE RULES (CREDITS)
+    // ==========================================
+    if (isPaid) {
+      const requiredCredits = usePro ? 4 : 1;
+      if (subscription.credits_remaining < requiredCredits) {
+        const errorMsg = usePro 
+          ? 'Pro görsel için yeterli krediniz yok' 
+          : 'Yetersiz kredi';
+        console.error(`Insufficient credits: has ${subscription.credits_remaining}, needs ${requiredCredits}`);
+        return new Response(
+          JSON.stringify({ error: errorMsg }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+    
+    // ==========================================
+    // ATOMIC PRE-DEDUCTION (BEFORE GENERATION)
+    // This prevents race conditions and duplicate deductions
+    // ==========================================
+    if (isTrial) {
+      const updateField = usePro ? 'pro_generations_remaining' : 'standard_generations_remaining';
+      const currentValue = usePro ? subscription.pro_generations_remaining : subscription.standard_generations_remaining;
+      
+      const { error: decrementError } = await supabase
+        .from('user_subscriptions')
+        .update({ [updateField]: currentValue - 1 })
+        .eq('user_id', authenticatedUserId)
+        .eq(updateField, currentValue); // Atomic check to prevent race conditions
+      
+      if (decrementError) {
+        console.error('Error decrementing trial generations:', decrementError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to reserve generation. Please try again.' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log(`Pre-decremented ${updateField} for trial user ${authenticatedUserId}. New value: ${currentValue - 1}`);
+    } else if (isPaid) {
+      const requiredCredits = usePro ? 4 : 1;
+      const newBalance = subscription.credits_remaining - requiredCredits;
+      
+      const { error: decrementError } = await supabase
+        .from('user_subscriptions')
+        .update({ credits_remaining: newBalance })
+        .eq('user_id', authenticatedUserId)
+        .eq('credits_remaining', subscription.credits_remaining); // Atomic check
+      
+      if (decrementError) {
+        console.error('Error decrementing credits:', decrementError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to deduct credits. Please try again.' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log(`Pre-deducted ${requiredCredits} credits for user ${authenticatedUserId}. New balance: ${newBalance}`);
     }
     
     console.log('Generation request validated:', { 
