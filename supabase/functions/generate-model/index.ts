@@ -7,8 +7,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Lovable AI Gateway (NanoBanana)
-const LOVABLE_AI_GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
+// Direct Google Gemini API (NanoBanana)
+const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 // Allowed values for input validation
 const ALLOWED_VALUES = {
@@ -232,7 +232,7 @@ serve(async (req) => {
     const prompt = buildPrompt(sanitizedConfig, referenceImages, usePro);
     console.log('Generated prompt:', prompt.substring(0, 500) + '...');
 
-    // Get NanoBanana API key
+    // Get NanoBanana API key (Gemini API Key)
     const apiKey = Deno.env.get('NANOBANANA_API_KEY');
     
     if (!apiKey) {
@@ -243,54 +243,55 @@ serve(async (req) => {
       );
     }
 
-    // Select model based on quality mode - using image generation model
-    const model = 'google/gemini-2.5-flash-image-preview';
+    // Select model based on quality mode
+    const model = usePro ? 'gemini-2.5-pro-preview-06-05' : 'gemini-2.5-flash-preview-05-20';
+    const apiUrl = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey}`;
     
-    console.log(`Using model: ${model} via NanoBanana gateway`);
+    console.log(`Using model: ${model} via direct Gemini API`);
 
-    // Build message content for the API
-    const messageContent: any[] = [
-      {
-        type: 'text',
-        text: prompt
-      }
+    // Build parts for Gemini API format
+    const parts: any[] = [
+      { text: prompt }
     ];
 
-    // Add reference images to the message if provided
+    // Add reference images as inline_data if provided
     if (referenceImages && referenceImages.length > 0) {
       referenceImages.forEach((img, index) => {
-        messageContent.push({
-          type: 'image_url',
-          image_url: {
-            url: img.data
-          }
-        });
-        console.log(`Added reference image ${index + 1} (type: ${img.type})`);
+        // Extract base64 data and mime type from data URL
+        const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
+        if (matches) {
+          parts.push({
+            inline_data: {
+              mime_type: matches[1],
+              data: matches[2]
+            }
+          });
+          console.log(`Added reference image ${index + 1} (type: ${img.type}, mime: ${matches[1]})`);
+        }
       });
     }
 
-    // Call the Lovable AI Gateway
-    const response = await fetch(LOVABLE_AI_GATEWAY, {
+    // Call the direct Gemini API
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: model,
-        messages: [
+        contents: [
           {
-            role: 'user',
-            content: messageContent
+            parts: parts
           }
         ],
-        modalities: ['image', 'text']
+        generationConfig: {
+          responseModalities: ['image', 'text']
+        }
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('NanoBanana API error:', response.status, errorText);
+      console.error('Gemini API error:', response.status, errorText);
       
       if (response.status === 429) {
         return new Response(
@@ -299,10 +300,10 @@ serve(async (req) => {
         );
       }
       
-      if (response.status === 402) {
+      if (response.status === 400) {
         return new Response(
-          JSON.stringify({ error: 'Not enough credits. Please add credits to your account.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: 'Invalid request. Please check your input.', details: errorText }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
@@ -320,15 +321,24 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('NanoBanana API response received');
+    console.log('Gemini API response received');
 
-    // Extract the generated image from the response
-    // NanoBanana returns images in choices[0].message.images array
+    // Extract the generated image from Gemini response format
+    // Gemini returns images in candidates[0].content.parts[] as inline_data
     let generatedImageUrl: string | null = null;
     
-    const images = data.choices?.[0]?.message?.images;
-    if (images && images.length > 0) {
-      generatedImageUrl = images[0]?.image_url?.url;
+    const candidates = data.candidates;
+    if (candidates && candidates.length > 0) {
+      const parts = candidates[0].content?.parts || [];
+      for (const part of parts) {
+        if (part.inline_data) {
+          // Convert inline_data to base64 data URL
+          const mimeType = part.inline_data.mime_type || 'image/png';
+          const base64Data = part.inline_data.data;
+          generatedImageUrl = `data:${mimeType};base64,${base64Data}`;
+          break;
+        }
+      }
     }
 
     if (!generatedImageUrl) {
