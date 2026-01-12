@@ -270,18 +270,27 @@ export default function Dashboard() {
               </div>
               
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Credits</span>
-                  <span className="font-medium text-foreground flex items-center gap-1">
-                    <Zap className="h-3.5 w-3.5 text-primary" />
-                    {subscription.credits_remaining}
-                  </span>
-                </div>
-                
-                {subscription.plan === 'trial' && (
+                {subscription.plan === 'trial' ? (
+                  <>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Standard Gens</span>
+                      <span className="font-medium text-foreground flex items-center gap-1">
+                        <Zap className="h-3.5 w-3.5 text-primary" />
+                        {subscription.standard_generations_remaining}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Pro Gens</span>
+                      <span className="font-medium text-foreground">{subscription.pro_generations_remaining}</span>
+                    </div>
+                  </>
+                ) : (
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Pro Gens</span>
-                    <span className="font-medium text-foreground">{subscription.pro_generations_remaining}</span>
+                    <span className="text-muted-foreground">Credits</span>
+                    <span className="font-medium text-foreground flex items-center gap-1">
+                      <Zap className="h-3.5 w-3.5 text-primary" />
+                      {subscription.credits_remaining}
+                    </span>
                   </div>
                 )}
               </div>
