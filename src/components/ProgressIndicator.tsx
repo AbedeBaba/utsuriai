@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { useNavigate } from 'react-router-dom';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
 
 interface ProgressIndicatorProps {
   currentStep: number;
@@ -11,8 +12,10 @@ interface ProgressIndicatorProps {
 export function ProgressIndicator({ currentStep, totalSteps }: ProgressIndicatorProps) {
   const navigate = useNavigate();
   const { getVisibleSteps, isStepCompleted, isStepRequired, config } = useModelConfig();
+  const { isTrialProExhausted } = useSubscription();
   
-  const visibleSteps = getVisibleSteps();
+  // Filter out Pro features for Trial users with exhausted Pro limit
+  const visibleSteps = getVisibleSteps(isTrialProExhausted);
 
   const handleStepClick = (stepIndex: number) => {
     const step = visibleSteps[stepIndex];

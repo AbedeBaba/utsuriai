@@ -84,12 +84,12 @@ export default function FilterHairType() {
     updateConfig('hairType', randomHairType.id);
 
     setTimeout(() => {
-      const nextPath = getNextStepPath('hairType');
+      const nextPath = getNextStepPath('hairType', isTrialProExhausted);
       if (nextPath) {
         navigate(nextPath);
       }
     }, 800);
-  }, [isAnimating, updateConfig, navigate, getNextStepPath]);
+  }, [isAnimating, updateConfig, navigate, getNextStepPath, isTrialProExhausted]);
 
   const handleRandomAll = useCallback(() => {
     if (isAnimating) return;

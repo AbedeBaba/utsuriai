@@ -3,6 +3,7 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { useSubscription } from '@/hooks/useSubscription';
 
 // Female eye color images
 import femaleBrown from '@/assets/eye-colors/female-brown.png';
@@ -54,6 +55,7 @@ const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard'
 export default function FilterEyeColor() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
+  const { isTrialProExhausted } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -91,12 +93,12 @@ export default function FilterEyeColor() {
     updateConfig('eyeColor', randomEyeColor.id);
 
     setTimeout(() => {
-      const nextPath = getNextStepPath('eyeColor');
+      const nextPath = getNextStepPath('eyeColor', isTrialProExhausted);
       if (nextPath) {
         navigate(nextPath);
       }
     }, 800);
-  }, [isAnimating, updateConfig, eyeColorOptions, navigate, getNextStepPath]);
+  }, [isAnimating, updateConfig, eyeColorOptions, navigate, getNextStepPath, isTrialProExhausted]);
 
   const handleRandomAll = useCallback(() => {
     if (isAnimating) return;
@@ -107,20 +109,24 @@ export default function FilterEyeColor() {
     const randomEyeColorId = eyeColorOptions[Math.floor(Math.random() * eyeColorOptions.length)].id;
     const randomBodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
     const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
-    const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
-    const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
     
     setSelectedId(randomEyeColorId);
     
     updateConfig('eyeColor', randomEyeColorId);
     updateConfig('bodyType', randomBodyType);
     updateConfig('hairType', randomHairType);
-    updateConfig('pose', randomPose);
-    updateConfig('background', randomBackground);
-    updateConfig('faceType', randomFaceType);
-    updateConfig('facialExpression', randomExpression);
+    
+    // Only set Pro features if not restricted
+    if (!isTrialProExhausted) {
+      const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
+      const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+      updateConfig('pose', randomPose);
+      updateConfig('background', randomBackground);
+      updateConfig('faceType', randomFaceType);
+      updateConfig('facialExpression', randomExpression);
+    }
     
     if (config.gender === 'Male') {
       const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)];
@@ -130,7 +136,7 @@ export default function FilterEyeColor() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, config.gender]);
+  }, [isAnimating, navigate, updateConfig, config.gender, eyeColorOptions, isTrialProExhausted]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
