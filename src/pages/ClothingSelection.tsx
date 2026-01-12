@@ -46,6 +46,7 @@ export default function ClothingSelection() {
   const [loading, setLoading] = useState(false);
   const [proLoading, setProLoading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false); // Prevent duplicate calls
 
   setCurrentStep(totalSteps);
 
@@ -95,6 +96,12 @@ export default function ClothingSelection() {
   };
 
   const handleGenerate = async (usePro: boolean = false) => {
+    // Prevent duplicate generation calls
+    if (isGenerating || loading || proLoading) {
+      console.log('Generation already in progress, blocking duplicate call');
+      return;
+    }
+
     if (!user) {
       toast({
         title: 'Not authenticated',
@@ -102,6 +109,16 @@ export default function ClothingSelection() {
         variant: 'destructive',
       });
       navigate('/auth');
+      return;
+    }
+
+    // CRITICAL: Validate at least 1 clothing image is uploaded (Image-to-Image only)
+    if (uploadedImages.length === 0) {
+      toast({
+        title: 'Kıyafet görseli gerekli',
+        description: 'Model oluşturmak için en az 1 adet kıyafet görseli yüklemeniz gerekmektedir.',
+        variant: 'destructive',
+      });
       return;
     }
 
@@ -119,6 +136,8 @@ export default function ClothingSelection() {
       return;
     }
 
+    // Set all loading states to prevent duplicate calls
+    setIsGenerating(true);
     if (usePro) {
       setProLoading(true);
     } else {
@@ -168,6 +187,7 @@ export default function ClothingSelection() {
     } finally {
       setLoading(false);
       setProLoading(false);
+      setIsGenerating(false);
     }
   };
 
