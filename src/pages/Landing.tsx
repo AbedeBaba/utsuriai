@@ -72,7 +72,7 @@ export default function Landing() {
       </header>
 
       {/* Full-Screen Hero Banner */}
-      <section className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center" style={{
+      <section className="relative min-h-screen w-full bg-cover bg-top md:bg-center bg-no-repeat flex items-center justify-center" style={{
       backgroundImage: `url(${heroBanner})`
     }}>
         {/* Dark overlay for text readability */}
@@ -104,11 +104,11 @@ export default function Landing() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-[90rem] mx-auto px-8 lg:px-16 rounded-3xl py-16 lg:py-20 overflow-hidden">
+        <div className="relative max-w-[90rem] mx-auto px-4 sm:px-8 lg:px-16 rounded-3xl py-12 sm:py-16 lg:py-20 overflow-hidden">
           {/* Blurred lavender gradient background */}
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] blur-xl" />
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] opacity-90" />
-          <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+          <div className="relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm mb-8">
@@ -140,9 +140,9 @@ export default function Landing() {
 
             {/* Right content - Before/After Example */}
             <div className="relative">
-              <div className="flex gap-6 items-center justify-center">
+              <div className="flex flex-col sm:flex-row gap-6 sm:gap-4 md:gap-6 items-center justify-center">
                 {/* Product Image */}
-                <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
+                <div className="relative w-full max-w-[280px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
                     <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/1705c0f2-68bc-4333-a1c8-ad01e24a5811.jpg" />
                   </div>
@@ -152,15 +152,15 @@ export default function Landing() {
                 </div>
 
                 {/* Arrow */}
-                <div className="flex flex-col items-center gap-2 px-4">
-                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Wand2 className="w-7 h-7 text-primary" />
+                <div className="flex flex-row sm:flex-col items-center gap-2 px-4 py-4 sm:py-0">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Wand2 className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
                   </div>
-                  <ArrowRight className="w-7 h-7 text-primary" />
+                  <ArrowRight className="w-6 h-6 sm:w-7 sm:h-7 text-primary rotate-90 sm:rotate-0" />
                 </div>
 
                 {/* Model Image */}
-                <div className="relative flex-1 max-w-[240px] lg:max-w-[300px]">
+                <div className="relative w-full max-w-[280px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
                     <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/5212774f-8c09-42bf-b019-8f7f544f3c3b.png" />
                     {/* Decorative badge */}
