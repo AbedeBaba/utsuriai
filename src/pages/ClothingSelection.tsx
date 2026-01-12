@@ -42,7 +42,18 @@ export default function ClothingSelection() {
   const { user } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { subscription, hasProAccess, canUseProGeneration, loading: subscriptionLoading } = useSubscription();
+  const { 
+    subscription, 
+    isTrial, 
+    isPaid,
+    trialStandardRemaining,
+    trialProRemaining,
+    creditsRemaining,
+    canGenerate,
+    canUseProGeneration,
+    loading: subscriptionLoading,
+    refetch: refetchSubscription
+  } = useSubscription();
   const [loading, setLoading] = useState(false);
   const [proLoading, setProLoading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
@@ -126,14 +137,39 @@ export default function ClothingSelection() {
       return;
     }
 
-    // Check subscription for Pro access
-    if (usePro && !canUseProGeneration) {
-      toast({
-        title: 'Pro generations exhausted',
-        description: 'You have used all your Pro generations. Upgrade your plan for unlimited Pro access.',
-        variant: 'destructive',
-      });
-      return;
+    // ==========================================
+    // FRONTEND VALIDATION (Double-check before API call)
+    // Backend is the source of truth, but we prevent wasted calls
+    // ==========================================
+    if (isTrial) {
+      if (usePro && trialProRemaining <= 0) {
+        toast({
+          title: 'Pro üretim hakkı doldu',
+          description: 'Deneme Pro üretim hakkınız dolmuştur',
+          variant: 'destructive',
+        });
+        return;
+      }
+      if (!usePro && trialStandardRemaining <= 0) {
+        toast({
+          title: 'Üretim hakkı doldu',
+          description: 'Deneme görsel üretim hakkınız dolmuştur',
+          variant: 'destructive',
+        });
+        return;
+      }
+    }
+
+    if (isPaid) {
+      const requiredCredits = usePro ? 4 : 1;
+      if (creditsRemaining < requiredCredits) {
+        toast({
+          title: usePro ? 'Yetersiz kredi' : 'Yetersiz kredi',
+          description: usePro ? 'Pro görsel için yeterli krediniz yok' : 'Yetersiz kredi',
+          variant: 'destructive',
+        });
+        return;
+      }
     }
 
     // Set all loading states to prevent duplicate calls
@@ -261,52 +297,102 @@ export default function ClothingSelection() {
 
           {/* Generate Buttons */}
           <div className="space-y-3 animate-fade-in" style={{ animationDelay: '200ms' }}>
+            {/* Credit/Generation Status Display */}
+            {subscription && (
+              <div className="bg-card/50 border border-border rounded-lg p-3 text-sm">
+                {isTrial ? (
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Deneme Hakkı:</span>
+                    <div className="flex gap-4">
+                      <span className="text-foreground">
+                        Standart: <strong className={trialStandardRemaining > 0 ? 'text-green-500' : 'text-destructive'}>{trialStandardRemaining}/5</strong>
+                      </span>
+                      <span className="text-foreground">
+                        Pro: <strong className={trialProRemaining > 0 ? 'text-amber-500' : 'text-destructive'}>{trialProRemaining}/2</strong>
+                      </span>
+                    </div>
+                  </div>
+                ) : isPaid ? (
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Utsuri Kredisi:</span>
+                    <span className="text-foreground">
+                      <strong className={creditsRemaining >= 1 ? 'text-green-500' : 'text-destructive'}>{creditsRemaining}</strong> kredi
+                      <span className="text-xs text-muted-foreground ml-2">(Std: 1, Pro: 4)</span>
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            )}
+            
             {/* Standard Generate Button */}
             <Button
               onClick={() => handleGenerate(false)}
-              disabled={loading || proLoading}
+              disabled={loading || proLoading || !canGenerate || subscriptionLoading}
               size="lg"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg font-medium"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   {t('common.loading')}
                 </>
+              ) : !canGenerate ? (
+                <>
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  {isTrial ? 'Deneme hakkı doldu' : 'Yetersiz kredi'}
+                </>
               ) : (
                 <>
                   <Sparkles className="mr-2 h-5 w-5" />
                   {t('clothing.generate')}
+                  {isTrial && (
+                    <span className="ml-2 text-sm opacity-80">
+                      ({trialStandardRemaining} kaldı)
+                    </span>
+                  )}
+                  {isPaid && (
+                    <span className="ml-2 text-sm opacity-80">
+                      (1 kredi)
+                    </span>
+                  )}
                 </>
               )}
             </Button>
 
-            {/* Pro Generate Button - Show for paid plans and Trial users with remaining pro generations */}
-            {canUseProGeneration && (
-              <Button
-                onClick={() => handleGenerate(true)}
-                disabled={loading || proLoading}
-                size="lg"
-                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-500/90 hover:to-orange-500/90 text-white py-6 text-lg font-medium shadow-lg shadow-amber-500/25"
-              >
-                {proLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    {t('common.loading')}
-                  </>
-                ) : (
-                  <>
-                    <Crown className="mr-2 h-5 w-5" />
-                    Generate Model With Utsuri Pro
-                    {subscription?.plan === 'trial' && (
-                      <span className="ml-2 text-sm opacity-80">
-                        ({subscription.pro_generations_remaining} left)
-                      </span>
-                    )}
-                  </>
-                )}
-              </Button>
-            )}
+            {/* Pro Generate Button */}
+            <Button
+              onClick={() => handleGenerate(true)}
+              disabled={loading || proLoading || !canUseProGeneration || subscriptionLoading}
+              size="lg"
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-500/90 hover:to-orange-500/90 text-white py-6 text-lg font-medium shadow-lg shadow-amber-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500"
+            >
+              {proLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  {t('common.loading')}
+                </>
+              ) : !canUseProGeneration ? (
+                <>
+                  <Crown className="mr-2 h-5 w-5" />
+                  {isTrial ? 'Deneme Pro hakkı doldu' : 'Pro için yetersiz kredi (4 gerekli)'}
+                </>
+              ) : (
+                <>
+                  <Crown className="mr-2 h-5 w-5" />
+                  Generate Model With Utsuri Pro
+                  {isTrial && (
+                    <span className="ml-2 text-sm opacity-80">
+                      ({trialProRemaining} kaldı)
+                    </span>
+                  )}
+                  {isPaid && (
+                    <span className="ml-2 text-sm opacity-80">
+                      (4 kredi)
+                    </span>
+                  )}
+                </>
+              )}
+            </Button>
           </div>
 
           <p className="text-xs text-center text-muted-foreground animate-fade-in" style={{ animationDelay: '300ms' }}>

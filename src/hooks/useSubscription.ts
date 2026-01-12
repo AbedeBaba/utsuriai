@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 
@@ -10,6 +10,7 @@ export interface UserSubscription {
   plan: SubscriptionPlan;
   credits_remaining: number;
   pro_generations_remaining: number;
+  standard_generations_remaining: number;
   created_at: string;
   updated_at: string;
 }
@@ -20,7 +21,7 @@ export function useSubscription() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchSubscription = async () => {
+  const fetchSubscription = useCallback(async () => {
     if (!user) {
       setSubscription(null);
       setLoading(false);
@@ -37,7 +38,6 @@ export function useSubscription() {
 
       if (error) throw error;
       
-      // Cast the plan to our type
       setSubscription(data as unknown as UserSubscription);
     } catch (err) {
       console.error('Error fetching subscription:', err);
@@ -45,30 +45,75 @@ export function useSubscription() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchSubscription();
-  }, [user]);
+  }, [fetchSubscription]);
 
-  // Check if user has access to Pro quality generation
-  const hasProAccess = subscription?.plan === 'starter' || 
-                       subscription?.plan === 'pro' || 
-                       subscription?.plan === 'creator';
+  // ==========================================
+  // PACKAGE TYPE DETECTION
+  // ==========================================
+  const isTrial = subscription?.plan === 'trial';
+  const isPaid = subscription?.plan === 'starter' || 
+                 subscription?.plan === 'pro' || 
+                 subscription?.plan === 'creator';
 
-  // For trial users, check if they have Pro generations remaining
-  const canUseProGeneration = hasProAccess || 
-                              (subscription?.plan === 'trial' && (subscription?.pro_generations_remaining ?? 0) > 0);
+  // ==========================================
+  // TRIAL PACKAGE CHECKS (NO CREDITS)
+  // Trial: 5 standard generations + 2 pro generations
+  // ==========================================
+  const trialStandardRemaining = subscription?.standard_generations_remaining ?? 0;
+  const trialProRemaining = subscription?.pro_generations_remaining ?? 0;
+  
+  const canTrialGenerate = isTrial && trialStandardRemaining > 0;
+  const canTrialGeneratePro = isTrial && trialProRemaining > 0;
 
-  const hasCredits = (subscription?.credits_remaining ?? 0) > 0;
+  // ==========================================
+  // PAID PACKAGE CHECKS (CREDITS)
+  // Standard: 1 credit, Pro: 4 credits
+  // ==========================================
+  const creditsRemaining = subscription?.credits_remaining ?? 0;
+  
+  const canPaidGenerate = isPaid && creditsRemaining >= 1;
+  const canPaidGeneratePro = isPaid && creditsRemaining >= 4;
+
+  // ==========================================
+  // UNIFIED CHECKS
+  // ==========================================
+  // Can use standard generation?
+  const canGenerate = canTrialGenerate || canPaidGenerate;
+  
+  // Can use pro generation?
+  const canUseProGeneration = canTrialGeneratePro || canPaidGeneratePro;
+
+  // Has any credits (for paid packages)
+  const hasCredits = creditsRemaining > 0;
+
+  // Legacy: hasProAccess means user is on a paid plan
+  const hasProAccess = isPaid;
 
   return {
     subscription,
     loading,
     error,
-    hasProAccess,
+    // Package type
+    isTrial,
+    isPaid,
+    // Trial-specific
+    trialStandardRemaining,
+    trialProRemaining,
+    canTrialGenerate,
+    canTrialGeneratePro,
+    // Paid-specific
+    creditsRemaining,
+    canPaidGenerate,
+    canPaidGeneratePro,
+    // Unified
+    canGenerate,
     canUseProGeneration,
     hasCredits,
+    hasProAccess,
     refetch: fetchSubscription,
   };
 }

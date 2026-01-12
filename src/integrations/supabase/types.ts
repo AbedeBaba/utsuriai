@@ -123,6 +123,7 @@ export type Database = {
           id: string
           plan: Database["public"]["Enums"]["subscription_plan"]
           pro_generations_remaining: number
+          standard_generations_remaining: number
           updated_at: string
           user_id: string
         }
@@ -132,6 +133,7 @@ export type Database = {
           id?: string
           plan?: Database["public"]["Enums"]["subscription_plan"]
           pro_generations_remaining?: number
+          standard_generations_remaining?: number
           updated_at?: string
           user_id: string
         }
@@ -141,6 +143,7 @@ export type Database = {
           id?: string
           plan?: Database["public"]["Enums"]["subscription_plan"]
           pro_generations_remaining?: number
+          standard_generations_remaining?: number
           updated_at?: string
           user_id?: string
         }
