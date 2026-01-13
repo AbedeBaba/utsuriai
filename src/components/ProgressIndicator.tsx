@@ -12,10 +12,10 @@ interface ProgressIndicatorProps {
 export function ProgressIndicator({ currentStep, totalSteps }: ProgressIndicatorProps) {
   const navigate = useNavigate();
   const { getVisibleSteps, isStepCompleted, isStepRequired, config } = useModelConfig();
-  const { hasProFeatureAccess } = useSubscription();
+  const { hasProFeatureAccess, hasCreatorFeatureAccess } = useSubscription();
   
-  // Filter out Pro features for Trial and Starter users (no Pro feature access)
-  const visibleSteps = getVisibleSteps(!hasProFeatureAccess);
+  // Filter out Pro features for Trial and Starter users, Creator features for non-Creator users
+  const visibleSteps = getVisibleSteps(!hasProFeatureAccess, !hasCreatorFeatureAccess);
 
   const handleStepClick = (stepIndex: number) => {
     const step = visibleSteps[stepIndex];

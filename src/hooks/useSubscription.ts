@@ -97,9 +97,13 @@ export function useSubscription() {
   const isTrialProExhausted = isTrial && trialProRemaining <= 0;
 
   // Pro feature access - ONLY Pro and Creator plans have access to:
-  // Backgrounds, Poses, Camera Angles, Face Types, Expressions, Save & Reuse Models
+  // Backgrounds, Poses, Camera Angles
   const isStarter = subscription?.plan === 'starter';
   const hasProFeatureAccess = subscription?.plan === 'pro' || subscription?.plan === 'creator';
+
+  // Creator feature access - ONLY Creator plan has access to:
+  // Face Types, Expressions, Save & Reuse Models
+  const hasCreatorFeatureAccess = subscription?.plan === 'creator';
 
   return {
     subscription,
@@ -126,6 +130,7 @@ export function useSubscription() {
     // Feature restrictions
     isTrialProExhausted,
     hasProFeatureAccess,
+    hasCreatorFeatureAccess,
     refetch: fetchSubscription,
   };
 }

@@ -121,7 +121,7 @@ export default function FilterSkinTone() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
   const { t } = useLanguage();
-  const { hasProFeatureAccess } = useSubscription();
+  const { hasProFeatureAccess, hasCreatorFeatureAccess } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -158,12 +158,12 @@ export default function FilterSkinTone() {
     updateConfig('skinTone', randomSkinTone.id);
 
     setTimeout(() => {
-      const nextPath = getNextStepPath('skinTone', !hasProFeatureAccess);
+      const nextPath = getNextStepPath('skinTone', !hasProFeatureAccess, !hasCreatorFeatureAccess);
       if (nextPath) {
         navigate(nextPath);
       }
     }, 800);
-  }, [isAnimating, updateConfig, navigate, getNextStepPath, hasProFeatureAccess]);
+  }, [isAnimating, updateConfig, navigate, getNextStepPath, hasProFeatureAccess, hasCreatorFeatureAccess]);
 
   const handleRandomAll = useCallback(() => {
     if (isAnimating) return;
@@ -189,10 +189,14 @@ export default function FilterSkinTone() {
     if (hasProFeatureAccess) {
       const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
       const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
       updateConfig('pose', randomPose);
       updateConfig('background', randomBackground);
+    }
+    
+    // Only set Creator features if user has Creator feature access (Creator plan only)
+    if (hasCreatorFeatureAccess) {
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
       updateConfig('faceType', randomFaceType);
       updateConfig('facialExpression', randomExpression);
     }
@@ -205,7 +209,7 @@ export default function FilterSkinTone() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, config.gender, hasProFeatureAccess]);
+  }, [isAnimating, navigate, updateConfig, config.gender, hasProFeatureAccess, hasCreatorFeatureAccess]);
 
   return (
     <FilterStepLayout 

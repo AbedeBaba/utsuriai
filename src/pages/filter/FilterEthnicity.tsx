@@ -77,7 +77,7 @@ const modestOptions = ['Standard', 'Hijab'];
 export default function FilterEthnicity() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
-  const { hasProFeatureAccess } = useSubscription();
+  const { hasProFeatureAccess, hasCreatorFeatureAccess } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -140,10 +140,14 @@ export default function FilterEthnicity() {
     if (hasProFeatureAccess) {
       const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
       const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
       updateConfig('pose', randomPose);
       updateConfig('background', randomBackground);
+    }
+    
+    // Only set Creator features if user has Creator feature access (Creator plan only)
+    if (hasCreatorFeatureAccess) {
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
       updateConfig('faceType', randomFaceType);
       updateConfig('facialExpression', randomExpression);
     }
@@ -151,7 +155,7 @@ export default function FilterEthnicity() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, ethnicityOptions, hasProFeatureAccess, config.modestOption]);
+  }, [isAnimating, navigate, updateConfig, ethnicityOptions, hasProFeatureAccess, hasCreatorFeatureAccess, config.modestOption]);
 
   const handleRandomSingle = useCallback(() => {
     if (isAnimating) return;
@@ -164,12 +168,12 @@ export default function FilterEthnicity() {
 
     // Navigate to next step after selection
     setTimeout(() => {
-      const nextPath = getNextStepPath('ethnicity', !hasProFeatureAccess);
+      const nextPath = getNextStepPath('ethnicity', !hasProFeatureAccess, !hasCreatorFeatureAccess);
       if (nextPath) {
         navigate(nextPath);
       }
     }, 800);
-  }, [isAnimating, updateConfig, ethnicityOptions, navigate, getNextStepPath, hasProFeatureAccess]);
+  }, [isAnimating, updateConfig, ethnicityOptions, navigate, getNextStepPath, hasProFeatureAccess, hasCreatorFeatureAccess]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 

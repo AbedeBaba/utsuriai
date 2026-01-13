@@ -27,19 +27,19 @@ const expressionOptions = [
 export default function FilterExpression() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
-  const { hasProFeatureAccess, loading } = useSubscription();
+  const { hasCreatorFeatureAccess, loading } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
 
   const isFemale = config.gender === 'Female';
 
-  // Redirect Trial and Starter users (no Pro feature access)
+  // Redirect non-Creator users (Creator-only feature)
   useEffect(() => {
-    if (!loading && !hasProFeatureAccess) {
+    if (!loading && !hasCreatorFeatureAccess) {
       navigate('/clothing');
     }
-  }, [hasProFeatureAccess, loading, navigate]);
+  }, [hasCreatorFeatureAccess, loading, navigate]);
 
   useEffect(() => {
     setCurrentStep(12);

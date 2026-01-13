@@ -32,7 +32,7 @@ const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
 export default function FilterBackground() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
-  const { hasProFeatureAccess, loading } = useSubscription();
+  const { hasProFeatureAccess, hasCreatorFeatureAccess, loading } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -76,18 +76,21 @@ export default function FilterBackground() {
   }, [isAnimating, updateConfig, navigate]);
 
   const handleRandomAll = useCallback(() => {
-    // Select random for this filter and all remaining ones
+    // Select random for this filter
     const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
-    
     updateConfig('background', randomBackground.id);
-    updateConfig('faceType', randomFaceType);
-    updateConfig('facialExpression', randomExpression);
+    
+    // Only set Creator features (Face Type, Expression) if user has Creator access
+    if (hasCreatorFeatureAccess) {
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+      updateConfig('faceType', randomFaceType);
+      updateConfig('facialExpression', randomExpression);
+    }
     
     // Navigate to clothing (final step before generation)
     navigate('/clothing');
-  }, [updateConfig, navigate]);
+  }, [updateConfig, navigate, hasCreatorFeatureAccess]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
