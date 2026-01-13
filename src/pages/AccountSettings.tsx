@@ -116,10 +116,24 @@ export default function AccountSettings() {
       return;
     }
 
-    if (newPassword.length < 6) {
+    if (newPassword.length < 12) {
       toast({
         title: 'Password too short',
-        description: 'Password must be at least 6 characters long.',
+        description: 'Password must be at least 12 characters long.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Check password complexity
+    const hasUppercase = /[A-Z]/.test(newPassword);
+    const hasLowercase = /[a-z]/.test(newPassword);
+    const hasNumber = /[0-9]/.test(newPassword);
+
+    if (!hasUppercase || !hasLowercase || !hasNumber) {
+      toast({
+        title: 'Weak password',
+        description: 'Password must contain uppercase, lowercase, and a number.',
         variant: 'destructive',
       });
       return;
@@ -371,7 +385,7 @@ export default function AccountSettings() {
               </div>
 
               <p className="text-xs text-muted-foreground">
-                Password must be at least 6 characters long.
+                Password must be at least 12 characters with uppercase, lowercase, and a number.
               </p>
               
               <Button
