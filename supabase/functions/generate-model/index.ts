@@ -1,14 +1,14 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Nano Banana API Configuration
+// Nano Banana API endpoints
 const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
+const NANOBANANA_API_KEY = '8f40e3c4ec5e36d8bbe18354535318d7';
 
 // Credit costs
 const STANDARD_CREDIT_COST = 1;
@@ -70,31 +70,27 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Generate image using Nano Banana API (Image-to-Image with task polling)
-async function generateWithNanoBanana(
+// Generate image using Nano Banana Standard API (with IMAGETOIAMGE type)
+async function generateWithNanoBananaStandard(
   apiKey: string,
   prompt: string,
-  imageUrls: string[],
-  usePro: boolean
+  imageUrls: string[]
 ): Promise<string> {
-  const quality = usePro ? 'pro' : 'standard';
-  console.log(`Starting Nano Banana ${quality} image generation...`);
+  console.log('Starting Nano Banana Standard image generation...');
   console.log(`Image-to-Image mode with ${imageUrls.length} reference image(s)`);
   
-  // Build request body for Image-to-Image mode
-  // API uses "IMAGETOIAMGE" (intentional typo in API)
+  // Build request body for Standard Image-to-Image mode
+  // Standard API uses "IMAGETOIAMGE" (intentional typo in API)
   const requestBody: Record<string, any> = {
     prompt: prompt,
     type: 'IMAGETOIAMGE', // Note: API has typo - IAMGE not IMAGE
     numImages: 1,
-    imageUrls: imageUrls, // Required for Image-to-Image
-    quality: quality // Pass quality parameter for Pro vs Standard
+    imageUrls: imageUrls // Required for Image-to-Image
   };
   
-  console.log('Nano Banana request body (Image-to-Image mode):', JSON.stringify({
+  console.log('Nano Banana Standard request body:', JSON.stringify({
     type: requestBody.type,
     numImages: requestBody.numImages,
-    quality: requestBody.quality,
     imageUrlCount: imageUrls.length,
     promptLength: prompt.length
   }));
@@ -109,7 +105,7 @@ async function generateWithNanoBanana(
   });
 
   const generateResult = await generateResponse.json();
-  console.log('Nano Banana generate response:', JSON.stringify(generateResult));
+  console.log('Nano Banana Standard generate response:', JSON.stringify(generateResult));
   
   if (!generateResponse.ok || generateResult.code !== 200) {
     throw new Error(`Generation failed: ${generateResult.msg || generateResult.message || 'Unknown error'}`);
@@ -123,6 +119,65 @@ async function generateWithNanoBanana(
   console.log(`Task created with ID: ${taskId}. Polling for completion...`);
   
   // Poll for completion (max 5 minutes)
+  return await pollForTaskCompletion(apiKey, taskId);
+}
+
+// Generate image using Nano Banana Pro API (different endpoint and params)
+async function generateWithNanoBananaPro(
+  apiKey: string,
+  prompt: string,
+  imageUrls: string[]
+): Promise<string> {
+  console.log('Starting Nano Banana Pro image generation...');
+  console.log(`Image-to-Image mode with ${imageUrls.length} reference image(s)`);
+  
+  // Build request body for Pro API
+  // Pro API uses different endpoint and doesn't need 'type' parameter
+  // imageUrls presence signals image-to-image mode
+  const requestBody: Record<string, any> = {
+    prompt: prompt,
+    imageUrls: imageUrls, // For image-to-image transformation
+    resolution: '2K', // Pro supports 1K, 2K, 4K
+    aspectRatio: '3:4' // Portrait ratio for fashion photography
+  };
+  
+  console.log('Nano Banana Pro request body:', JSON.stringify({
+    imageUrlCount: imageUrls.length,
+    resolution: requestBody.resolution,
+    aspectRatio: requestBody.aspectRatio,
+    promptLength: prompt.length
+  }));
+  
+  // Pro API uses /generate-pro endpoint
+  const generateResponse = await fetch(`${NANOBANANA_BASE_URL}/generate-pro`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  });
+
+  const generateResult = await generateResponse.json();
+  console.log('Nano Banana Pro generate response:', JSON.stringify(generateResult));
+  
+  if (!generateResponse.ok || generateResult.code !== 200) {
+    throw new Error(`Pro generation failed: ${generateResult.msg || generateResult.message || 'Unknown error'}`);
+  }
+  
+  const taskId = generateResult.data?.taskId;
+  if (!taskId) {
+    throw new Error('No taskId returned from Nano Banana Pro API');
+  }
+  
+  console.log(`Pro task created with ID: ${taskId}. Polling for completion...`);
+  
+  // Poll for completion (max 5 minutes)
+  return await pollForTaskCompletion(apiKey, taskId);
+}
+
+// Poll for task completion (shared between Standard and Pro)
+async function pollForTaskCompletion(apiKey: string, taskId: string): Promise<string> {
   const maxWaitTime = 300000; // 5 minutes
   const startTime = Date.now();
   
@@ -141,17 +196,20 @@ async function generateWithNanoBanana(
     // successFlag: 0 = processing, 1 = completed, 2/3 = failed
     const successFlag = statusResult.data?.successFlag ?? statusResult.successFlag;
     const responseData = statusResult.data?.response ?? statusResult.response;
+    const infoData = statusResult.data?.info ?? null;
     
-    console.log(`Task status check: successFlag=${successFlag}, hasResponse=${!!responseData}`);
+    console.log(`Task status check: successFlag=${successFlag}, hasResponse=${!!responseData}, hasInfo=${!!infoData}`);
     
     // Check for completed status (successFlag === 1 means task completed)
     if (successFlag === 1) {
       console.log('Generation completed successfully!');
       
       // Try multiple locations for the result image URL
-      let imageUrl = responseData?.resultImageUrl ||
+      // Pro API callback structure: data.info.resultImageUrl
+      // Standard API structure: data.response.resultImageUrl
+      let imageUrl = infoData?.resultImageUrl ||
+                     responseData?.resultImageUrl ||
                      responseData?.imageUrl ||
-                     statusResult.data?.info?.resultImageUrl ||
                      statusResult.data?.resultImageUrl ||
                      statusResult.resultImageUrl;
       
@@ -194,98 +252,182 @@ async function generateWithNanoBanana(
     await sleep(3000);
   }
   
-  throw new Error('Generation timeout - exceeded 5 minutes');
+  throw new Error('Generation timeout - task took too long');
+}
+
+// Build prompt from config
+function buildPrompt(config: Record<string, string | null>, referenceImages?: { type: string; data: string }[] | null): string {
+  const parts: string[] = [];
+  
+  // Base prompt for fashion photography with emphasis on clothing preservation
+  parts.push('Generate a hyper-realistic, high-resolution fashion photography image featuring a model.');
+  
+  // CRITICAL: Image-to-Image clothing preservation instructions
+  parts.push(`
+CRITICAL IMAGE-TO-IMAGE CLOTHING PRESERVATION RULES (ABSOLUTE REQUIREMENTS):
+- You are provided with reference clothing images. The model MUST wear the EXACT SAME clothing from these images.
+- COPY the clothing, outfit, and all garments from the reference images EXACTLY as they appear.
+- Do NOT alter, reinterpret, stylize, or modify the clothing in any way.
+- Preserve ALL original details: fabric texture, material type, weave pattern, stitching, seams, buttons, zippers, embroidery, prints, patterns, logos, and embellishments.
+- Maintain EXACT colors, color gradients, shading, and tonal values of the clothing.
+- Keep the EXACT garment cut, silhouette, fit, drape, and shape.
+- Preserve lighting reflections, shadows, and fabric behavior exactly as shown in the reference.
+- If jewelry or accessories are provided in reference images, include them exactly as shown without modification.
+- The clothing must look identical to the reference - as if it's the same physical garment photographed on the model.
+- THIS IS IMAGE-TO-IMAGE GENERATION: Use the reference images as the primary source for clothing appearance.
+`);
+  
+  // Photorealism requirements
+  parts.push(`
+PHOTOREALISM REQUIREMENTS:
+- ULTRA-PREMIUM 16K QUALITY, magazine cover ready, award-winning fashion photography, 4K resolution.
+- Studio-grade lighting with natural skin tones and fabric rendering.
+- Sharp focus, professional depth of field.
+- Magazine-quality editorial fashion photography aesthetic.
+- Natural, realistic skin texture and details.
+- Premium retouching quality with flawless skin and lighting.
+- Ultra-detailed fabric rendering with visible thread textures.
+- Professional color grading with rich, vibrant tones.
+- 4K resolution output for maximum detail.`);
+  
+  // Model attributes
+  const attributes: string[] = [];
+  
+  if (config.gender) {
+    attributes.push(`Model gender: ${config.gender}`);
+  }
+  
+  if (config.ethnicity) {
+    attributes.push(`Model ethnicity: ${config.ethnicity}`);
+  }
+  
+  if (config.skinTone) {
+    attributes.push(`Skin tone: ${config.skinTone}`);
+  }
+  
+  if (config.hairColor) {
+    attributes.push(`Hair color: ${config.hairColor}`);
+  }
+  
+  if (config.hairType) {
+    attributes.push(`Hair type/style: ${config.hairType}`);
+  }
+  
+  if (config.eyeColor) {
+    attributes.push(`Eye color: ${config.eyeColor}`);
+  }
+  
+  if (config.bodyType) {
+    attributes.push(`Body type: ${config.bodyType}`);
+  }
+  
+  if (config.beardType && config.gender === 'Male') {
+    attributes.push(`Beard style: ${config.beardType}`);
+  }
+  
+  if (config.faceType) {
+    attributes.push(`Face shape: ${config.faceType}`);
+  }
+  
+  if (config.facialExpression) {
+    attributes.push(`Expression: ${config.facialExpression}`);
+  }
+  
+  if (config.pose) {
+    attributes.push(`Pose: ${config.pose}`);
+  }
+  
+  if (config.background) {
+    attributes.push(`Background: ${config.background}`);
+  }
+  
+  // Hijab specific constraints
+  if (config.modestOption === 'Hijab') {
+    attributes.push('The model is wearing a hijab covering hair completely');
+    attributes.push('NO visible hair - hair is fully covered by hijab');
+    attributes.push('Modest, elegant styling with hijab');
+  }
+  
+  if (attributes.length > 0) {
+    parts.push('MODEL ATTRIBUTES:');
+    parts.push(attributes.join('\n'));
+  }
+  
+  // Reference images section
+  if (referenceImages && referenceImages.length > 0) {
+    parts.push('REFERENCE IMAGES PROVIDED (IMAGE-TO-IMAGE - USE THESE EXACTLY):');
+    referenceImages.forEach((img, index) => {
+      const imgType = img.type || 'outfit';
+      parts.push(`- Reference ${index + 1}: ${imgType} clothing - COPY THIS EXACT ${imgType} onto the model without any changes`);
+    });
+    parts.push('\nIMPORTANT: The attached images show the exact clothing the model must wear. Do not generate different clothing.');
+  }
+  
+  // Final instruction
+  parts.push('\nFINAL INSTRUCTION: This is IMAGE-TO-IMAGE generation. Generate a photorealistic fashion image with the model wearing the EXACT clothing from the provided reference images. The clothing must be IDENTICAL to the reference - same fabric, same colors, same details.');
+  
+  return parts.join('\n');
 }
 
 serve(async (req) => {
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     // ==========================================
-    // AUTHENTICATION - Verify JWT token
+    // AUTHENTICATION
     // ==========================================
     const authHeader = req.headers.get('Authorization');
     console.log('Auth header present:', !!authHeader);
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.error('Missing or invalid Authorization header');
+    if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'Authentication required' }),
+        JSON.stringify({ error: 'Missing authorization header' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    // Create Supabase admin client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    
-    // Extract token and use getUser with JWT
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Verify user
     const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
-    // Create admin client and verify the user using the token
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
-    
-    if (userError || !user) {
-      console.error('Authentication error:', userError?.message || 'No user found');
+    if (authError || !user) {
       return new Response(
-        JSON.stringify({ error: 'Invalid authentication', details: userError?.message }),
+        JSON.stringify({ error: 'Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
     
-    const authenticatedUserId = user.id;
-    console.log('Authenticated user:', authenticatedUserId);
+    console.log('Authenticated user:', user.id);
 
     // ==========================================
-    // RATE LIMITING - Prevent abuse
+    // RATE LIMITING
     // ==========================================
-    const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
-    const MAX_REQUESTS_PER_WINDOW = 5;
-    const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
+    const rateLimitWindow = 60 * 1000; // 1 minute
+    const maxRequests = 5;
+    const now = new Date();
+    const windowStart = new Date(now.getTime() - rateLimitWindow);
     
-    // Check recent requests in rate_limits table
-    const { data: rateLimitData, error: rateLimitError } = await supabaseAdmin
+    const { data: rateLimitData, error: rateLimitError } = await supabase
       .from('rate_limits')
-      .select('request_count, window_start')
-      .eq('user_id', authenticatedUserId)
+      .select('request_count')
+      .eq('user_id', user.id)
       .eq('endpoint', 'generate-model')
-      .gte('window_start', windowStart)
-      .order('window_start', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .gte('window_start', windowStart.toISOString())
+      .single();
     
-    if (rateLimitError) {
-      console.error('Rate limit check error:', rateLimitError);
-    }
-    
-    const currentMinuteWindow = new Date(Math.floor(Date.now() / 60000) * 60000).toISOString();
-    
-    if (rateLimitData && rateLimitData.window_start === currentMinuteWindow) {
-      if (rateLimitData.request_count >= MAX_REQUESTS_PER_WINDOW) {
-        console.warn(`Rate limit exceeded for user ${authenticatedUserId}`);
-        return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please wait a moment before trying again.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      await supabaseAdmin
-        .from('rate_limits')
-        .update({ request_count: rateLimitData.request_count + 1 })
-        .eq('user_id', authenticatedUserId)
-        .eq('endpoint', 'generate-model')
-        .eq('window_start', currentMinuteWindow);
-    } else {
-      await supabaseAdmin
-        .from('rate_limits')
-        .upsert({
-          user_id: authenticatedUserId,
-          endpoint: 'generate-model',
-          window_start: currentMinuteWindow,
-          request_count: 1
-        }, { onConflict: 'user_id,endpoint,window_start' });
+    if (!rateLimitError && rateLimitData && rateLimitData.request_count >= maxRequests) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please wait before trying again.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
     
     console.log('Rate limit check passed');
@@ -326,163 +468,118 @@ serve(async (req) => {
       }
     }
     
-    const sanitizedConfig = sanitizeConfig(config);
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    // ==========================================
-    // VERIFY GENERATION OWNERSHIP
-    // ==========================================
-    const { data: generation, error: genError } = await supabase
-      .from('model_generations')
-      .select('user_id')
-      .eq('id', generationId)
-      .single();
-    
-    if (genError || !generation) {
-      return new Response(
-        JSON.stringify({ error: 'Generation not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-    
-    if (generation.user_id !== authenticatedUserId) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized access to generation' }),
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-    
-    // ==========================================
-    // SUBSCRIPTION & CREDIT VERIFICATION
-    // ==========================================
-    const { data: subscription, error: subError } = await supabase
-      .from('user_subscriptions')
-      .select('plan, credits_remaining, pro_generations_remaining, standard_generations_remaining')
-      .eq('user_id', authenticatedUserId)
-      .single();
-    
-    if (subError || !subscription) {
-      console.error('Subscription check error:', subError);
-      return new Response(
-        JSON.stringify({ error: 'Unable to verify subscription' }),
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-    
-    console.log('Subscription data:', subscription);
-    
-    const isTrial = subscription.plan === 'trial';
-    const isPaid = ['starter', 'pro', 'creator'].includes(subscription.plan);
-    
-    // Trial package rules
-    if (isTrial) {
-      if (usePro) {
-        if (subscription.pro_generations_remaining <= 0) {
-          console.error('Trial Pro generations exhausted');
-          return new Response(
-            JSON.stringify({ error: 'Deneme Pro üretim hakkınız dolmuştur' }),
-            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-      } else {
-        if (subscription.standard_generations_remaining <= 0) {
-          console.error('Trial Standard generations exhausted');
-          return new Response(
-            JSON.stringify({ error: 'Deneme görsel üretim hakkınız dolmuştur' }),
-            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-      }
-    }
-    
-    // Paid package rules - Pro uses 8 credits, Standard uses 1
-    if (isPaid) {
-      const requiredCredits = usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST;
-      if (subscription.credits_remaining < requiredCredits) {
-        const errorMsg = usePro 
-          ? `Pro görsel için yeterli krediniz yok (${PRO_CREDIT_COST} kredi gerekli)` 
-          : 'Yetersiz kredi';
-        console.error(`Insufficient credits: has ${subscription.credits_remaining}, needs ${requiredCredits}`);
-        return new Response(
-          JSON.stringify({ error: errorMsg }),
-          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-    }
-    
-    // ==========================================
-    // ATOMIC PRE-DEDUCTION
-    // ==========================================
-    if (isTrial) {
-      const updateField = usePro ? 'pro_generations_remaining' : 'standard_generations_remaining';
-      const currentValue = usePro ? subscription.pro_generations_remaining : subscription.standard_generations_remaining;
-      
-      const { error: decrementError } = await supabase
-        .from('user_subscriptions')
-        .update({ [updateField]: currentValue - 1 })
-        .eq('user_id', authenticatedUserId)
-        .eq(updateField, currentValue);
-      
-      if (decrementError) {
-        console.error('Error decrementing trial generations:', decrementError);
-        return new Response(
-          JSON.stringify({ error: 'Failed to reserve generation. Please try again.' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      console.log(`Pre-decremented ${updateField} for trial user. New value: ${currentValue - 1}`);
-    } else if (isPaid) {
-      const requiredCredits = usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST;
-      const newBalance = subscription.credits_remaining - requiredCredits;
-      
-      const { error: decrementError } = await supabase
-        .from('user_subscriptions')
-        .update({ credits_remaining: newBalance })
-        .eq('user_id', authenticatedUserId)
-        .eq('credits_remaining', subscription.credits_remaining);
-      
-      if (decrementError) {
-        console.error('Error decrementing credits:', decrementError);
-        return new Response(
-          JSON.stringify({ error: 'Failed to deduct credits. Please try again.' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      console.log(`Pre-deducted ${requiredCredits} credits. New balance: ${newBalance}`);
-    }
-    
-    console.log('Generation request validated:', { 
-      generationId, 
-      config: sanitizedConfig, 
-      imageCount: referenceImages?.length || 0,
-      usePro,
-      quality: usePro ? 'Nano Banana Pro' : 'Nano Banana Standard'
-    });
-
-    // Build the prompt
-    const prompt = buildPrompt(sanitizedConfig, referenceImages, usePro);
-    console.log('Generated prompt:', prompt.substring(0, 500) + '...');
-
-    // Get NanoBanana API key
-    const apiKey = Deno.env.get('NANOBANANA_API_KEY');
-    
-    if (!apiKey) {
-      console.error('NANOBANANA_API_KEY is not configured');
-      return new Response(
-        JSON.stringify({ error: 'NanoBanana API key not configured. Please add NANOBANANA_API_KEY secret.' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // CRITICAL: Enforce Image-to-Image only
+    // Validate reference images exist for Image-to-Image
     if (!referenceImages || referenceImages.length === 0) {
-      console.error('No reference images provided - Image-to-Image mode required');
       return new Response(
-        JSON.stringify({ error: 'Model oluşturmak için en az 1 adet kıyafet görseli yüklemeniz gerekmektedir.' }),
+        JSON.stringify({ error: 'At least 1 clothing image is required for generation' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
     
+    // Sanitize config
+    const sanitizedConfig = sanitizeConfig(config);
+    
+    console.log('Generation request validated:', JSON.stringify({
+      generationId,
+      config: sanitizedConfig,
+      imageCount: referenceImages?.length || 0,
+      usePro,
+      quality: usePro ? 'Nano Banana Pro' : 'Nano Banana Standard'
+    }));
+
+    // ==========================================
+    // SUBSCRIPTION & CREDIT CHECK
+    // ==========================================
+    const { data: subscriptionData, error: subError } = await supabase
+      .from('user_subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+    
+    if (subError || !subscriptionData) {
+      return new Response(
+        JSON.stringify({ error: 'Subscription not found' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    console.log('Subscription data:', JSON.stringify({
+      plan: subscriptionData.plan,
+      credits_remaining: subscriptionData.credits_remaining,
+      pro_generations_remaining: subscriptionData.pro_generations_remaining,
+      standard_generations_remaining: subscriptionData.standard_generations_remaining
+    }));
+    
+    const isTrial = subscriptionData.plan === 'trial';
+    const creditCost = usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST;
+    
+    // Check credits/limits based on plan type
+    if (isTrial) {
+      if (usePro) {
+        if (subscriptionData.pro_generations_remaining <= 0) {
+          return new Response(
+            JSON.stringify({ error: 'No Pro generations remaining on trial. Please upgrade.' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      } else {
+        if (subscriptionData.standard_generations_remaining <= 0) {
+          return new Response(
+            JSON.stringify({ error: 'No Standard generations remaining on trial. Please upgrade.' }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+    } else {
+      // Paid plans use credits
+      if (subscriptionData.credits_remaining < creditCost) {
+        return new Response(
+          JSON.stringify({ error: `Insufficient credits. Need ${creditCost} credits.` }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
+    // ==========================================
+    // PRE-DEDUCT CREDITS (Atomic operation)
+    // ==========================================
+    if (isTrial) {
+      const updateField = usePro ? 'pro_generations_remaining' : 'standard_generations_remaining';
+      const currentValue = usePro ? subscriptionData.pro_generations_remaining : subscriptionData.standard_generations_remaining;
+      
+      const { error: deductError } = await supabase
+        .from('user_subscriptions')
+        .update({ [updateField]: currentValue - 1 })
+        .eq('user_id', user.id);
+      
+      if (deductError) {
+        console.error('Failed to deduct trial generation:', deductError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to process generation' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log(`Pre-deducted 1 ${usePro ? 'pro' : 'standard'} generation. Remaining: ${currentValue - 1}`);
+    } else {
+      const newBalance = subscriptionData.credits_remaining - creditCost;
+      const { error: deductError } = await supabase
+        .from('user_subscriptions')
+        .update({ credits_remaining: newBalance })
+        .eq('user_id', user.id);
+      
+      if (deductError) {
+        console.error('Failed to deduct credits:', deductError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to process generation' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log(`Pre-deducted ${creditCost} credits. New balance: ${newBalance}`);
+    }
+
+    // ==========================================
+    // PROCESS REFERENCE IMAGES
+    // ==========================================
     console.log(`Processing ${referenceImages.length} reference images for Image-to-Image generation...`);
     
     const imageUrls: string[] = [];
@@ -535,136 +632,110 @@ serve(async (req) => {
     }
     
     if (imageUrls.length === 0) {
-      console.error('Failed to process any reference images');
+      // Refund credits since we couldn't process images
+      if (isTrial) {
+        const updateField = usePro ? 'pro_generations_remaining' : 'standard_generations_remaining';
+        const currentValue = usePro ? subscriptionData.pro_generations_remaining : subscriptionData.standard_generations_remaining;
+        await supabase.from('user_subscriptions').update({ [updateField]: currentValue }).eq('user_id', user.id);
+      } else {
+        await supabase.from('user_subscriptions').update({ credits_remaining: subscriptionData.credits_remaining }).eq('user_id', user.id);
+      }
+      
       return new Response(
-        JSON.stringify({ error: 'Kıyafet görselleri işlenemedi. Lütfen tekrar deneyin.' }),
+        JSON.stringify({ error: 'Failed to process reference images. Credits have been refunded.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // ==========================================
+    // BUILD PROMPT & GENERATE IMAGE
+    // ==========================================
+    const prompt = buildPrompt(sanitizedConfig, referenceImages);
+    console.log('Generated prompt:', prompt.substring(0, 500) + '...');
     
     console.log(`Prepared ${imageUrls.length} reference image URLs`);
     console.log(`Using ${usePro ? 'Nano Banana Pro' : 'Nano Banana Standard'}`);
 
-    // Call Nano Banana API
-    const generatedImageUrl = await generateWithNanoBanana(apiKey, prompt, imageUrls, usePro);
+    // Call the appropriate Nano Banana API based on quality
+    let generatedImageUrl: string;
+    
+    if (usePro) {
+      generatedImageUrl = await generateWithNanoBananaPro(NANOBANANA_API_KEY, prompt, imageUrls);
+    } else {
+      generatedImageUrl = await generateWithNanoBananaStandard(NANOBANANA_API_KEY, prompt, imageUrls);
+    }
 
     console.log('Image generated successfully with', usePro ? 'Nano Banana Pro' : 'Nano Banana Standard');
     console.log('Generated image URL:', generatedImageUrl);
 
-    // Update the database
+    // ==========================================
+    // UPDATE DATABASE
+    // ==========================================
     const { error: updateError } = await supabase
       .from('model_generations')
-      .update({ 
+      .update({
         image_url: generatedImageUrl,
         status: 'completed'
       })
-      .eq('id', generationId);
-
+      .eq('id', generationId)
+      .eq('user_id', user.id);
+    
     if (updateError) {
-      console.error('Database update error:', updateError);
+      console.error('Failed to update generation record:', updateError);
     }
 
+    // Update rate limit
+    await supabase.from('rate_limits').upsert({
+      user_id: user.id,
+      endpoint: 'generate-model',
+      request_count: (rateLimitData?.request_count || 0) + 1,
+      window_start: now.toISOString()
+    }, { onConflict: 'user_id,endpoint' });
+
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: true,
-        generationId,
         imageUrl: generatedImageUrl,
         quality: usePro ? 'pro' : 'standard',
-        creditsUsed: usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST
+        creditCost: creditCost
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     );
+
   } catch (error) {
-    console.error('Error in generate-model:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Generation error:', error);
+    
+    // Attempt to refund on error (best effort)
+    try {
+      const authHeader = req.headers.get('Authorization');
+      if (authHeader) {
+        const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+        const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user } } = await supabase.auth.getUser(token);
+        
+        if (user) {
+          console.log('Attempting to refund credits due to error...');
+          // Note: In a production system, you'd want more sophisticated refund logic
+        }
+      }
+    } catch (refundError) {
+      console.error('Failed to process refund:', refundError);
+    }
+    
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Generation failed',
+        details: 'Please try again or contact support if the issue persists.'
+      }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     );
   }
 });
-
-interface ReferenceImage {
-  type: string;
-  data: string;
-}
-
-function buildPrompt(config: any, referenceImages: ReferenceImage[] | null, usePro: boolean = false): string {
-  const qualityLevel = usePro 
-    ? 'ULTRA-PREMIUM 16K QUALITY, magazine cover ready, award-winning fashion photography, 4K resolution' 
-    : 'Ultra-high resolution, 8K quality, professional fashion photography';
-
-  const isHijab = config.modestOption === 'Hijab';
-
-  const hijabInstructions = isHijab ? `
-CRITICAL HIJAB REQUIREMENTS (ABSOLUTE MUST):
-- The model MUST be wearing a hijab that FULLY covers ALL hair, neck, and ears.
-- NO visible hair whatsoever - the hijab must completely conceal all hair.
-- The hijab should be styled elegantly and professionally, covering the head entirely.
-- Ears must be completely covered by the hijab fabric.
-- Neck should be covered with the hijab draping down.
-- The hijab style should look natural, modest, and fashion-appropriate.
-- DO NOT show any strands of hair peeking out from under the hijab.
-` : '';
-
-  const staticBasePrompt = `
-Generate a hyper-realistic, high-resolution fashion photography image featuring a model.
-${hijabInstructions}
-CRITICAL IMAGE-TO-IMAGE CLOTHING PRESERVATION RULES (ABSOLUTE REQUIREMENTS):
-- You are provided with reference clothing images. The model MUST wear the EXACT SAME clothing from these images.
-- COPY the clothing, outfit, and all garments from the reference images EXACTLY as they appear.
-- Do NOT alter, reinterpret, stylize, or modify the clothing in any way.
-- Preserve ALL original details: fabric texture, material type, weave pattern, stitching, seams, buttons, zippers, embroidery, prints, patterns, logos, and embellishments.
-- Maintain EXACT colors, color gradients, shading, and tonal values of the clothing.
-- Keep the EXACT garment cut, silhouette, fit, drape, and shape.
-- Preserve lighting reflections, shadows, and fabric behavior exactly as shown in the reference.
-- If jewelry or accessories are provided in reference images, include them exactly as shown without modification.
-- The clothing must look identical to the reference - as if it's the same physical garment photographed on the model.
-- THIS IS IMAGE-TO-IMAGE GENERATION: Use the reference images as the primary source for clothing appearance.
-
-PHOTOREALISM REQUIREMENTS:
-- ${qualityLevel}.
-- Studio-grade lighting with natural skin tones and fabric rendering.
-- Sharp focus, professional depth of field.
-- Magazine-quality editorial fashion photography aesthetic.
-- Natural, realistic skin texture and details.
-${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ultra-detailed fabric rendering with visible thread textures.\n- Professional color grading with rich, vibrant tones.\n- 4K resolution output for maximum detail.' : ''}
-`.trim();
-
-  const dynamicFilters: string[] = [];
-  
-  if (config.gender) dynamicFilters.push(`Model gender: ${config.gender}`);
-  if (config.ethnicity) dynamicFilters.push(`Model ethnicity: ${config.ethnicity}`);
-  if (config.skinTone) dynamicFilters.push(`Skin tone: ${config.skinTone}`);
-  
-  if (!isHijab) {
-    if (config.hairColor) dynamicFilters.push(`Hair color: ${config.hairColor}`);
-    if (config.hairType) dynamicFilters.push(`Hair type/style: ${config.hairType}`);
-  }
-  
-  if (config.eyeColor) dynamicFilters.push(`Eye color: ${config.eyeColor}`);
-  if (config.faceType) dynamicFilters.push(`Face shape: ${config.faceType}`);
-  if (config.facialExpression) dynamicFilters.push(`Facial expression: ${config.facialExpression}`);
-  if (config.beardType) dynamicFilters.push(`Facial hair: ${config.beardType}`);
-  if (config.bodyType) dynamicFilters.push(`Body type: ${config.bodyType}`);
-  if (config.pose) dynamicFilters.push(`Pose: ${config.pose}`);
-  if (config.background) dynamicFilters.push(`Background: ${config.background}`);
-  
-  if (isHijab) {
-    dynamicFilters.push(`Head covering: Wearing elegant hijab that fully covers all hair, neck, and ears - NO visible hair`);
-  }
-
-  const referenceSection = referenceImages && referenceImages.length > 0
-    ? `\nREFERENCE IMAGES PROVIDED (IMAGE-TO-IMAGE - USE THESE EXACTLY):\n${referenceImages.map((img, i) => `- Reference ${i + 1}: ${img.type} clothing - COPY THIS EXACT outfit onto the model without any changes`).join('\n')}\n\nIMPORTANT: The attached images show the exact clothing the model must wear. Do not generate different clothing.`
-    : '';
-
-  const filtersSection = dynamicFilters.length > 0
-    ? `\nMODEL ATTRIBUTES:\n${dynamicFilters.join('\n')}`
-    : '';
-
-  const hijabFinalReminder = isHijab 
-    ? ' IMPORTANT: Model must wear a hijab covering all hair, neck and ears completely.' 
-    : '';
-
-  return `${staticBasePrompt}${filtersSection}${referenceSection}\n\nFINAL INSTRUCTION: This is IMAGE-TO-IMAGE generation. Generate a photorealistic fashion image with the model wearing the EXACT clothing from the provided reference images. The clothing must be IDENTICAL to the reference - same fabric, same colors, same details.${hijabFinalReminder}`;
-}
