@@ -114,12 +114,18 @@ export default function FilterBodyType() {
   }, [bodyTypeOptions, updateConfig, navigate]);
 
   const handleRandomAll = useCallback(() => {
+    const isHijab = config.modestOption === 'Hijab';
+    
     // Select random for this filter and all remaining ones
     const randomBodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
-    const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
     
     updateConfig('bodyType', randomBodyType.id);
-    updateConfig('hairType', randomHairType);
+    
+    // Only set hair type if NOT Hijab (hair is hidden under hijab)
+    if (!isHijab) {
+      const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
+      updateConfig('hairType', randomHairType);
+    }
     
     // Only set Pro features if not restricted
     if (!isTrialProExhausted) {
@@ -141,7 +147,7 @@ export default function FilterBodyType() {
     
     // Navigate to clothing (final step before generation)
     navigate('/clothing');
-  }, [bodyTypeOptions, isFemale, updateConfig, navigate, isTrialProExhausted]);
+  }, [bodyTypeOptions, isFemale, config.modestOption, updateConfig, navigate, isTrialProExhausted]);
 
   // Keyboard navigation
   useEffect(() => {

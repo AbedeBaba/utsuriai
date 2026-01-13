@@ -592,9 +592,24 @@ function buildPrompt(config: any, referenceImages: ReferenceImage[] | null, useP
     ? 'ULTRA-PREMIUM 16K QUALITY, magazine cover ready, award-winning fashion photography' 
     : 'Ultra-high resolution, 8K quality, professional fashion photography';
 
+  // Check if Hijab is selected
+  const isHijab = config.modestOption === 'Hijab';
+
+  // Hijab-specific prompt additions
+  const hijabInstructions = isHijab ? `
+CRITICAL HIJAB REQUIREMENTS (ABSOLUTE MUST):
+- The model MUST be wearing a hijab that FULLY covers ALL hair, neck, and ears.
+- NO visible hair whatsoever - the hijab must completely conceal all hair.
+- The hijab should be styled elegantly and professionally, covering the head entirely.
+- Ears must be completely covered by the hijab fabric.
+- Neck should be covered with the hijab draping down.
+- The hijab style should look natural, modest, and fashion-appropriate.
+- DO NOT show any strands of hair peeking out from under the hijab.
+` : '';
+
   const staticBasePrompt = `
 Generate a hyper-realistic, high-resolution fashion photography image featuring a model.
-
+${hijabInstructions}
 CRITICAL CLOTHING PRESERVATION RULES (ABSOLUTE REQUIREMENTS):
 - The clothing, outfit, and all garments shown in the reference images MUST be reproduced EXACTLY as they appear.
 - Do NOT alter, reinterpret, stylize, or modify the clothing in any way.
@@ -619,8 +634,13 @@ ${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ult
   if (config.gender) dynamicFilters.push(`Model gender: ${config.gender}`);
   if (config.ethnicity) dynamicFilters.push(`Model ethnicity: ${config.ethnicity}`);
   if (config.skinTone) dynamicFilters.push(`Skin tone: ${config.skinTone}`);
-  if (config.hairColor) dynamicFilters.push(`Hair color: ${config.hairColor}`);
-  if (config.hairType) dynamicFilters.push(`Hair type/style: ${config.hairType}`);
+  
+  // Only add hair attributes if NOT Hijab
+  if (!isHijab) {
+    if (config.hairColor) dynamicFilters.push(`Hair color: ${config.hairColor}`);
+    if (config.hairType) dynamicFilters.push(`Hair type/style: ${config.hairType}`);
+  }
+  
   if (config.eyeColor) dynamicFilters.push(`Eye color: ${config.eyeColor}`);
   if (config.faceType) dynamicFilters.push(`Face shape: ${config.faceType}`);
   if (config.facialExpression) dynamicFilters.push(`Facial expression: ${config.facialExpression}`);
@@ -628,7 +648,11 @@ ${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ult
   if (config.bodyType) dynamicFilters.push(`Body type: ${config.bodyType}`);
   if (config.pose) dynamicFilters.push(`Pose: ${config.pose}`);
   if (config.background) dynamicFilters.push(`Background: ${config.background}`);
-  if (config.modestOption === 'Hijab') dynamicFilters.push(`Wearing a hijab headscarf`);
+  
+  // Add explicit hijab instruction to dynamic filters
+  if (isHijab) {
+    dynamicFilters.push(`Head covering: Wearing elegant hijab that fully covers all hair, neck, and ears - NO visible hair`);
+  }
 
   const referenceSection = referenceImages && referenceImages.length > 0
     ? `\nREFERENCE IMAGES PROVIDED:\n${referenceImages.map((img, i) => `- Reference ${i + 1}: ${img.type} - Copy this EXACTLY onto the model`).join('\n')}\n`
@@ -638,5 +662,9 @@ ${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ult
     ? `\nMODEL ATTRIBUTES:\n${dynamicFilters.join('\n')}`
     : '';
 
-  return `${staticBasePrompt}${filtersSection}${referenceSection}\n\nFINAL INSTRUCTION: Generate a photorealistic fashion image with the exact clothing from reference images (if provided) on a model with the specified attributes. The clothing must be identical to the reference.`;
+  const hijabFinalReminder = isHijab 
+    ? ' IMPORTANT: Model must wear a hijab covering all hair, neck and ears completely.' 
+    : '';
+
+  return `${staticBasePrompt}${filtersSection}${referenceSection}\n\nFINAL INSTRUCTION: Generate a photorealistic fashion image with the exact clothing from reference images (if provided) on a model with the specified attributes. The clothing must be identical to the reference.${hijabFinalReminder}`;
 }

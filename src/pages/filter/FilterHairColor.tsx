@@ -125,17 +125,26 @@ export default function FilterHairColor() {
     setIsAnimating(true);
     setHoverDisabled(true);
     
-    const randomHairColor = hairColorOptions[Math.floor(Math.random() * hairColorOptions.length)].id;
+    const isHijab = config.modestOption === 'Hijab';
+    
+    // Only set hair color if NOT Hijab
+    if (!isHijab) {
+      const randomHairColor = hairColorOptions[Math.floor(Math.random() * hairColorOptions.length)].id;
+      setSelectedId(randomHairColor);
+      updateConfig('hairColor', randomHairColor);
+    }
+    
     const randomEyeColor = eyeColorOptions[Math.floor(Math.random() * eyeColorOptions.length)];
     const randomBodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
-    const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
     
-    setSelectedId(randomHairColor);
-    
-    updateConfig('hairColor', randomHairColor);
     updateConfig('eyeColor', randomEyeColor);
     updateConfig('bodyType', randomBodyType);
-    updateConfig('hairType', randomHairType);
+    
+    // Only set hair type if NOT Hijab
+    if (!isHijab) {
+      const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
+      updateConfig('hairType', randomHairType);
+    }
     
     // Only set Pro features if not restricted
     if (!isTrialProExhausted) {
@@ -157,7 +166,7 @@ export default function FilterHairColor() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, hairColorOptions, config.gender, isTrialProExhausted]);
+  }, [isAnimating, navigate, updateConfig, hairColorOptions, config.gender, config.modestOption, isTrialProExhausted]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 

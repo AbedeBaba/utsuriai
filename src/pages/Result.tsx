@@ -156,22 +156,51 @@ export default function Result() {
     if (!generation?.image_url) return;
 
     try {
-      const response = await fetch(generation.image_url);
+      // Fetch with no-cors mode for external images
+      const response = await fetch(generation.image_url, {
+        mode: 'cors',
+        credentials: 'omit',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `fashion-model-${generation.id}.png`;
+      a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
+      
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+      
       toast({
-        title: 'Download failed',
-        description: 'Could not download the image.',
-        variant: 'destructive',
+        title: 'Download started',
+        description: 'Your image is being downloaded.',
       });
+    } catch (error) {
+      console.error('Download error:', error);
+      // Fallback: open in new tab for manual download
+      try {
+        window.open(generation.image_url, '_blank');
+        toast({
+          title: 'Opening image',
+          description: 'The image opened in a new tab. Right-click to save it.',
+        });
+      } catch {
+        toast({
+          title: 'Download failed',
+          description: 'Could not download the image. Please try again.',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
