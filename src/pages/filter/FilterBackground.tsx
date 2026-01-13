@@ -32,17 +32,17 @@ const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
 export default function FilterBackground() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
-  const { isTrialProExhausted, loading } = useSubscription();
+  const { hasProFeatureAccess, loading } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
 
-  // Redirect Trial users with exhausted Pro limit
+  // Redirect Trial and Starter users (no Pro feature access)
   useEffect(() => {
-    if (!loading && isTrialProExhausted) {
+    if (!loading && !hasProFeatureAccess) {
       navigate('/clothing');
     }
-  }, [isTrialProExhausted, loading, navigate]);
+  }, [hasProFeatureAccess, loading, navigate]);
 
   useEffect(() => {
     setCurrentStep(10);

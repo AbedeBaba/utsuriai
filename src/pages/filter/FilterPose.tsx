@@ -45,19 +45,19 @@ const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
 export default function FilterPose() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
-  const { isTrialProExhausted, loading } = useSubscription();
+  const { hasProFeatureAccess, loading } = useSubscription();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
   const isFemale = config.gender === 'Female';
 
-  // Redirect Trial users with exhausted Pro limit
+  // Redirect Trial and Starter users (no Pro feature access)
   useEffect(() => {
-    if (!loading && isTrialProExhausted) {
+    if (!loading && !hasProFeatureAccess) {
       navigate('/clothing');
     }
-  }, [isTrialProExhausted, loading, navigate]);
+  }, [hasProFeatureAccess, loading, navigate]);
 
   useEffect(() => {
     setCurrentStep(config.gender === 'Male' ? 9 : 9);

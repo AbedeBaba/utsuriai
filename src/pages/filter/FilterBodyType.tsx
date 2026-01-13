@@ -50,7 +50,7 @@ const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard'
 export default function FilterBodyType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
-  const { isTrialProExhausted } = useSubscription();
+  const { hasProFeatureAccess } = useSubscription();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -127,8 +127,8 @@ export default function FilterBodyType() {
       updateConfig('hairType', randomHairType);
     }
     
-    // Only set Pro features if not restricted
-    if (!isTrialProExhausted) {
+    // Only set Pro features if user has Pro feature access (Pro/Creator plans)
+    if (hasProFeatureAccess) {
       const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
       const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
       const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
@@ -147,7 +147,7 @@ export default function FilterBodyType() {
     
     // Navigate to clothing (final step before generation)
     navigate('/clothing');
-  }, [bodyTypeOptions, isFemale, config.modestOption, updateConfig, navigate, isTrialProExhausted]);
+  }, [bodyTypeOptions, isFemale, config.modestOption, updateConfig, navigate, hasProFeatureAccess]);
 
   // Keyboard navigation
   useEffect(() => {

@@ -55,7 +55,7 @@ const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard'
 export default function FilterEyeColor() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
-  const { isTrialProExhausted } = useSubscription();
+  const { hasProFeatureAccess } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -93,12 +93,12 @@ export default function FilterEyeColor() {
     updateConfig('eyeColor', randomEyeColor.id);
 
     setTimeout(() => {
-      const nextPath = getNextStepPath('eyeColor', isTrialProExhausted);
+      const nextPath = getNextStepPath('eyeColor', !hasProFeatureAccess);
       if (nextPath) {
         navigate(nextPath);
       }
     }, 800);
-  }, [isAnimating, updateConfig, eyeColorOptions, navigate, getNextStepPath, isTrialProExhausted]);
+  }, [isAnimating, updateConfig, eyeColorOptions, navigate, getNextStepPath, hasProFeatureAccess]);
 
   const handleRandomAll = useCallback(() => {
     if (isAnimating) return;
@@ -122,8 +122,8 @@ export default function FilterEyeColor() {
       updateConfig('hairType', randomHairType);
     }
     
-    // Only set Pro features if not restricted
-    if (!isTrialProExhausted) {
+    // Only set Pro features if user has Pro feature access (Pro/Creator plans)
+    if (hasProFeatureAccess) {
       const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
       const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
       const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
@@ -142,7 +142,7 @@ export default function FilterEyeColor() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, config.gender, config.modestOption, eyeColorOptions, isTrialProExhausted]);
+  }, [isAnimating, navigate, updateConfig, config.gender, config.modestOption, eyeColorOptions, hasProFeatureAccess]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
