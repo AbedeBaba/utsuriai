@@ -163,11 +163,6 @@ export default function Landing() {
                 <div className="relative w-full max-w-[280px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[300px]">
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/30">
                     <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/5212774f-8c09-42bf-b019-8f7f544f3c3b.png" />
-                    {/* Decorative badge */}
-                    <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/90 backdrop-blur-sm text-xs">
-                      <Sparkles className="w-3 h-3 text-primary" />
-                      <span className="text-foreground">AI Generated</span>
-                    </div>
                   </div>
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap">
                     AI Model
@@ -180,7 +175,7 @@ export default function Landing() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 my-16 border-y border-border bg-secondary/30">
+      <section className="py-20 border-y border-border bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
