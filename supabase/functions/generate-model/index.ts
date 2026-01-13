@@ -137,29 +137,26 @@ async function generateWithNanoBanana(
     const statusResult = await statusResponse.json();
     console.log('Task status response:', JSON.stringify(statusResult));
     
-    // Handle NanoBanana Pro response structure: { code, msg, data: { taskId, info: { resultImageUrl } } }
-    const code = statusResult.code;
-    const successFlag = statusResult.successFlag ?? statusResult.data?.successFlag ?? statusResult.data?.status;
+    // Get successFlag from response - this determines actual task status
+    // successFlag: 0 = processing, 1 = completed, 2/3 = failed
+    const successFlag = statusResult.data?.successFlag ?? statusResult.successFlag;
+    const responseData = statusResult.data?.response ?? statusResult.response;
     
-    console.log(`Task status check: code=${code}, successFlag=${successFlag}`);
+    console.log(`Task status check: successFlag=${successFlag}, hasResponse=${!!responseData}`);
     
-    // Check for completed status (code 200 for NanoBanana Pro)
-    if (code === 200) {
+    // Check for completed status (successFlag === 1 means task completed)
+    if (successFlag === 1) {
       console.log('Generation completed successfully!');
       
-      // NanoBanana Pro structure: data.info.resultImageUrl
-      let imageUrl = statusResult.data?.info?.resultImageUrl;
-      
-      // Fallback to other possible locations
-      if (!imageUrl) {
-        imageUrl = statusResult.data?.resultImageUrl || 
-                   statusResult.data?.imageUrl || 
-                   statusResult.response?.resultImageUrl ||
-                   statusResult.resultImageUrl;
-      }
+      // Try multiple locations for the result image URL
+      let imageUrl = responseData?.resultImageUrl ||
+                     responseData?.imageUrl ||
+                     statusResult.data?.info?.resultImageUrl ||
+                     statusResult.data?.resultImageUrl ||
+                     statusResult.resultImageUrl;
       
       if (imageUrl) {
-        console.log('Found result image URL');
+        console.log('Found result image URL:', imageUrl.substring(0, 100) + '...');
         return imageUrl;
       }
       
@@ -167,25 +164,30 @@ async function generateWithNanoBanana(
       throw new Error('No resultImageUrl in successful response');
     }
     
-    // Check for NanoBanana Pro error codes
-    if (code === 400) {
-      throw new Error('Content policy violation - please adjust your prompt');
-    } else if (code === 500) {
-      throw new Error('Internal error - please try again later');
-    } else if (code === 501) {
-      throw new Error('Generation task failed - may need to adjust parameters');
-    }
-    
-    // Check for legacy failed status
+    // Check for failed status
     if (successFlag === 2 || successFlag === 3) {
-      throw new Error(statusResult.errorMessage || statusResult.data?.errorMessage || 'Generation failed');
+      const errorMsg = statusResult.data?.errorMessage || 
+                       statusResult.errorMessage || 
+                       'Generation failed';
+      console.error('Task failed with successFlag:', successFlag, 'Error:', errorMsg);
+      throw new Error(errorMsg);
     }
     
-    // Check if still generating (successFlag 0 or 1, or code not 200 yet)
-    if (successFlag === 0 || successFlag === 1 || code === undefined) {
+    // Check for error codes in the response
+    const errorCode = statusResult.data?.errorCode || statusResult.errorCode;
+    if (errorCode) {
+      if (errorCode === 400 || errorCode === '400') {
+        throw new Error('Content policy violation - please adjust your prompt');
+      } else if (errorCode === 500 || errorCode === '500') {
+        throw new Error('Internal error - please try again later');
+      } else if (errorCode === 501 || errorCode === '501') {
+        throw new Error('Generation task failed - may need to adjust parameters');
+      }
+    }
+    
+    // Still processing (successFlag === 0 or undefined)
+    if (successFlag === 0 || successFlag === undefined || successFlag === null) {
       console.log('Task is still generating...');
-    } else {
-      console.log('Unknown status, continuing to poll...');
     }
     
     // Wait 3 seconds before next poll
