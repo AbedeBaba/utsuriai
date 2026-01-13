@@ -55,10 +55,10 @@ interface ModelConfigContextType {
   currentStep: number;
   setCurrentStep: (step: number) => void;
   totalSteps: number;
-  getVisibleSteps: (isTrialProExhausted?: boolean) => FilterStep[];
+  getVisibleSteps: (hideProFeatures?: boolean) => FilterStep[];
   isStepCompleted: (stepId: string) => boolean;
   isStepRequired: (stepId: string) => boolean;
-  getNextStepPath: (currentStepId: string, isTrialProExhausted?: boolean) => string | null;
+  getNextStepPath: (currentStepId: string, hideProFeatures?: boolean) => string | null;
 }
 
 const initialConfig: ModelConfig = {
@@ -86,11 +86,12 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<ModelConfig>(initialConfig);
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Get visible steps based on current config and trial restrictions
-  const getVisibleSteps = useCallback((isTrialProExhausted: boolean = false): FilterStep[] => {
+  // Get visible steps based on current config and Pro feature restrictions
+  // hideProFeatures = true for Trial and Starter users who don't have access to Pro features
+  const getVisibleSteps = useCallback((hideProFeatures: boolean = false): FilterStep[] => {
     return FILTER_STEPS.filter(step => {
-      // Filter out Pro features for Trial users with exhausted Pro limit
-      if (isTrialProExhausted && step.isProFeature) return false;
+      // Filter out Pro features for Trial/Starter users
+      if (hideProFeatures && step.isProFeature) return false;
       if (!step.condition) return true;
       return step.condition(config);
     });
@@ -112,8 +113,8 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Get the next step path from current step
-  const getNextStepPath = useCallback((currentStepId: string, isTrialProExhausted: boolean = false): string | null => {
-    const visibleSteps = getVisibleSteps(isTrialProExhausted);
+  const getNextStepPath = useCallback((currentStepId: string, hideProFeatures: boolean = false): string | null => {
+    const visibleSteps = getVisibleSteps(hideProFeatures);
     const currentIndex = visibleSteps.findIndex(s => s.id === currentStepId);
     if (currentIndex === -1 || currentIndex >= visibleSteps.length - 1) return null;
     return visibleSteps[currentIndex + 1].path;

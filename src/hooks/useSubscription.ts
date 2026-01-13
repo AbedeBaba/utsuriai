@@ -96,6 +96,11 @@ export function useSubscription() {
   // Trial Pro limit exhausted - used for feature restrictions
   const isTrialProExhausted = isTrial && trialProRemaining <= 0;
 
+  // Pro feature access - ONLY Pro and Creator plans have access to:
+  // Backgrounds, Poses, Camera Angles, Face Types, Expressions, Save & Reuse Models
+  const isStarter = subscription?.plan === 'starter';
+  const hasProFeatureAccess = subscription?.plan === 'pro' || subscription?.plan === 'creator';
+
   return {
     subscription,
     loading,
@@ -103,6 +108,7 @@ export function useSubscription() {
     // Package type
     isTrial,
     isPaid,
+    isStarter,
     // Trial-specific
     trialStandardRemaining,
     trialProRemaining,
@@ -119,6 +125,7 @@ export function useSubscription() {
     hasProAccess,
     // Feature restrictions
     isTrialProExhausted,
+    hasProFeatureAccess,
     refetch: fetchSubscription,
   };
 }

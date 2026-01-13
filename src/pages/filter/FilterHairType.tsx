@@ -45,7 +45,7 @@ export default function FilterHairType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
   const { t } = useLanguage();
-  const { isTrialProExhausted } = useSubscription();
+  const { hasProFeatureAccess } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -62,10 +62,10 @@ export default function FilterHairType() {
       if (config.gender === 'Male') {
         navigate('/filter/beard-type');
       } else {
-        navigate(isTrialProExhausted ? '/clothing' : '/filter/pose');
+        navigate(hasProFeatureAccess ? '/filter/pose' : '/clothing');
       }
     }
-  }, [config.modestOption, config.gender, navigate, isTrialProExhausted]);
+  }, [config.modestOption, config.gender, navigate, hasProFeatureAccess]);
 
   const handleSelect = useCallback((hairType: string) => {
     if (isAnimating) return;
@@ -79,11 +79,11 @@ export default function FilterHairType() {
       if (config.gender === 'Male') {
         navigate('/filter/beard-type');
       } else {
-        // Skip Pro features if Trial Pro exhausted
-        navigate(isTrialProExhausted ? '/clothing' : '/filter/pose');
+        // Skip Pro features if user doesn't have Pro feature access (Trial/Starter)
+        navigate(hasProFeatureAccess ? '/filter/pose' : '/clothing');
       }
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, config.gender, isTrialProExhausted]);
+  }, [isAnimating, navigate, updateConfig, config.gender, hasProFeatureAccess]);
 
   const handleRandomSingle = useCallback(() => {
     if (isAnimating) return;
@@ -95,12 +95,12 @@ export default function FilterHairType() {
     updateConfig('hairType', randomHairType.id);
 
     setTimeout(() => {
-      const nextPath = getNextStepPath('hairType', isTrialProExhausted);
+      const nextPath = getNextStepPath('hairType', !hasProFeatureAccess);
       if (nextPath) {
         navigate(nextPath);
       }
     }, 800);
-  }, [isAnimating, updateConfig, navigate, getNextStepPath, isTrialProExhausted]);
+  }, [isAnimating, updateConfig, navigate, getNextStepPath, hasProFeatureAccess]);
 
   const handleRandomAll = useCallback(() => {
     if (isAnimating) return;
@@ -111,8 +111,8 @@ export default function FilterHairType() {
     setSelectedId(randomHairType);
     updateConfig('hairType', randomHairType);
     
-    // Only set Pro features if not restricted
-    if (!isTrialProExhausted) {
+    // Only set Pro features if user has Pro feature access (Pro/Creator plans)
+    if (hasProFeatureAccess) {
       const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
       const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
       const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
@@ -129,7 +129,7 @@ export default function FilterHairType() {
     }
 
     setTimeout(() => { navigate('/clothing'); }, 1000);
-  }, [isAnimating, navigate, updateConfig, config.gender, isTrialProExhausted]);
+  }, [isAnimating, navigate, updateConfig, config.gender, hasProFeatureAccess]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 

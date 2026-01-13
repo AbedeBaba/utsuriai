@@ -121,7 +121,7 @@ export default function FilterSkinTone() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
   const { t } = useLanguage();
-  const { isTrialProExhausted } = useSubscription();
+  const { hasProFeatureAccess } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -158,12 +158,12 @@ export default function FilterSkinTone() {
     updateConfig('skinTone', randomSkinTone.id);
 
     setTimeout(() => {
-      const nextPath = getNextStepPath('skinTone', isTrialProExhausted);
+      const nextPath = getNextStepPath('skinTone', !hasProFeatureAccess);
       if (nextPath) {
         navigate(nextPath);
       }
     }, 800);
-  }, [isAnimating, updateConfig, navigate, getNextStepPath, isTrialProExhausted]);
+  }, [isAnimating, updateConfig, navigate, getNextStepPath, hasProFeatureAccess]);
 
   const handleRandomAll = useCallback(() => {
     if (isAnimating) return;
@@ -185,8 +185,8 @@ export default function FilterSkinTone() {
     updateConfig('bodyType', randomBodyType);
     updateConfig('hairType', randomHairType);
     
-    // Only set Pro features if not restricted
-    if (!isTrialProExhausted) {
+    // Only set Pro features if user has Pro feature access (Pro/Creator plans)
+    if (hasProFeatureAccess) {
       const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
       const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
       const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
@@ -205,7 +205,7 @@ export default function FilterSkinTone() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, config.gender, isTrialProExhausted]);
+  }, [isAnimating, navigate, updateConfig, config.gender, hasProFeatureAccess]);
 
   return (
     <FilterStepLayout 
