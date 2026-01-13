@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap } from 'lucide-react';
+import { Sparkles, ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, differenceInHours, addHours } from 'date-fns';
 import {
@@ -18,6 +18,7 @@ import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
 
 type Category = 'Bottomwear' | 'Topwear' | 'Shoes' | 'Dresses';
 
@@ -40,6 +41,7 @@ export default function Dashboard() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { subscription, loading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
+  const { isAdmin } = useAdminCheck();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(true);
   const [activeCategory, setActiveCategory] = useState<Category | 'All'>('All');
@@ -232,6 +234,16 @@ export default function Dashboard() {
           </div>
           
           <div className="flex items-center gap-4">
+            {isAdmin && (
+              <Button
+                variant="outline"
+                onClick={() => navigate('/admin')}
+                className="border-primary/50 text-primary hover:bg-primary/10"
+              >
+                <Shield className="h-4 w-4 mr-2" />
+                Admin
+              </Button>
+            )}
             <Button
               onClick={() => navigate('/filter/gender')}
               className="btn-gold"
