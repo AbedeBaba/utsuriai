@@ -7,6 +7,9 @@ import { User, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import maleModel from '@/assets/gender-male.jpeg';
 import femaleModel from '@/assets/gender-female.jpeg';
+import { useSubscription } from '@/hooks/useSubscription';
+import { LoadSavedModelDialog } from '@/components/LoadSavedModelDialog';
+import { useSavedModels, SavedModel } from '@/hooks/useSavedModels';
 
 const genderOptions = [
   { id: 'Male', label: 'Male', icon: <User className="h-8 w-8" /> },
@@ -15,7 +18,9 @@ const genderOptions = [
 
 export default function FilterGender() {
   const navigate = useNavigate();
-  const { config, updateConfig, setCurrentStep } = useModelConfig();
+  const { config, updateConfig, setCurrentStep, loadSavedModel } = useModelConfig();
+  const { hasCreatorFeatureAccess } = useSubscription();
+  const { convertToModelConfig } = useSavedModels();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredGender, setHoveredGender] = useState<string | null>(null);
@@ -23,6 +28,14 @@ export default function FilterGender() {
   useEffect(() => {
     setCurrentStep(1);
   }, [setCurrentStep]);
+
+  // Handle loading a saved model
+  const handleLoadSavedModel = useCallback((savedModel: SavedModel) => {
+    const modelConfig = convertToModelConfig(savedModel);
+    loadSavedModel(modelConfig);
+    // Navigate to clothing page since all filters are pre-filled
+    navigate('/clothing');
+  }, [convertToModelConfig, loadSavedModel, navigate]);
 
   const handleSelect = useCallback((gender: string) => {
     if (isAnimating) return;
@@ -136,6 +149,13 @@ export default function FilterGender() {
           hideSubtitleBackground={true}
           isCorePage={true}
         >
+          {/* Load Saved Model Button - Creator Only */}
+          {hasCreatorFeatureAccess && (
+            <div className="flex justify-center mb-6">
+              <LoadSavedModelDialog onSelect={handleLoadSavedModel} />
+            </div>
+          )}
+          
           <div className="grid grid-cols-2 gap-8 max-w-lg mx-auto relative outline-none" tabIndex={-1}>
             {genderOptions.map((option, index) => (
               <div
