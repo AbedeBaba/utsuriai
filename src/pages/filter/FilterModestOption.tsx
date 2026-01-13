@@ -5,11 +5,12 @@ import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { SelectionCard } from '@/components/SelectionCard';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { User, Heart } from 'lucide-react';
+import standardImage from '@/assets/modest-options/standard.png';
+import hijabImage from '@/assets/modest-options/hijab.png';
 
 const modestOptions = [
-  { id: 'Standard', label: 'Standard', subtitle: 'Regular appearance', icon: <User className="h-6 w-6" /> },
-  { id: 'Hijab', label: 'Hijab', subtitle: 'Head covering', icon: <Heart className="h-6 w-6" /> },
+  { id: 'Standard', label: 'Standard', subtitle: 'Regular appearance', image: standardImage },
+  { id: 'Hijab', label: 'Hijab', subtitle: 'Head covering', image: hijabImage },
 ];
 
 export default function FilterModestOption() {
@@ -58,7 +59,7 @@ export default function FilterModestOption() {
             key={option.id}
             title={option.label}
             subtitle={option.subtitle}
-            icon={option.icon}
+            image={option.image}
             selected={config.modestOption === option.id}
             onClick={() => handleSelect(option.id)}
             isAnimating={selectedId === option.id}
