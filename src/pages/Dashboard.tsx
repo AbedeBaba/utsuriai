@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap, Shield } from 'lucide-react';
+import { Sparkles, ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap, Shield, Save, User, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, differenceInHours, addHours } from 'date-fns';
 import {
@@ -19,6 +19,8 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
+import { useSavedModels, SavedModel } from '@/hooks/useSavedModels';
+import { useModelConfig } from '@/context/ModelConfigContext';
 
 type Category = 'Bottomwear' | 'Topwear' | 'Shoes' | 'Dresses';
 
@@ -40,8 +42,10 @@ export default function Dashboard() {
   const { user, profile, loading } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { subscription, loading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
+  const { subscription, loading: subscriptionLoading, refetch: refetchSubscription, hasCreatorFeatureAccess } = useSubscription();
   const { isAdmin } = useAdminCheck();
+  const { savedModels, loading: loadingSavedModels, deleteModel, deleting } = useSavedModels();
+  const { loadSavedModel } = useModelConfig();
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(true);
   const [activeCategory, setActiveCategory] = useState<Category | 'All'>('All');
@@ -384,6 +388,100 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* Saved Models Section - Creator Only */}
+        {hasCreatorFeatureAccess && (
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Save className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-semibold text-foreground">Saved Models</h2>
+                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600 text-xs font-medium">Creator</span>
+              </div>
+            </div>
+            
+            {loadingSavedModels ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : savedModels.length === 0 ? (
+              <div className="text-center py-8 bg-card border border-border rounded-xl">
+                <User className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground text-sm mb-3">No saved models yet</p>
+                <p className="text-muted-foreground/70 text-xs max-w-md mx-auto">
+                  Create a model configuration and save it from the Clothing Selection page to reuse it later.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {savedModels.map((model) => (
+                  <div
+                    key={model.id}
+                    className="bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-all"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-medium text-foreground truncate flex-1">{model.name}</h3>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => deleteModel(model.id)}
+                        disabled={deleting === model.id}
+                        className="h-7 w-7 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 -mr-2 -mt-1"
+                      >
+                        {deleting === model.id ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-3.5 w-3.5" />
+                        )}
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-1 text-xs mb-4">
+                      <span className="text-muted-foreground">Gender:</span>
+                      <span className="text-foreground capitalize">{model.gender}</span>
+                      <span className="text-muted-foreground">Ethnicity:</span>
+                      <span className="text-foreground capitalize">{model.ethnicity}</span>
+                      <span className="text-muted-foreground">Body:</span>
+                      <span className="text-foreground capitalize">{model.body_type}</span>
+                      {model.hair_color && (
+                        <>
+                          <span className="text-muted-foreground">Hair:</span>
+                          <span className="text-foreground capitalize">{model.hair_color}</span>
+                        </>
+                      )}
+                    </div>
+                    
+                    <Button
+                      size="sm"
+                      className="w-full btn-gold"
+                      onClick={() => {
+                        loadSavedModel({
+                          gender: model.gender as 'male' | 'female',
+                          ethnicity: model.ethnicity,
+                          skinTone: model.skin_tone,
+                          bodyType: model.body_type,
+                          hairColor: model.hair_color || undefined,
+                          hairType: model.hair_type || undefined,
+                          eyeColor: model.eye_color,
+                          beardType: model.beard_type || undefined,
+                          modestOption: model.modest_option as 'standard' | 'hijab' | undefined,
+                          pose: model.pose || undefined,
+                          background: model.background || undefined,
+                          faceType: model.face_type || undefined,
+                          facialExpression: model.facial_expression || undefined,
+                        });
+                        navigate('/clothing');
+                      }}
+                    >
+                      <ArrowRight className="h-4 w-4 mr-2" />
+                      Use Model
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-2 mb-8">

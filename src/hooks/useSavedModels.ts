@@ -31,6 +31,7 @@ export function useSavedModels() {
   const [savedModels, setSavedModels] = useState<SavedModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const fetchSavedModels = useCallback(async () => {
     if (!user) {
@@ -129,6 +130,7 @@ export function useSavedModels() {
     if (!user) return false;
 
     try {
+      setDeleting(id);
       // Using type assertion since saved_models table was just created
       const { error } = await (supabase
         .from('saved_models' as any)
@@ -151,6 +153,8 @@ export function useSavedModels() {
         variant: 'destructive',
       });
       return false;
+    } finally {
+      setDeleting(null);
     }
   }, [user, toast]);
 
@@ -176,6 +180,7 @@ export function useSavedModels() {
     savedModels,
     loading,
     saving,
+    deleting,
     saveModel,
     deleteModel,
     convertToModelConfig,
