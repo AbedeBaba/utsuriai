@@ -187,7 +187,7 @@ export default function Landing() {
               <p className="text-sm text-muted-foreground mt-1">Faster to Market</p>
             </div>
             <div>
-              <p className="text-3xl md:text-4xl font-bold text-foreground">30%+</p>
+              <p className="text-3xl md:text-4xl font-bold text-foreground">10%+</p>
               <p className="text-sm text-muted-foreground mt-1">Conversion Boost</p>
             </div>
             <div>
