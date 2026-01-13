@@ -7,12 +7,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Nano Banana Pro API Configuration - uses chat/completions endpoint
-const NANOBANANA_API_URL = 'https://api.apiyi.com/v1/chat/completions';
-
-// Model names for Nano Banana
-const NANO_BANANA_STANDARD = 'gemini-2.5-flash-image';
-const NANO_BANANA_PRO = 'gemini-3-pro-image-preview';
+// Nano Banana API Configuration
+const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
 
 // Credit costs
 const STANDARD_CREDIT_COST = 1;
@@ -69,56 +65,41 @@ function sanitizeConfig(config: any): Record<string, string | null> {
   };
 }
 
-// Generate image using Nano Banana API (Chat Completions endpoint with image-to-image)
+// Helper function to wait/sleep
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Generate image using Nano Banana API (Image-to-Image with task polling)
 async function generateWithNanoBanana(
   apiKey: string,
   prompt: string,
   imageUrls: string[],
   usePro: boolean
 ): Promise<string> {
-  const model = usePro ? NANO_BANANA_PRO : NANO_BANANA_STANDARD;
-  console.log(`Starting Nano Banana image generation with model: ${model}`);
+  const quality = usePro ? 'pro' : 'standard';
+  console.log(`Starting Nano Banana ${quality} image generation...`);
   console.log(`Image-to-Image mode with ${imageUrls.length} reference image(s)`);
   
-  // Build message content array with text prompt and reference images
-  const contentArray: any[] = [
-    {
-      type: "text",
-      text: prompt
-    }
-  ];
-  
-  // Add all reference images to the message content
-  // This ensures the AI sees and uses the clothing from the reference images
-  for (let i = 0; i < imageUrls.length; i++) {
-    contentArray.push({
-      type: "image_url",
-      image_url: {
-        url: imageUrls[i]
-      }
-    });
-    console.log(`Added reference image ${i + 1}: ${imageUrls[i].substring(0, 100)}...`);
-  }
-  
-  const requestBody = {
-    model: model,
-    stream: false,
-    messages: [
-      {
-        role: "user",
-        content: contentArray
-      }
-    ]
+  // Build request body for Image-to-Image mode
+  // API uses "IMAGETOIAMGE" (intentional typo in API)
+  const requestBody: Record<string, any> = {
+    prompt: prompt,
+    type: 'IMAGETOIAMGE', // Note: API has typo - IAMGE not IMAGE
+    numImages: 1,
+    imageUrls: imageUrls, // Required for Image-to-Image
+    quality: quality // Pass quality parameter for Pro vs Standard
   };
   
-  console.log('Nano Banana request (Image-to-Image via chat/completions):', JSON.stringify({
-    model: requestBody.model,
-    stream: requestBody.stream,
-    messageContentTypes: contentArray.map(c => c.type),
-    imageCount: imageUrls.length
+  console.log('Nano Banana request body (Image-to-Image mode):', JSON.stringify({
+    type: requestBody.type,
+    numImages: requestBody.numImages,
+    quality: requestBody.quality,
+    imageUrlCount: imageUrls.length,
+    promptLength: prompt.length
   }));
   
-  const response = await fetch(NANOBANANA_API_URL, {
+  const generateResponse = await fetch(`${NANOBANANA_BASE_URL}/generate`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -127,67 +108,80 @@ async function generateWithNanoBanana(
     body: JSON.stringify(requestBody)
   });
 
-  const result = await response.json();
-  console.log('Nano Banana response status:', response.status);
+  const generateResult = await generateResponse.json();
+  console.log('Nano Banana generate response:', JSON.stringify(generateResult));
   
-  if (!response.ok) {
-    console.error('Nano Banana API error:', JSON.stringify(result));
-    throw new Error(`Generation failed: ${result.error?.message || result.message || 'Unknown error'}`);
+  if (!generateResponse.ok || generateResult.code !== 200) {
+    throw new Error(`Generation failed: ${generateResult.msg || generateResult.message || 'Unknown error'}`);
   }
   
-  // Extract image from response - check multiple possible locations
-  let imageUrl: string | null = null;
+  const taskId = generateResult.data?.taskId;
+  if (!taskId) {
+    throw new Error('No taskId returned from Nano Banana API');
+  }
   
-  // Check if response has choices with message content containing images
-  if (result.choices && result.choices.length > 0) {
-    const choice = result.choices[0];
-    const message = choice.message;
-    
-    // Check for images array in message (Nano Banana format)
-    if (message?.images && message.images.length > 0) {
-      const img = message.images[0];
-      if (img.image_url?.url) {
-        imageUrl = img.image_url.url;
-        console.log('Found image in message.images');
+  console.log(`Task created with ID: ${taskId}. Polling for completion...`);
+  
+  // Poll for completion (max 5 minutes)
+  const maxWaitTime = 300000; // 5 minutes
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < maxWaitTime) {
+    const statusResponse = await fetch(`${NANOBANANA_BASE_URL}/record-info?taskId=${taskId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`
       }
+    });
+    
+    const statusResult = await statusResponse.json();
+    console.log('Task status response:', JSON.stringify(statusResult));
+    
+    // Handle different API response structures
+    const successFlag = statusResult.successFlag ?? statusResult.data?.successFlag ?? statusResult.data?.status;
+    const responseData = statusResult.response ?? statusResult.data?.response ?? statusResult.data;
+    
+    console.log(`Task status check: successFlag=${successFlag}, hasResponse=${!!responseData}`);
+    
+    // Check for completed status
+    if (successFlag === 1 || (statusResult.code === 200 && responseData?.resultImageUrl)) {
+      console.log('Generation completed successfully!');
+      const imageUrl = responseData?.resultImageUrl || responseData?.imageUrl || responseData?.url;
+      if (!imageUrl) {
+        // Try to find image URL in other locations
+        const possibleUrls = [
+          statusResult.resultImageUrl,
+          statusResult.imageUrl,
+          statusResult.data?.resultImageUrl,
+          statusResult.data?.imageUrl
+        ].filter(Boolean);
+        
+        if (possibleUrls.length > 0) {
+          return possibleUrls[0];
+        }
+        console.error('Response structure:', JSON.stringify(statusResult));
+        throw new Error('No resultImageUrl in successful response');
+      }
+      return imageUrl;
     }
     
-    // Check for inline base64 in content
-    if (!imageUrl && message?.content) {
-      const content = message.content;
-      // Look for base64 image data
-      const base64Match = content.match(/data:image\/[^;]+;base64,[A-Za-z0-9+/=]+/);
-      if (base64Match) {
-        imageUrl = base64Match[0];
-        console.log('Found base64 image in content');
-      }
+    // Check for failed status
+    if (successFlag === 2 || successFlag === 3) {
+      throw new Error(statusResult.errorMessage || statusResult.data?.errorMessage || 'Generation failed');
     }
-  }
-  
-  // Check for direct image_url in response
-  if (!imageUrl && result.image_url) {
-    imageUrl = result.image_url;
-    console.log('Found image_url at root level');
-  }
-  
-  // Check for data array format
-  if (!imageUrl && result.data && result.data.length > 0) {
-    if (result.data[0].url) {
-      imageUrl = result.data[0].url;
-      console.log('Found image in data array');
-    } else if (result.data[0].b64_json) {
-      imageUrl = `data:image/png;base64,${result.data[0].b64_json}`;
-      console.log('Found base64 in data array');
+    
+    // Check if still generating
+    if (successFlag === 0) {
+      console.log('Task is still generating...');
+    } else if (successFlag === undefined || successFlag === null) {
+      console.log('Unknown/pending status, continuing to poll...');
     }
+    
+    // Wait 3 seconds before next poll
+    await sleep(3000);
   }
   
-  if (!imageUrl) {
-    console.error('Full response structure:', JSON.stringify(result));
-    throw new Error('No image found in API response');
-  }
-  
-  console.log('Successfully extracted image URL/data');
-  return imageUrl;
+  throw new Error('Generation timeout - exceeded 5 minutes');
 }
 
 serve(async (req) => {
@@ -251,7 +245,6 @@ serve(async (req) => {
     
     if (rateLimitError) {
       console.error('Rate limit check error:', rateLimitError);
-      // Don't block on rate limit errors, just log
     }
     
     const currentMinuteWindow = new Date(Math.floor(Date.now() / 60000) * 60000).toISOString();
@@ -265,7 +258,6 @@ serve(async (req) => {
         );
       }
       
-      // Increment existing counter
       await supabaseAdmin
         .from('rate_limits')
         .update({ request_count: rateLimitData.request_count + 1 })
@@ -273,7 +265,6 @@ serve(async (req) => {
         .eq('endpoint', 'generate-model')
         .eq('window_start', currentMinuteWindow);
     } else {
-      // Create new rate limit entry for this window
       await supabaseAdmin
         .from('rate_limits')
         .upsert({
@@ -290,9 +281,7 @@ serve(async (req) => {
     // INPUT VALIDATION
     // ==========================================
     const { generationId, config, referenceImage, usePro = false } = await req.json();
-
     
-    // Validate generationId
     if (!generationId || typeof generationId !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Invalid generationId' }),
@@ -300,7 +289,6 @@ serve(async (req) => {
       );
     }
     
-    // Validate reference image size (max 10MB per image)
     const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
     if (referenceImage && referenceImage.length > MAX_IMAGE_SIZE) {
       return new Response(
@@ -309,14 +297,11 @@ serve(async (req) => {
       );
     }
     
-    // Parse and validate reference images
     let referenceImages: { type: string; data: string }[] | null = null;
     
     if (referenceImage) {
       try {
         referenceImages = JSON.parse(referenceImage);
-        
-        // Validate array length (max 10 images)
         if (Array.isArray(referenceImages) && referenceImages.length > 10) {
           return new Response(
             JSON.stringify({ error: 'Too many reference images (max 10)' }),
@@ -328,10 +313,7 @@ serve(async (req) => {
       }
     }
     
-    // Sanitize config values
     const sanitizedConfig = sanitizeConfig(config);
-    
-    // Create service role client for database operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // ==========================================
@@ -358,7 +340,7 @@ serve(async (req) => {
     }
     
     // ==========================================
-    // SERVER-SIDE SUBSCRIPTION & CREDIT VERIFICATION
+    // SUBSCRIPTION & CREDIT VERIFICATION
     // ==========================================
     const { data: subscription, error: subError } = await supabase
       .from('user_subscriptions')
@@ -379,12 +361,9 @@ serve(async (req) => {
     const isTrial = subscription.plan === 'trial';
     const isPaid = ['starter', 'pro', 'creator'].includes(subscription.plan);
     
-    // ==========================================
-    // TRIAL PACKAGE RULES (NO CREDITS)
-    // ==========================================
+    // Trial package rules
     if (isTrial) {
       if (usePro) {
-        // Trial Pro: Check pro_generations_remaining
         if (subscription.pro_generations_remaining <= 0) {
           console.error('Trial Pro generations exhausted');
           return new Response(
@@ -393,7 +372,6 @@ serve(async (req) => {
           );
         }
       } else {
-        // Trial Standard: Check standard_generations_remaining
         if (subscription.standard_generations_remaining <= 0) {
           console.error('Trial Standard generations exhausted');
           return new Response(
@@ -404,10 +382,7 @@ serve(async (req) => {
       }
     }
     
-    // ==========================================
-    // PAID PACKAGE RULES (CREDITS)
-    // Pro uses 8 credits, Standard uses 1 credit
-    // ==========================================
+    // Paid package rules - Pro uses 8 credits, Standard uses 1
     if (isPaid) {
       const requiredCredits = usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST;
       if (subscription.credits_remaining < requiredCredits) {
@@ -423,8 +398,7 @@ serve(async (req) => {
     }
     
     // ==========================================
-    // ATOMIC PRE-DEDUCTION (BEFORE GENERATION)
-    // This prevents race conditions and duplicate deductions
+    // ATOMIC PRE-DEDUCTION
     // ==========================================
     if (isTrial) {
       const updateField = usePro ? 'pro_generations_remaining' : 'standard_generations_remaining';
@@ -434,7 +408,7 @@ serve(async (req) => {
         .from('user_subscriptions')
         .update({ [updateField]: currentValue - 1 })
         .eq('user_id', authenticatedUserId)
-        .eq(updateField, currentValue); // Atomic check to prevent race conditions
+        .eq(updateField, currentValue);
       
       if (decrementError) {
         console.error('Error decrementing trial generations:', decrementError);
@@ -443,7 +417,7 @@ serve(async (req) => {
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      console.log(`Pre-decremented ${updateField} for trial user ${authenticatedUserId}. New value: ${currentValue - 1}`);
+      console.log(`Pre-decremented ${updateField} for trial user. New value: ${currentValue - 1}`);
     } else if (isPaid) {
       const requiredCredits = usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST;
       const newBalance = subscription.credits_remaining - requiredCredits;
@@ -452,7 +426,7 @@ serve(async (req) => {
         .from('user_subscriptions')
         .update({ credits_remaining: newBalance })
         .eq('user_id', authenticatedUserId)
-        .eq('credits_remaining', subscription.credits_remaining); // Atomic check
+        .eq('credits_remaining', subscription.credits_remaining);
       
       if (decrementError) {
         console.error('Error decrementing credits:', decrementError);
@@ -461,7 +435,7 @@ serve(async (req) => {
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      console.log(`Pre-deducted ${requiredCredits} credits for user ${authenticatedUserId}. New balance: ${newBalance}`);
+      console.log(`Pre-deducted ${requiredCredits} credits. New balance: ${newBalance}`);
     }
     
     console.log('Generation request validated:', { 
@@ -469,10 +443,10 @@ serve(async (req) => {
       config: sanitizedConfig, 
       imageCount: referenceImages?.length || 0,
       usePro,
-      userId: authenticatedUserId
+      quality: usePro ? 'Nano Banana Pro' : 'Nano Banana Standard'
     });
 
-    // Build the prompt for the AI model
+    // Build the prompt
     const prompt = buildPrompt(sanitizedConfig, referenceImages, usePro);
     console.log('Generated prompt:', prompt.substring(0, 500) + '...');
 
@@ -487,8 +461,7 @@ serve(async (req) => {
       );
     }
 
-    // CRITICAL: Enforce Image-to-Image only - block generation without reference images
-    let imageUrls: string[] = [];
+    // CRITICAL: Enforce Image-to-Image only
     if (!referenceImages || referenceImages.length === 0) {
       console.error('No reference images provided - Image-to-Image mode required');
       return new Response(
@@ -499,17 +472,17 @@ serve(async (req) => {
     
     console.log(`Processing ${referenceImages.length} reference images for Image-to-Image generation...`);
     
+    const imageUrls: string[] = [];
+    
     for (let i = 0; i < referenceImages.length; i++) {
       const img = referenceImages[i];
       
-      // If already an HTTP URL, use directly
       if (img.data.startsWith('http')) {
         imageUrls.push(img.data);
         console.log(`Using direct URL for image ${i + 1}`);
         continue;
       }
       
-      // Convert base64 to blob and upload
       if (img.data.startsWith('data:')) {
         try {
           const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
@@ -521,8 +494,7 @@ serve(async (req) => {
             const extension = mimeType.split('/')[1] || 'png';
             const fileName = `${generationId}/ref-${i}-${Date.now()}.${extension}`;
             
-            // Upload to storage bucket
-            const { data: uploadData, error: uploadError } = await supabase.storage
+            const { error: uploadError } = await supabase.storage
               .from('generated-images')
               .upload(fileName, binaryData, {
                 contentType: mimeType,
@@ -534,7 +506,6 @@ serve(async (req) => {
               continue;
             }
             
-            // Get public URL
             const { data: urlData } = supabase.storage
               .from('generated-images')
               .getPublicUrl(fileName);
@@ -550,7 +521,6 @@ serve(async (req) => {
       }
     }
     
-    // Final validation - must have at least one valid image URL
     if (imageUrls.length === 0) {
       console.error('Failed to process any reference images');
       return new Response(
@@ -559,58 +529,20 @@ serve(async (req) => {
       );
     }
     
-    console.log(`Prepared ${imageUrls.length} reference image URLs for Nano Banana API`);
-    console.log(`Using ${usePro ? 'Nano Banana Pro (gemini-3-pro-image-preview)' : 'Nano Banana Standard (gemini-2.5-flash-image)'}`);
+    console.log(`Prepared ${imageUrls.length} reference image URLs`);
+    console.log(`Using ${usePro ? 'Nano Banana Pro' : 'Nano Banana Standard'}`);
 
-    // Call the Nano Banana API with proper Image-to-Image
+    // Call Nano Banana API
     const generatedImageUrl = await generateWithNanoBanana(apiKey, prompt, imageUrls, usePro);
 
-    console.log('Image generated successfully with', usePro ? 'Pro' : 'Standard', 'quality');
-    
-    // If result is base64, upload to storage
-    let finalImageUrl = generatedImageUrl;
-    if (generatedImageUrl.startsWith('data:')) {
-      try {
-        const matches = generatedImageUrl.match(/^data:([^;]+);base64,(.+)$/);
-        if (matches) {
-          const mimeType = matches[1];
-          const base64Data = matches[2];
-          const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-          
-          const extension = mimeType.split('/')[1] || 'png';
-          const fileName = `${generationId}/generated-${Date.now()}.${extension}`;
-          
-          const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('generated-images')
-            .upload(fileName, binaryData, {
-              contentType: mimeType,
-              upsert: true
-            });
-          
-          if (!uploadError) {
-            const { data: urlData } = supabase.storage
-              .from('generated-images')
-              .getPublicUrl(fileName);
-            
-            if (urlData?.publicUrl) {
-              finalImageUrl = urlData.publicUrl;
-              console.log('Uploaded generated image to storage:', finalImageUrl);
-            }
-          }
-        }
-      } catch (e) {
-        console.error('Failed to upload generated image:', e);
-        // Keep the base64 URL as fallback
-      }
-    }
-    
-    console.log('Final image URL:', finalImageUrl.substring(0, 100) + '...');
+    console.log('Image generated successfully with', usePro ? 'Nano Banana Pro' : 'Nano Banana Standard');
+    console.log('Generated image URL:', generatedImageUrl);
 
-    // Update the database with the generated image
+    // Update the database
     const { error: updateError } = await supabase
       .from('model_generations')
       .update({ 
-        image_url: finalImageUrl,
+        image_url: generatedImageUrl,
         status: 'completed'
       })
       .eq('id', generationId);
@@ -623,9 +555,8 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true,
         generationId,
-        imageUrl: finalImageUrl,
+        imageUrl: generatedImageUrl,
         quality: usePro ? 'pro' : 'standard',
-        model: usePro ? NANO_BANANA_PRO : NANO_BANANA_STANDARD,
         creditsUsed: usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -650,10 +581,8 @@ function buildPrompt(config: any, referenceImages: ReferenceImage[] | null, useP
     ? 'ULTRA-PREMIUM 16K QUALITY, magazine cover ready, award-winning fashion photography, 4K resolution' 
     : 'Ultra-high resolution, 8K quality, professional fashion photography';
 
-  // Check if Hijab is selected
   const isHijab = config.modestOption === 'Hijab';
 
-  // Hijab-specific prompt additions
   const hijabInstructions = isHijab ? `
 CRITICAL HIJAB REQUIREMENTS (ABSOLUTE MUST):
 - The model MUST be wearing a hijab that FULLY covers ALL hair, neck, and ears.
@@ -695,7 +624,6 @@ ${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ult
   if (config.ethnicity) dynamicFilters.push(`Model ethnicity: ${config.ethnicity}`);
   if (config.skinTone) dynamicFilters.push(`Skin tone: ${config.skinTone}`);
   
-  // Only add hair attributes if NOT Hijab
   if (!isHijab) {
     if (config.hairColor) dynamicFilters.push(`Hair color: ${config.hairColor}`);
     if (config.hairType) dynamicFilters.push(`Hair type/style: ${config.hairType}`);
@@ -709,7 +637,6 @@ ${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ult
   if (config.pose) dynamicFilters.push(`Pose: ${config.pose}`);
   if (config.background) dynamicFilters.push(`Background: ${config.background}`);
   
-  // Add explicit hijab instruction to dynamic filters
   if (isHijab) {
     dynamicFilters.push(`Head covering: Wearing elegant hijab that fully covers all hair, neck, and ears - NO visible hair`);
   }
