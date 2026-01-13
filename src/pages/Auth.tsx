@@ -12,7 +12,7 @@ import { z } from 'zod';
 
 const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(12, 'Password must be at least 12 characters'),
+  password: z.string().min(1, 'Password is required'),
 });
 
 const signUpSchema = z.object({
