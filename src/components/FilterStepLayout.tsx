@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ProgressIndicator } from './ProgressIndicator';
 import { RandomFilterButton } from './RandomFilterButton';
@@ -32,6 +33,7 @@ export function FilterStepLayout({
   infoText,
   isCorePage = false
 }: FilterStepLayoutProps) {
+  const navigate = useNavigate();
   const {
     currentStep,
     totalSteps
@@ -41,18 +43,29 @@ export function FilterStepLayout({
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-4 md:p-6">
-        {showBack && onBack ? (
+        <div className="flex items-center gap-2">
+          {showBack && onBack ? (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={onBack} 
+              className="relative text-white hover:text-white hover:bg-violet-500/30 border-2 border-white/50 backdrop-blur-xl rounded-xl transition-all duration-300 hover:border-violet-400 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] bg-black/30 w-11 h-11 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          ) : (
+            <div className="w-11" />
+          )}
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={onBack} 
+            onClick={() => navigate('/dashboard')} 
             className="relative text-white hover:text-white hover:bg-violet-500/30 border-2 border-white/50 backdrop-blur-xl rounded-xl transition-all duration-300 hover:border-violet-400 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] bg-black/30 w-11 h-11 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+            title="Go to Dashboard"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <LayoutDashboard className="h-5 w-5" />
           </Button>
-        ) : (
-          <div className="w-11" />
-        )}
+        </div>
         
         <ProgressIndicator currentStep={currentStep} totalSteps={totalSteps} />
         
