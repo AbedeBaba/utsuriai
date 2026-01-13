@@ -50,7 +50,7 @@ const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard'
 export default function FilterBodyType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
-  const { hasProFeatureAccess } = useSubscription();
+  const { hasProFeatureAccess, hasCreatorFeatureAccess } = useSubscription();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -131,10 +131,14 @@ export default function FilterBodyType() {
     if (hasProFeatureAccess) {
       const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
       const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
       updateConfig('pose', randomPose);
       updateConfig('background', randomBackground);
+    }
+    
+    // Only set Creator features if user has Creator feature access (Creator plan only)
+    if (hasCreatorFeatureAccess) {
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
       updateConfig('faceType', randomFaceType);
       updateConfig('facialExpression', randomExpression);
     }
@@ -147,7 +151,7 @@ export default function FilterBodyType() {
     
     // Navigate to clothing (final step before generation)
     navigate('/clothing');
-  }, [bodyTypeOptions, isFemale, config.modestOption, updateConfig, navigate, hasProFeatureAccess]);
+  }, [bodyTypeOptions, isFemale, config.modestOption, updateConfig, navigate, hasProFeatureAccess, hasCreatorFeatureAccess]);
 
   // Keyboard navigation
   useEffect(() => {

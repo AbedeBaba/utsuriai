@@ -26,8 +26,10 @@ export interface FilterStep {
   label: string;
   isCore: boolean;
   condition?: (config: ModelConfig) => boolean;
-  // Steps restricted for Trial users when Pro limit is exhausted
+  // Steps restricted for Trial and Starter users (Pro and Creator only)
   isProFeature?: boolean;
+  // Steps restricted for Trial, Starter, and Pro users (Creator only)
+  isCreatorFeature?: boolean;
 }
 
 export const FILTER_STEPS: FilterStep[] = [
@@ -42,8 +44,8 @@ export const FILTER_STEPS: FilterStep[] = [
   { id: 'beardType', path: '/filter/beard-type', label: 'Beard Type', isCore: false, condition: (c) => c.gender === 'Male' },
   { id: 'pose', path: '/filter/pose', label: 'Pose', isCore: false, isProFeature: true },
   { id: 'background', path: '/filter/background', label: 'Background', isCore: false, isProFeature: true },
-  { id: 'faceType', path: '/filter/face-type', label: 'Face Type', isCore: false, isProFeature: true },
-  { id: 'facialExpression', path: '/filter/expression', label: 'Expression', isCore: false, isProFeature: true },
+  { id: 'faceType', path: '/filter/face-type', label: 'Face Type', isCore: false, isCreatorFeature: true },
+  { id: 'facialExpression', path: '/filter/expression', label: 'Expression', isCore: false, isCreatorFeature: true },
   { id: 'clothing', path: '/clothing', label: 'Clothing', isCore: false },
 ];
 
@@ -55,10 +57,10 @@ interface ModelConfigContextType {
   currentStep: number;
   setCurrentStep: (step: number) => void;
   totalSteps: number;
-  getVisibleSteps: (hideProFeatures?: boolean) => FilterStep[];
+  getVisibleSteps: (hideProFeatures?: boolean, hideCreatorFeatures?: boolean) => FilterStep[];
   isStepCompleted: (stepId: string) => boolean;
   isStepRequired: (stepId: string) => boolean;
-  getNextStepPath: (currentStepId: string, hideProFeatures?: boolean) => string | null;
+  getNextStepPath: (currentStepId: string, hideProFeatures?: boolean, hideCreatorFeatures?: boolean) => string | null;
 }
 
 const initialConfig: ModelConfig = {
@@ -86,12 +88,15 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<ModelConfig>(initialConfig);
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Get visible steps based on current config and Pro feature restrictions
+  // Get visible steps based on current config and feature restrictions
   // hideProFeatures = true for Trial and Starter users who don't have access to Pro features
-  const getVisibleSteps = useCallback((hideProFeatures: boolean = false): FilterStep[] => {
+  // hideCreatorFeatures = true for Trial, Starter, and Pro users who don't have access to Creator features
+  const getVisibleSteps = useCallback((hideProFeatures: boolean = false, hideCreatorFeatures: boolean = false): FilterStep[] => {
     return FILTER_STEPS.filter(step => {
       // Filter out Pro features for Trial/Starter users
       if (hideProFeatures && step.isProFeature) return false;
+      // Filter out Creator features for non-Creator users
+      if (hideCreatorFeatures && step.isCreatorFeature) return false;
       if (!step.condition) return true;
       return step.condition(config);
     });
@@ -113,8 +118,8 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Get the next step path from current step
-  const getNextStepPath = useCallback((currentStepId: string, hideProFeatures: boolean = false): string | null => {
-    const visibleSteps = getVisibleSteps(hideProFeatures);
+  const getNextStepPath = useCallback((currentStepId: string, hideProFeatures: boolean = false, hideCreatorFeatures: boolean = false): string | null => {
+    const visibleSteps = getVisibleSteps(hideProFeatures, hideCreatorFeatures);
     const currentIndex = visibleSteps.findIndex(s => s.id === currentStepId);
     if (currentIndex === -1 || currentIndex >= visibleSteps.length - 1) return null;
     return visibleSteps[currentIndex + 1].path;

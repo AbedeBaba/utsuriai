@@ -45,7 +45,7 @@ const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
 export default function FilterPose() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep } = useModelConfig();
-  const { hasProFeatureAccess, loading } = useSubscription();
+  const { hasProFeatureAccess, hasCreatorFeatureAccess, loading } = useSubscription();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -108,20 +108,24 @@ export default function FilterPose() {
   }, [updateConfig, navigate]);
 
   const handleRandomAll = useCallback(() => {
-    // Select random for this filter and all remaining ones
+    // Select random for this filter and Pro features
     const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
     const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-    const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-    const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
     
     updateConfig('pose', randomPose.id);
     updateConfig('background', randomBackground);
-    updateConfig('faceType', randomFaceType);
-    updateConfig('facialExpression', randomExpression);
+    
+    // Only set Creator features (Face Type, Expression) if user has Creator access
+    if (hasCreatorFeatureAccess) {
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
+      updateConfig('faceType', randomFaceType);
+      updateConfig('facialExpression', randomExpression);
+    }
     
     // Navigate to clothing (final step before generation)
     navigate('/clothing');
-  }, [updateConfig, navigate]);
+  }, [updateConfig, navigate, hasCreatorFeatureAccess]);
 
   // Keyboard navigation
   useEffect(() => {
