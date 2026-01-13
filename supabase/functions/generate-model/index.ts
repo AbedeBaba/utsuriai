@@ -7,8 +7,16 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Nano Banana API Configuration
-const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
+// Nano Banana Pro API Configuration - uses chat/completions endpoint
+const NANOBANANA_API_URL = 'https://api.apiyi.com/v1/chat/completions';
+
+// Model names for Nano Banana
+const NANO_BANANA_STANDARD = 'gemini-2.5-flash-image';
+const NANO_BANANA_PRO = 'gemini-3-pro-image-preview';
+
+// Credit costs
+const STANDARD_CREDIT_COST = 1;
+const PRO_CREDIT_COST = 8; // Pro costs 8 credits
 
 // Allowed values for input validation
 const ALLOWED_VALUES = {
@@ -61,32 +69,56 @@ function sanitizeConfig(config: any): Record<string, string | null> {
   };
 }
 
-// Helper function to wait/sleep
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// Generate image using Nano Banana API
+// Generate image using Nano Banana API (Chat Completions endpoint with image-to-image)
 async function generateWithNanoBanana(
   apiKey: string,
   prompt: string,
-  imageUrls: string[] | null,
+  imageUrls: string[],
   usePro: boolean
 ): Promise<string> {
-  console.log('Starting Nano Banana image generation...');
+  const model = usePro ? NANO_BANANA_PRO : NANO_BANANA_STANDARD;
+  console.log(`Starting Nano Banana image generation with model: ${model}`);
+  console.log(`Image-to-Image mode with ${imageUrls.length} reference image(s)`);
   
-  // Step 1: Create generation task
-  // Image-to-Image mode - API uses "IMAGETOIAMGE" (intentional typo in API)
-  const requestBody: Record<string, any> = {
-    prompt,
-    type: 'IMAGETOIAMGE', // Note: API has typo - IAMGE not IMAGE
-    numImages: 1,
-    imageUrls: imageUrls // Required for Image-to-Image
+  // Build message content array with text prompt and reference images
+  const contentArray: any[] = [
+    {
+      type: "text",
+      text: prompt
+    }
+  ];
+  
+  // Add all reference images to the message content
+  // This ensures the AI sees and uses the clothing from the reference images
+  for (let i = 0; i < imageUrls.length; i++) {
+    contentArray.push({
+      type: "image_url",
+      image_url: {
+        url: imageUrls[i]
+      }
+    });
+    console.log(`Added reference image ${i + 1}: ${imageUrls[i].substring(0, 100)}...`);
+  }
+  
+  const requestBody = {
+    model: model,
+    stream: false,
+    messages: [
+      {
+        role: "user",
+        content: contentArray
+      }
+    ]
   };
   
-  console.log('Nano Banana request body (Image-to-Image mode):', JSON.stringify(requestBody));
+  console.log('Nano Banana request (Image-to-Image via chat/completions):', JSON.stringify({
+    model: requestBody.model,
+    stream: requestBody.stream,
+    messageContentTypes: contentArray.map(c => c.type),
+    imageCount: imageUrls.length
+  }));
   
-  const generateResponse = await fetch(`${NANOBANANA_BASE_URL}/generate`, {
+  const response = await fetch(NANOBANANA_API_URL, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -95,81 +127,67 @@ async function generateWithNanoBanana(
     body: JSON.stringify(requestBody)
   });
 
-  const generateResult = await generateResponse.json();
-  console.log('Nano Banana generate response:', JSON.stringify(generateResult));
+  const result = await response.json();
+  console.log('Nano Banana response status:', response.status);
   
-  if (!generateResponse.ok || generateResult.code !== 200) {
-    throw new Error(`Generation failed: ${generateResult.msg || generateResult.message || 'Unknown error'}`);
+  if (!response.ok) {
+    console.error('Nano Banana API error:', JSON.stringify(result));
+    throw new Error(`Generation failed: ${result.error?.message || result.message || 'Unknown error'}`);
   }
   
-  const taskId = generateResult.data?.taskId;
-  if (!taskId) {
-    throw new Error('No taskId returned from Nano Banana API');
-  }
+  // Extract image from response - check multiple possible locations
+  let imageUrl: string | null = null;
   
-  console.log(`Task created with ID: ${taskId}. Polling for completion...`);
-  
-  // Step 2: Poll for completion (max 5 minutes)
-  const maxWaitTime = 300000; // 5 minutes
-  const startTime = Date.now();
-  
-  while (Date.now() - startTime < maxWaitTime) {
-    const statusResponse = await fetch(`${NANOBANANA_BASE_URL}/record-info?taskId=${taskId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`
+  // Check if response has choices with message content containing images
+  if (result.choices && result.choices.length > 0) {
+    const choice = result.choices[0];
+    const message = choice.message;
+    
+    // Check for images array in message (Nano Banana format)
+    if (message?.images && message.images.length > 0) {
+      const img = message.images[0];
+      if (img.image_url?.url) {
+        imageUrl = img.image_url.url;
+        console.log('Found image in message.images');
       }
-    });
+    }
     
-    const statusResult = await statusResponse.json();
-    console.log('Full status response:', JSON.stringify(statusResult));
-    
-    // Handle different API response structures
-    // The status might be in statusResult directly or in statusResult.data
-    const successFlag = statusResult.successFlag ?? statusResult.data?.successFlag ?? statusResult.data?.status;
-    const responseData = statusResult.response ?? statusResult.data?.response ?? statusResult.data;
-    
-    console.log(`Task status check: successFlag=${successFlag}, hasResponse=${!!responseData}`);
-    
-    // Check for completed status
-    if (successFlag === 1 || statusResult.code === 200 && responseData?.resultImageUrl) {
-      console.log('Generation completed successfully!');
-      const imageUrl = responseData?.resultImageUrl || responseData?.imageUrl || responseData?.url;
-      if (!imageUrl) {
-        // Try to find image URL in other locations
-        const possibleUrls = [
-          statusResult.resultImageUrl,
-          statusResult.imageUrl,
-          statusResult.data?.resultImageUrl,
-          statusResult.data?.imageUrl
-        ].filter(Boolean);
-        
-        if (possibleUrls.length > 0) {
-          return possibleUrls[0];
-        }
-        console.error('Response structure:', JSON.stringify(statusResult));
-        throw new Error('No resultImageUrl in successful response');
+    // Check for inline base64 in content
+    if (!imageUrl && message?.content) {
+      const content = message.content;
+      // Look for base64 image data
+      const base64Match = content.match(/data:image\/[^;]+;base64,[A-Za-z0-9+/=]+/);
+      if (base64Match) {
+        imageUrl = base64Match[0];
+        console.log('Found base64 image in content');
       }
-      return imageUrl;
     }
-    
-    // Check for failed status
-    if (successFlag === 2 || successFlag === 3) {
-      throw new Error(statusResult.errorMessage || statusResult.data?.errorMessage || 'Generation failed');
-    }
-    
-    // Check if still generating (successFlag === 0 or undefined while still processing)
-    if (successFlag === 0) {
-      console.log('Task is still generating...');
-    } else if (successFlag === undefined || successFlag === null) {
-      console.log('Unknown/pending status, continuing to poll...');
-    }
-    
-    // Wait 3 seconds before next poll
-    await sleep(3000);
   }
   
-  throw new Error('Generation timeout - exceeded 5 minutes');
+  // Check for direct image_url in response
+  if (!imageUrl && result.image_url) {
+    imageUrl = result.image_url;
+    console.log('Found image_url at root level');
+  }
+  
+  // Check for data array format
+  if (!imageUrl && result.data && result.data.length > 0) {
+    if (result.data[0].url) {
+      imageUrl = result.data[0].url;
+      console.log('Found image in data array');
+    } else if (result.data[0].b64_json) {
+      imageUrl = `data:image/png;base64,${result.data[0].b64_json}`;
+      console.log('Found base64 in data array');
+    }
+  }
+  
+  if (!imageUrl) {
+    console.error('Full response structure:', JSON.stringify(result));
+    throw new Error('No image found in API response');
+  }
+  
+  console.log('Successfully extracted image URL/data');
+  return imageUrl;
 }
 
 serve(async (req) => {
@@ -388,12 +406,13 @@ serve(async (req) => {
     
     // ==========================================
     // PAID PACKAGE RULES (CREDITS)
+    // Pro uses 8 credits, Standard uses 1 credit
     // ==========================================
     if (isPaid) {
-      const requiredCredits = usePro ? 4 : 1;
+      const requiredCredits = usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST;
       if (subscription.credits_remaining < requiredCredits) {
         const errorMsg = usePro 
-          ? 'Pro görsel için yeterli krediniz yok' 
+          ? `Pro görsel için yeterli krediniz yok (${PRO_CREDIT_COST} kredi gerekli)` 
           : 'Yetersiz kredi';
         console.error(`Insufficient credits: has ${subscription.credits_remaining}, needs ${requiredCredits}`);
         return new Response(
@@ -426,7 +445,7 @@ serve(async (req) => {
       }
       console.log(`Pre-decremented ${updateField} for trial user ${authenticatedUserId}. New value: ${currentValue - 1}`);
     } else if (isPaid) {
-      const requiredCredits = usePro ? 4 : 1;
+      const requiredCredits = usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST;
       const newBalance = subscription.credits_remaining - requiredCredits;
       
       const { error: decrementError } = await supabase
@@ -469,7 +488,7 @@ serve(async (req) => {
     }
 
     // CRITICAL: Enforce Image-to-Image only - block generation without reference images
-    let imageUrls: string[] | null = null;
+    let imageUrls: string[] = [];
     if (!referenceImages || referenceImages.length === 0) {
       console.error('No reference images provided - Image-to-Image mode required');
       return new Response(
@@ -478,8 +497,7 @@ serve(async (req) => {
       );
     }
     
-    console.log(`Uploading ${referenceImages.length} reference images to storage...`);
-    imageUrls = [];
+    console.log(`Processing ${referenceImages.length} reference images for Image-to-Image generation...`);
     
     for (let i = 0; i < referenceImages.length; i++) {
       const img = referenceImages[i];
@@ -487,6 +505,7 @@ serve(async (req) => {
       // If already an HTTP URL, use directly
       if (img.data.startsWith('http')) {
         imageUrls.push(img.data);
+        console.log(`Using direct URL for image ${i + 1}`);
         continue;
       }
       
@@ -522,7 +541,7 @@ serve(async (req) => {
             
             if (urlData?.publicUrl) {
               imageUrls.push(urlData.publicUrl);
-              console.log(`Uploaded reference image ${i}: ${urlData.publicUrl}`);
+              console.log(`Uploaded reference image ${i + 1}: ${urlData.publicUrl}`);
             }
           }
         } catch (uploadErr) {
@@ -540,21 +559,58 @@ serve(async (req) => {
       );
     }
     
-    console.log(`Prepared ${imageUrls.length} reference image URLs for Nano Banana API (Image-to-Image mode)`);
+    console.log(`Prepared ${imageUrls.length} reference image URLs for Nano Banana API`);
+    console.log(`Using ${usePro ? 'Nano Banana Pro (gemini-3-pro-image-preview)' : 'Nano Banana Standard (gemini-2.5-flash-image)'}`);
 
-    console.log(`Using Nano Banana API with ${usePro ? 'Pro' : 'Standard'} model`);
-
-    // Call the Nano Banana API
+    // Call the Nano Banana API with proper Image-to-Image
     const generatedImageUrl = await generateWithNanoBanana(apiKey, prompt, imageUrls, usePro);
 
     console.log('Image generated successfully with', usePro ? 'Pro' : 'Standard', 'quality');
-    console.log('Generated image URL:', generatedImageUrl);
+    
+    // If result is base64, upload to storage
+    let finalImageUrl = generatedImageUrl;
+    if (generatedImageUrl.startsWith('data:')) {
+      try {
+        const matches = generatedImageUrl.match(/^data:([^;]+);base64,(.+)$/);
+        if (matches) {
+          const mimeType = matches[1];
+          const base64Data = matches[2];
+          const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+          
+          const extension = mimeType.split('/')[1] || 'png';
+          const fileName = `${generationId}/generated-${Date.now()}.${extension}`;
+          
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('generated-images')
+            .upload(fileName, binaryData, {
+              contentType: mimeType,
+              upsert: true
+            });
+          
+          if (!uploadError) {
+            const { data: urlData } = supabase.storage
+              .from('generated-images')
+              .getPublicUrl(fileName);
+            
+            if (urlData?.publicUrl) {
+              finalImageUrl = urlData.publicUrl;
+              console.log('Uploaded generated image to storage:', finalImageUrl);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Failed to upload generated image:', e);
+        // Keep the base64 URL as fallback
+      }
+    }
+    
+    console.log('Final image URL:', finalImageUrl.substring(0, 100) + '...');
 
     // Update the database with the generated image
     const { error: updateError } = await supabase
       .from('model_generations')
       .update({ 
-        image_url: generatedImageUrl,
+        image_url: finalImageUrl,
         status: 'completed'
       })
       .eq('id', generationId);
@@ -567,8 +623,10 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true,
         generationId,
-        imageUrl: generatedImageUrl,
+        imageUrl: finalImageUrl,
         quality: usePro ? 'pro' : 'standard',
+        model: usePro ? NANO_BANANA_PRO : NANO_BANANA_STANDARD,
+        creditsUsed: usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -589,7 +647,7 @@ interface ReferenceImage {
 
 function buildPrompt(config: any, referenceImages: ReferenceImage[] | null, usePro: boolean = false): string {
   const qualityLevel = usePro 
-    ? 'ULTRA-PREMIUM 16K QUALITY, magazine cover ready, award-winning fashion photography' 
+    ? 'ULTRA-PREMIUM 16K QUALITY, magazine cover ready, award-winning fashion photography, 4K resolution' 
     : 'Ultra-high resolution, 8K quality, professional fashion photography';
 
   // Check if Hijab is selected
@@ -610,15 +668,17 @@ CRITICAL HIJAB REQUIREMENTS (ABSOLUTE MUST):
   const staticBasePrompt = `
 Generate a hyper-realistic, high-resolution fashion photography image featuring a model.
 ${hijabInstructions}
-CRITICAL CLOTHING PRESERVATION RULES (ABSOLUTE REQUIREMENTS):
-- The clothing, outfit, and all garments shown in the reference images MUST be reproduced EXACTLY as they appear.
+CRITICAL IMAGE-TO-IMAGE CLOTHING PRESERVATION RULES (ABSOLUTE REQUIREMENTS):
+- You are provided with reference clothing images. The model MUST wear the EXACT SAME clothing from these images.
+- COPY the clothing, outfit, and all garments from the reference images EXACTLY as they appear.
 - Do NOT alter, reinterpret, stylize, or modify the clothing in any way.
 - Preserve ALL original details: fabric texture, material type, weave pattern, stitching, seams, buttons, zippers, embroidery, prints, patterns, logos, and embellishments.
 - Maintain EXACT colors, color gradients, shading, and tonal values of the clothing.
 - Keep the EXACT garment cut, silhouette, fit, drape, and shape.
-- Preserve lighting reflections, shadows, and fabric behavior exactly as shown.
+- Preserve lighting reflections, shadows, and fabric behavior exactly as shown in the reference.
 - If jewelry or accessories are provided in reference images, include them exactly as shown without modification.
 - The clothing must look identical to the reference - as if it's the same physical garment photographed on the model.
+- THIS IS IMAGE-TO-IMAGE GENERATION: Use the reference images as the primary source for clothing appearance.
 
 PHOTOREALISM REQUIREMENTS:
 - ${qualityLevel}.
@@ -626,7 +686,7 @@ PHOTOREALISM REQUIREMENTS:
 - Sharp focus, professional depth of field.
 - Magazine-quality editorial fashion photography aesthetic.
 - Natural, realistic skin texture and details.
-${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ultra-detailed fabric rendering with visible thread textures.\n- Professional color grading with rich, vibrant tones.' : ''}
+${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ultra-detailed fabric rendering with visible thread textures.\n- Professional color grading with rich, vibrant tones.\n- 4K resolution output for maximum detail.' : ''}
 `.trim();
 
   const dynamicFilters: string[] = [];
@@ -655,7 +715,7 @@ ${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ult
   }
 
   const referenceSection = referenceImages && referenceImages.length > 0
-    ? `\nREFERENCE IMAGES PROVIDED:\n${referenceImages.map((img, i) => `- Reference ${i + 1}: ${img.type} - Copy this EXACTLY onto the model`).join('\n')}\n`
+    ? `\nREFERENCE IMAGES PROVIDED (IMAGE-TO-IMAGE - USE THESE EXACTLY):\n${referenceImages.map((img, i) => `- Reference ${i + 1}: ${img.type} clothing - COPY THIS EXACT outfit onto the model without any changes`).join('\n')}\n\nIMPORTANT: The attached images show the exact clothing the model must wear. Do not generate different clothing.`
     : '';
 
   const filtersSection = dynamicFilters.length > 0
@@ -666,5 +726,5 @@ ${usePro ? '- Premium retouching quality with flawless skin and lighting.\n- Ult
     ? ' IMPORTANT: Model must wear a hijab covering all hair, neck and ears completely.' 
     : '';
 
-  return `${staticBasePrompt}${filtersSection}${referenceSection}\n\nFINAL INSTRUCTION: Generate a photorealistic fashion image with the exact clothing from reference images (if provided) on a model with the specified attributes. The clothing must be identical to the reference.${hijabFinalReminder}`;
+  return `${staticBasePrompt}${filtersSection}${referenceSection}\n\nFINAL INSTRUCTION: This is IMAGE-TO-IMAGE generation. Generate a photorealistic fashion image with the model wearing the EXACT clothing from the provided reference images. The clothing must be IDENTICAL to the reference - same fabric, same colors, same details.${hijabFinalReminder}`;
 }
