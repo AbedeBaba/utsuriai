@@ -27,6 +27,7 @@ import ClothingSelection from "./pages/ClothingSelection";
 import Result from "./pages/Result";
 import Dashboard from "./pages/Dashboard";
 import AccountSettings from "./pages/AccountSettings";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/account-settings" element={<AccountSettings />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="/filter/gender" element={<FilterGender />} />
               <Route path="/filter/ethnicity" element={<FilterEthnicity />} />
               <Route path="/filter/skin-tone" element={<FilterSkinTone />} />
