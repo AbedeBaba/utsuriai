@@ -20,7 +20,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
 import { useSavedModels, SavedModel } from '@/hooks/useSavedModels';
-import { useModelConfig } from '@/context/ModelConfigContext';
+import { useModelConfig, ModelConfig } from '@/context/ModelConfigContext';
+import { SaveModelDialog } from '@/components/SaveModelDialog';
 
 type Category = 'Bottomwear' | 'Topwear' | 'Shoes' | 'Dresses';
 
@@ -33,6 +34,15 @@ interface GeneratedImage {
   status: string;
   category: Category | null;
   custom_name: string | null;
+  // Additional fields for saving model
+  skin_tone: string;
+  hair_color: string;
+  hair_type: string;
+  eye_color: string;
+  body_type: string;
+  beard_type: string | null;
+  pose: string | null;
+  background: string | null;
 }
 
 const CATEGORIES: Category[] = ['Topwear', 'Bottomwear', 'Shoes', 'Dresses'];
@@ -94,7 +104,7 @@ export default function Dashboard() {
     
     const { data, error } = await supabase
       .from('model_generations')
-      .select('id, image_url, created_at, gender, ethnicity, status, category, custom_name')
+      .select('id, image_url, created_at, gender, ethnicity, status, category, custom_name, skin_tone, hair_color, hair_type, eye_color, body_type, beard_type, pose, background')
       .eq('user_id', user!.id)
       .gte('created_at', twentyFourHoursAgo)
       .order('created_at', { ascending: false });
@@ -616,6 +626,33 @@ export default function Dashboard() {
                       <span>{getTimeRemaining(image.created_at)}</span>
                     </div>
                     <div className="flex gap-1.5">
+                      {/* Save Model Button - Creator Only */}
+                      {hasCreatorFeatureAccess && image.image_url && (
+                        <SaveModelDialog
+                          config={{
+                            gender: image.gender as 'male' | 'female',
+                            ethnicity: image.ethnicity,
+                            skinTone: image.skin_tone,
+                            hairColor: image.hair_color,
+                            hairType: image.hair_type,
+                            eyeColor: image.eye_color,
+                            bodyType: image.body_type,
+                            beardType: image.beard_type || undefined,
+                            pose: image.pose || undefined,
+                            background: image.background || undefined,
+                          } as ModelConfig}
+                          trigger={
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 text-amber-400 hover:text-amber-300 hover:bg-amber-400/20"
+                              title="Save model configuration"
+                            >
+                              <Save className="h-4 w-4" />
+                            </Button>
+                          }
+                        />
+                      )}
                       {image.image_url && (
                         <Button
                           size="icon"
