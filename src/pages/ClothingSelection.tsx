@@ -168,11 +168,11 @@ export default function ClothingSelection() {
     }
 
     if (isPaid) {
-      const requiredCredits = usePro ? 8 : 1;
+      const requiredCredits = usePro ? 4 : 1;
       if (creditsRemaining < requiredCredits) {
         toast({
           title: 'Insufficient credits',
-          description: usePro ? 'Pro generation requires 8 credits.' : 'Not enough credits.',
+          description: usePro ? 'Pro generation requires 4 credits.' : 'Not enough credits.',
           variant: 'destructive',
         });
         return;
@@ -327,7 +327,7 @@ export default function ClothingSelection() {
                     <span className="text-muted-foreground">Credits:</span>
                     <span className="text-foreground">
                       <strong className={creditsRemaining >= 1 ? 'text-green-500' : 'text-destructive'}>{creditsRemaining}</strong> credits
-                      <span className="text-xs text-muted-foreground ml-2">(Std: 1, Pro: 8)</span>
+                      <span className="text-xs text-muted-foreground ml-2">(Std: 1, Pro: 4)</span>
                     </span>
                   </div>
                 ) : null}
@@ -384,7 +384,7 @@ export default function ClothingSelection() {
               ) : !canUseProGeneration ? (
                 <>
                   <Crown className="mr-2 h-5 w-5" />
-                  {isTrial ? 'Trial Pro limit reached' : 'Insufficient credits (8 required)'}
+                  {isTrial ? 'Trial Pro limit reached' : 'Insufficient credits (4 required)'}
                 </>
               ) : (
                 <>
@@ -397,7 +397,7 @@ export default function ClothingSelection() {
                   )}
                   {isPaid && (
                     <span className="ml-2 text-sm opacity-80">
-                      (8 credits)
+                      (4 credits)
                     </span>
                   )}
                 </>

@@ -12,7 +12,7 @@ const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
 
 // Credit costs
 const STANDARD_CREDIT_COST = 1;
-const PRO_CREDIT_COST = 8; // Pro costs 8 credits
+const PRO_CREDIT_COST = 4; // Pro costs 4 credits
 
 // Allowed values for input validation
 const ALLOWED_VALUES = {
@@ -137,44 +137,55 @@ async function generateWithNanoBanana(
     const statusResult = await statusResponse.json();
     console.log('Task status response:', JSON.stringify(statusResult));
     
-    // Handle different API response structures
+    // Handle NanoBanana Pro response structure: { code, msg, data: { taskId, info: { resultImageUrl } } }
+    const code = statusResult.code;
     const successFlag = statusResult.successFlag ?? statusResult.data?.successFlag ?? statusResult.data?.status;
-    const responseData = statusResult.response ?? statusResult.data?.response ?? statusResult.data;
     
-    console.log(`Task status check: successFlag=${successFlag}, hasResponse=${!!responseData}`);
+    console.log(`Task status check: code=${code}, successFlag=${successFlag}`);
     
-    // Check for completed status
-    if (successFlag === 1 || (statusResult.code === 200 && responseData?.resultImageUrl)) {
+    // Check for completed status (code 200 for NanoBanana Pro)
+    if (code === 200) {
       console.log('Generation completed successfully!');
-      const imageUrl = responseData?.resultImageUrl || responseData?.imageUrl || responseData?.url;
+      
+      // NanoBanana Pro structure: data.info.resultImageUrl
+      let imageUrl = statusResult.data?.info?.resultImageUrl;
+      
+      // Fallback to other possible locations
       if (!imageUrl) {
-        // Try to find image URL in other locations
-        const possibleUrls = [
-          statusResult.resultImageUrl,
-          statusResult.imageUrl,
-          statusResult.data?.resultImageUrl,
-          statusResult.data?.imageUrl
-        ].filter(Boolean);
-        
-        if (possibleUrls.length > 0) {
-          return possibleUrls[0];
-        }
-        console.error('Response structure:', JSON.stringify(statusResult));
-        throw new Error('No resultImageUrl in successful response');
+        imageUrl = statusResult.data?.resultImageUrl || 
+                   statusResult.data?.imageUrl || 
+                   statusResult.response?.resultImageUrl ||
+                   statusResult.resultImageUrl;
       }
-      return imageUrl;
+      
+      if (imageUrl) {
+        console.log('Found result image URL');
+        return imageUrl;
+      }
+      
+      console.error('Response structure:', JSON.stringify(statusResult));
+      throw new Error('No resultImageUrl in successful response');
     }
     
-    // Check for failed status
+    // Check for NanoBanana Pro error codes
+    if (code === 400) {
+      throw new Error('Content policy violation - please adjust your prompt');
+    } else if (code === 500) {
+      throw new Error('Internal error - please try again later');
+    } else if (code === 501) {
+      throw new Error('Generation task failed - may need to adjust parameters');
+    }
+    
+    // Check for legacy failed status
     if (successFlag === 2 || successFlag === 3) {
       throw new Error(statusResult.errorMessage || statusResult.data?.errorMessage || 'Generation failed');
     }
     
-    // Check if still generating
-    if (successFlag === 0) {
+    // Check if still generating (successFlag 0 or 1, or code not 200 yet)
+    if (successFlag === 0 || successFlag === 1 || code === undefined) {
       console.log('Task is still generating...');
-    } else if (successFlag === undefined || successFlag === null) {
-      console.log('Unknown/pending status, continuing to poll...');
+    } else {
+      console.log('Unknown status, continuing to poll...');
     }
     
     // Wait 3 seconds before next poll
