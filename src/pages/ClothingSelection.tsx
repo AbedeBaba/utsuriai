@@ -270,7 +270,21 @@ export default function ClothingSelection() {
         
         <ProgressIndicator currentStep={totalSteps} totalSteps={totalSteps} />
         
-        <LanguageSwitcher />
+        <div className="flex items-center gap-2">
+          {/* Save Model Button in Header - Creator Only */}
+          {hasCreatorFeatureAccess && (
+            <SaveModelDialog
+              config={config}
+              trigger={
+                <Button variant="outline" size="sm" className="gap-2 border-primary/50 hover:border-primary">
+                  <Save className="h-4 w-4" />
+                  <span className="hidden sm:inline">Save Model</span>
+                </Button>
+              }
+            />
+          )}
+          <LanguageSwitcher />
+        </div>
       </header>
 
       {/* Content */}
