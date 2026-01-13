@@ -101,11 +101,38 @@ serve(async (req) => {
       }
 
       case "update_credits": {
-        const { user_id, credits_remaining, pro_generations_remaining, standard_generations_remaining } = params;
+        const { user_id, credits_remaining, pro_generations_remaining, standard_generations_remaining, add_credits } = params;
 
         if (!user_id) {
           return new Response(JSON.stringify({ error: "user_id is required" }), {
             status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // If add_credits is specified, fetch current and add to it
+        if (add_credits !== undefined) {
+          const { data: currentSub, error: fetchError } = await supabaseAdmin
+            .from("user_subscriptions")
+            .select("credits_remaining")
+            .eq("user_id", user_id)
+            .single();
+
+          if (fetchError) {
+            throw new Error(`Failed to fetch current credits: ${fetchError.message}`);
+          }
+
+          const newCredits = (currentSub?.credits_remaining || 0) + add_credits;
+          const { error: updateError } = await supabaseAdmin
+            .from("user_subscriptions")
+            .update({ credits_remaining: Math.max(0, newCredits) })
+            .eq("user_id", user_id);
+
+          if (updateError) {
+            throw new Error(`Failed to update credits: ${updateError.message}`);
+          }
+
+          return new Response(JSON.stringify({ success: true, new_credits: Math.max(0, newCredits) }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
@@ -122,6 +149,28 @@ serve(async (req) => {
 
         if (updateError) {
           throw new Error(`Failed to update credits: ${updateError.message}`);
+        }
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      case "delete_user": {
+        const { user_id } = params;
+
+        if (!user_id) {
+          return new Response(JSON.stringify({ error: "user_id is required" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // Delete the user from auth (this will cascade to other tables)
+        const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user_id);
+
+        if (deleteError) {
+          throw new Error(`Failed to delete user: ${deleteError.message}`);
         }
 
         return new Response(JSON.stringify({ success: true }), {
