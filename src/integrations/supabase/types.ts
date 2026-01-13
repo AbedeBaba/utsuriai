@@ -143,6 +143,69 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_models: {
+        Row: {
+          background: string | null
+          beard_type: string | null
+          body_type: string
+          created_at: string
+          ethnicity: string
+          eye_color: string
+          face_type: string | null
+          facial_expression: string | null
+          gender: string
+          hair_color: string | null
+          hair_type: string | null
+          id: string
+          modest_option: string | null
+          name: string
+          pose: string | null
+          skin_tone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          background?: string | null
+          beard_type?: string | null
+          body_type: string
+          created_at?: string
+          ethnicity: string
+          eye_color: string
+          face_type?: string | null
+          facial_expression?: string | null
+          gender: string
+          hair_color?: string | null
+          hair_type?: string | null
+          id?: string
+          modest_option?: string | null
+          name: string
+          pose?: string | null
+          skin_tone: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          background?: string | null
+          beard_type?: string | null
+          body_type?: string
+          created_at?: string
+          ethnicity?: string
+          eye_color?: string
+          face_type?: string | null
+          facial_expression?: string | null
+          gender?: string
+          hair_color?: string | null
+          hair_type?: string | null
+          id?: string
+          modest_option?: string | null
+          name?: string
+          pose?: string | null
+          skin_tone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

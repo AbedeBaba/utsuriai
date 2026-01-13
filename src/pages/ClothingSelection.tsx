@@ -4,13 +4,14 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Loader2, CheckCircle, LayoutDashboard, Crown } from 'lucide-react';
+import { ArrowLeft, Sparkles, Loader2, CheckCircle, LayoutDashboard, Crown, Save } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { MultiImageUpload, UploadedImage } from '@/components/MultiImageUpload';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ProgressIndicator } from '@/components/ProgressIndicator';
 import { useSubscription } from '@/hooks/useSubscription';
+import { SaveModelDialog } from '@/components/SaveModelDialog';
 
 // Backend-ready data structure for API communication
 interface GenerationPayload {
@@ -51,6 +52,7 @@ export default function ClothingSelection() {
     creditsRemaining,
     canGenerate,
     canUseProGeneration,
+    hasCreatorFeatureAccess,
     loading: subscriptionLoading,
     refetch: refetchSubscription
   } = useSubscription();
@@ -281,10 +283,24 @@ export default function ClothingSelection() {
         <div className="w-full max-w-lg space-y-6">
           {/* Filter Summary */}
           <div className="bg-card border border-border rounded-xl p-4 animate-fade-in">
-            <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-primary" />
-              Selected Attributes
-            </h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-primary" />
+                Selected Attributes
+              </h3>
+              {/* Save Model Button - Creator Only */}
+              {hasCreatorFeatureAccess && (
+                <SaveModelDialog
+                  config={config}
+                  trigger={
+                    <Button variant="outline" size="sm" className="gap-2 text-xs">
+                      <Save className="h-3.5 w-3.5" />
+                      Save Model
+                    </Button>
+                  }
+                />
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-2">
               {filterSummary.map((item, index) => (
                 <div key={index} className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">

@@ -54,6 +54,7 @@ interface ModelConfigContextType {
   updateConfig: (key: keyof ModelConfig, value: string) => void;
   resetConfig: () => void;
   resetSubsequentFilters: (fromKey: keyof ModelConfig) => void;
+  loadSavedModel: (savedConfig: Partial<ModelConfig>) => void;
   currentStep: number;
   setCurrentStep: (step: number) => void;
   totalSteps: number;
@@ -184,12 +185,21 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
     setCurrentStep(1);
   };
 
+  // Load a saved model configuration
+  const loadSavedModel = useCallback((savedConfig: Partial<ModelConfig>) => {
+    setConfig(prev => ({
+      ...prev,
+      ...savedConfig,
+    }));
+  }, []);
+
   return (
     <ModelConfigContext.Provider value={{ 
       config, 
       updateConfig, 
       resetConfig, 
       resetSubsequentFilters,
+      loadSavedModel,
       currentStep, 
       setCurrentStep,
       totalSteps,
