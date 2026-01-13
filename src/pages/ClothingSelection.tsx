@@ -92,7 +92,14 @@ export default function ClothingSelection() {
 
   // Validate all required filters are selected
   const validateFilters = (): boolean => {
-    const requiredFields = ['gender', 'ethnicity', 'skinTone', 'hairColor', 'eyeColor', 'bodyType', 'hairType'];
+    // Base required fields
+    let requiredFields = ['gender', 'ethnicity', 'skinTone', 'eyeColor', 'bodyType'];
+    
+    // Hair Color and Hair Type are NOT required when Hijab is selected
+    if (config.modestOption !== 'Hijab') {
+      requiredFields = [...requiredFields, 'hairColor', 'hairType'];
+    }
+    
     const missingFields = requiredFields.filter(field => !config[field as keyof typeof config]);
     
     if (missingFields.length > 0) {
@@ -227,14 +234,17 @@ export default function ClothingSelection() {
     }
   };
 
+  // Hide Hair Color and Hair Type from summary when Hijab is selected
+  const isHijab = config.modestOption === 'Hijab';
+  
   const filterSummary = [
     { label: 'Gender', value: config.gender },
     { label: 'Ethnicity', value: config.ethnicity },
     { label: 'Skin Tone', value: config.skinTone },
-    { label: 'Hair Color', value: config.hairColor },
+    ...(!isHijab ? [{ label: 'Hair Color', value: config.hairColor }] : []),
     { label: 'Eye Color', value: config.eyeColor },
     { label: 'Body Type', value: config.bodyType },
-    { label: 'Hair Type', value: config.hairType },
+    ...(!isHijab ? [{ label: 'Hair Type', value: config.hairType }] : []),
     ...(config.beardType ? [{ label: 'Beard Type', value: config.beardType }] : []),
     { label: 'Coverage', value: config.modestOption },
     { label: 'Pose', value: config.pose },

@@ -56,6 +56,17 @@ export default function FilterHairType() {
     setCurrentStep(config.gender === 'Female' ? 8 : 7);
   }, [setCurrentStep, config.gender]);
 
+  // Redirect to pose/beard if Hijab is selected (hair won't be visible)
+  useEffect(() => {
+    if (config.modestOption === 'Hijab') {
+      if (config.gender === 'Male') {
+        navigate('/filter/beard-type');
+      } else {
+        navigate(isTrialProExhausted ? '/clothing' : '/filter/pose');
+      }
+    }
+  }, [config.modestOption, config.gender, navigate, isTrialProExhausted]);
+
   const handleSelect = useCallback((hairType: string) => {
     if (isAnimating) return;
     
