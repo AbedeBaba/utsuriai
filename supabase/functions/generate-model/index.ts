@@ -214,9 +214,65 @@ serve(async (req) => {
     console.log('Authenticated user:', authenticatedUserId);
 
     // ==========================================
+    // RATE LIMITING - Prevent abuse
+    // ==========================================
+    const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+    const MAX_REQUESTS_PER_WINDOW = 5;
+    const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
+    
+    // Check recent requests in rate_limits table
+    const { data: rateLimitData, error: rateLimitError } = await supabaseAdmin
+      .from('rate_limits')
+      .select('request_count, window_start')
+      .eq('user_id', authenticatedUserId)
+      .eq('endpoint', 'generate-model')
+      .gte('window_start', windowStart)
+      .order('window_start', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    if (rateLimitError) {
+      console.error('Rate limit check error:', rateLimitError);
+      // Don't block on rate limit errors, just log
+    }
+    
+    const currentMinuteWindow = new Date(Math.floor(Date.now() / 60000) * 60000).toISOString();
+    
+    if (rateLimitData && rateLimitData.window_start === currentMinuteWindow) {
+      if (rateLimitData.request_count >= MAX_REQUESTS_PER_WINDOW) {
+        console.warn(`Rate limit exceeded for user ${authenticatedUserId}`);
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded. Please wait a moment before trying again.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      // Increment existing counter
+      await supabaseAdmin
+        .from('rate_limits')
+        .update({ request_count: rateLimitData.request_count + 1 })
+        .eq('user_id', authenticatedUserId)
+        .eq('endpoint', 'generate-model')
+        .eq('window_start', currentMinuteWindow);
+    } else {
+      // Create new rate limit entry for this window
+      await supabaseAdmin
+        .from('rate_limits')
+        .upsert({
+          user_id: authenticatedUserId,
+          endpoint: 'generate-model',
+          window_start: currentMinuteWindow,
+          request_count: 1
+        }, { onConflict: 'user_id,endpoint,window_start' });
+    }
+    
+    console.log('Rate limit check passed');
+
+    // ==========================================
     // INPUT VALIDATION
     // ==========================================
     const { generationId, config, referenceImage, usePro = false } = await req.json();
+
     
     // Validate generationId
     if (!generationId || typeof generationId !== 'string') {
