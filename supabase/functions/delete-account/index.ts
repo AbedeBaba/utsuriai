@@ -47,6 +47,44 @@ serve(async (req) => {
     // Create admin client for deletion operations
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
 
+    // ==========================================
+    // RATE LIMITING - Prevent abuse
+    // ==========================================
+    const RATE_LIMIT_WINDOW_MS = 3600000; // 1 hour for destructive operations
+    const MAX_DELETE_ATTEMPTS_PER_WINDOW = 3;
+    const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
+    
+    const { data: rateLimitData } = await adminClient
+      .from('rate_limits')
+      .select('request_count')
+      .eq('user_id', user.id)
+      .eq('endpoint', 'delete-account')
+      .gte('window_start', windowStart)
+      .order('window_start', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    const totalAttempts = rateLimitData?.request_count || 0;
+    
+    if (totalAttempts >= MAX_DELETE_ATTEMPTS_PER_WINDOW) {
+      console.warn(`Delete account rate limit exceeded for user ${user.id}`);
+      return new Response(
+        JSON.stringify({ error: 'Too many delete attempts. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Record this attempt
+    const currentHourWindow = new Date(Math.floor(Date.now() / 3600000) * 3600000).toISOString();
+    await adminClient
+      .from('rate_limits')
+      .upsert({
+        user_id: user.id,
+        endpoint: 'delete-account',
+        window_start: currentHourWindow,
+        request_count: totalAttempts + 1
+      }, { onConflict: 'user_id,endpoint,window_start' });
+
     // Delete user's model generations
     const { error: generationsError } = await adminClient
       .from('model_generations')
