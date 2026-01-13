@@ -10,7 +10,7 @@ const corsHeaders = {
 const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
 const NANOBANANA_API_KEY = '8f40e3c4ec5e36d8bbe18354535318d7';
 
-// Lovable AI Gateway for Gemini (for true virtual try-on)
+// Lovable AI Gateway for Gemini
 const LOVABLE_AI_GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 // Credit costs
@@ -67,52 +67,33 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Fetch image and convert to base64
-async function imageUrlToBase64(url: string): Promise<string> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch image: ${response.status}`);
-  }
-  const buffer = await response.arrayBuffer();
-  const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
-  const contentType = response.headers.get('content-type') || 'image/png';
-  return `data:${contentType};base64,${base64}`;
-}
-
-// Generate using Gemini 2.5 Flash Image (Nano Banana style virtual try-on)
-// This model understands multi-image compositing for clothing transfer
+// Generate using Gemini 2.5 Flash Image for virtual try-on
+// Takes base64 images directly to avoid URL fetching issues
 async function generateWithGeminiTryOn(
   apiKey: string,
-  clothingImageUrls: string[],
+  clothingBase64Images: string[], // Already base64 encoded
   config: Record<string, string | null>,
   supabase: any
 ): Promise<string> {
   console.log('Starting Gemini virtual try-on generation...');
-  console.log(`Processing ${clothingImageUrls.length} clothing image(s)`);
+  console.log(`Processing ${clothingBase64Images.length} clothing image(s)`);
   
   // Build the content array with clothing images and text prompt
   const contentParts: any[] = [];
   
-  // Add each clothing image
-  for (let i = 0; i < clothingImageUrls.length; i++) {
-    try {
-      const imageUrl = clothingImageUrls[i];
-      console.log(`Processing clothing image ${i + 1}: ${imageUrl.substring(0, 80)}...`);
-      
-      // Convert URL to base64 for Gemini
-      const base64Image = await imageUrlToBase64(imageUrl);
-      
-      contentParts.push({
-        type: "image_url",
-        image_url: { url: base64Image }
-      });
-    } catch (err) {
-      console.error(`Failed to process clothing image ${i + 1}:`, err);
-    }
+  // Add each clothing image directly as base64
+  for (let i = 0; i < clothingBase64Images.length; i++) {
+    const base64Image = clothingBase64Images[i];
+    console.log(`Adding clothing image ${i + 1} (base64 length: ${base64Image.length})`);
+    
+    contentParts.push({
+      type: "image_url",
+      image_url: { url: base64Image }
+    });
   }
   
   if (contentParts.length === 0) {
-    throw new Error('No clothing images could be processed');
+    throw new Error('No clothing images to process');
   }
   
   // Build the virtual try-on prompt
@@ -121,29 +102,32 @@ async function generateWithGeminiTryOn(
   const tryOnPrompt = `You are a professional fashion photographer AI. Generate a hyper-realistic fashion photography image.
 
 CRITICAL TASK: VIRTUAL TRY-ON / CLOTHING TRANSFER
-You are provided with clothing/outfit reference images above. Your task is to:
-1. Generate a photorealistic fashion model with the specified attributes
-2. The model MUST wear the EXACT clothing shown in the reference images
-3. This is a VIRTUAL TRY-ON task - transfer the clothing from the reference images onto the generated model
+The image(s) above show clothing/outfit items. Your task is to:
+1. Generate a photorealistic fashion model with the specified attributes below
+2. The model MUST wear the EXACT clothing shown in the reference image(s) above
+3. This is a VIRTUAL TRY-ON task - the clothing from the reference images must appear on the generated model
 
 MODEL ATTRIBUTES TO GENERATE:
 ${modelDescription}
 
 CLOTHING TRANSFER RULES (ABSOLUTE REQUIREMENTS):
 - The generated model MUST wear the EXACT SAME clothing from the provided reference images
-- COPY the outfit EXACTLY: same fabric, same colors, same patterns, same style
-- Do NOT invent new clothing or modify the outfit in any way
-- Preserve ALL clothing details: texture, stitching, buttons, zippers, prints, logos
-- The clothing fit should be natural on the model's body type
-- Maintain the exact garment cut, silhouette, and design
+- COPY the outfit EXACTLY: same fabric, same colors, same patterns, same style, same design
+- Do NOT invent new clothing - use ONLY what is shown in the reference images
+- Do NOT modify, change, or replace the outfit in any way
+- Preserve ALL clothing details: texture, stitching, buttons, zippers, prints, logos, embroidery
+- The clothing fit should look natural on the model's body
+- Maintain the exact garment cut, silhouette, neckline, sleeves, and overall design
 
 PHOTOGRAPHY REQUIREMENTS:
 - Ultra-realistic, magazine-quality fashion photography
-- Professional studio lighting
-- Sharp focus, natural skin texture
-- 4K resolution quality
-${config.background ? `- Background setting: ${config.background}` : '- Clean, professional background'}
-${config.pose ? `- Model pose: ${config.pose}` : '- Natural, confident pose'}
+- Professional studio lighting with soft shadows
+- Sharp focus, natural skin texture, realistic fabric rendering
+- High resolution output
+${config.background ? `- Background setting: ${config.background}` : '- Clean white studio background'}
+${config.pose ? `- Model pose: ${config.pose}` : '- Natural, confident standing pose'}
+
+IMPORTANT: The clothing in the output image MUST be identical to the clothing in the input reference images. Do not create different clothing.
 
 OUTPUT: A single photorealistic image of the described model wearing the exact clothing from the reference images.`;
 
@@ -189,12 +173,12 @@ OUTPUT: A single photorealistic image of the described model wearing the exact c
     throw new Error('No image generated by Gemini');
   }
   
-  console.log('Generated image received (base64), uploading to storage...');
+  console.log('Generated image received, uploading to storage...');
   
   // Upload the base64 image to Supabase storage
   const matches = generatedImage.match(/^data:([^;]+);base64,(.+)$/);
   if (!matches) {
-    throw new Error('Invalid base64 image format');
+    throw new Error('Invalid base64 image format from Gemini');
   }
   
   const mimeType = matches[1];
@@ -216,16 +200,22 @@ OUTPUT: A single photorealistic image of the described model wearing the exact c
     throw new Error('Failed to save generated image');
   }
   
-  const { data: urlData } = supabase.storage
+  // Create a signed URL since bucket is private
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
     .from('generated-images')
-    .getPublicUrl(fileName);
+    .createSignedUrl(fileName, 60 * 60 * 24); // 24 hours
   
-  if (!urlData?.publicUrl) {
-    throw new Error('Failed to get public URL for generated image');
+  if (signedUrlError || !signedUrlData?.signedUrl) {
+    console.error('Failed to create signed URL:', signedUrlError);
+    // Fallback to public URL attempt
+    const { data: urlData } = supabase.storage
+      .from('generated-images')
+      .getPublicUrl(fileName);
+    return urlData?.publicUrl || '';
   }
   
-  console.log('Generated image uploaded:', urlData.publicUrl);
-  return urlData.publicUrl;
+  console.log('Generated image uploaded with signed URL');
+  return signedUrlData.signedUrl;
 }
 
 // Build model description from config
@@ -250,22 +240,41 @@ function buildModelDescription(config: Record<string, string | null>): string {
   return parts.join('\n');
 }
 
-// Fallback: Use Nano Banana Standard API
-async function generateWithNanoBananaStandard(
+// Fallback: Use Nano Banana API with proper virtual try-on prompt
+async function generateWithNanoBanana(
   apiKey: string,
   prompt: string,
-  imageUrls: string[]
+  imageUrls: string[],
+  usePro: boolean
 ): Promise<string> {
-  console.log('Fallback: Starting Nano Banana Standard generation...');
+  console.log(`Starting Nano Banana ${usePro ? 'Pro' : 'Standard'} generation...`);
   
-  const requestBody: Record<string, any> = {
-    prompt: prompt,
-    type: 'IMAGETOIAMGE',
-    numImages: 1,
-    imageUrls: imageUrls
-  };
+  let requestBody: Record<string, any>;
+  let endpoint: string;
   
-  const generateResponse = await fetch(`${NANOBANANA_BASE_URL}/generate`, {
+  if (usePro) {
+    // Pro API uses different endpoint and parameters
+    requestBody = {
+      prompt: prompt,
+      imageUrls: imageUrls,
+      resolution: '2K',
+      aspectRatio: '3:4'
+    };
+    endpoint = `${NANOBANANA_BASE_URL}/generate-pro`;
+  } else {
+    // Standard API
+    requestBody = {
+      prompt: prompt,
+      type: 'IMAGETOIAMGE',
+      numImages: 1,
+      imageUrls: imageUrls
+    };
+    endpoint = `${NANOBANANA_BASE_URL}/generate`;
+  }
+  
+  console.log('Nano Banana request:', JSON.stringify({ endpoint, imageCount: imageUrls.length }));
+  
+  const generateResponse = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -470,19 +479,18 @@ serve(async (req) => {
       console.log(`Pre-deducted ${creditCost} credits. New balance: ${newBalance}`);
     }
 
-    // Process clothing images - upload to storage to get URLs
+    // Collect base64 images for Gemini AND URLs for Nano Banana fallback
+    const base64Images: string[] = [];
     const imageUrls: string[] = [];
     
     for (let i = 0; i < referenceImages.length; i++) {
       const img = referenceImages[i];
       
-      if (img.data.startsWith('http')) {
-        imageUrls.push(img.data);
-        console.log(`Direct URL for image ${i + 1}`);
-        continue;
-      }
-      
+      // If already base64, use directly for Gemini
       if (img.data.startsWith('data:')) {
+        base64Images.push(img.data);
+        
+        // Also upload to storage for Nano Banana fallback
         try {
           const matches = img.data.match(/^data:([^;]+);base64,(.+)$/);
           if (matches) {
@@ -497,27 +505,29 @@ serve(async (req) => {
               .from('generated-images')
               .upload(fileName, binaryData, { contentType: mimeType, upsert: true });
             
-            if (uploadError) {
-              console.error(`Failed to upload image ${i}:`, uploadError);
-              continue;
-            }
-            
-            const { data: urlData } = supabase.storage
-              .from('generated-images')
-              .getPublicUrl(fileName);
-            
-            if (urlData?.publicUrl) {
-              imageUrls.push(urlData.publicUrl);
-              console.log(`Uploaded clothing image ${i + 1}: ${urlData.publicUrl}`);
+            if (!uploadError) {
+              // Create signed URL for Nano Banana
+              const { data: signedData } = await supabase.storage
+                .from('generated-images')
+                .createSignedUrl(fileName, 60 * 60); // 1 hour
+              
+              if (signedData?.signedUrl) {
+                imageUrls.push(signedData.signedUrl);
+                console.log(`Uploaded clothing image ${i + 1} with signed URL`);
+              }
             }
           }
         } catch (err) {
-          console.error(`Error processing image ${i}:`, err);
+          console.error(`Error uploading image ${i}:`, err);
         }
+      } else if (img.data.startsWith('http')) {
+        // URL - use for Nano Banana, need to fetch for Gemini
+        imageUrls.push(img.data);
+        // We'll skip Gemini if we only have URLs (can't easily convert)
       }
     }
     
-    if (imageUrls.length === 0) {
+    if (base64Images.length === 0 && imageUrls.length === 0) {
       // Refund
       if (isTrial) {
         const field = usePro ? 'pro_generations_remaining' : 'standard_generations_remaining';
@@ -533,28 +543,36 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Ready to generate with ${imageUrls.length} clothing image(s)`);
+    console.log(`Ready: ${base64Images.length} base64 images, ${imageUrls.length} URLs`);
     console.log(`Quality: ${usePro ? 'Pro' : 'Standard'}`);
 
     let generatedImageUrl: string;
     
-    // Use Gemini for proper virtual try-on (clothing transfer)
-    if (lovableApiKey) {
+    // Try Gemini first if we have base64 images and API key
+    if (lovableApiKey && base64Images.length > 0) {
       try {
         console.log('Using Gemini for virtual try-on...');
-        generatedImageUrl = await generateWithGeminiTryOn(lovableApiKey, imageUrls, sanitizedConfig, supabase);
+        generatedImageUrl = await generateWithGeminiTryOn(lovableApiKey, base64Images, sanitizedConfig, supabase);
+        console.log('Gemini generation successful');
       } catch (geminiError) {
         console.error('Gemini generation failed:', geminiError);
-        // Fallback to Nano Banana
-        console.log('Falling back to Nano Banana...');
-        const fallbackPrompt = buildFallbackPrompt(sanitizedConfig, referenceImages);
-        generatedImageUrl = await generateWithNanoBananaStandard(NANOBANANA_API_KEY, fallbackPrompt, imageUrls);
+        
+        // Fallback to Nano Banana if we have URLs
+        if (imageUrls.length > 0) {
+          console.log('Falling back to Nano Banana...');
+          const fallbackPrompt = buildFallbackPrompt(sanitizedConfig);
+          generatedImageUrl = await generateWithNanoBanana(NANOBANANA_API_KEY, fallbackPrompt, imageUrls, usePro);
+        } else {
+          throw geminiError;
+        }
       }
+    } else if (imageUrls.length > 0) {
+      // No Gemini available, use Nano Banana directly
+      console.log('Using Nano Banana directly...');
+      const fallbackPrompt = buildFallbackPrompt(sanitizedConfig);
+      generatedImageUrl = await generateWithNanoBanana(NANOBANANA_API_KEY, fallbackPrompt, imageUrls, usePro);
     } else {
-      // No Lovable API key, use Nano Banana directly
-      console.log('Using Nano Banana (no Lovable API key)...');
-      const fallbackPrompt = buildFallbackPrompt(sanitizedConfig, referenceImages);
-      generatedImageUrl = await generateWithNanoBananaStandard(NANOBANANA_API_KEY, fallbackPrompt, imageUrls);
+      throw new Error('No valid image sources available');
     }
 
     console.log('Generation successful:', generatedImageUrl);
@@ -595,12 +613,15 @@ serve(async (req) => {
   }
 });
 
-function buildFallbackPrompt(config: Record<string, string | null>, referenceImages: { type: string; data: string }[]): string {
+function buildFallbackPrompt(config: Record<string, string | null>): string {
   const parts: string[] = [];
   
-  parts.push('VIRTUAL TRY-ON TASK: Generate a fashion model wearing the EXACT clothing from the provided images.');
+  parts.push('VIRTUAL TRY-ON TASK: Generate a fashion model wearing the EXACT clothing shown in the input images.');
   parts.push('');
-  parts.push('CRITICAL: The model MUST wear the SAME outfit shown in the input images. Do NOT create new clothing.');
+  parts.push('CRITICAL RULES:');
+  parts.push('- The model MUST wear the SAME outfit from the input images');
+  parts.push('- Do NOT create new or different clothing');
+  parts.push('- Preserve exact fabric, colors, patterns, and design');
   parts.push('');
   
   parts.push('MODEL ATTRIBUTES:');
@@ -619,13 +640,7 @@ function buildFallbackPrompt(config: Record<string, string | null>, referenceIma
   }
   
   parts.push('');
-  parts.push('CLOTHING REQUIREMENTS:');
-  parts.push('- Transfer the EXACT clothing from reference images onto the model');
-  parts.push('- Preserve all fabric details, colors, patterns, and design');
-  parts.push('- Do NOT modify or replace the outfit');
-  
-  parts.push('');
-  parts.push('OUTPUT: Ultra-realistic fashion photography, magazine quality, 4K resolution.');
+  parts.push('OUTPUT: Ultra-realistic fashion photography with the model wearing the exact input clothing.');
   
   return parts.join('\n');
 }
