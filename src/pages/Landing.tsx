@@ -180,7 +180,7 @@ export default function Landing() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 border-y border-border bg-secondary/30">
+      <section className="py-20 my-16 border-y border-border bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
@@ -206,7 +206,7 @@ export default function Landing() {
       {/* How it Works Section */}
       <section id="how-it-works" style={{
       backgroundColor: '#c4bfab'
-    }} className="py-28 mt-12 relative overflow-hidden bg-[#6d625a]">
+    }} className="py-28 relative overflow-hidden bg-[#6d625a]">
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
@@ -221,14 +221,13 @@ export default function Landing() {
               <div className="absolute -left-3 -top-3 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground z-10 shadow-lg">
                 1
               </div>
-              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
-                <div className="p-8 pt-10">
-                  <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Wand2 className="w-7 h-7 text-primary" />
+              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[380px] flex flex-col">
+                <div className="flex-1 flex items-center justify-center p-8 pt-12">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center shadow-lg border border-primary/20 group-hover:scale-110 group-hover:shadow-primary/30 transition-all duration-300">
+                    <Wand2 className="w-16 h-16 md:w-20 md:h-20 text-primary drop-shadow-lg" />
                   </div>
                 </div>
-                <div className="flex-1" />
-                <div className="relative z-10 p-8 pt-0">
+                <div className="relative z-10 p-8 pt-0 text-center">
                   <h3 className="text-2xl font-bold text-foreground mb-3">Transform</h3>
                   <p className="text-muted-foreground text-base">Choose model, pose & environment with AI.</p>
                 </div>
@@ -240,14 +239,13 @@ export default function Landing() {
               <div className="absolute -left-3 -top-3 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground z-10 shadow-lg">
                 2
               </div>
-              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
-                <div className="p-8 pt-10">
-                  <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Upload className="w-7 h-7 text-primary" />
+              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[380px] flex flex-col">
+                <div className="flex-1 flex items-center justify-center p-8 pt-12">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center shadow-lg border border-primary/20 group-hover:scale-110 group-hover:shadow-primary/30 transition-all duration-300">
+                    <Upload className="w-16 h-16 md:w-20 md:h-20 text-primary drop-shadow-lg" />
                   </div>
                 </div>
-                <div className="flex-1" />
-                <div className="relative z-10 p-8 pt-0">
+                <div className="relative z-10 p-8 pt-0 text-center">
                   <h3 className="text-2xl font-bold text-foreground mb-3">Upload</h3>
                   <p className="text-muted-foreground text-base">Upload your product photos in seconds.</p>
                 </div>
@@ -259,14 +257,13 @@ export default function Landing() {
               <div className="absolute -left-3 -top-3 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground z-10 shadow-lg">
                 3
               </div>
-              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[400px] flex flex-col">
-                <div className="p-8 pt-10">
-                  <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Download className="w-7 h-7 text-primary" />
+              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[380px] flex flex-col">
+                <div className="flex-1 flex items-center justify-center p-8 pt-12">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center shadow-lg border border-primary/20 group-hover:scale-110 group-hover:shadow-primary/30 transition-all duration-300">
+                    <Download className="w-16 h-16 md:w-20 md:h-20 text-primary drop-shadow-lg" />
                   </div>
                 </div>
-                <div className="flex-1" />
-                <div className="relative z-10 p-8 pt-0">
+                <div className="relative z-10 p-8 pt-0 text-center">
                   <h3 className="text-2xl font-bold text-foreground mb-3">Download</h3>
                   <p className="text-muted-foreground text-base">Get studio-quality images instantly.</p>
                 </div>
