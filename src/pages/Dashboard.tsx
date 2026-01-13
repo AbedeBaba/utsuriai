@@ -139,24 +139,54 @@ export default function Dashboard() {
   };
 
   const handleDownload = async (imageUrl: string, customName: string | null, id: string) => {
+    const fileName = customName ? customName.replace(/\s+/g, '-').toLowerCase() : `utsuri-model-${id}`;
+    
     try {
-      const response = await fetch(imageUrl);
+      // Try fetching with CORS
+      const response = await fetch(imageUrl, {
+        mode: 'cors',
+        credentials: 'omit',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      const fileName = customName ? customName.replace(/\s+/g, '-').toLowerCase() : `utsuri-model-${id}`;
       a.download = `${fileName}.png`;
+      a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
+      
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+      
       toast({
-        title: 'Download failed',
-        description: 'Could not download the image.',
-        variant: 'destructive',
+        title: 'Download started',
+        description: 'Your image is being downloaded.',
       });
+    } catch (error) {
+      console.error('Download error:', error);
+      // Fallback: open in new tab for manual download
+      try {
+        window.open(imageUrl, '_blank');
+        toast({
+          title: 'Opening image',
+          description: 'The image opened in a new tab. Right-click to save it.',
+        });
+      } catch {
+        toast({
+          title: 'Download failed',
+          description: 'Could not download the image. Please try again.',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
