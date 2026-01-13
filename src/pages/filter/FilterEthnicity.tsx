@@ -111,25 +111,30 @@ export default function FilterEthnicity() {
     setIsAnimating(true);
     setHoverDisabled(true);
     
-    // Randomly select all filters
+    // Check if Hijab flow - skip hair attributes
+    const isHijabFlow = config.modestOption === 'Hijab';
+    
+    // Randomly select all remaining filters (NOT modestOption - it's a core step already set)
     const randomEthnicity = ethnicityOptions[Math.floor(Math.random() * ethnicityOptions.length)].id;
     const randomSkinTone = skinToneOptions[Math.floor(Math.random() * skinToneOptions.length)];
-    const randomHairColor = hairColorOptions[Math.floor(Math.random() * hairColorOptions.length)];
     const randomEyeColor = eyeColorOptions[Math.floor(Math.random() * eyeColorOptions.length)];
     const randomBodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
-    const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
-    const randomModest = modestOptions[Math.floor(Math.random() * modestOptions.length)];
     
     setSelectedId(randomEthnicity);
     
-    // Update all configs
+    // Update all non-core configs
     updateConfig('ethnicity', randomEthnicity);
     updateConfig('skinTone', randomSkinTone);
-    updateConfig('hairColor', randomHairColor);
     updateConfig('eyeColor', randomEyeColor);
     updateConfig('bodyType', randomBodyType);
-    updateConfig('hairType', randomHairType);
-    updateConfig('modestOption', randomModest);
+    
+    // Only set hair attributes if NOT in Hijab flow
+    if (!isHijabFlow) {
+      const randomHairColor = hairColorOptions[Math.floor(Math.random() * hairColorOptions.length)];
+      const randomHairType = hairTypeOptions[Math.floor(Math.random() * hairTypeOptions.length)];
+      updateConfig('hairColor', randomHairColor);
+      updateConfig('hairType', randomHairType);
+    }
     
     // Only set Pro features if not restricted
     if (!isTrialProExhausted) {
@@ -146,7 +151,7 @@ export default function FilterEthnicity() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, ethnicityOptions, isTrialProExhausted]);
+  }, [isAnimating, navigate, updateConfig, ethnicityOptions, isTrialProExhausted, config.modestOption]);
 
   const handleRandomSingle = useCallback(() => {
     if (isAnimating) return;
