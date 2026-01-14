@@ -1,9 +1,10 @@
 import { Check, Sparkles, Crown, Zap, Star, Lock, Image, Plus, AlertTriangle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useSubscription } from "@/hooks/useSubscription";
+import { Footer } from "@/components/Footer";
 
 interface PlanFeature {
   textKey: string;
@@ -394,11 +395,24 @@ const Pricing = () => {
           </div>
         </div>
 
+        {/* Legal Notice for Payment */}
+        <div className="mt-12 p-6 rounded-xl bg-white/5 border border-white/10 max-w-2xl mx-auto text-center">
+          <p className="text-sm text-gray-400">
+            By completing your purchase, you accept the{' '}
+            <Link to="/legal/pre-information-form" className="text-primary hover:underline">Pre-Information Form</Link>
+            {' '}and{' '}
+            <Link to="/legal/distance-sales-agreement" className="text-primary hover:underline">Distance Sales Agreement</Link>.
+          </p>
+        </div>
+
         {/* Bottom Note */}
-        <p className="text-center text-gray-500 text-sm mt-12">
+        <p className="text-center text-gray-500 text-sm mt-8">
           {t('pricing.bottomNote')}
         </p>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

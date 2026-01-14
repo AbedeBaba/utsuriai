@@ -691,6 +691,13 @@ export default function Dashboard() {
             ))}
           </div>
         )}
+
+        {/* Legal Links */}
+        <div className="mt-12 pt-8 border-t border-border flex flex-wrap items-center justify-center gap-6 text-sm">
+          <a href="/legal/privacy-policy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</a>
+          <a href="/legal/terms-of-use" className="text-muted-foreground hover:text-foreground transition-colors">Terms of Use</a>
+          <a href="/legal/membership-agreement" className="text-muted-foreground hover:text-foreground transition-colors">Membership Agreement</a>
+        </div>
       </main>
     </div>
   );

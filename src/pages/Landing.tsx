@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
+import { Footer } from '@/components/Footer';
 import exampleProduct from '@/assets/example-product.jpeg';
 import exampleModel from '@/assets/example-model.jpeg';
 import modelRealBg from '@/assets/modelreal.jpg';
@@ -472,30 +473,6 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 bg-card border-t border-border">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-xl text-foreground">Utsuri</span>
-            </div>
-            
-            <p className="text-sm text-muted-foreground">
-              Powered by AI • Create unlimited unique models
-            </p>
-            
-            <div className="flex items-center gap-6">
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Privacy
-              </a>
-              <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Terms
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>;
 }

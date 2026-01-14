@@ -30,6 +30,13 @@ import AccountSettings from "./pages/AccountSettings";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
+// Legal pages
+import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
+import TermsOfUse from "./pages/legal/TermsOfUse";
+import MembershipAgreement from "./pages/legal/MembershipAgreement";
+import PreInformationForm from "./pages/legal/PreInformationForm";
+import DistanceSalesAgreement from "./pages/legal/DistanceSalesAgreement";
+
 const queryClient = new QueryClient();
 
 // App component with all providers
@@ -65,6 +72,12 @@ const App = () => (
               <Route path="/filter/expression" element={<FilterExpression />} />
               <Route path="/clothing" element={<ClothingSelection />} />
               <Route path="/result/:id" element={<Result />} />
+              {/* Legal pages */}
+              <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/legal/terms-of-use" element={<TermsOfUse />} />
+              <Route path="/legal/membership-agreement" element={<MembershipAgreement />} />
+              <Route path="/legal/pre-information-form" element={<PreInformationForm />} />
+              <Route path="/legal/distance-sales-agreement" element={<DistanceSalesAgreement />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
