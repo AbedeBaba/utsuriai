@@ -412,7 +412,7 @@ const Pricing = () => {
       </div>
       
       {/* Footer */}
-      <Footer />
+      <Footer variant="dark" />
     </div>
   );
 };
