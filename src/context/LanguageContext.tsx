@@ -151,7 +151,7 @@ export const translations: Translations = {
   'pricing.creditExplanation': { en: '1 credit = 1 AI-generated image', tr: '1 kredi = 1 AI tarafından oluşturulan görsel' },
   'pricing.featureComparison': { en: 'Feature Comparison', tr: 'Özellik Karşılaştırması' },
   'pricing.feature': { en: 'Feature', tr: 'Özellik' },
-  'pricing.bottomNote': { en: 'All plans include secure payments and can be cancelled anytime. Credits reset monthly.', tr: 'Tüm planlar güvenli ödeme içerir ve istediğiniz zaman iptal edilebilir. Krediler aylık olarak sıfırlanır.' },
+  'pricing.bottomNote': { en: 'All plans include secure payments. Credits reset monthly. Refunds are subject to applicable laws.', tr: 'Tüm planlar güvenli ödeme içerir. Krediler aylık olarak sıfırlanır. İadeler yürürlükteki mevzuata tabidir.' },
   
   // Plan names
   'pricing.trial': { en: 'Trial', tr: 'Deneme' },
