@@ -73,6 +73,7 @@ const backgroundOptions = ['City', 'Fashion White', 'Beach', 'Mountain', 'Forest
 const faceTypeOptions = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
 const expressionOptions = ['Neutral', 'Smile', 'Serious', 'Confident'];
 const modestOptions = ['Standard', 'Hijab'];
+const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard', 'Goatee', 'Mustache', 'Van Dyke', 'Circle Beard', 'Mutton Chops'];
 
 export default function FilterEthnicity() {
   const navigate = useNavigate();
@@ -151,11 +152,17 @@ export default function FilterEthnicity() {
       updateConfig('faceType', randomFaceType);
       updateConfig('facialExpression', randomExpression);
     }
+    
+    // For males, also set beard type
+    if (config.gender === 'Male') {
+      const randomBeardType = beardTypeOptions[Math.floor(Math.random() * beardTypeOptions.length)];
+      updateConfig('beardType', randomBeardType);
+    }
 
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, ethnicityOptions, hasProFeatureAccess, hasCreatorFeatureAccess, config.modestOption]);
+  }, [isAnimating, navigate, updateConfig, ethnicityOptions, hasProFeatureAccess, hasCreatorFeatureAccess, config.modestOption, config.gender]);
 
   const handleRandomSingle = useCallback(() => {
     if (isAnimating) return;
