@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Sparkles, ArrowLeft, Loader2 } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -24,6 +25,9 @@ const signUpSchema = z.object({
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number'),
+  acceptTerms: z.literal(true, {
+    errorMap: () => ({ message: 'You must accept the Terms of Use and Privacy Policy' }),
+  }),
 });
 
 export default function Auth() {
@@ -39,7 +43,8 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; email?: string; password?: string }>({});
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; email?: string; password?: string; acceptTerms?: string }>({});
 
   useEffect(() => {
     if (user) {
@@ -50,7 +55,7 @@ export default function Auth() {
   const validateForm = () => {
     try {
       if (isSignUp) {
-        signUpSchema.parse({ firstName, lastName, email, password });
+        signUpSchema.parse({ firstName, lastName, email, password, acceptTerms });
       } else {
         signInSchema.parse({ email, password });
       }
@@ -58,12 +63,13 @@ export default function Auth() {
       return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldErrors: { firstName?: string; lastName?: string; email?: string; password?: string } = {};
+        const fieldErrors: { firstName?: string; lastName?: string; email?: string; password?: string; acceptTerms?: string } = {};
         error.errors.forEach(err => {
           if (err.path[0] === 'firstName') fieldErrors.firstName = err.message;
           if (err.path[0] === 'lastName') fieldErrors.lastName = err.message;
           if (err.path[0] === 'email') fieldErrors.email = err.message;
           if (err.path[0] === 'password') fieldErrors.password = err.message;
+          if (err.path[0] === 'acceptTerms') fieldErrors.acceptTerms = err.message;
         });
         setErrors(fieldErrors);
       }
@@ -273,6 +279,33 @@ export default function Auth() {
               )}
             </div>
 
+            {/* Terms Checkbox - Only for Sign Up */}
+            {isSignUp && (
+              <div className="space-y-2">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="acceptTerms"
+                    checked={acceptTerms}
+                    onCheckedChange={(checked) => setAcceptTerms(checked === true)}
+                    className={errors.acceptTerms ? 'border-destructive' : ''}
+                  />
+                  <Label htmlFor="acceptTerms" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+                    I have read and accept the{' '}
+                    <Link to="/legal/terms-of-use" className="text-primary hover:underline" target="_blank">
+                      Terms of Use
+                    </Link>{' '}
+                    and{' '}
+                    <Link to="/legal/privacy-policy" className="text-primary hover:underline" target="_blank">
+                      Privacy Policy
+                    </Link>
+                  </Label>
+                </div>
+                {errors.acceptTerms && (
+                  <p className="text-sm text-destructive">{errors.acceptTerms}</p>
+                )}
+              </div>
+            )}
+
             <Button
               type="submit"
               disabled={loading || googleLoading}
@@ -291,10 +324,11 @@ export default function Auth() {
                 setErrors({});
                 setFirstName('');
                 setLastName('');
+                setAcceptTerms(false);
               }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              {isSignUp 
+              {isSignUp
                 ? t('auth.haveAccount')
                 : t('auth.noAccount')}
             </button>
