@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Sparkles, Upload, Wand2, Download, ArrowRight, Play } from 'lucide-react';
+import { Sparkles, Upload, Wand2, Download, ArrowRight, Play, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import exampleProduct from '@/assets/example-product.jpeg';
 import exampleModel from '@/assets/example-model.jpeg';
 import modelRealBg from '@/assets/modelreal.jpg';
@@ -31,6 +33,8 @@ export default function Landing() {
       navigate('/auth');
     }
   };
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
@@ -42,6 +46,7 @@ export default function Landing() {
             <span className="font-bold text-xl text-foreground">Utsuri</span>
           </div>
           
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               How it Works
@@ -54,7 +59,8 @@ export default function Landing() {
             </button>
           </nav>
 
-          <div className="flex items-center gap-4">
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-4">
             {!loading && user && <button onClick={() => navigate('/dashboard')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 {t('common.dashboard')}
               </button>}
@@ -67,6 +73,70 @@ export default function Landing() {
             <Button onClick={handleStart} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6">
               {t('common.getStarted')}
             </Button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden items-center gap-3">
+            <LanguageSwitcher />
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-10 w-10">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[280px] sm:w-[320px]">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <nav className="flex flex-col gap-6 mt-8">
+                  <a 
+                    href="#how-it-works" 
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    How it Works
+                  </a>
+                  <a 
+                    href="#features" 
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Features
+                  </a>
+                  <button 
+                    onClick={() => { navigate('/pricing'); setMobileMenuOpen(false); }} 
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left"
+                  >
+                    Pricing
+                  </button>
+                  
+                  <div className="h-px bg-border my-2" />
+                  
+                  {!loading && user && (
+                    <button 
+                      onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }} 
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left"
+                    >
+                      {t('common.dashboard')}
+                    </button>
+                  )}
+                  {!loading && !user && (
+                    <button 
+                      onClick={() => { navigate('/auth'); setMobileMenuOpen(false); }} 
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left"
+                    >
+                      {t('common.login')}
+                    </button>
+                  )}
+                  
+                  <Button 
+                    onClick={() => { handleStart(); setMobileMenuOpen(false); }} 
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full mt-4"
+                  >
+                    {t('common.getStarted')}
+                  </Button>
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
