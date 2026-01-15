@@ -270,81 +270,82 @@ export default function Landing() {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" style={{
-      backgroundColor: '#c4bfab'
-    }} className="py-28 relative overflow-hidden bg-[#6d625a]">
+      <section id="how-it-works" className="py-28 relative overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+        
         <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4">
               How <span className="italic text-primary">Utsuri</span> Works
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Create Fashion Models Without a Studio - Upload your product, choose a model, and get realistic AI fashion photos in minutes.</p>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">Create Fashion Models Without a Studio - Upload your product, choose a model, and get realistic AI fashion photos in minutes.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-8">
             {/* Step 1 - Transform */}
             <div className="relative group">
-              <div className="absolute -left-3 -top-3 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground z-10 shadow-lg">
+              <div className="absolute -left-2 -top-2 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-lg font-semibold text-primary-foreground z-10">
                 1
               </div>
-              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[380px] flex flex-col">
+              <div className="bg-white border border-slate-200 rounded-2xl h-full transition-all duration-200 hover:shadow-lg hover:-translate-y-1 min-h-[320px] flex flex-col shadow-sm">
                 <div className="flex-1 flex items-center justify-center p-8 pt-12">
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center shadow-lg border border-primary/20 group-hover:scale-110 group-hover:shadow-primary/30 transition-all duration-300">
-                    <Wand2 className="w-16 h-16 md:w-20 md:h-20 text-primary drop-shadow-lg" />
+                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-primary/10 flex items-center justify-center">
+                    <Wand2 className="w-12 h-12 md:w-14 md:h-14 text-primary" />
                   </div>
                 </div>
-                <div className="relative z-10 p-8 pt-0 text-center">
-                  <h3 className="text-2xl font-bold text-foreground mb-3">Transform</h3>
-                  <p className="text-muted-foreground text-base">Choose model, pose & environment with AI.</p>
+                <div className="p-6 pt-0 text-center">
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Transform</h3>
+                  <p className="text-slate-600 text-sm">Choose model, pose & environment with AI.</p>
                 </div>
               </div>
             </div>
 
             {/* Step 2 - Upload */}
             <div className="relative group">
-              <div className="absolute -left-3 -top-3 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground z-10 shadow-lg">
+              <div className="absolute -left-2 -top-2 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-lg font-semibold text-primary-foreground z-10">
                 2
               </div>
-              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[380px] flex flex-col">
+              <div className="bg-white border border-slate-200 rounded-2xl h-full transition-all duration-200 hover:shadow-lg hover:-translate-y-1 min-h-[320px] flex flex-col shadow-sm">
                 <div className="flex-1 flex items-center justify-center p-8 pt-12">
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center shadow-lg border border-primary/20 group-hover:scale-110 group-hover:shadow-primary/30 transition-all duration-300">
-                    <Upload className="w-16 h-16 md:w-20 md:h-20 text-primary drop-shadow-lg" />
+                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-primary/10 flex items-center justify-center">
+                    <Upload className="w-12 h-12 md:w-14 md:h-14 text-primary" />
                   </div>
                 </div>
-                <div className="relative z-10 p-8 pt-0 text-center">
-                  <h3 className="text-2xl font-bold text-foreground mb-3">Upload</h3>
-                  <p className="text-muted-foreground text-base">Upload your product photos in seconds.</p>
+                <div className="p-6 pt-0 text-center">
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Upload</h3>
+                  <p className="text-slate-600 text-sm">Upload your product photos in seconds.</p>
                 </div>
               </div>
             </div>
 
             {/* Step 3 - Download */}
             <div className="relative group">
-              <div className="absolute -left-3 -top-3 w-14 h-14 rounded-full bg-primary flex items-center justify-center text-2xl font-bold text-primary-foreground z-10 shadow-lg">
+              <div className="absolute -left-2 -top-2 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-lg font-semibold text-primary-foreground z-10">
                 3
               </div>
-              <div className="relative bg-gradient-to-br from-secondary via-background to-secondary/80 border-2 border-primary/20 rounded-3xl h-full transition-all duration-300 hover:shadow-2xl hover:border-primary/50 hover:scale-[1.02] overflow-hidden min-h-[380px] flex flex-col">
+              <div className="bg-white border border-slate-200 rounded-2xl h-full transition-all duration-200 hover:shadow-lg hover:-translate-y-1 min-h-[320px] flex flex-col shadow-sm">
                 <div className="flex-1 flex items-center justify-center p-8 pt-12">
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center shadow-lg border border-primary/20 group-hover:scale-110 group-hover:shadow-primary/30 transition-all duration-300">
-                    <Download className="w-16 h-16 md:w-20 md:h-20 text-primary drop-shadow-lg" />
+                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-primary/10 flex items-center justify-center">
+                    <Download className="w-12 h-12 md:w-14 md:h-14 text-primary" />
                   </div>
                 </div>
-                <div className="relative z-10 p-8 pt-0 text-center">
-                  <h3 className="text-2xl font-bold text-foreground mb-3">Download</h3>
-                  <p className="text-muted-foreground text-base">Get studio-quality images instantly.</p>
+                <div className="p-6 pt-0 text-center">
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Download</h3>
+                  <p className="text-slate-600 text-sm">Get studio-quality images instantly.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="text-center mt-16 flex flex-col items-center gap-3">
-            <Button onClick={handleStart} size="lg" className="relative bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/90 hover:via-primary hover:to-primary text-primary-foreground text-xl font-bold px-12 py-8 rounded-2xl shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300 animate-glow-pulse">
-              <span className="relative z-10 flex items-center gap-3">
-                Start for Free!
-                <ArrowRight className="h-6 w-6" />
+          <div className="text-center mt-14 flex flex-col items-center gap-3">
+            <Button onClick={handleStart} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-semibold px-10 py-6 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+              <span className="flex items-center gap-2">
+                Start for Free
+                <ArrowRight className="h-5 w-5" />
               </span>
             </Button>
-            <span className="text-sm text-muted-foreground font-medium">No credit card required</span>
+            <span className="text-sm text-slate-500">No credit card required</span>
           </div>
         </div>
       </section>
