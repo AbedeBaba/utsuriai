@@ -662,6 +662,9 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
   if (config.hairType) parts.push(`- Hair style: ${config.hairType}`);
   if (config.eyeColor) parts.push(`- Eye color: ${config.eyeColor}`);
   if (config.bodyType) parts.push(`- Body type: ${config.bodyType}`);
+  if (config.faceType) parts.push(`- Face shape: ${config.faceType}`);
+  if (config.facialExpression) parts.push(`- Expression: ${config.facialExpression}`);
+  if (config.beardType && config.gender === 'Male') parts.push(`- Beard/Facial hair: ${config.beardType}`);
   if (isPortraitPose) {
     parts.push(`- Pose: Face close-up portrait`);
   } else {
