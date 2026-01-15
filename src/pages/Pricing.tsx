@@ -127,7 +127,7 @@ const plans: PricingPlan[] = [
 const Pricing = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { isTrial, isTrialProExhausted, trialStandardRemaining } = useSubscription();
+  const { isTrial, isPaid, isTrialProExhausted, trialStandardRemaining } = useSubscription();
 
   const handleSelectPlan = (planName: string) => {
     navigate("/auth");
@@ -357,43 +357,45 @@ const Pricing = () => {
           </div>
         </div>
 
-        {/* Credit Packs Section */}
-        <div className="mt-20">
-          <h2 className="text-2xl font-bold text-white text-center mb-4">{t('pricing.creditPacks.title')}</h2>
-          <p className="text-gray-400 text-center mb-8 max-w-xl mx-auto">
-            {t('pricing.creditPacks.subtitle')}
-          </p>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
-            {creditPacks.map((pack) => (
-              <div
-                key={pack.credits}
-                className="relative rounded-xl p-5 bg-gradient-to-b from-[#1a1a25] to-[#12121a] border border-white/10 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(155,135,245,0.1)] group"
-              >
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-2">
-                    <Zap className="w-4 h-4 text-primary" />
-                    <span className="text-2xl font-bold text-white">{pack.credits}</span>
-                  </div>
-                  <p className="text-xs text-gray-400 mb-3">{t('pricing.credits')}</p>
-                  <p className="text-xl font-semibold text-primary">{pack.price}</p>
-                  <p className="text-[10px] text-gray-500 mt-1">
-                    ${(pack.priceValue / pack.credits * 100).toFixed(1)}¢ / {t('pricing.perCredit')}
-                  </p>
-                </div>
-                
-                <Button
-                  onClick={() => handleSelectPlan(`${pack.credits} credits`)}
-                  size="sm"
-                  className="w-full mt-4 bg-white/5 hover:bg-primary/20 text-white border border-white/10 hover:border-primary/50 transition-all"
+        {/* Credit Packs Section - Only visible to paid plan users */}
+        {isPaid && (
+          <div className="mt-20">
+            <h2 className="text-2xl font-bold text-white text-center mb-4">{t('pricing.creditPacks.title')}</h2>
+            <p className="text-gray-400 text-center mb-8 max-w-xl mx-auto">
+              {t('pricing.creditPacks.subtitle')}
+            </p>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
+              {creditPacks.map((pack) => (
+                <div
+                  key={pack.credits}
+                  className="relative rounded-xl p-5 bg-gradient-to-b from-[#1a1a25] to-[#12121a] border border-white/10 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(155,135,245,0.1)] group"
                 >
-                  <Plus className="w-3 h-3 mr-1" />
-                  {t('pricing.buy')}
-                </Button>
-              </div>
-            ))}
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-1 mb-2">
+                      <Zap className="w-4 h-4 text-primary" />
+                      <span className="text-2xl font-bold text-white">{pack.credits}</span>
+                    </div>
+                    <p className="text-xs text-gray-400 mb-3">{t('pricing.credits')}</p>
+                    <p className="text-xl font-semibold text-primary">{pack.price}</p>
+                    <p className="text-[10px] text-gray-500 mt-1">
+                      ${(pack.priceValue / pack.credits * 100).toFixed(1)}¢ / {t('pricing.perCredit')}
+                    </p>
+                  </div>
+                  
+                  <Button
+                    onClick={() => handleSelectPlan(`${pack.credits} credits`)}
+                    size="sm"
+                    className="w-full mt-4 bg-white/5 hover:bg-primary/20 text-white border border-white/10 hover:border-primary/50 transition-all"
+                  >
+                    <Plus className="w-3 h-3 mr-1" />
+                    {t('pricing.buy')}
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Legal Notice for Payment */}
         <div className="mt-12 p-6 rounded-xl bg-white/5 border border-white/10 max-w-2xl mx-auto text-center">
