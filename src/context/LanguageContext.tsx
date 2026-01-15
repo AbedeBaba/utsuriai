@@ -28,6 +28,14 @@ export const translations: Translations = {
   'common.pricing': { en: 'Pricing', tr: 'Fiyatlandırma' },
   'common.getStarted': { en: 'Get Started', tr: 'Başla' },
   'common.learnMore': { en: 'Learn More', tr: 'Daha Fazla' },
+  'common.contact': { en: 'Contact', tr: 'İletişim' },
+  'common.home': { en: 'Home', tr: 'Ana Sayfa' },
+  
+  // Navigation
+  'nav.howItWorks': { en: 'How it Works', tr: 'Nasıl Çalışır' },
+  'nav.features': { en: 'Features', tr: 'Özellikler' },
+  'nav.pricing': { en: 'Pricing', tr: 'Fiyatlandırma' },
+  'nav.watchDemo': { en: 'Watch Demo', tr: 'Demo İzle' },
   
   // Auth
   'auth.welcomeBack': { en: 'Welcome back', tr: 'Tekrar hoş geldiniz' },
@@ -54,6 +62,9 @@ export const translations: Translations = {
   'dashboard.untitled': { en: 'Untitled', tr: 'İsimsiz' },
   'dashboard.selectCategory': { en: 'Select category', tr: 'Kategori seçin' },
   'dashboard.expired': { en: 'Expired', tr: 'Süresi doldu' },
+  'dashboard.savedModels': { en: 'Saved Models', tr: 'Kayıtlı Modeller' },
+  'dashboard.credits': { en: 'Credits', tr: 'Kredi' },
+  'dashboard.generationsRemaining': { en: 'generations remaining', tr: 'oluşturma hakkı' },
   
   // Account Settings
   'account.title': { en: 'Account Settings', tr: 'Hesap Ayarları' },
@@ -123,6 +134,10 @@ export const translations: Translations = {
   'filter.faceTypeSubtitle': { en: 'Choose the face type for your model', tr: 'Modeliniz için yüz tipi seçin' },
   'filter.selectExpression': { en: 'Select Expression', tr: 'İfade Seçin' },
   'filter.expressionSubtitle': { en: 'Choose the facial expression for your model', tr: 'Modeliniz için yüz ifadesi seçin' },
+  'filter.goBack': { en: 'Go Back', tr: 'Geri Dön' },
+  'filter.selectRandomAll': { en: 'Select Random All', tr: 'Rastgele Tümünü Seç' },
+  'filter.selectRandomThis': { en: 'Select Random for This Filter', tr: 'Bu Filtre İçin Rastgele Seç' },
+  'filter.infoText': { en: 'Images shown in the cards are for example purposes only. AI-generated models are unique creations and not exact recreations.', tr: 'Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. AI tarafından oluşturulan modeller benzersiz yaratımlardır ve birebir kopyalar değildir.' },
   
   // Result Page
   'result.yourModel': { en: 'Your Model', tr: 'Modeliniz' },
@@ -142,8 +157,39 @@ export const translations: Translations = {
   // Landing Page
   'landing.hero.title': { en: 'AI Fashion Photography', tr: 'AI Moda Fotoğrafçılığı' },
   'landing.hero.subtitle': { en: 'Create stunning fashion photos with AI Generated Models', tr: 'AI Modelleri ile çarpıcı moda fotoğrafları oluşturun' },
+  'landing.hero.mainTitle': { en: 'Transform Fashion with AI', tr: 'AI ile Modayı Dönüştürün' },
+  'landing.hero.mainSubtitle': { en: 'Create stunning AI-generated model photos for your fashion brand', tr: 'Moda markanız için çarpıcı AI model fotoğrafları oluşturun' },
+  'landing.hero.createStunning': { en: 'Create stunning fashion photos with AI generated models', tr: 'AI tarafından oluşturulan modellerle çarpıcı moda fotoğrafları oluşturun' },
+  'landing.hero.perfectFor': { en: 'Perfect for fashion brands that value quality, speed, and flexibility. Bring your products to life at a fraction of the cost.', tr: 'Kalite, hız ve esneklik değer veren moda markaları için mükemmel. Ürünlerinizi çok daha düşük maliyetle hayata geçirin.' },
+  'landing.hero.aiPowered': { en: 'AI-Powered Fashion Photography', tr: 'AI Destekli Moda Fotoğrafçılığı' },
   'landing.cta.title': { en: 'Ready to Transform Your Fashion Photography?', tr: 'Moda Fotoğrafçılığınızı Dönüştürmeye Hazır mısınız?' },
   'landing.cta.subtitle': { en: 'Join thousands of fashion brands using AI to create stunning product photos', tr: 'Çarpıcı ürün fotoğrafları oluşturmak için AI kullanan binlerce moda markasına katılın' },
+  'landing.stats.costReduction': { en: 'Cost Reduction', tr: 'Maliyet Düşüşü' },
+  'landing.stats.fasterToMarket': { en: 'Faster to Market', tr: 'Pazara Daha Hızlı' },
+  'landing.stats.conversionBoost': { en: 'Conversion Boost', tr: 'Dönüşüm Artışı' },
+  'landing.stats.modelDiversity': { en: 'Model Diversity', tr: 'Model Çeşitliliği' },
+  'landing.howItWorks.title': { en: 'How Utsuri Works', tr: 'Utsuri Nasıl Çalışır' },
+  'landing.howItWorks.subtitle': { en: 'Create Fashion Models Without a Studio - Upload your product, choose a model, and get realistic AI fashion photos in minutes.', tr: 'Stüdyo Olmadan Moda Modelleri Oluşturun - Ürününüzü yükleyin, model seçin ve dakikalar içinde gerçekçi AI moda fotoğrafları alın.' },
+  'landing.howItWorks.transform': { en: 'Transform', tr: 'Dönüştür' },
+  'landing.howItWorks.transformDesc': { en: 'Choose model, pose & environment with AI.', tr: 'AI ile model, poz ve ortam seçin.' },
+  'landing.howItWorks.upload': { en: 'Upload', tr: 'Yükle' },
+  'landing.howItWorks.uploadDesc': { en: 'Add your product photos quickly & easily.', tr: 'Ürün fotoğraflarınızı hızlı ve kolay ekleyin.' },
+  'landing.howItWorks.download': { en: 'Download', tr: 'İndir' },
+  'landing.howItWorks.downloadDesc': { en: 'Get high-quality AI fashion photos.', tr: 'Yüksek kaliteli AI moda fotoğrafları alın.' },
+  'landing.features.diverseModels': { en: 'Diverse Models', tr: 'Çeşitli Modeller' },
+  'landing.features.diverseModelsDesc': { en: 'Choose from a wide range of AI models representing various ethnicities, body types, and styles.', tr: 'Çeşitli etnik kökenleri, vücut tiplerini ve stilleri temsil eden geniş bir AI model yelpazesinden seçim yapın.' },
+  'landing.features.instantGeneration': { en: 'Instant Generation', tr: 'Anında Oluşturma' },
+  'landing.features.instantGenerationDesc': { en: 'Generate professional fashion photos in seconds, not hours.', tr: 'Profesyonel moda fotoğraflarını saatler değil saniyeler içinde oluşturun.' },
+  'landing.features.studioQuality': { en: 'Studio Quality', tr: 'Stüdyo Kalitesi' },
+  'landing.features.studioQualityDesc': { en: 'Professional-grade photos that rival traditional studio shoots.', tr: 'Geleneksel stüdyo çekimlerine rakip profesyonel kalitede fotoğraflar.' },
+  'landing.features.fullRights': { en: 'Full Image Rights', tr: 'Tam Görsel Hakları' },
+  'landing.features.fullRightsDesc': { en: 'You own the rights to every image you create—use them anywhere.', tr: 'Oluşturduğunuz her görselin haklarına sahipsiniz—istediğiniz yerde kullanın.' },
+  'landing.features.multiAngle': { en: 'Multi-Angle Shots', tr: 'Çoklu Açı Çekimleri' },
+  'landing.features.multiAngleDesc': { en: 'Get multiple angles and poses for each product automatically.', tr: 'Her ürün için otomatik olarak birden fazla açı ve poz alın.' },
+  'landing.features.aiSolutions': { en: 'AI Solutions to Boost Your Brand', tr: 'Markanızı Güçlendiren AI Çözümleri' },
+  'landing.productPhoto': { en: 'Product Photo', tr: 'Ürün Fotoğrafı' },
+  'landing.aiModel': { en: 'AI Model', tr: 'AI Model' },
+  'landing.aiResult': { en: 'AI Result', tr: 'AI Sonucu' },
   
   // Pricing
   'pricing.title': { en: 'Choose Your Plan', tr: 'Planınızı Seçin' },
@@ -237,6 +283,28 @@ export const translations: Translations = {
   // Language
   'language.english': { en: 'English', tr: 'İngilizce' },
   'language.turkish': { en: 'Turkish', tr: 'Türkçe' },
+  
+  // Footer
+  'footer.product': { en: 'Product', tr: 'Ürün' },
+  'footer.features': { en: 'Features', tr: 'Özellikler' },
+  'footer.pricing': { en: 'Pricing', tr: 'Fiyatlandırma' },
+  'footer.legal': { en: 'Legal', tr: 'Yasal' },
+  'footer.privacyPolicy': { en: 'Privacy Policy', tr: 'Gizlilik Politikası' },
+  'footer.termsOfUse': { en: 'Terms of Use', tr: 'Kullanım Koşulları' },
+  'footer.membershipAgreement': { en: 'Membership Agreement', tr: 'Üyelik Sözleşmesi' },
+  'footer.preInformationForm': { en: 'Pre-Information Form', tr: 'Ön Bilgilendirme Formu' },
+  'footer.distanceSalesAgreement': { en: 'Distance Sales Agreement', tr: 'Mesafeli Satış Sözleşmesi' },
+  'footer.contact': { en: 'Contact', tr: 'İletişim' },
+  'footer.allRightsReserved': { en: 'All rights reserved.', tr: 'Tüm hakları saklıdır.' },
+  
+  // Contact Page
+  'contact.title': { en: 'Contact Us', tr: 'Bize Ulaşın' },
+  'contact.subtitle': { en: 'We\'d love to hear from you', tr: 'Sizden haber almaktan mutluluk duyarız' },
+  'contact.address': { en: 'Address', tr: 'Adres' },
+  'contact.phone': { en: 'Phone', tr: 'Telefon' },
+  'contact.email': { en: 'Support Email', tr: 'Destek E-postası' },
+  'contact.getInTouch': { en: 'Get in Touch', tr: 'İletişime Geçin' },
+  'contact.reachOut': { en: 'Reach out to us through any of the following channels. We\'re here to help!', tr: 'Aşağıdaki kanallardan bize ulaşın. Yardımcı olmak için buradayız!' },
 };
 
 interface LanguageContextType {
@@ -249,9 +317,9 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>(() => {
-    // Check localStorage for saved preference
+    // Check localStorage for saved preference, default to Turkish
     const saved = localStorage.getItem('language');
-    return (saved as Language) || 'en';
+    return (saved as Language) || 'tr';
   });
 
   const handleSetLanguage = useCallback((lang: Language) => {
