@@ -165,113 +165,113 @@ export default function Landing() {
       </section>
 
       {/* Hero Section */}
-      <section className="relative pt-36 pb-24 lg:pt-44 lg:pb-36 overflow-hidden bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)]">
+      <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-28 overflow-hidden bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)]">
         {/* Subtle background accents */}
         <div className="absolute inset-0 opacity-30 pointer-events-none">
           <div className="absolute top-20 left-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative z-10 max-w-[1400px] mx-auto px-8 lg:px-12">
-          <div className="grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-20 items-start">
-            {/* Left content - shifted more left with larger text */}
-            <div className="text-center lg:text-left lg:pr-8">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-base mb-10">
-                <Sparkles className="h-5 w-5 text-primary" />
+        <div className="relative z-10 max-w-[1400px] mx-auto px-8 lg:px-16">
+          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-16 items-center">
+            {/* Left content - shifted left with refined typography */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm mb-8">
+                <Sparkles className="h-4 w-4 text-primary" />
                 <span className="text-foreground font-medium">AI-Powered Fashion Photography</span>
               </div>
               
-              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-foreground mb-10 leading-[1.1]">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-8 leading-[1.15]">
                 Create <span className="italic text-primary">stunning</span> fashion photos with AI generated models
               </h1>
               
-              <p className="text-xl lg:text-2xl text-muted-foreground mb-14 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-lg lg:text-xl text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
                 Perfect for fashion brands that value quality, speed, and flexibility. 
                 Bring your products to life at a fraction of the cost.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
-                <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-lg px-10 py-7 rounded-xl">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-base px-8 py-6 rounded-xl">
                   Get Started
-                  <ArrowRight className="ml-2 h-6 w-6" />
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 
-                <Button variant="outline" size="lg" className="text-lg px-10 py-7 rounded-xl border-2 border-border hover:bg-secondary">
-                  <Play className="mr-2 h-6 w-6" />
+                <Button variant="outline" size="lg" className="text-base px-8 py-6 rounded-xl border-2 border-border hover:bg-secondary">
+                  <Play className="mr-2 h-5 w-5" />
                   Watch Demo
                 </Button>
               </div>
             </div>
 
             {/* Right content - Stacked Transformation Examples */}
-            <div className="relative flex flex-col gap-10">
+            <div className="relative flex flex-col gap-14 items-center">
               {/* Transformation Example 1 */}
-              <div className="flex flex-row gap-4 md:gap-6 items-center justify-center">
+              <div className="flex flex-row gap-5 md:gap-8 items-center justify-center">
                 {/* Product Image */}
-                <div className="relative w-full max-w-[180px] md:max-w-[220px] lg:max-w-[260px]">
-                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-slate-400/50 bg-white">
+                <div className="relative">
+                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.15)]">
                     <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/1705c0f2-68bc-4333-a1c8-ad01e24a5811.jpg" />
                   </div>
-                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted border border-slate-300 text-sm font-medium text-muted-foreground whitespace-nowrap shadow-sm">
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white border border-slate-300 text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
                     Product Photo
                   </div>
                 </div>
 
                 {/* Arrow */}
-                <div className="flex flex-col items-center gap-2 px-2">
-                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                <div className="flex flex-col items-center gap-3 px-2">
+                  <div className="w-14 h-14 rounded-full bg-white/80 flex items-center justify-center border border-primary/30 shadow-md">
                     <Wand2 className="w-7 h-7 text-primary" />
                   </div>
-                  <ArrowRight className="w-7 h-7 text-primary" />
+                  <ArrowRight className="w-6 h-6 text-primary" />
                 </div>
 
                 {/* Model Image */}
-                <div className="relative w-full max-w-[180px] md:max-w-[220px] lg:max-w-[260px]">
-                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/40 bg-white">
+                <div className="relative">
+                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.25)]">
                     <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/5212774f-8c09-42bf-b019-8f7f544f3c3b.png" />
                   </div>
-                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-sm">
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
                     AI Model
                   </div>
                 </div>
               </div>
 
               {/* Transformation Example 2 - Placeholder */}
-              <div className="flex flex-row gap-4 md:gap-6 items-center justify-center">
+              <div className="flex flex-row gap-5 md:gap-8 items-center justify-center">
                 {/* Product Image Placeholder */}
-                <div className="relative w-full max-w-[180px] md:max-w-[220px] lg:max-w-[260px]">
-                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border-2 border-slate-400/50 bg-white flex items-center justify-center">
-                    <div className="text-center p-4">
-                      <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center">
-                        <Upload className="w-8 h-8 text-slate-400" />
+                <div className="relative">
+                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.12)] flex items-center justify-center">
+                    <div className="text-center p-6">
+                      <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center">
+                        <Upload className="w-10 h-10 text-slate-400" />
                       </div>
-                      <p className="text-sm text-slate-400 font-medium">Product Photo</p>
+                      <p className="text-base text-slate-400 font-medium">Product Photo</p>
                     </div>
                   </div>
-                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-muted border border-slate-300 text-sm font-medium text-muted-foreground whitespace-nowrap shadow-sm">
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white border border-slate-300 text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
                     Product Photo
                   </div>
                 </div>
 
                 {/* Arrow */}
-                <div className="flex flex-col items-center gap-2 px-2">
-                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                <div className="flex flex-col items-center gap-3 px-2">
+                  <div className="w-14 h-14 rounded-full bg-white/80 flex items-center justify-center border border-primary/30 shadow-md">
                     <Wand2 className="w-7 h-7 text-primary" />
                   </div>
-                  <ArrowRight className="w-7 h-7 text-primary" />
+                  <ArrowRight className="w-6 h-6 text-primary" />
                 </div>
 
                 {/* Model Image Placeholder */}
-                <div className="relative w-full max-w-[180px] md:max-w-[220px] lg:max-w-[260px]">
-                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border-2 border-primary/40 bg-white flex items-center justify-center">
-                    <div className="text-center p-4">
-                      <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-primary/10 border-2 border-dashed border-primary/30 flex items-center justify-center">
-                        <Sparkles className="w-8 h-8 text-primary/50" />
+                <div className="relative">
+                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.2)] flex items-center justify-center">
+                    <div className="text-center p-6">
+                      <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-primary/10 border-2 border-dashed border-primary/30 flex items-center justify-center">
+                        <Sparkles className="w-10 h-10 text-primary/50" />
                       </div>
-                      <p className="text-sm text-primary/60 font-medium">AI Result</p>
+                      <p className="text-base text-primary/60 font-medium">AI Result</p>
                     </div>
                   </div>
-                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-sm">
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
                     AI Model
                   </div>
                 </div>
