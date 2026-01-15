@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Sparkles, MapPin, Phone, Mail } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface FooterProps {
   variant?: 'light' | 'dark';
@@ -7,6 +8,7 @@ interface FooterProps {
 
 export function Footer({ variant = 'light' }: FooterProps) {
   const isDark = variant === 'dark';
+  const { t } = useLanguage();
   
   return (
     <footer className={`py-12 ${isDark ? 'bg-[#0a0a0f] border-t border-white/10' : 'bg-secondary/30 border-t border-border'}`}>
@@ -21,20 +23,20 @@ export function Footer({ variant = 'light' }: FooterProps) {
               <span className={`font-bold text-xl ${isDark ? 'text-white' : 'text-foreground'}`}>UtsuriAI</span>
             </div>
             <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`}>
-              AI-powered fashion photography platform. Create stunning model photos in minutes.
+              {t('footer.brandDescription')}
             </p>
           </div>
 
           {/* Legal Links */}
           <div>
-            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>Yasal</h3>
+            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>{t('footer.legal')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link 
                   to="/legal/privacy-policy" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Gizlilik Politikası
+                  {t('footer.privacyPolicy')}
                 </Link>
               </li>
               <li>
@@ -42,7 +44,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
                   to="/legal/terms-of-use" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Kullanım Koşulları
+                  {t('footer.termsOfUse')}
                 </Link>
               </li>
               <li>
@@ -50,7 +52,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
                   to="/legal/membership-agreement" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Üyelik Sözleşmesi
+                  {t('footer.membershipAgreement')}
                 </Link>
               </li>
             </ul>
@@ -58,14 +60,14 @@ export function Footer({ variant = 'light' }: FooterProps) {
 
           {/* Sales Documents */}
           <div>
-            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>Satış</h3>
+            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>{t('footer.sales')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link 
                   to="/legal/pre-information-form" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Ön Bilgilendirme Formu
+                  {t('footer.preInformationForm')}
                 </Link>
               </li>
               <li>
@@ -73,7 +75,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
                   to="/legal/distance-sales-agreement" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Mesafeli Satış Sözleşmesi
+                  {t('footer.distanceSalesAgreement')}
                 </Link>
               </li>
             </ul>
@@ -81,7 +83,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
 
           {/* Contact */}
           <div>
-            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>İletişim</h3>
+            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>{t('footer.contact')}</h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
                 <MapPin className={`h-4 w-4 mt-0.5 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`} />
@@ -112,7 +114,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
                   to="/contact" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  İletişim Sayfası →
+                  {t('footer.contactPage')}
                 </Link>
               </li>
             </ul>
@@ -122,20 +124,20 @@ export function Footer({ variant = 'light' }: FooterProps) {
         {/* Bottom Bar */}
         <div className={`pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 ${isDark ? 'border-white/10' : 'border-border'}`}>
           <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-muted-foreground'}`}>
-            © {new Date().getFullYear()} UtsuriAI. Tüm hakları saklıdır.
+            © {new Date().getFullYear()} UtsuriAI. {t('footer.allRightsReserved')}
           </p>
           <div className="flex items-center gap-6">
             <Link 
               to="/legal/privacy-policy" 
               className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Gizlilik
+              {t('footer.privacy')}
             </Link>
             <Link 
               to="/legal/terms-of-use" 
               className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Koşullar
+              {t('footer.terms')}
             </Link>
           </div>
         </div>

@@ -302,13 +302,18 @@ export const translations: Translations = {
   'footer.features': { en: 'Features', tr: 'Özellikler' },
   'footer.pricing': { en: 'Pricing', tr: 'Fiyatlandırma' },
   'footer.legal': { en: 'Legal', tr: 'Yasal' },
+  'footer.sales': { en: 'Sales', tr: 'Satış' },
   'footer.privacyPolicy': { en: 'Privacy Policy', tr: 'Gizlilik Politikası' },
   'footer.termsOfUse': { en: 'Terms of Use', tr: 'Kullanım Koşulları' },
   'footer.membershipAgreement': { en: 'Membership Agreement', tr: 'Üyelik Sözleşmesi' },
   'footer.preInformationForm': { en: 'Pre-Information Form', tr: 'Ön Bilgilendirme Formu' },
   'footer.distanceSalesAgreement': { en: 'Distance Sales Agreement', tr: 'Mesafeli Satış Sözleşmesi' },
   'footer.contact': { en: 'Contact', tr: 'İletişim' },
+  'footer.contactPage': { en: 'Contact Page →', tr: 'İletişim Sayfası →' },
   'footer.allRightsReserved': { en: 'All rights reserved.', tr: 'Tüm hakları saklıdır.' },
+  'footer.privacy': { en: 'Privacy', tr: 'Gizlilik' },
+  'footer.terms': { en: 'Terms', tr: 'Koşullar' },
+  'footer.brandDescription': { en: 'AI-powered fashion photography platform. Create stunning model photos in minutes.', tr: 'AI destekli moda fotoğrafçılığı platformu. Dakikalar içinde çarpıcı model fotoğrafları oluşturun.' },
   
   // Contact Page
   'contact.title': { en: 'Contact Us', tr: 'Bize Ulaşın' },
