@@ -152,6 +152,9 @@ export const translations: Translations = {
   'pricing.featureComparison': { en: 'Feature Comparison', tr: 'Özellik Karşılaştırması' },
   'pricing.feature': { en: 'Feature', tr: 'Özellik' },
   'pricing.bottomNote': { en: 'All plans include secure payments. Credits reset monthly. Refunds are subject to applicable laws.', tr: 'Tüm planlar güvenli ödeme içerir. Krediler aylık olarak sıfırlanır. İadeler yürürlükteki mevzuata tabidir.' },
+  'pricing.upgradeToUnlock': { en: 'Upgrade to Purchase Credits', tr: 'Kredi Satın Almak İçin Yükseltin' },
+  'pricing.upgradeToUnlockDescription': { en: 'Credit packs are available exclusively for paid plan subscribers. Choose a plan above to unlock the ability to purchase additional credits.', tr: 'Kredi paketleri yalnızca ücretli plan aboneleri için kullanılabilir. Ek kredi satın alma özelliğini açmak için yukarıdan bir plan seçin.' },
+  'pricing.chooseAPlanAbove': { en: 'Choose a Starter, Pro, or Creator plan to get started.', tr: 'Başlamak için Başlangıç, Pro veya Yaratıcı planlarından birini seçin.' },
   
   // Plan names
   'pricing.trial': { en: 'Trial', tr: 'Deneme' },

@@ -358,7 +358,7 @@ const Pricing = () => {
         </div>
 
         {/* Credit Packs Section - Only visible to paid plan users */}
-        {isPaid && (
+        {isPaid ? (
           <div className="mt-20">
             <h2 className="text-2xl font-bold text-white text-center mb-4">{t('pricing.creditPacks.title')}</h2>
             <p className="text-gray-400 text-center mb-8 max-w-xl mx-auto">
@@ -395,7 +395,22 @@ const Pricing = () => {
               ))}
             </div>
           </div>
-        )}
+        ) : isTrial ? (
+          <div className="mt-20 max-w-2xl mx-auto">
+            <div className="rounded-xl p-8 bg-gradient-to-b from-[#1a1a25] to-[#12121a] border border-primary/30 text-center">
+              <Zap className="w-10 h-10 text-primary mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-3">
+                {t('pricing.upgradeToUnlock')}
+              </h3>
+              <p className="text-gray-400 mb-6">
+                {t('pricing.upgradeToUnlockDescription')}
+              </p>
+              <p className="text-sm text-gray-500">
+                {t('pricing.chooseAPlanAbove')}
+              </p>
+            </div>
+          </div>
+        ) : null}
 
         {/* Legal Notice for Payment */}
         <div className="mt-12 p-6 rounded-xl bg-white/5 border border-white/10 max-w-2xl mx-auto text-center">
