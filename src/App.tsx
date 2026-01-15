@@ -47,9 +47,9 @@ const App = () => (
       <AuthProvider>
         <ModelConfigProvider>
           <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/pricing" element={<Pricing />} />
