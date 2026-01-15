@@ -282,7 +282,7 @@ export default function Landing() {
               <div className="absolute -left-2 -top-2 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-lg font-semibold text-primary-foreground z-10">
                 1
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl h-full transition-all duration-200 hover:shadow-lg hover:-translate-y-1 min-h-[320px] flex flex-col shadow-sm">
+              <div className="bg-white border-[1.5px] border-slate-300/80 rounded-2xl h-full transition-all duration-200 hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 min-h-[320px] flex flex-col shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)]">
                 <div className="flex-1 flex items-center justify-center p-8 pt-12">
                   <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-primary/10 flex items-center justify-center">
                     <Wand2 className="w-12 h-12 md:w-14 md:h-14 text-primary" />
@@ -300,7 +300,7 @@ export default function Landing() {
               <div className="absolute -left-2 -top-2 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-lg font-semibold text-primary-foreground z-10">
                 2
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl h-full transition-all duration-200 hover:shadow-lg hover:-translate-y-1 min-h-[320px] flex flex-col shadow-sm">
+              <div className="bg-white border-[1.5px] border-slate-300/80 rounded-2xl h-full transition-all duration-200 hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 min-h-[320px] flex flex-col shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)]">
                 <div className="flex-1 flex items-center justify-center p-8 pt-12">
                   <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-primary/10 flex items-center justify-center">
                     <Upload className="w-12 h-12 md:w-14 md:h-14 text-primary" />
@@ -318,7 +318,7 @@ export default function Landing() {
               <div className="absolute -left-2 -top-2 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-lg font-semibold text-primary-foreground z-10">
                 3
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl h-full transition-all duration-200 hover:shadow-lg hover:-translate-y-1 min-h-[320px] flex flex-col shadow-sm">
+              <div className="bg-white border-[1.5px] border-slate-300/80 rounded-2xl h-full transition-all duration-200 hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 min-h-[320px] flex flex-col shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)]">
                 <div className="flex-1 flex items-center justify-center p-8 pt-12">
                   <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl bg-primary/10 flex items-center justify-center">
                     <Download className="w-12 h-12 md:w-14 md:h-14 text-primary" />
