@@ -425,10 +425,10 @@ const Pricing = () => {
         {/* Legal Notice for Payment */}
         <div className="mt-12 p-6 rounded-xl bg-white/5 border border-white/10 max-w-2xl mx-auto text-center">
           <p className="text-sm text-gray-400">
-            By completing your purchase, you accept the{' '}
-            <Link to="/legal/pre-information-form" className="text-primary hover:underline">Pre-Information Form</Link>
-            {' '}and{' '}
-            <Link to="/legal/distance-sales-agreement" className="text-primary hover:underline">Distance Sales Agreement</Link>.
+            Satın alma işlemini tamamlayarak{' '}
+            <Link to="/legal/pre-information-form" className="text-primary hover:underline">Ön Bilgilendirme Formu</Link>'nu
+            {' '}ve{' '}
+            <Link to="/legal/distance-sales-agreement" className="text-primary hover:underline">Mesafeli Satış Sözleşmesi</Link>'ni kabul etmiş olursunuz.
           </p>
         </div>
 

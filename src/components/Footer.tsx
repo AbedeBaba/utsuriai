@@ -18,7 +18,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Sparkles className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className={`font-bold text-xl ${isDark ? 'text-white' : 'text-foreground'}`}>Utsuri</span>
+              <span className={`font-bold text-xl ${isDark ? 'text-white' : 'text-foreground'}`}>UtsuriAI</span>
             </div>
             <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`}>
               AI-powered fashion photography platform. Create stunning model photos in minutes.
@@ -27,14 +27,14 @@ export function Footer({ variant = 'light' }: FooterProps) {
 
           {/* Legal Links */}
           <div>
-            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>Legal</h3>
+            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>Yasal</h3>
             <ul className="space-y-2">
               <li>
                 <Link 
                   to="/legal/privacy-policy" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Privacy Policy
+                  Gizlilik Politikası
                 </Link>
               </li>
               <li>
@@ -42,7 +42,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
                   to="/legal/terms-of-use" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Terms of Use
+                  Kullanım Koşulları
                 </Link>
               </li>
               <li>
@@ -50,7 +50,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
                   to="/legal/membership-agreement" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Membership Agreement
+                  Üyelik Sözleşmesi
                 </Link>
               </li>
             </ul>
@@ -58,14 +58,14 @@ export function Footer({ variant = 'light' }: FooterProps) {
 
           {/* Sales Documents */}
           <div>
-            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>Sales</h3>
+            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>Satış</h3>
             <ul className="space-y-2">
               <li>
                 <Link 
                   to="/legal/pre-information-form" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Pre-Information Form
+                  Ön Bilgilendirme Formu
                 </Link>
               </li>
               <li>
@@ -73,7 +73,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
                   to="/legal/distance-sales-agreement" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Distance Sales Agreement
+                  Mesafeli Satış Sözleşmesi
                 </Link>
               </li>
             </ul>
@@ -81,22 +81,22 @@ export function Footer({ variant = 'light' }: FooterProps) {
 
           {/* Company */}
           <div>
-            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>Company</h3>
+            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>Şirket</h3>
             <ul className="space-y-2">
               <li>
                 <Link 
                   to="/pricing" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Pricing
+                  Fiyatlandırma
                 </Link>
               </li>
               <li>
                 <a 
-                  href="mailto:support@utsuri.ai" 
+                  href="mailto:bussiness@utsuriai.com" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  Contact Us
+                  İletişim
                 </a>
               </li>
             </ul>
@@ -106,20 +106,20 @@ export function Footer({ variant = 'light' }: FooterProps) {
         {/* Bottom Bar */}
         <div className={`pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 ${isDark ? 'border-white/10' : 'border-border'}`}>
           <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-muted-foreground'}`}>
-            © {new Date().getFullYear()} Utsuri. All rights reserved.
+            © {new Date().getFullYear()} UtsuriAI. Tüm hakları saklıdır.
           </p>
           <div className="flex items-center gap-6">
             <Link 
               to="/legal/privacy-policy" 
               className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Privacy
+              Gizlilik
             </Link>
             <Link 
               to="/legal/terms-of-use" 
               className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Terms
+              Koşullar
             </Link>
           </div>
         </div>

@@ -26,7 +26,7 @@ const signUpSchema = z.object({
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number'),
   acceptTerms: z.literal(true, {
-    errorMap: () => ({ message: 'You must accept the Terms of Use and Privacy Policy' }),
+    errorMap: () => ({ message: 'Gizlilik Politikası ve Kullanım Koşullarını kabul etmelisiniz' }),
   }),
 });
 
@@ -290,14 +290,13 @@ export default function Auth() {
                     className={errors.acceptTerms ? 'border-destructive' : ''}
                   />
                   <Label htmlFor="acceptTerms" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-                    I have read and accept the{' '}
-                    <Link to="/legal/terms-of-use" className="text-primary hover:underline" target="_blank">
-                      Terms of Use
-                    </Link>{' '}
-                    and{' '}
                     <Link to="/legal/privacy-policy" className="text-primary hover:underline" target="_blank">
-                      Privacy Policy
-                    </Link>
+                      Gizlilik Politikası
+                    </Link>{' '}
+                    ve{' '}
+                    <Link to="/legal/terms-of-use" className="text-primary hover:underline" target="_blank">
+                      Kullanım Koşulları
+                    </Link>'nı okudum ve kabul ediyorum
                   </Label>
                 </div>
                 {errors.acceptTerms && (

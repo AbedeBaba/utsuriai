@@ -1,5 +1,5 @@
-import { ArrowLeft, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function PrivacyPolicy() {
@@ -8,108 +8,96 @@ export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Button 
-            variant="ghost" 
-            size="icon" 
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
+        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => navigate(-1)}
             className="text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
             <Sparkles className="h-5 w-5 text-primary" />
-            <span className="font-medium text-foreground italic">Utsuri</span>
+            <span className="font-medium text-foreground italic">UtsuriAI</span>
           </div>
-          
           <div className="w-10" />
         </div>
       </header>
 
       {/* Content */}
       <main className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-3xl font-bold text-foreground mb-8">Privacy Policy</h1>
-        
-        <div className="prose prose-neutral dark:prose-invert max-w-none space-y-6">
-          <p className="text-muted-foreground">Last updated: January 2025</p>
+        <h1 className="text-3xl font-bold text-foreground mb-8">Gizlilik Politikası</h1>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">1. Information We Collect</h2>
-            <p className="text-muted-foreground">
-              We collect information you provide directly to us, such as when you create an account, 
-              use our services, or contact us for support. This includes:
-            </p>
-            <ul className="list-disc pl-6 text-muted-foreground space-y-2 mt-4">
-              <li>Account information (name, email address, password)</li>
-              <li>Payment information (processed securely through third-party providers)</li>
-              <li>Images you upload for AI model generation</li>
-              <li>Usage data and preferences</li>
-            </ul>
-          </section>
+        <div className="prose prose-gray dark:prose-invert max-w-none">
+          <p className="text-muted-foreground mb-6">
+            Bu Gizlilik Politikası, UtsuriAI ("Site") tarafından işletilen www.utsuriai.com alan adı üzerinden sunulan dijital ürünler ve e‑ticaret hizmetleri kapsamında, kullanıcıların kişisel verilerinin nasıl toplandığını, işlendiğini, saklandığını ve korunduğunu açıklamak amacıyla hazırlanmıştır.
+          </p>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">2. How We Use Your Information</h2>
-            <p className="text-muted-foreground">We use the information we collect to:</p>
-            <ul className="list-disc pl-6 text-muted-foreground space-y-2 mt-4">
-              <li>Provide, maintain, and improve our services</li>
-              <li>Process transactions and send related information</li>
-              <li>Send technical notices, updates, and support messages</li>
-              <li>Respond to your comments and questions</li>
-              <li>Analyze usage patterns to improve user experience</li>
-            </ul>
-          </section>
+          <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">1.1 Toplanan Kişisel Veriler</h2>
+          <p className="text-muted-foreground mb-4">Hizmetlerin sunulabilmesi amacıyla aşağıdaki kişisel veriler toplanabilir:</p>
+          <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-6">
+            <li>Ad, soyad</li>
+            <li>E‑posta adresi</li>
+            <li>Telefon numarası</li>
+            <li>Fatura ve ödeme bilgileri</li>
+            <li>IP adresi, cihaz, işletim sistemi ve tarayıcı bilgileri</li>
+            <li>Kullanıcı işlem ve kullanım geçmişi</li>
+            <li>Satın alınan dijital ürün ve hizmetlere ilişkin bilgiler</li>
+          </ul>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">3. Data Storage and Security</h2>
-            <p className="text-muted-foreground">
-              We implement appropriate technical and organizational measures to protect your personal data. 
-              Generated images are stored for 24 hours and then automatically deleted. We use industry-standard 
-              encryption for data transmission and storage.
-            </p>
-          </section>
+          <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">1.2 Kişisel Verilerin Toplanma Yöntemi</h2>
+          <p className="text-muted-foreground mb-4">Kişisel veriler;</p>
+          <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-6">
+            <li>Site üzerindeki üyelik, iletişim ve satın alma formları,</li>
+            <li>Kullanıcı hesap oluşturma ve giriş işlemleri,</li>
+            <li>Çerezler (cookies) ve benzeri teknolojiler,</li>
+            <li>E‑posta ve diğer iletişim kanalları</li>
+          </ul>
+          <p className="text-muted-foreground mb-6">aracılığıyla otomatik veya kısmen otomatik yollarla toplanmaktadır.</p>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">4. Data Sharing</h2>
-            <p className="text-muted-foreground">
-              We do not sell, trade, or otherwise transfer your personal information to third parties except:
-            </p>
-            <ul className="list-disc pl-6 text-muted-foreground space-y-2 mt-4">
-              <li>To trusted third parties who assist us in operating our service</li>
-              <li>When required by law or to protect our rights</li>
-              <li>With your explicit consent</li>
-            </ul>
-          </section>
+          <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">1.3 Kişisel Verilerin İşlenme Amaçları</h2>
+          <p className="text-muted-foreground mb-4">Toplanan kişisel veriler aşağıdaki amaçlarla işlenmektedir:</p>
+          <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-6">
+            <li>Dijital ürün ve hizmetlerin sunulması</li>
+            <li>Ödeme işlemlerinin gerçekleştirilmesi</li>
+            <li>Kullanıcı hesabının oluşturulması ve yönetilmesi</li>
+            <li>Müşteri destek süreçlerinin yürütülmesi</li>
+            <li>Hukuki ve yasal yükümlülüklerin yerine getirilmesi</li>
+            <li>Kullanıcı deneyiminin geliştirilmesi</li>
+            <li>Kullanıcının açık rızası bulunması halinde pazarlama ve bilgilendirme faaliyetleri</li>
+          </ul>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">5. Your Rights</h2>
-            <p className="text-muted-foreground">You have the right to:</p>
-            <ul className="list-disc pl-6 text-muted-foreground space-y-2 mt-4">
-              <li>Access your personal data</li>
-              <li>Correct inaccurate data</li>
-              <li>Request deletion of your data</li>
-              <li>Object to processing of your data</li>
-              <li>Data portability</li>
-            </ul>
-          </section>
+          <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">1.4 Kişisel Verilerin Saklanması ve Korunması</h2>
+          <p className="text-muted-foreground mb-4">Kişisel veriler;</p>
+          <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-6">
+            <li>Güvenli sunucularda saklanır,</li>
+            <li>Yetkisiz erişim, kayıp ve kötüye kullanım risklerine karşı korunur,</li>
+            <li>Güncel teknik ve idari güvenlik önlemleri ile muhafaza edilir.</li>
+          </ul>
+          <p className="text-muted-foreground mb-6">Veriler, ilgili mevzuatta öngörülen süreler boyunca saklanır ve sürenin sonunda silinir, yok edilir veya anonim hale getirilir.</p>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">6. Cookies</h2>
-            <p className="text-muted-foreground">
-              We use cookies and similar tracking technologies to track activity on our service and 
-              hold certain information. You can instruct your browser to refuse all cookies or to 
-              indicate when a cookie is being sent.
-            </p>
-          </section>
+          <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">1.5 Üçüncü Taraflarla Paylaşım</h2>
+          <p className="text-muted-foreground mb-4">Kişisel veriler, yalnızca hizmetin gerektirdiği ölçüde ve hukuka uygun olarak;</p>
+          <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-6">
+            <li>Ödeme hizmeti sağlayıcıları (örn. sanal POS ve ödeme altyapıları),</li>
+            <li>Sunucu, yazılım ve barındırma hizmeti sağlayıcıları,</li>
+            <li>Yasal merciler</li>
+          </ul>
+          <p className="text-muted-foreground mb-6">ile paylaşılabilir.</p>
 
-          <section>
-            <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">7. Contact Us</h2>
-            <p className="text-muted-foreground">
-              If you have any questions about this Privacy Policy, please contact us at: 
-              <a href="mailto:privacy@utsuri.ai" className="text-primary hover:underline ml-1">privacy@utsuri.ai</a>
-            </p>
-          </section>
+          <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">1.6 KVKK Kapsamındaki Haklarınız</h2>
+          <p className="text-muted-foreground mb-4">6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında kullanıcılar;</p>
+          <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-6">
+            <li>Kişisel verilerinin işlenip işlenmediğini öğrenme,</li>
+            <li>İşlenmişse buna ilişkin bilgi talep etme,</li>
+            <li>Eksik veya yanlış işlenmiş verilerin düzeltilmesini isteme,</li>
+            <li>Kişisel verilerin silinmesini veya yok edilmesini talep etme,</li>
+            <li>İşleme faaliyetlerine itiraz etme</li>
+          </ul>
+          <p className="text-muted-foreground mb-6">haklarına sahiptir.</p>
+          <p className="text-muted-foreground">Bu haklara ilişkin talepler <a href="mailto:bussiness@utsuriai.com" className="text-primary hover:underline">bussiness@utsuriai.com</a> adresi üzerinden iletilebilir.</p>
         </div>
       </main>
     </div>
