@@ -59,8 +59,8 @@ export default function FilterGender() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Light premium gradient background */}
-      <div className="fixed inset-0 bg-gradient-to-b from-white via-slate-50 to-white" />
+      {/* Clean white background */}
+      <div className="fixed inset-0 bg-white" />
       
       {/* Male Model - Left Side with vignette fade */}
       <div 
@@ -77,14 +77,9 @@ export default function FilterGender() {
               "h-full w-auto object-contain object-left transition-all duration-700",
               hoveredGender === 'Male' && "scale-[1.02]"
             )}
-            style={{
-              filter: hoveredGender === 'Male' 
-                ? 'drop-shadow(0 0 80px rgba(139, 92, 246, 0.3))' 
-                : 'drop-shadow(0 0 40px rgba(139, 92, 246, 0.15))'
-            }}
           />
           {/* Vignette fade toward center */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/90 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white pointer-events-none" />
           {/* Subtle accent glow on hover */}
           <div 
             className={cn(
@@ -110,14 +105,9 @@ export default function FilterGender() {
               "h-full w-auto object-contain object-right transition-all duration-700",
               hoveredGender === 'Female' && "scale-[1.02]"
             )}
-            style={{
-              filter: hoveredGender === 'Female' 
-                ? 'drop-shadow(0 0 80px rgba(139, 92, 246, 0.3))' 
-                : 'drop-shadow(0 0 40px rgba(139, 92, 246, 0.15))'
-            }}
           />
           {/* Vignette fade toward center */}
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white/90 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white pointer-events-none" />
           {/* Subtle accent glow on hover */}
           <div 
             className={cn(
@@ -128,14 +118,9 @@ export default function FilterGender() {
         </div>
       </div>
 
-      {/* Center panel - light gradient for content separation */}
+      {/* Center panel - clean white for content separation */}
       <div className="fixed inset-0 z-[3] pointer-events-none flex justify-center">
-        <div className="w-[45%] h-full bg-gradient-to-b from-white/80 via-slate-50/60 to-white/80 backdrop-blur-sm" />
-      </div>
-      
-      {/* Soft radial glow in center */}
-      <div className="fixed inset-0 z-[4] pointer-events-none flex items-center justify-center">
-        <div className="w-[600px] h-[600px] rounded-full bg-violet-300/10 blur-3xl" />
+        <div className="w-[45%] h-full bg-white" />
       </div>
 
       {/* Main Content */}
@@ -169,11 +154,10 @@ export default function FilterGender() {
                   className={cn(
                     "gender-card relative flex flex-col items-center justify-center gap-5 min-h-[220px] rounded-2xl cursor-pointer select-none",
                     "transition-all duration-500 ease-out",
-                    "bg-white/90 backdrop-blur-xl",
-                    "border border-slate-200 hover:border-violet-300",
-                    "shadow-[0_4px_24px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgba(139,92,246,0.15)]",
+                    "bg-white",
+                    "border border-slate-200 hover:border-violet-400",
                     "outline-none ring-0",
-                    config.gender === option.id && "border-violet-400 bg-violet-50",
+                    config.gender === option.id && "border-violet-500 bg-violet-50",
                     isAnimating && selectedId === option.id && "scale-105",
                     isAnimating && selectedId !== option.id && "opacity-30 scale-95"
                   )}
