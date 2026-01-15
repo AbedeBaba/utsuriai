@@ -65,37 +65,29 @@ export default function FilterGender() {
       {/* Male Model - Left Side */}
       <div 
         className={cn(
-          "fixed left-0 top-0 bottom-0 w-[32%] z-[2] transition-opacity duration-500 flex items-center",
+          "fixed left-0 top-0 bottom-0 w-[32%] z-[2] flex items-center",
           hoveredGender === 'Male' ? "opacity-100" : "opacity-95"
         )}
       >
-        <div className="relative h-full w-full flex items-center justify-start">
-          <img 
-            src={maleModel} 
-            alt="Male model"
-            className="h-full w-auto object-contain object-left"
-          />
-          {/* Fade toward center */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#eceef1] pointer-events-none" />
-        </div>
+        <img 
+          src={maleModel} 
+          alt="Male model"
+          className="h-full w-auto object-contain object-left"
+        />
       </div>
 
       {/* Female Model - Right Side */}
       <div 
         className={cn(
-          "fixed right-0 top-0 bottom-0 w-[32%] z-[2] flex items-center justify-end transition-opacity duration-500",
+          "fixed right-0 top-0 bottom-0 w-[32%] z-[2] flex items-center justify-end",
           hoveredGender === 'Female' ? "opacity-100" : "opacity-95"
         )}
       >
-        <div className="relative h-full w-full flex items-center justify-end">
-          <img 
-            src={femaleModel} 
-            alt="Female model"
-            className="h-full w-auto object-contain object-right"
-          />
-          {/* Fade toward center */}
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#eceef1] pointer-events-none" />
-        </div>
+        <img 
+          src={femaleModel} 
+          alt="Female model"
+          className="h-full w-auto object-contain object-right"
+        />
       </div>
 
       {/* Center panel */}
