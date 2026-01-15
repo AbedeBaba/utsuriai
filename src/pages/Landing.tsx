@@ -50,13 +50,13 @@ export default function Landing() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              How it Works
+              {t('nav.howItWorks')}
             </a>
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Features
+              {t('nav.features')}
             </a>
             <button onClick={() => navigate('/pricing')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Pricing
+              {t('nav.pricing')}
             </button>
           </nav>
 
@@ -94,20 +94,20 @@ export default function Landing() {
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    How it Works
+                    {t('nav.howItWorks')}
                   </a>
                   <a 
                     href="#features" 
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Features
+                    {t('nav.features')}
                   </a>
                   <button 
                     onClick={() => { navigate('/pricing'); setMobileMenuOpen(false); }} 
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left"
                   >
-                    Pricing
+                    {t('nav.pricing')}
                   </button>
                   
                   <div className="h-px bg-border my-2" />
@@ -152,13 +152,13 @@ export default function Landing() {
         {/* Text content - customize as needed */}
         <div className="relative z-10 text-center px-6 max-w-4xl">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            Transform Fashion with AI
+            {t('landing.hero.mainTitle')}
           </h1>
           <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-            Create stunning AI-generated model photos for your fashion brand
+            {t('landing.hero.mainSubtitle')}
           </p>
           <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-lg px-10 py-6 rounded-xl">
-            Get Started
+            {t('common.getStarted')}
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
@@ -178,27 +178,26 @@ export default function Landing() {
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm mb-8">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <span className="text-foreground font-medium">AI-Powered Fashion Photography</span>
+                <span className="text-foreground font-medium">{t('landing.hero.aiPowered')}</span>
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-8 leading-[1.15]">
-                Create <span className="italic text-primary">stunning</span> fashion photos with AI generated models
+                {t('landing.hero.createStunning')}
               </h1>
               
               <p className="text-lg lg:text-xl text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Perfect for fashion brands that value quality, speed, and flexibility. 
-                Bring your products to life at a fraction of the cost.
+                {t('landing.hero.perfectFor')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-base px-8 py-6 rounded-xl">
-                  Get Started
+                  {t('common.getStarted')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 
                 <Button variant="outline" size="lg" className="text-base px-8 py-6 rounded-xl border-2 border-border hover:bg-secondary">
                   <Play className="mr-2 h-5 w-5" />
-                  Watch Demo
+                  {t('nav.watchDemo')}
                 </Button>
               </div>
             </div>
@@ -213,7 +212,7 @@ export default function Landing() {
                     <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/1705c0f2-68bc-4333-a1c8-ad01e24a5811.jpg" />
                   </div>
                   <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white border border-slate-300 text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
-                    Product Photo
+                    {t('landing.productPhoto')}
                   </div>
                 </div>
 
@@ -231,7 +230,7 @@ export default function Landing() {
                     <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/5212774f-8c09-42bf-b019-8f7f544f3c3b.png" />
                   </div>
                   <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
-                    AI Model
+                    {t('landing.aiModel')}
                   </div>
                 </div>
               </div>
@@ -245,11 +244,11 @@ export default function Landing() {
                       <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center">
                         <Upload className="w-10 h-10 text-slate-400" />
                       </div>
-                      <p className="text-base text-slate-400 font-medium">Product Photo</p>
+                      <p className="text-base text-slate-400 font-medium">{t('landing.productPhoto')}</p>
                     </div>
                   </div>
                   <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white border border-slate-300 text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
-                    Product Photo
+                    {t('landing.productPhoto')}
                   </div>
                 </div>
 
@@ -268,11 +267,11 @@ export default function Landing() {
                       <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-primary/10 border-2 border-dashed border-primary/30 flex items-center justify-center">
                         <Sparkles className="w-10 h-10 text-primary/50" />
                       </div>
-                      <p className="text-base text-primary/60 font-medium">AI Result</p>
+                      <p className="text-base text-primary/60 font-medium">{t('landing.aiResult')}</p>
                     </div>
                   </div>
                   <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
-                    AI Model
+                    {t('landing.aiModel')}
                   </div>
                 </div>
               </div>
@@ -287,19 +286,19 @@ export default function Landing() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <p className="text-3xl md:text-4xl font-bold text-foreground">90%</p>
-              <p className="text-sm text-muted-foreground mt-1">Cost Reduction</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('landing.stats.costReduction')}</p>
             </div>
             <div>
               <p className="text-3xl md:text-4xl font-bold text-foreground">10x</p>
-              <p className="text-sm text-muted-foreground mt-1">Faster to Market</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('landing.stats.fasterToMarket')}</p>
             </div>
             <div>
               <p className="text-3xl md:text-4xl font-bold text-foreground">10%+</p>
-              <p className="text-sm text-muted-foreground mt-1">Conversion Boost</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('landing.stats.conversionBoost')}</p>
             </div>
             <div>
               <p className="text-3xl md:text-4xl font-bold text-foreground">∞</p>
-              <p className="text-sm text-muted-foreground mt-1">Model Diversity</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('landing.stats.modelDiversity')}</p>
             </div>
           </div>
         </div>
@@ -313,9 +312,9 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4">
-              How <span className="italic text-primary">Utsuri</span> Works
+              {t('landing.howItWorks.title')}
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">Create Fashion Models Without a Studio - Upload your product, choose a model, and get realistic AI fashion photos in minutes.</p>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">{t('landing.howItWorks.subtitle')}</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
