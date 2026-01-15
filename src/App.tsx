@@ -36,6 +36,7 @@ import TermsOfUse from "./pages/legal/TermsOfUse";
 import MembershipAgreement from "./pages/legal/MembershipAgreement";
 import PreInformationForm from "./pages/legal/PreInformationForm";
 import DistanceSalesAgreement from "./pages/legal/DistanceSalesAgreement";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ const App = () => (
               <Route path="/legal/membership-agreement" element={<MembershipAgreement />} />
               <Route path="/legal/pre-information-form" element={<PreInformationForm />} />
               <Route path="/legal/distance-sales-agreement" element={<DistanceSalesAgreement />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

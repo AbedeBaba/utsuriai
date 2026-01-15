@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, MapPin, Phone, Mail } from 'lucide-react';
 
 interface FooterProps {
   variant?: 'light' | 'dark';
@@ -79,25 +79,41 @@ export function Footer({ variant = 'light' }: FooterProps) {
             </ul>
           </div>
 
-          {/* Company */}
+          {/* Contact */}
           <div>
-            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>Şirket</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link 
-                  to="/pricing" 
-                  className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  Fiyatlandırma
-                </Link>
+            <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-foreground'}`}>İletişim</h3>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2">
+                <MapPin className={`h-4 w-4 mt-0.5 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`} />
+                <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`}>
+                  Gölpazarı / Bilecik, Turkey
+                </span>
               </li>
-              <li>
+              <li className="flex items-center gap-2">
+                <Phone className={`h-4 w-4 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`} />
                 <a 
-                  href="mailto:bussiness@utsuriai.com" 
+                  href="tel:+905314051484" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  İletişim
+                  +90 531 405 14 84
                 </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail className={`h-4 w-4 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`} />
+                <a 
+                  href="mailto:support@utsuriai.com" 
+                  className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  support@utsuriai.com
+                </a>
+              </li>
+              <li className="pt-1">
+                <Link 
+                  to="/contact" 
+                  className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  İletişim Sayfası →
+                </Link>
               </li>
             </ul>
           </div>
