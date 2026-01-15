@@ -99,6 +99,9 @@ async function generateWithGeminiTryOn(
   // Build the virtual try-on prompt
   const modelDescription = buildModelDescription(config);
   
+  // Determine if this is a portrait-only pose
+  const isPortraitPose = config.pose === 'Face Close-up';
+  
   const tryOnPrompt = `You are a professional fashion photographer AI. Generate a hyper-realistic fashion photography image.
 
 CRITICAL TASK: VIRTUAL TRY-ON / CLOTHING TRANSFER
@@ -119,17 +122,26 @@ CLOTHING TRANSFER RULES (ABSOLUTE REQUIREMENTS):
 - The clothing fit should look natural on the model's body
 - Maintain the exact garment cut, silhouette, neckline, sleeves, and overall design
 
+CRITICAL FRAMING REQUIREMENTS:
+${isPortraitPose ? `- Portrait/face close-up shot as requested` : `- MANDATORY FULL-BODY SHOT: The model's ENTIRE body must be visible from head to toe
+- DO NOT crop, zoom in, or frame as upper-body/half-body
+- Show the complete figure: head, torso, arms, legs, and feet ALL visible in frame
+- Use vertical 9:16 portrait orientation suitable for full-body fashion photography
+- Natural full-body standing pose with feet touching or near the bottom of the frame
+- Leave minimal space above the head and below the feet`}
+
 PHOTOGRAPHY REQUIREMENTS:
 - Ultra-realistic, magazine-quality fashion photography
 - Professional studio lighting with soft shadows
 - Sharp focus, natural skin texture, realistic fabric rendering
-- High resolution output
+- High resolution output with 9:16 vertical aspect ratio
 ${config.background ? `- Background setting: ${config.background}` : '- Clean white studio background'}
-${config.pose ? `- Model pose: ${config.pose}` : '- Natural, confident standing pose'}
+${isPortraitPose ? `- Model pose: Face close-up portrait` : `- Model pose: ${config.pose || 'Natural, confident standing pose with full body visible head-to-toe'}`}
 
 IMPORTANT: The clothing in the output image MUST be identical to the clothing in the input reference images. Do not create different clothing.
+${!isPortraitPose ? 'CRITICAL: Generate a FULL-BODY image. The entire model from head to feet MUST be visible. NO cropping or zooming.' : ''}
 
-OUTPUT: A single photorealistic image of the described model wearing the exact clothing from the reference images.`;
+OUTPUT: A single photorealistic ${isPortraitPose ? 'portrait' : 'FULL-BODY (head to feet visible)'} image of the described model wearing the exact clothing from the reference images in 9:16 vertical format.`;
 
   contentParts.push({
     type: "text",
@@ -254,20 +266,23 @@ async function generateWithNanoBanana(
   
   if (usePro) {
     // Pro API uses different endpoint and parameters
+    // FORCE 9:16 vertical aspect ratio for full-body fashion images
     requestBody = {
       prompt: prompt,
       imageUrls: imageUrls,
       resolution: '2K',
-      aspectRatio: '3:4'
+      aspectRatio: '9:16'
     };
     endpoint = `${NANOBANANA_BASE_URL}/generate-pro`;
   } else {
     // Standard API
+    // FORCE 9:16 vertical aspect ratio for full-body fashion images
     requestBody = {
       prompt: prompt,
       type: 'IMAGETOIAMGE',
       numImages: 1,
-      imageUrls: imageUrls
+      imageUrls: imageUrls,
+      aspectRatio: '9:16'
     };
     endpoint = `${NANOBANANA_BASE_URL}/generate`;
   }
@@ -616,6 +631,9 @@ serve(async (req) => {
 function buildFallbackPrompt(config: Record<string, string | null>): string {
   const parts: string[] = [];
   
+  // Determine if this is a portrait-only pose
+  const isPortraitPose = config.pose === 'Face Close-up';
+  
   parts.push('VIRTUAL TRY-ON TASK: Generate a fashion model wearing the EXACT clothing shown in the input images.');
   parts.push('');
   parts.push('CRITICAL RULES:');
@@ -623,6 +641,18 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
   parts.push('- Do NOT create new or different clothing');
   parts.push('- Preserve exact fabric, colors, patterns, and design');
   parts.push('');
+  
+  // CRITICAL: Full-body framing requirements
+  if (!isPortraitPose) {
+    parts.push('MANDATORY FULL-BODY FRAMING:');
+    parts.push('- Generate a FULL-BODY shot showing the ENTIRE model from head to toe');
+    parts.push('- DO NOT crop, zoom in, or create upper-body/half-body shots');
+    parts.push('- The complete figure must be visible: head, torso, arms, legs, and FEET');
+    parts.push('- Use vertical 9:16 portrait orientation for full-body fashion photography');
+    parts.push('- Natural standing pose with feet visible at the bottom of the frame');
+    parts.push('- NO automatic cropping or zoom-in allowed');
+    parts.push('');
+  }
   
   parts.push('MODEL ATTRIBUTES:');
   if (config.gender) parts.push(`- Gender: ${config.gender}`);
@@ -632,7 +662,11 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
   if (config.hairType) parts.push(`- Hair style: ${config.hairType}`);
   if (config.eyeColor) parts.push(`- Eye color: ${config.eyeColor}`);
   if (config.bodyType) parts.push(`- Body type: ${config.bodyType}`);
-  if (config.pose) parts.push(`- Pose: ${config.pose}`);
+  if (isPortraitPose) {
+    parts.push(`- Pose: Face close-up portrait`);
+  } else {
+    parts.push(`- Pose: ${config.pose || 'Natural full-body standing pose, head to feet visible'}`);
+  }
   if (config.background) parts.push(`- Background: ${config.background}`);
   
   if (config.modestOption === 'Hijab') {
@@ -640,7 +674,13 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
   }
   
   parts.push('');
-  parts.push('OUTPUT: Ultra-realistic fashion photography with the model wearing the exact input clothing.');
+  parts.push('IMAGE FORMAT: Vertical 9:16 aspect ratio');
+  if (isPortraitPose) {
+    parts.push('OUTPUT: Ultra-realistic fashion portrait photography with the model wearing the exact input clothing.');
+  } else {
+    parts.push('OUTPUT: Ultra-realistic FULL-BODY fashion photography (head to feet visible) with the model wearing the exact input clothing.');
+    parts.push('REMINDER: The ENTIRE body from head to feet MUST be in frame. No cropping.');
+  }
   
   return parts.join('\n');
 }
