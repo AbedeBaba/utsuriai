@@ -246,7 +246,7 @@ export default function Landing() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 border-y border-border bg-secondary/30">
+      <section className="py-16 my-12 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
