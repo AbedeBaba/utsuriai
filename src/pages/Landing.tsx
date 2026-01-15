@@ -330,8 +330,8 @@ export default function Landing() {
                   </div>
                 </div>
                 <div className="p-6 pt-0 text-center">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Transform</h3>
-                  <p className="text-slate-600 text-sm">Choose model, pose & environment with AI.</p>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">{t('landing.howItWorks.transform')}</h3>
+                  <p className="text-slate-600 text-sm">{t('landing.howItWorks.transformDesc')}</p>
                 </div>
               </div>
             </div>
@@ -348,8 +348,8 @@ export default function Landing() {
                   </div>
                 </div>
                 <div className="p-6 pt-0 text-center">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Upload</h3>
-                  <p className="text-slate-600 text-sm">Upload your product photos in seconds.</p>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">{t('landing.howItWorks.upload')}</h3>
+                  <p className="text-slate-600 text-sm">{t('landing.howItWorks.uploadProductPhotos')}</p>
                 </div>
               </div>
             </div>
@@ -366,8 +366,8 @@ export default function Landing() {
                   </div>
                 </div>
                 <div className="p-6 pt-0 text-center">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Download</h3>
-                  <p className="text-slate-600 text-sm">Get studio-quality images instantly.</p>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">{t('landing.howItWorks.download')}</h3>
+                  <p className="text-slate-600 text-sm">{t('landing.howItWorks.getStudioQuality')}</p>
                 </div>
               </div>
             </div>
@@ -376,11 +376,11 @@ export default function Landing() {
           <div className="text-center mt-14 flex flex-col items-center gap-3">
             <Button onClick={handleStart} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-semibold px-10 py-6 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
               <span className="flex items-center gap-2">
-                Start for Free
+                {t('landing.howItWorks.startForFree')}
                 <ArrowRight className="h-5 w-5" />
               </span>
             </Button>
-            <span className="text-sm text-slate-500">No credit card required</span>
+            <span className="text-sm text-slate-500">{t('landing.howItWorks.noCreditCard')}</span>
           </div>
         </div>
       </section>
@@ -395,10 +395,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              AI Solutions to Boost Your Brand
+              {t('landing.features.aiSolutions')}
             </h2>
             <p className="text-lg text-white/80 max-w-2xl mx-auto">
-              Transform your fashion photography with powerful AI-driven features.
+              {t('landing.features.aiSolutionsSubtitle')}
             </p>
           </div>
 
@@ -412,9 +412,9 @@ export default function Landing() {
           }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
-                <h3 className="text-lg font-semibold text-white mb-2">Instant Generation</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">{t('landing.features.instantGeneration')}</h3>
                 <p className="text-sm text-white/80">
-                  Generate stunning, professional photos and launch collections in no time.
+                  {t('landing.features.instantGenerationCard')}
                 </p>
               </div>
             </div>
@@ -430,9 +430,9 @@ export default function Landing() {
           }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
-                <h3 className="text-lg font-semibold text-white mb-2">Diverse Model Portfolio</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">{t('landing.features.diversePortfolio')}</h3>
                 <p className="text-sm text-white/80">
-                  Access a wide selection of AI models with diverse body types, ethnicities, ages, and styles.
+                  {t('landing.features.diversePortfolioDesc')}
                 </p>
               </div>
             </div>
@@ -448,9 +448,9 @@ export default function Landing() {
           }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
-                <h3 className="text-lg font-semibold text-white mb-2">Studio-Quality Results</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">{t('landing.features.studioQuality')}</h3>
                 <p className="text-sm text-white/80">
-                  Get professional, studio-quality photos without the expensive photoshoot.
+                  {t('landing.features.studioQualityCard')}
                 </p>
               </div>
             </div>
@@ -463,9 +463,9 @@ export default function Landing() {
           }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
-                <h3 className="text-lg font-semibold text-white mb-2">Multi-Angle Support</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">{t('landing.features.multiAngle')}</h3>
                 <p className="text-sm text-white/80">
-                  Upload multiple photos from different angles - outfits, accessories, and jewelry all combined.
+                  {t('landing.features.multiAngleCard')}
                 </p>
               </div>
             </div>
@@ -478,9 +478,9 @@ export default function Landing() {
           }}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
               <div className="relative z-10">
-                <h3 className="text-lg font-semibold text-white mb-2">Full Image Rights</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">{t('landing.features.fullRights')}</h3>
                 <p className="text-sm text-white/80">
-                  Use your photos anytime, anywhere. No fees, no headaches - just freedom.
+                  {t('landing.features.fullRightsCard')}
                 </p>
               </div>
             </div>
@@ -496,13 +496,13 @@ export default function Landing() {
         <div className="absolute inset-0 bg-background/70" />
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-            Ready to Transform Your Fashion Photography?
+            {t('landing.cta.title')}
           </h2>
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Join thousands of fashion brands creating stunning AI-generated model photos.
+            {t('landing.cta.joinThousands')}
           </p>
           <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-lg px-10 py-6 rounded-xl">
-            Start Creating Now
+            {t('landing.cta.startCreating')}
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
