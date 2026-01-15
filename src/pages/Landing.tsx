@@ -165,21 +165,15 @@ export default function Landing() {
       </section>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-secondary/50 to-background" />
-        
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-30">
+      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)]">
+        {/* Subtle background accents */}
+        <div className="absolute inset-0 opacity-30 pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-[90rem] mx-auto px-4 sm:px-8 lg:px-16 rounded-3xl py-12 sm:py-16 lg:py-20 overflow-hidden">
-          {/* Blurred lavender gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] blur-xl" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)] opacity-90" />
-          <div className="relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm mb-8">
