@@ -59,13 +59,13 @@ export default function FilterGender() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Clean matte white background */}
-      <div className="fixed inset-0 bg-[#ffffff]" />
+      {/* Muted off-white background */}
+      <div className="fixed inset-0 bg-[#eceef1]" />
       
       {/* Male Model - Left Side */}
       <div 
         className={cn(
-          "fixed left-0 top-0 bottom-0 w-[32%] z-[2] transition-all duration-500 flex items-center",
+          "fixed left-0 top-0 bottom-0 w-[32%] z-[2] transition-opacity duration-500 flex items-center",
           hoveredGender === 'Male' ? "opacity-100" : "opacity-95"
         )}
       >
@@ -73,20 +73,17 @@ export default function FilterGender() {
           <img 
             src={maleModel} 
             alt="Male model"
-            className={cn(
-              "h-full w-auto object-contain object-left transition-transform duration-500",
-              hoveredGender === 'Male' && "scale-[1.01]"
-            )}
+            className="h-full w-auto object-contain object-left"
           />
-          {/* Clean fade toward center */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#f6f7f9] pointer-events-none" />
+          {/* Fade toward center */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#eceef1] pointer-events-none" />
         </div>
       </div>
 
       {/* Female Model - Right Side */}
       <div 
         className={cn(
-          "fixed right-0 top-0 bottom-0 w-[32%] z-[2] flex items-center justify-end transition-all duration-500",
+          "fixed right-0 top-0 bottom-0 w-[32%] z-[2] flex items-center justify-end transition-opacity duration-500",
           hoveredGender === 'Female' ? "opacity-100" : "opacity-95"
         )}
       >
@@ -94,19 +91,16 @@ export default function FilterGender() {
           <img 
             src={femaleModel} 
             alt="Female model"
-            className={cn(
-              "h-full w-auto object-contain object-right transition-transform duration-500",
-              hoveredGender === 'Female' && "scale-[1.01]"
-            )}
+            className="h-full w-auto object-contain object-right"
           />
-          {/* Clean fade toward center */}
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#f6f7f9] pointer-events-none" />
+          {/* Fade toward center */}
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#eceef1] pointer-events-none" />
         </div>
       </div>
 
-      {/* Center panel - soft gray for content separation */}
+      {/* Center panel */}
       <div className="fixed inset-0 z-[3] pointer-events-none flex justify-center">
-        <div className="w-[45%] h-full bg-[#f6f7f9]" />
+        <div className="w-[45%] h-full bg-[#eceef1]" />
       </div>
 
       {/* Main Content */}
