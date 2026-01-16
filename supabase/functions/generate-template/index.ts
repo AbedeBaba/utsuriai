@@ -184,7 +184,7 @@ async function generateWithNanoBananaStandard(
     callBackUrl: callbackUrl,
     numImages: 1,
     imageUrls: [poseImageUrl, productImageUrl], // Both pose and product images
-    image_size: '3:4' // Portrait aspect ratio for fashion
+    image_size: '9:16' // Portrait aspect ratio for fashion templates
   };
   
   console.log('NanoBanana STANDARD request body:', JSON.stringify({
@@ -274,7 +274,7 @@ async function generateWithNanoBananaPro(
     prompt: finalPrompt,
     imageUrls: [poseImageUrl, productImageUrl], // Both pose and product images
     resolution: '2K', // High quality: 1K, 2K, or 4K
-    aspectRatio: '3:4', // Portrait aspect ratio for fashion
+    aspectRatio: '9:16', // Portrait aspect ratio for fashion templates
     callBackUrl: callbackUrl
   };
   
