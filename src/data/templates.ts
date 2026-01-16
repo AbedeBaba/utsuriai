@@ -246,6 +246,86 @@ export const templates: Template[] = [
     ],
     tags: ['lifestyle', 'modern', 'e-commerce'],
   },
+  // Classic Sitting - Male
+  {
+    id: 'classic-sitting-upper-wear-male',
+    nameKey: 'templates.items.classicSittingUpperWearMale',
+    descriptionKey: 'templates.items.classicSittingUpperWearMaleDesc',
+    categoryId: 'upper-wear',
+    gender: 'male',
+    framing: 'seated',
+    aspectRatio: '9:16',
+    requiredImages: 2,
+    requiresBackView: true,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'es3p1',
+        nameKey: 'templates.poses.seatedFrontRelaxed',
+        imagePath: '/lovable-uploads/templates/male/es3p1.png',
+        useBackView: false,
+      },
+      {
+        id: 'es3p2',
+        nameKey: 'templates.poses.seatedFrontCrossedLegs',
+        imagePath: '/lovable-uploads/templates/male/es3p2.png',
+        useBackView: false,
+      },
+      {
+        id: 'es3p3',
+        nameKey: 'templates.poses.seatedSideProfile',
+        imagePath: '/lovable-uploads/templates/male/es3p3.png',
+        useBackView: false,
+      },
+      {
+        id: 'es3p4',
+        nameKey: 'templates.poses.seatedBackView',
+        imagePath: '/lovable-uploads/templates/male/es3p4.png',
+        useBackView: true,
+      },
+    ],
+    tags: ['lifestyle', 'classic', 'seated', 'e-commerce'],
+  },
+  // Classic Sitting - Female
+  {
+    id: 'classic-sitting-upper-wear-female',
+    nameKey: 'templates.items.classicSittingUpperWearFemale',
+    descriptionKey: 'templates.items.classicSittingUpperWearFemaleDesc',
+    categoryId: 'upper-wear',
+    gender: 'female',
+    framing: 'seated',
+    aspectRatio: '9:16',
+    requiredImages: 2,
+    requiresBackView: true,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 's3p1',
+        nameKey: 'templates.poses.seatedFrontRelaxed',
+        imagePath: '/lovable-uploads/templates/female/s3p1.png',
+        useBackView: false,
+      },
+      {
+        id: 's3p2',
+        nameKey: 'templates.poses.seatedFrontCrossedLegs',
+        imagePath: '/lovable-uploads/templates/female/s3p2.png',
+        useBackView: false,
+      },
+      {
+        id: 's3p3',
+        nameKey: 'templates.poses.seatedSideProfile',
+        imagePath: '/lovable-uploads/templates/female/s3p3.png',
+        useBackView: false,
+      },
+      {
+        id: 's3p4',
+        nameKey: 'templates.poses.seatedBackView',
+        imagePath: '/lovable-uploads/templates/female/s3p4.png',
+        useBackView: true,
+      },
+    ],
+    tags: ['lifestyle', 'classic', 'seated', 'e-commerce'],
+  },
 ];
 
 // Helper functions
