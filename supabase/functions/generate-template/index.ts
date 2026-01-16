@@ -17,14 +17,48 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Build Hijab constraint prompt injection
+function buildHijabConstraint(): string {
+  return `
+=== HIJAB/MODEST MODEL - MANDATORY REQUIREMENTS ===
+This MUST be a hijabi (covered/modest) female model.
+REQUIRED - Headscarf (hijab) fully covering ALL hair - NO hair visible whatsoever
+REQUIRED - Neck must be FULLY covered by the hijab or clothing
+REQUIRED - Chest/décolletage must be FULLY covered - NO cleavage
+REQUIRED - Shoulders must be covered
+REQUIRED - Long sleeves covering arms completely
+REQUIRED - Modest, conservative clothing style
+
+STRICTLY FORBIDDEN when Hijab is selected:
+- ANY visible hair (not a single strand)
+- Exposed neck or neckline
+- Any cleavage or chest exposure
+- Short sleeves or exposed shoulders
+- Open collar, V-neck, or transparent fabrics
+- Any skin exposure beyond face and hands
+
+The Hijab requirement OVERRIDES all default styling and takes ABSOLUTE PRIORITY.
+=== END HIJAB REQUIREMENTS ===
+`;
+}
+
 async function generateWithNanoBanana(
   apiKey: string,
   prompt: string,
   templatePoseImageUrl: string,
   productImageBase64: string,
-  usePro: boolean
+  usePro: boolean,
+  isHijab: boolean = false
 ): Promise<string> {
   console.log(`Generating with Nano Banana ${usePro ? 'Pro' : 'Standard'}...`);
+  console.log(`Hijab mode: ${isHijab}`);
+  
+  // Inject Hijab constraint if enabled
+  let finalPrompt = prompt;
+  if (isHijab) {
+    finalPrompt = buildHijabConstraint() + '\n\n' + prompt;
+    console.log('Hijab constraint injected into prompt');
+  }
   
   // Build content with both images
   const contentParts: any[] = [
@@ -38,7 +72,7 @@ async function generateWithNanoBanana(
     },
     {
       type: "text",
-      text: prompt
+      text: finalPrompt
     }
   ];
   
@@ -178,8 +212,11 @@ serve(async (req) => {
       poseImageUrl, 
       productImageBase64, 
       prompt,
-      usePro = false 
+      usePro = false,
+      isHijab = false  // Support for Hijab/modest model generation
     } = await req.json();
+    
+    console.log(`Template generation request - templateId: ${templateId}, poseIndex: ${poseIndex}, usePro: ${usePro}, isHijab: ${isHijab}`);
     
     if (!templateId || typeof poseIndex !== 'number' || !poseImageUrl || !productImageBase64 || !prompt) {
       return new Response(
@@ -246,7 +283,8 @@ serve(async (req) => {
       prompt,
       poseImageUrl,
       productImageBase64,
-      usePro
+      usePro,
+      isHijab
     );
     
     // Upload to storage
