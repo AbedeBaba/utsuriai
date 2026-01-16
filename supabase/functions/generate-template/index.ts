@@ -15,6 +15,51 @@ const NANOBANANA_TASK_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana/reco
 const STANDARD_CREDIT_COST = 4; // 1 credit per pose × 4 poses
 const PRO_CREDIT_COST = 16; // 4 credits per pose × 4 poses
 
+// Fixed prompt for template generation - DO NOT CHANGE
+const TEMPLATE_PROMPT = `Use the uploaded images as strict references.
+
+The first image is the template model image.
+
+The second image is the user-uploaded product image.
+
+Replace ONLY the clothing item worn on the model with the user-uploaded product.
+
+Preserve the original clothing's:
+- texture realism
+- fabric structure
+- color accuracy
+- material details
+
+Do NOT recolor, stylize, or reinterpret the product.
+
+The product must look exactly like the uploaded image.
+
+STRICT PRESERVATION RULES:
+- Keep the same model
+- Keep the same pose
+- Keep the same body proportions
+- Keep the same camera angle
+- Keep the same framing and crop
+- Keep the same background
+- Keep the same lighting and shadows
+
+Do NOT change:
+- pose or posture
+- body shape
+- background or environment
+- camera distance or angle
+- lighting style
+
+The result must look like a realistic product photoshoot.
+
+Clean, photorealistic, e-commerce ready output.
+
+Portrait orientation.
+
+9:16 aspect ratio.
+
+No editorial, fashion magazine, or artistic styling.`;
+
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -51,6 +96,8 @@ async function uploadBase64ToStorage(
   templateId: string,
   prefix: string
 ): Promise<string> {
+  console.log(`Uploading ${prefix} image to storage...`);
+  
   // Parse base64 data
   const matches = base64Data.match(/^data:([^;]+);base64,(.+)$/);
   if (!matches) {
@@ -61,7 +108,7 @@ async function uploadBase64ToStorage(
   const base64Content = matches[2];
   const binaryData = Uint8Array.from(atob(base64Content), c => c.charCodeAt(0));
   
-  const extension = mimeType.split('/')[1] || 'png';
+  const extension = mimeType.split('/')[1]?.replace('jpeg', 'jpg') || 'png';
   const fileName = `templates/${templateId}/${prefix}-${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
   
   const { error: uploadError } = await supabase.storage
@@ -73,7 +120,7 @@ async function uploadBase64ToStorage(
   
   if (uploadError) {
     console.error('Upload error:', uploadError);
-    throw new Error(`Failed to upload ${prefix} image`);
+    throw new Error(`Failed to upload ${prefix} image: ${uploadError.message}`);
   }
   
   // Get public URL
@@ -81,7 +128,59 @@ async function uploadBase64ToStorage(
     .from('generated-images')
     .getPublicUrl(fileName);
   
-  return urlData?.publicUrl || '';
+  const publicUrl = urlData?.publicUrl || '';
+  console.log(`${prefix} image uploaded successfully:`, publicUrl);
+  return publicUrl;
+}
+
+// Download image from URL and upload to storage to get accessible URL
+async function downloadAndUploadImage(
+  supabase: any,
+  imageUrl: string,
+  templateId: string,
+  prefix: string
+): Promise<string> {
+  console.log(`Downloading image from: ${imageUrl}`);
+  
+  try {
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+    }
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const binaryData = new Uint8Array(arrayBuffer);
+    
+    const contentType = response.headers.get('content-type') || 'image/png';
+    const extension = contentType.includes('jpeg') || contentType.includes('jpg') ? 'jpg' : 
+                      contentType.includes('webp') ? 'webp' : 'png';
+    
+    const fileName = `templates/${templateId}/${prefix}-${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('generated-images')
+      .upload(fileName, binaryData, {
+        contentType,
+        upsert: true
+      });
+    
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      throw new Error(`Failed to upload ${prefix} image: ${uploadError.message}`);
+    }
+    
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('generated-images')
+      .getPublicUrl(fileName);
+    
+    const publicUrl = urlData?.publicUrl || '';
+    console.log(`${prefix} image downloaded and uploaded successfully:`, publicUrl);
+    return publicUrl;
+  } catch (error) {
+    console.error(`Error downloading/uploading ${prefix} image:`, error);
+    throw error;
+  }
 }
 
 // Poll for task completion using successFlag
@@ -156,7 +255,6 @@ async function pollForTaskCompletion(
 // Generate image using NanoBanana STANDARD API (IMAGETOIAMGE mode)
 async function generateWithNanoBananaStandard(
   apiKey: string,
-  prompt: string,
   poseImageUrl: string,
   productImageUrl: string,
   supabase: any,
@@ -167,10 +265,10 @@ async function generateWithNanoBananaStandard(
   console.log('Pose image URL:', poseImageUrl);
   console.log('Product image URL:', productImageUrl);
   
-  // Inject Hijab constraint if enabled
-  let finalPrompt = prompt;
+  // Use fixed template prompt, optionally with Hijab constraint
+  let finalPrompt = TEMPLATE_PROMPT;
   if (isHijab) {
-    finalPrompt = buildHijabConstraint() + '\n\n' + prompt;
+    finalPrompt = buildHijabConstraint() + '\n\n' + TEMPLATE_PROMPT;
     console.log('Hijab constraint injected into prompt');
   }
   
@@ -247,7 +345,6 @@ async function generateWithNanoBananaStandard(
 // Generate image using NanoBanana PRO API
 async function generateWithNanoBananaPro(
   apiKey: string,
-  prompt: string,
   poseImageUrl: string,
   productImageUrl: string,
   supabase: any,
@@ -258,10 +355,10 @@ async function generateWithNanoBananaPro(
   console.log('Pose image URL:', poseImageUrl);
   console.log('Product image URL:', productImageUrl);
   
-  // Inject Hijab constraint if enabled
-  let finalPrompt = prompt;
+  // Use fixed template prompt, optionally with Hijab constraint
+  let finalPrompt = TEMPLATE_PROMPT;
   if (isHijab) {
-    finalPrompt = buildHijabConstraint() + '\n\n' + prompt;
+    finalPrompt = buildHijabConstraint() + '\n\n' + TEMPLATE_PROMPT;
     console.log('Hijab constraint injected into prompt');
   }
   
@@ -500,6 +597,11 @@ serve(async (req) => {
     const productImageUrl = await uploadBase64ToStorage(supabase, productImageBase64, templateId, 'product');
     console.log('Product image uploaded:', productImageUrl);
     
+    // Download and upload pose image to storage to get accessible URL for NanoBanana
+    console.log('Downloading and uploading pose image to storage...');
+    const accessiblePoseImageUrl = await downloadAndUploadImage(supabase, poseImageUrl, templateId, 'pose');
+    console.log('Pose image accessible URL:', accessiblePoseImageUrl);
+    
     console.log(`Generating pose ${poseIndex + 1} for template ${templateId} using ${usePro ? 'PRO' : 'STANDARD'} mode...`);
 
     // Call appropriate NanoBanana API based on usePro flag
@@ -509,8 +611,7 @@ serve(async (req) => {
       // Use NanoBanana PRO API for higher quality
       storedImageUrl = await generateWithNanoBananaPro(
         nanoBananaApiKey,
-        prompt,
-        poseImageUrl,
+        accessiblePoseImageUrl,
         productImageUrl,
         supabase,
         templateId,
@@ -520,8 +621,7 @@ serve(async (req) => {
       // Use NanoBanana STANDARD API
       storedImageUrl = await generateWithNanoBananaStandard(
         nanoBananaApiKey,
-        prompt,
-        poseImageUrl,
+        accessiblePoseImageUrl,
         productImageUrl,
         supabase,
         templateId,
