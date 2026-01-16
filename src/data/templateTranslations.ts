@@ -3,6 +3,11 @@
 
 export const templateTranslations = {
   en: {
+    'templates.uploadFrontView': 'Front View',
+    'templates.uploadFrontViewDesc': 'Upload the front view of your product',
+    'templates.uploadBackView': 'Back View',
+    'templates.uploadBackViewDesc': 'Upload the back view of your product (required for back pose)',
+    'templates.backViewRequired': 'This template includes a back view pose. Please upload both front and back images of your product.',
     // Page titles
     'templates.pageTitle': 'Templates',
     'templates.whatToSell': 'What do you want to sell?',
@@ -21,9 +26,14 @@ export const templateTranslations = {
     'templates.proCredits': '16 credits (Utsuri Pro)',
     'templates.perTemplate': 'per template (4 images)',
     
-    // Generation flow
-    'templates.uploadProduct': 'Upload Your Product',
-    'templates.uploadProductDesc': 'Upload a clear image of your product. The AI will place it on the model.',
+    // Generation flow - Upload
+    'templates.uploadProduct': 'Upload Your Product Images',
+    'templates.uploadProductDesc': 'Upload clear images of your product. The AI will place it on the model.',
+    'templates.frontImageUploaded': 'Front image uploaded',
+    'templates.backImageUploaded': 'Back image uploaded',
+    'templates.changeImage': 'Change image',
+    
+    // Generation flow - Mode
     'templates.selectMode': 'Select Generation Mode',
     'templates.standard': 'Utsuri Standard',
     'templates.standardDesc': '4 credits • Good quality',
@@ -39,6 +49,7 @@ export const templateTranslations = {
     'templates.insufficientCredits': 'Insufficient credits',
     'templates.needCredits': 'You need {credits} credits for this generation.',
     'templates.backToTemplate': 'Back to Template',
+    'templates.uploadBothImages': 'Please upload both front and back view images',
     
     // Categories
     'templates.categories.hat': 'Hat / Beanie',
@@ -88,9 +99,19 @@ export const templateTranslations = {
     'templates.proCredits': '16 kredi (Utsuri Pro)',
     'templates.perTemplate': 'şablon başına (4 görsel)',
     
-    // Generation flow
-    'templates.uploadProduct': 'Ürününüzü Yükleyin',
-    'templates.uploadProductDesc': 'Ürününüzün net bir fotoğrafını yükleyin. AI onu modelin üzerine yerleştirecek.',
+    // Generation flow - Upload
+    'templates.uploadProduct': 'Ürün Görsellerinizi Yükleyin',
+    'templates.uploadProductDesc': 'Ürününüzün net görsellerini yükleyin. AI onu modelin üzerine yerleştirecek.',
+    'templates.uploadFrontView': 'Ön Görünüm',
+    'templates.uploadFrontViewDesc': 'Ürününüzün ön görünümünü yükleyin',
+    'templates.uploadBackView': 'Arka Görünüm',
+    'templates.uploadBackViewDesc': 'Ürününüzün arka görünümünü yükleyin (arka poz için gerekli)',
+    'templates.backViewRequired': 'Bu şablonda arka görünüm pozu bulunmaktadır. Lütfen ürününüzün hem ön hem de arka görselini yükleyin.',
+    'templates.frontImageUploaded': 'Ön görsel yüklendi',
+    'templates.backImageUploaded': 'Arka görsel yüklendi',
+    'templates.changeImage': 'Görseli değiştir',
+    
+    // Generation flow - Mode
     'templates.selectMode': 'Üretim Modunu Seçin',
     'templates.standard': 'Utsuri Standard',
     'templates.standardDesc': '4 kredi • İyi kalite',
@@ -106,6 +127,7 @@ export const templateTranslations = {
     'templates.insufficientCredits': 'Yetersiz kredi',
     'templates.needCredits': 'Bu üretim için {credits} krediye ihtiyacınız var.',
     'templates.backToTemplate': 'Şablona Dön',
+    'templates.uploadBothImages': 'Lütfen hem ön hem de arka görsel yükleyin',
     
     // Categories
     'templates.categories.hat': 'Şapka / Bere',
