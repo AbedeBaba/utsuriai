@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sparkles, ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap, Shield, Save, User, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { formatDistanceToNow, differenceInHours, addHours } from 'date-fns';
+import { formatDistanceToNow, addHours } from 'date-fns';
 import {
   Select,
   SelectContent,
@@ -52,7 +52,7 @@ export default function Dashboard() {
   const { user, profile, loading } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { subscription, loading: subscriptionLoading, refetch: refetchSubscription, hasCreatorFeatureAccess } = useSubscription();
+  const { subscription, loading: subscriptionLoading, refetch: refetchSubscription, hasCreatorFeatureAccess, imageRetentionHours, imageRetentionDays } = useSubscription();
   const { isAdmin } = useAdminCheck();
   const { savedModels, loading: loadingSavedModels, deleteModel, deleting } = useSavedModels();
   const { loadSavedModel } = useModelConfig();
@@ -92,21 +92,29 @@ export default function Dashboard() {
   }, [user, loading, navigate]);
 
   useEffect(() => {
-    if (user) {
+    if (user && !subscriptionLoading) {
       fetchImages();
+    }
+  }, [user, subscriptionLoading, imageRetentionHours]);
+
+  useEffect(() => {
+    if (user) {
       refetchSubscription(); // Always sync credits on mount/navigation
     }
   }, [user, refetchSubscription]);
 
   const fetchImages = async () => {
     setLoadingImages(true);
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    
+    // Creator users get 7 days retention, others get 24 hours
+    const retentionMs = imageRetentionHours * 60 * 60 * 1000;
+    const cutoffTime = new Date(Date.now() - retentionMs).toISOString();
     
     const { data, error } = await supabase
       .from('model_generations')
       .select('id, image_url, created_at, gender, ethnicity, status, category, custom_name, skin_tone, hair_color, hair_type, eye_color, body_type, beard_type, pose, background')
       .eq('user_id', user!.id)
-      .gte('created_at', twentyFourHoursAgo)
+      .gte('created_at', cutoffTime)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -122,11 +130,28 @@ export default function Dashboard() {
   };
 
   const getTimeRemaining = (createdAt: string) => {
-    const expiryTime = addHours(new Date(createdAt), 24);
-    const hoursLeft = differenceInHours(expiryTime, new Date());
-    const minutesLeft = Math.round((expiryTime.getTime() - Date.now()) / (1000 * 60)) % 60;
+    const expiryTime = addHours(new Date(createdAt), imageRetentionHours);
+    const now = new Date();
+    const msLeft = expiryTime.getTime() - now.getTime();
     
-    if (hoursLeft <= 0 && minutesLeft <= 0) return 'Expired';
+    if (msLeft <= 0) return 'Expired';
+    
+    const daysLeft = Math.floor(msLeft / (1000 * 60 * 60 * 24));
+    const hoursLeft = Math.floor((msLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutesLeft = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60));
+    
+    // For Creator users (7 days), show days
+    if (imageRetentionHours > 24) {
+      if (daysLeft > 0) {
+        return `${daysLeft}d ${hoursLeft}h left`;
+      }
+      if (hoursLeft > 0) {
+        return `${hoursLeft}h ${minutesLeft}m left`;
+      }
+      return `${minutesLeft}m left`;
+    }
+    
+    // For 24-hour retention
     if (hoursLeft < 1) return `${minutesLeft}m left`;
     return `${hoursLeft}h ${minutesLeft}m left`;
   };
@@ -346,7 +371,13 @@ export default function Dashboard() {
               Welcome back, <span className="text-primary">{displayName}</span>!
             </h1>
             <p className="text-muted-foreground">
-              Your generated images are stored for 24 hours. Download them before they expire.
+              Your generated images are stored for {imageRetentionDays === 7 ? '7 days' : '24 hours'}. Download them before they expire.
+              {hasCreatorFeatureAccess && (
+                <span className="ml-2 inline-flex items-center gap-1 text-amber-500 font-medium">
+                  <Crown className="h-3.5 w-3.5" />
+                  Extended storage
+                </span>
+              )}
             </p>
           </div>
 

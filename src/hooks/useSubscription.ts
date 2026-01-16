@@ -105,6 +105,11 @@ export function useSubscription() {
   // Face Types, Expressions, Save & Reuse Models
   const hasCreatorFeatureAccess = subscription?.plan === 'creator';
 
+  // Image retention period in hours
+  // Creator: 7 days (168 hours), Others: 24 hours
+  const imageRetentionHours = hasCreatorFeatureAccess ? 168 : 24;
+  const imageRetentionDays = hasCreatorFeatureAccess ? 7 : 1;
+
   return {
     subscription,
     loading,
@@ -131,6 +136,9 @@ export function useSubscription() {
     isTrialProExhausted,
     hasProFeatureAccess,
     hasCreatorFeatureAccess,
+    // Image retention
+    imageRetentionHours,
+    imageRetentionDays,
     refetch: fetchSubscription,
   };
 }
