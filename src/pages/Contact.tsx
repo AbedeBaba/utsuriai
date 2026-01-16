@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Phone, Mail } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Mail, User } from 'lucide-react';
 import { Footer } from '@/components/Footer';
 
 const Contact = () => {
@@ -28,7 +28,18 @@ const Contact = () => {
             Sorularınız için bizimle iletişime geçin. Size yardımcı olmaktan mutluluk duyarız.
           </p>
 
-          <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+            {/* Name Card */}
+            <div className="bg-card border border-border rounded-2xl p-8 text-center hover:shadow-lg transition-shadow">
+              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <User className="h-7 w-7 text-primary" />
+              </div>
+              <h2 className="text-lg font-semibold text-foreground mb-3">İsim</h2>
+              <p className="text-muted-foreground">
+                Çağatay Samet Macar
+              </p>
+            </div>
+
             {/* Address Card */}
             <div className="bg-card border border-border rounded-2xl p-8 text-center hover:shadow-lg transition-shadow">
               <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
