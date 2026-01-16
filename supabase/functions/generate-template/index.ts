@@ -6,12 +6,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Lovable AI Gateway for Nano Banana image generation
-const LOVABLE_AI_GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
+// Nano Banana API endpoints - SAME AS generate-model
+const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
+const NANOBANANA_API_KEY = '8f40e3c4ec5e36d8bbe18354535318d7';
 
 // Credit costs per template (4 poses)
-const STANDARD_CREDIT_COST = 4; // 1 credit per pose
-const PRO_CREDIT_COST = 16; // 4 credits per pose
+const STANDARD_CREDIT_COST = 4; // 1 credit per pose × 4 poses
+const PRO_CREDIT_COST = 16; // 4 credits per pose × 4 poses
 
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -42,89 +43,8 @@ The Hijab requirement OVERRIDES all default styling and takes ABSOLUTE PRIORITY.
 `;
 }
 
-async function generateWithNanoBanana(
-  apiKey: string,
-  prompt: string,
-  templatePoseImageUrl: string,
-  productImageBase64: string,
-  usePro: boolean,
-  isHijab: boolean = false
-): Promise<string> {
-  console.log(`Generating with Nano Banana ${usePro ? 'Pro' : 'Standard'}...`);
-  console.log(`Hijab mode: ${isHijab}`);
-  
-  // Inject Hijab constraint if enabled
-  let finalPrompt = prompt;
-  if (isHijab) {
-    finalPrompt = buildHijabConstraint() + '\n\n' + prompt;
-    console.log('Hijab constraint injected into prompt');
-  }
-  
-  // Build content with both images
-  const contentParts: any[] = [
-    {
-      type: "image_url",
-      image_url: { url: templatePoseImageUrl }
-    },
-    {
-      type: "image_url",
-      image_url: { url: productImageBase64 }
-    },
-    {
-      type: "text",
-      text: finalPrompt
-    }
-  ];
-  
-  const model = usePro 
-    ? 'google/gemini-3-pro-image-preview' 
-    : 'google/gemini-2.5-flash-image-preview';
-  
-  console.log(`Using model: ${model}`);
-  
-  const response = await fetch(LOVABLE_AI_GATEWAY, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: [
-        {
-          role: 'user',
-          content: contentParts
-        }
-      ],
-      modalities: ['image', 'text']
-    })
-  });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('AI Gateway error:', errorText);
-    
-    if (response.status === 429) {
-      throw new Error('Rate limit exceeded. Please try again later.');
-    }
-    if (response.status === 402) {
-      throw new Error('Payment required. Please add credits to continue.');
-    }
-    throw new Error(`AI generation failed: ${response.status}`);
-  }
-  
-  const result = await response.json();
-  const generatedImage = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-  
-  if (!generatedImage) {
-    console.error('No image in response:', JSON.stringify(result).substring(0, 500));
-    throw new Error('No image generated');
-  }
-  
-  return generatedImage;
-}
-
-async function uploadBase64ToStorage(
+// Upload base64 image to Supabase storage and get a signed URL
+async function uploadBase64ToStorageForApi(
   supabase: any,
   base64Image: string,
   folder: string
@@ -150,12 +70,174 @@ async function uploadBase64ToStorage(
   
   if (uploadError) {
     console.error('Upload error:', uploadError);
-    throw new Error('Failed to save image');
+    throw new Error('Failed to upload image to storage');
   }
   
+  // Create signed URL for NanoBanana API
   const { data: signedUrlData, error: signedUrlError } = await supabase.storage
     .from('generated-images')
-    .createSignedUrl(fileName, 60 * 60 * 24);
+    .createSignedUrl(fileName, 60 * 60); // 1 hour
+  
+  if (signedUrlError || !signedUrlData?.signedUrl) {
+    console.error('Signed URL error:', signedUrlError);
+    throw new Error('Failed to create signed URL');
+  }
+  
+  return signedUrlData.signedUrl;
+}
+
+// Poll for NanoBanana task completion - SAME AS generate-model
+async function pollForTaskCompletion(apiKey: string, taskId: string): Promise<string> {
+  const maxWaitTime = 300000; // 5 minutes
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < maxWaitTime) {
+    const statusResponse = await fetch(`${NANOBANANA_BASE_URL}/record-info?taskId=${taskId}`, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${apiKey}` }
+    });
+    
+    const statusResult = await statusResponse.json();
+    console.log('Poll response:', JSON.stringify(statusResult));
+    
+    const successFlag = statusResult.data?.successFlag ?? statusResult.successFlag;
+    const responseData = statusResult.data?.response ?? statusResult.response;
+    const infoData = statusResult.data?.info ?? null;
+    
+    if (successFlag === 1) {
+      let imageUrl = infoData?.resultImageUrl ||
+                     responseData?.resultImageUrl ||
+                     responseData?.imageUrl ||
+                     statusResult.data?.resultImageUrl;
+      
+      if (imageUrl) {
+        console.log('Found result image URL:', imageUrl);
+        return imageUrl;
+      }
+      throw new Error('No resultImageUrl in NanoBanana response');
+    }
+    
+    if (successFlag === 2 || successFlag === 3) {
+      const errorMsg = statusResult.data?.errorMessage || 'NanoBanana generation failed';
+      console.error('NanoBanana error:', errorMsg);
+      throw new Error(errorMsg);
+    }
+    
+    // Poll every 3 seconds
+    await sleep(3000);
+  }
+  
+  throw new Error('NanoBanana generation timeout after 5 minutes');
+}
+
+// Generate using NanoBanana API - SAME LOGIC AS generate-model
+async function generateWithNanoBanana(
+  apiKey: string,
+  prompt: string,
+  imageUrls: string[],
+  usePro: boolean,
+  isHijab: boolean = false
+): Promise<string> {
+  console.log(`Starting NanoBanana ${usePro ? 'Pro' : 'Standard'} generation...`);
+  console.log(`Images count: ${imageUrls.length}, Hijab mode: ${isHijab}`);
+  
+  // Inject Hijab constraint if enabled
+  let finalPrompt = prompt;
+  if (isHijab) {
+    finalPrompt = buildHijabConstraint() + '\n\n' + prompt;
+    console.log('Hijab constraint injected into prompt');
+  }
+  
+  let requestBody: Record<string, any>;
+  let endpoint: string;
+  
+  if (usePro) {
+    // Pro API uses different endpoint and parameters
+    requestBody = {
+      prompt: finalPrompt,
+      imageUrls: imageUrls,
+      resolution: '2K',
+      aspectRatio: '9:16'
+    };
+    endpoint = `${NANOBANANA_BASE_URL}/generate-pro`;
+  } else {
+    // Standard API
+    requestBody = {
+      prompt: finalPrompt,
+      type: 'IMAGETOIAMGE',
+      numImages: 1,
+      imageUrls: imageUrls,
+      aspectRatio: '9:16'
+    };
+    endpoint = `${NANOBANANA_BASE_URL}/generate`;
+  }
+  
+  console.log('NanoBanana request:', JSON.stringify({ endpoint, imageCount: imageUrls.length, usePro }));
+  
+  const generateResponse = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  });
+
+  const generateResult = await generateResponse.json();
+  console.log('NanoBanana response:', JSON.stringify(generateResult));
+  
+  if (!generateResponse.ok || generateResult.code !== 200) {
+    const errorMsg = generateResult.msg || 'Unknown NanoBanana error';
+    console.error('NanoBanana API error:', errorMsg);
+    throw new Error(`NanoBanana generation failed: ${errorMsg}`);
+  }
+  
+  const taskId = generateResult.data?.taskId;
+  if (!taskId) {
+    console.error('No taskId in response:', generateResult);
+    throw new Error('No taskId returned from NanoBanana');
+  }
+  
+  console.log(`NanoBanana Task ID: ${taskId}, starting poll...`);
+  return await pollForTaskCompletion(apiKey, taskId);
+}
+
+// Upload result image to storage for persistence
+async function uploadResultToStorage(
+  supabase: any,
+  imageUrl: string,
+  folder: string
+): Promise<string> {
+  // Fetch the image from NanoBanana
+  const imageResponse = await fetch(imageUrl);
+  if (!imageResponse.ok) {
+    throw new Error('Failed to fetch generated image from NanoBanana');
+  }
+  
+  const imageBlob = await imageResponse.blob();
+  const arrayBuffer = await imageBlob.arrayBuffer();
+  const binaryData = new Uint8Array(arrayBuffer);
+  
+  const mimeType = imageBlob.type || 'image/png';
+  const extension = mimeType.split('/')[1] || 'png';
+  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
+  
+  const { error: uploadError } = await supabase.storage
+    .from('generated-images')
+    .upload(fileName, binaryData, {
+      contentType: mimeType,
+      upsert: true
+    });
+  
+  if (uploadError) {
+    console.error('Upload error:', uploadError);
+    throw new Error('Failed to save generated image');
+  }
+  
+  // Create signed URL for client
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+    .from('generated-images')
+    .createSignedUrl(fileName, 60 * 60 * 24); // 24 hours
   
   if (signedUrlError || !signedUrlData?.signedUrl) {
     console.error('Signed URL error:', signedUrlError);
@@ -176,6 +258,7 @@ serve(async (req) => {
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
+      console.error('Missing authorization header');
       return new Response(
         JSON.stringify({ error: 'Missing authorization header' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -184,20 +267,13 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    if (!lovableApiKey) {
-      return new Response(
-        JSON.stringify({ error: 'LOVABLE_API_KEY not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
 
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
     if (authError || !user) {
+      console.error('Auth error:', authError);
       return new Response(
         JSON.stringify({ error: 'Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -213,12 +289,13 @@ serve(async (req) => {
       productImageBase64, 
       prompt,
       usePro = false,
-      isHijab = false  // Support for Hijab/modest model generation
+      isHijab = false
     } = await req.json();
     
     console.log(`Template generation request - templateId: ${templateId}, poseIndex: ${poseIndex}, usePro: ${usePro}, isHijab: ${isHijab}`);
     
     if (!templateId || typeof poseIndex !== 'number' || !poseImageUrl || !productImageBase64 || !prompt) {
+      console.error('Missing required fields');
       return new Response(
         JSON.stringify({ error: 'Missing required fields: templateId, poseIndex, poseImageUrl, productImageBase64, prompt' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -236,6 +313,7 @@ serve(async (req) => {
         .single();
 
       if (subError || !subscription) {
+        console.error('Subscription error:', subError);
         return new Response(
           JSON.stringify({ error: 'No subscription found' }),
           { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -245,6 +323,7 @@ serve(async (req) => {
       const hasCredits = subscription.credits_remaining >= creditCost;
       
       if (!hasCredits) {
+        console.error(`Insufficient credits: ${subscription.credits_remaining} < ${creditCost}`);
         return new Response(
           JSON.stringify({ 
             error: 'Insufficient credits', 
@@ -275,31 +354,47 @@ serve(async (req) => {
       console.log(`Deducted ${creditCost} credits for template generation`);
     }
 
-    // Generate the image
-    console.log(`Generating pose ${poseIndex + 1} for template ${templateId}...`);
-    
-    const generatedBase64 = await generateWithNanoBanana(
-      lovableApiKey,
-      prompt,
-      poseImageUrl,
+    // Upload product image to storage and get a signed URL for NanoBanana
+    console.log('Uploading product image to storage...');
+    const productImageUrl = await uploadBase64ToStorageForApi(
+      supabase,
       productImageBase64,
+      `templates/${templateId}/products`
+    );
+    console.log('Product image uploaded:', productImageUrl);
+
+    // Prepare image URLs for NanoBanana API
+    // poseImageUrl is the template pose image (full URL)
+    // productImageUrl is the user's product image (signed URL from storage)
+    const imageUrls = [poseImageUrl, productImageUrl];
+    
+    console.log(`Generating pose ${poseIndex + 1} for template ${templateId}...`);
+    console.log('Image URLs:', imageUrls);
+
+    // Call NanoBanana API - SAME AS generate-model
+    const generatedImageUrl = await generateWithNanoBanana(
+      NANOBANANA_API_KEY,
+      prompt,
+      imageUrls,
       usePro,
       isHijab
     );
     
-    // Upload to storage
-    const imageUrl = await uploadBase64ToStorage(
+    console.log('NanoBanana generation complete, uploading result...');
+    
+    // Upload generated image to our storage for persistence
+    const storedImageUrl = await uploadResultToStorage(
       supabase, 
-      generatedBase64, 
-      `templates/${templateId}`
+      generatedImageUrl, 
+      `templates/${templateId}/generated`
     );
     
-    console.log(`Pose ${poseIndex + 1} generated successfully`);
+    console.log(`Pose ${poseIndex + 1} generated and stored successfully`);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        imageUrl,
+        imageUrl: storedImageUrl,
         poseIndex
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -308,7 +403,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Template generation error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        details: error instanceof Error ? error.stack : undefined
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
