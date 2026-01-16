@@ -20,6 +20,8 @@ function PoseCard({ pose, isMain = false }: { pose: TemplatePose; isMain?: boole
     return translations[key as keyof typeof translations] || key;
   };
   
+  const hasImage = pose.imagePath && !pose.imagePath.includes('placeholder');
+  
   return (
     <div 
       className={cn(
@@ -28,9 +30,9 @@ function PoseCard({ pose, isMain = false }: { pose: TemplatePose; isMain?: boole
         isMain ? "aspect-[9/16]" : "aspect-[9/16]"
       )}
     >
-      {pose.imagePlaceholder !== '/placeholder.svg' ? (
+      {hasImage ? (
         <img 
-          src={pose.imagePlaceholder} 
+          src={pose.imagePath} 
           alt={t(pose.nameKey)}
           className="w-full h-full object-cover"
         />
@@ -116,8 +118,7 @@ function TemplateCard({ template }: { template: Template }) {
         <Button 
           className="w-full"
           onClick={() => {
-            // Future: navigate to template usage flow
-            console.log('Use template:', template.id);
+            navigate(`/templates/generate/${template.id}`);
           }}
         >
           {t('templates.useTemplate')}

@@ -3,7 +3,7 @@
 export interface TemplatePose {
   id: string;
   nameKey: string; // Translation key
-  imagePlaceholder: string; // Will be replaced with actual image later
+  imagePath: string; // Path to pose image in src/assets/templates/
 }
 
 export interface Template {
@@ -17,6 +17,8 @@ export interface Template {
   poses: TemplatePose[];
   tags?: string[]; // Future: for filtering (instagram-ready, trendyol-ready, etc.)
   planRequired?: string; // Future: for pricing plan requirements
+  requiredImages: number; // How many product images user needs to upload (usually 1)
+  prompt: string; // Fixed prompt for this template
 }
 
 export interface ProductCategory {
@@ -27,6 +29,75 @@ export interface ProductCategory {
   imagePlaceholder: string; // Will be replaced with actual image later
   order: number; // For sorting
 }
+
+// Credit costs for template generation
+export const TEMPLATE_CREDIT_COSTS = {
+  standard: 4, // 1 credit per pose × 4 poses
+  pro: 16, // 4 credits per pose × 4 poses
+};
+
+// Fixed prompt for all templates - DO NOT MODIFY
+export const TEMPLATE_GENERATION_PROMPT = `Use the uploaded images as strict references.
+
+The first image is the template model image.
+
+The second image is the user-uploaded product image.
+
+Replace ONLY the clothing item worn on the model with the user-uploaded product.
+
+Preserve the original clothing's:
+
+- texture realism
+
+- fabric structure
+
+- color accuracy
+
+- material details
+
+Do NOT recolor, stylize, or reinterpret the product.
+
+The product must look exactly like the uploaded image.
+
+STRICT PRESERVATION RULES:
+
+- Keep the same model
+
+- Keep the same pose
+
+- Keep the same body proportions
+
+- Keep the same camera angle
+
+- Keep the same framing and crop
+
+- Keep the same background
+
+- Keep the same lighting and shadows
+
+Do NOT change:
+
+- pose or posture
+
+- body shape
+
+- background or environment
+
+- camera distance or angle
+
+- lighting style
+
+The result must look like a realistic product photoshoot.
+
+Clean, photorealistic, e-commerce ready output.
+
+Suitable for marketplaces such as Trendyol and Instagram.
+
+Portrait orientation.
+
+9:16 aspect ratio.
+
+No editorial, fashion magazine, or artistic styling.`;
 
 // Product categories - easily extensible
 export const productCategories: ProductCategory[] = [
@@ -82,26 +153,28 @@ export const templates: Template[] = [
     gender: 'male',
     framing: 'neck-to-knee',
     aspectRatio: '9:16',
+    requiredImages: 1,
+    prompt: TEMPLATE_GENERATION_PROMPT,
     poses: [
       {
-        id: 'front-hand-pocket-watch',
+        id: 'poz1',
         nameKey: 'templates.poses.frontHandPocketWatch',
-        imagePlaceholder: '/placeholder.svg',
+        imagePath: '/lovable-uploads/templates/male/poz1.jpg',
       },
       {
-        id: 'side-hand-collar',
+        id: 'poz2',
         nameKey: 'templates.poses.sideHandCollar',
-        imagePlaceholder: '/placeholder.svg',
+        imagePath: '/lovable-uploads/templates/male/poz2.jpg',
       },
       {
-        id: 'back-hands-waist',
+        id: 'poz3',
         nameKey: 'templates.poses.backHandsWaist',
-        imagePlaceholder: '/placeholder.svg',
+        imagePath: '/lovable-uploads/templates/male/poz3.jpg',
       },
       {
-        id: 'front-wall-arms-crossed',
+        id: 'poz4',
         nameKey: 'templates.poses.frontWallArmsCrossed',
-        imagePlaceholder: '/placeholder.svg',
+        imagePath: '/lovable-uploads/templates/male/poz4.jpg',
       },
     ],
     tags: ['e-commerce', 'classic'],
@@ -115,26 +188,28 @@ export const templates: Template[] = [
     gender: 'female',
     framing: 'neck-to-knee',
     aspectRatio: '9:16',
+    requiredImages: 1,
+    prompt: TEMPLATE_GENERATION_PROMPT,
     poses: [
       {
-        id: 'front-hand-pocket-watch-f',
+        id: 'kpoz1',
         nameKey: 'templates.poses.frontHandPocketWatch',
-        imagePlaceholder: '/placeholder.svg',
+        imagePath: '/lovable-uploads/templates/female/kpoz1.jpg',
       },
       {
-        id: 'side-hand-collar-f',
+        id: 'kpoz2',
         nameKey: 'templates.poses.sideHandCollar',
-        imagePlaceholder: '/placeholder.svg',
+        imagePath: '/lovable-uploads/templates/female/kpoz2.jpg',
       },
       {
-        id: 'back-hands-waist-f',
+        id: 'kpoz3',
         nameKey: 'templates.poses.backHandsWaist',
-        imagePlaceholder: '/placeholder.svg',
+        imagePath: '/lovable-uploads/templates/female/kpoz3.jpg',
       },
       {
-        id: 'front-wall-arms-crossed-f',
+        id: 'kpoz4',
         nameKey: 'templates.poses.frontWallArmsCrossed',
-        imagePlaceholder: '/placeholder.svg',
+        imagePath: '/lovable-uploads/templates/female/kpoz4.jpg',
       },
     ],
     tags: ['e-commerce', 'classic'],

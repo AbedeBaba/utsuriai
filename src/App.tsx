@@ -33,6 +33,7 @@ import NotFound from "./pages/NotFound";
 // Templates pages
 import TemplatesHome from "./pages/templates/TemplatesHome";
 import TemplatesList from "./pages/templates/TemplatesList";
+import TemplateGenerate from "./pages/templates/TemplateGenerate";
 
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
@@ -64,6 +65,7 @@ const App = () => (
               {/* Templates routes */}
               <Route path="/templates" element={<TemplatesHome />} />
               <Route path="/templates/:categoryId" element={<TemplatesList />} />
+              <Route path="/templates/generate/:templateId" element={<TemplateGenerate />} />
               <Route path="/filter/gender" element={<FilterGender />} />
               <Route path="/filter/ethnicity" element={<FilterEthnicity />} />
               <Route path="/filter/skin-tone" element={<FilterSkinTone />} />
