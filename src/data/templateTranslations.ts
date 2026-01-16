@@ -15,6 +15,31 @@ export const templateTranslations = {
     'templates.useTemplate': 'Use This Template',
     'templates.comingSoon': 'Coming Soon',
     
+    // Credit info
+    'templates.creditInfo': 'Credit Usage',
+    'templates.standardCredits': '4 credits (Utsuri Standard)',
+    'templates.proCredits': '16 credits (Utsuri Pro)',
+    'templates.perTemplate': 'per template (4 images)',
+    
+    // Generation flow
+    'templates.uploadProduct': 'Upload Your Product',
+    'templates.uploadProductDesc': 'Upload a clear image of your product. The AI will place it on the model.',
+    'templates.selectMode': 'Select Generation Mode',
+    'templates.standard': 'Utsuri Standard',
+    'templates.standardDesc': '4 credits • Good quality',
+    'templates.pro': 'Utsuri Pro',
+    'templates.proDesc': '16 credits • Best quality',
+    'templates.generate': 'Generate Images',
+    'templates.generating': 'Generating...',
+    'templates.generatingPose': 'Generating pose',
+    'templates.of': 'of',
+    'templates.complete': 'Complete!',
+    'templates.downloadAll': 'Download All',
+    'templates.tryAnother': 'Try Another Template',
+    'templates.insufficientCredits': 'Insufficient credits',
+    'templates.needCredits': 'You need {credits} credits for this generation.',
+    'templates.backToTemplate': 'Back to Template',
+    
     // Categories
     'templates.categories.hat': 'Hat / Beanie',
     'templates.categories.hatDesc': 'Showcase hats, beanies, and headwear',
@@ -56,6 +81,31 @@ export const templateTranslations = {
     'templates.poses': 'Pozlar',
     'templates.useTemplate': 'Bu Şablonu Kullan',
     'templates.comingSoon': 'Yakında',
+    
+    // Credit info
+    'templates.creditInfo': 'Kredi Kullanımı',
+    'templates.standardCredits': '4 kredi (Utsuri Standard)',
+    'templates.proCredits': '16 kredi (Utsuri Pro)',
+    'templates.perTemplate': 'şablon başına (4 görsel)',
+    
+    // Generation flow
+    'templates.uploadProduct': 'Ürününüzü Yükleyin',
+    'templates.uploadProductDesc': 'Ürününüzün net bir fotoğrafını yükleyin. AI onu modelin üzerine yerleştirecek.',
+    'templates.selectMode': 'Üretim Modunu Seçin',
+    'templates.standard': 'Utsuri Standard',
+    'templates.standardDesc': '4 kredi • İyi kalite',
+    'templates.pro': 'Utsuri Pro',
+    'templates.proDesc': '16 kredi • En iyi kalite',
+    'templates.generate': 'Görselleri Oluştur',
+    'templates.generating': 'Oluşturuluyor...',
+    'templates.generatingPose': 'Poz oluşturuluyor',
+    'templates.of': '/',
+    'templates.complete': 'Tamamlandı!',
+    'templates.downloadAll': 'Tümünü İndir',
+    'templates.tryAnother': 'Başka Şablon Dene',
+    'templates.insufficientCredits': 'Yetersiz kredi',
+    'templates.needCredits': 'Bu üretim için {credits} krediye ihtiyacınız var.',
+    'templates.backToTemplate': 'Şablona Dön',
     
     // Categories
     'templates.categories.hat': 'Şapka / Bere',
