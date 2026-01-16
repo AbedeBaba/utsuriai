@@ -49,6 +49,9 @@ export default function Landing() {
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
+            <button onClick={() => navigate('/templates')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              {t('nav.templates')}
+            </button>
             <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {t('nav.howItWorks')}
             </a>
@@ -89,6 +92,12 @@ export default function Landing() {
               <SheetContent side="right" className="w-[280px] sm:w-[320px]">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <nav className="flex flex-col gap-6 mt-8">
+                  <button 
+                    onClick={() => { navigate('/templates'); setMobileMenuOpen(false); }} 
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left"
+                  >
+                    {t('nav.templates')}
+                  </button>
                   <a 
                     href="#how-it-works" 
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"

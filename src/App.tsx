@@ -30,6 +30,10 @@ import AccountSettings from "./pages/AccountSettings";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
+// Templates pages
+import TemplatesHome from "./pages/templates/TemplatesHome";
+import TemplatesList from "./pages/templates/TemplatesList";
+
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfUse from "./pages/legal/TermsOfUse";
@@ -57,6 +61,9 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/account-settings" element={<AccountSettings />} />
               <Route path="/admin" element={<Admin />} />
+              {/* Templates routes */}
+              <Route path="/templates" element={<TemplatesHome />} />
+              <Route path="/templates/:categoryId" element={<TemplatesList />} />
               <Route path="/filter/gender" element={<FilterGender />} />
               <Route path="/filter/ethnicity" element={<FilterEthnicity />} />
               <Route path="/filter/skin-tone" element={<FilterSkinTone />} />
