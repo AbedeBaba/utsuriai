@@ -72,6 +72,10 @@ export const templateTranslations = {
     'templates.items.modernLifestyleUpperWearMaleDesc': 'Soft lighting, everyday-chic e-commerce shots',
     'templates.items.modernLifestyleUpperWearFemale': 'Modern Lifestyle – Upper Wear (Female)',
     'templates.items.modernLifestyleUpperWearFemaleDesc': 'Soft lighting, everyday-chic e-commerce shots',
+    'templates.items.classicSittingUpperWearMale': 'Classic Sitting – Upper Wear (Male)',
+    'templates.items.classicSittingUpperWearMaleDesc': 'Warm tones, timeless lifestyle photography',
+    'templates.items.classicSittingUpperWearFemale': 'Classic Sitting – Upper Wear (Female)',
+    'templates.items.classicSittingUpperWearFemaleDesc': 'Warm tones, timeless lifestyle photography',
     
     // Pose names
     'templates.poses.frontHandPocketWatch': 'Front view – hand in pocket, showing watch',
@@ -82,6 +86,10 @@ export const templateTranslations = {
     'templates.poses.lifestyleBackStanding': 'Back view – standing',
     'templates.poses.lifestyleFrontWalking': 'Front view – walking',
     'templates.poses.lifestyleSideProfile': 'Side profile view',
+    'templates.poses.seatedFrontRelaxed': 'Seated front view – relaxed',
+    'templates.poses.seatedFrontCrossedLegs': 'Seated front view – crossed legs',
+    'templates.poses.seatedSideProfile': 'Seated side profile',
+    'templates.poses.seatedBackView': 'Seated back view',
     
     // Gender filter
     'templates.filter.all': 'All',
@@ -158,6 +166,10 @@ export const templateTranslations = {
     'templates.items.modernLifestyleUpperWearMaleDesc': 'Yumuşak aydınlatma, günlük-şık e-ticaret çekimleri',
     'templates.items.modernLifestyleUpperWearFemale': 'Modern Yaşam Tarzı – Üst Giyim (Kadın)',
     'templates.items.modernLifestyleUpperWearFemaleDesc': 'Yumuşak aydınlatma, günlük-şık e-ticaret çekimleri',
+    'templates.items.classicSittingUpperWearMale': 'Klasik Oturan – Üst Giyim (Erkek)',
+    'templates.items.classicSittingUpperWearMaleDesc': 'Sıcak tonlar, zamansız yaşam tarzı fotoğrafçılığı',
+    'templates.items.classicSittingUpperWearFemale': 'Klasik Oturan – Üst Giyim (Kadın)',
+    'templates.items.classicSittingUpperWearFemaleDesc': 'Sıcak tonlar, zamansız yaşam tarzı fotoğrafçılığı',
     
     // Pose names
     'templates.poses.frontHandPocketWatch': 'Ön görünüm – el cepte, saat gösteriliyor',
@@ -168,6 +180,10 @@ export const templateTranslations = {
     'templates.poses.lifestyleBackStanding': 'Arka görünüm – ayakta',
     'templates.poses.lifestyleFrontWalking': 'Ön görünüm – yürürken',
     'templates.poses.lifestyleSideProfile': 'Yan profil görünümü',
+    'templates.poses.seatedFrontRelaxed': 'Oturarak ön görünüm – rahat',
+    'templates.poses.seatedFrontCrossedLegs': 'Oturarak ön görünüm – bacak bacak üstüne',
+    'templates.poses.seatedSideProfile': 'Oturarak yan profil',
+    'templates.poses.seatedBackView': 'Oturarak arka görünüm',
     
     // Gender filter
     'templates.filter.all': 'Tümü',
