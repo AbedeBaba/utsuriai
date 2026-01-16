@@ -152,7 +152,7 @@ async function generateWithNanoBanana(
   let endpoint: string;
   
   if (usePro) {
-    // Pro API uses different endpoint and parameters - SAME AS generate-model
+    // Pro API uses different endpoint and parameters
     requestBody = {
       prompt: finalPrompt,
       imageUrls: imageUrls,
@@ -161,10 +161,10 @@ async function generateWithNanoBanana(
     };
     endpoint = `${NANOBANANA_BASE_URL}/generate-pro`;
   } else {
-    // Standard API - SAME AS generate-model
+    // Standard API - fixed typo IMAGETOIMAGE
     requestBody = {
       prompt: finalPrompt,
-      type: 'IMAGETOIAMGE',
+      type: 'IMAGETOIMAGE',
       numImages: 1,
       imageUrls: imageUrls,
       aspectRatio: '9:16'
