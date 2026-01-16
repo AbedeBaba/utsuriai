@@ -103,9 +103,28 @@ async function uploadUrlImageToStorageForApi(
   const arrayBuffer = await blob.arrayBuffer();
   const binaryData = new Uint8Array(arrayBuffer);
   
-  const mimeType = blob.type || 'image/png';
-  const extension = mimeType.split('/')[1] || 'png';
+  // Extract extension from original URL (more reliable than blob.type for some servers)
+  const urlPath = new URL(imageUrl).pathname;
+  const urlExtension = urlPath.split('.').pop()?.toLowerCase();
+  
+  // Determine the correct extension and mime type
+  let extension = 'png';
+  let mimeType = 'image/png';
+  
+  if (urlExtension && ['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(urlExtension)) {
+    extension = urlExtension === 'jpg' ? 'jpeg' : urlExtension;
+    mimeType = `image/${extension}`;
+  } else if (blob.type && blob.type.startsWith('image/')) {
+    // Only use blob.type if it's a valid image type
+    const blobExt = blob.type.split('/')[1]?.split(';')[0]; // Handle "image/png;charset=utf-8"
+    if (blobExt && ['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(blobExt)) {
+      extension = blobExt;
+      mimeType = `image/${extension}`;
+    }
+  }
+  
   const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
+  console.log('Uploading with mimeType:', mimeType, 'extension:', extension);
   
   const { error: uploadError } = await supabase.storage
     .from('generated-images')
