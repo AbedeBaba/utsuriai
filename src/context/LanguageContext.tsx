@@ -35,6 +35,7 @@ export const translations: Translations = {
   'nav.howItWorks': { en: 'How it Works', tr: 'Nasıl Çalışır' },
   'nav.features': { en: 'Features', tr: 'Özellikler' },
   'nav.pricing': { en: 'Pricing', tr: 'Fiyatlandırma' },
+  'nav.templates': { en: 'Templates', tr: 'Şablonlar' },
   'nav.watchDemo': { en: 'Watch Demo', tr: 'Demo İzle' },
   
   // Auth
