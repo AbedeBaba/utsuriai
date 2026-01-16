@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Sparkles, MapPin, Phone, Mail } from 'lucide-react';
+import { Sparkles, MapPin, Phone, Mail, User } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface FooterProps {
@@ -108,6 +108,12 @@ export function Footer({ variant = 'light' }: FooterProps) {
                 >
                   support@utsuriai.com
                 </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <User className={`h-4 w-4 flex-shrink-0 ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`} />
+                <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`}>
+                  Çağatay Samet Macar
+                </span>
               </li>
               <li className="pt-1">
                 <Link 
