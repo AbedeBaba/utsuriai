@@ -166,6 +166,86 @@ export const templates: Template[] = [
     ],
     tags: ['e-commerce', 'classic'],
   },
+  // Modern Lifestyle - Male
+  {
+    id: 'modern-lifestyle-upper-wear-male',
+    nameKey: 'templates.items.modernLifestyleUpperWearMale',
+    descriptionKey: 'templates.items.modernLifestyleUpperWearMaleDesc',
+    categoryId: 'upper-wear',
+    gender: 'male',
+    framing: 'full-body',
+    aspectRatio: '9:16',
+    requiredImages: 2,
+    requiresBackView: true,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'es2p1',
+        nameKey: 'templates.poses.lifestyleFrontRelaxed',
+        imagePath: '/lovable-uploads/templates/male/es2p1.png',
+        useBackView: false,
+      },
+      {
+        id: 'es2p2',
+        nameKey: 'templates.poses.lifestyleBackStanding',
+        imagePath: '/lovable-uploads/templates/male/es2p2.png',
+        useBackView: true,
+      },
+      {
+        id: 'es2p3',
+        nameKey: 'templates.poses.lifestyleFrontWalking',
+        imagePath: '/lovable-uploads/templates/male/es2p3.png',
+        useBackView: false,
+      },
+      {
+        id: 'es2p4',
+        nameKey: 'templates.poses.lifestyleSideProfile',
+        imagePath: '/lovable-uploads/templates/male/es2p4.png',
+        useBackView: false,
+      },
+    ],
+    tags: ['lifestyle', 'modern', 'e-commerce'],
+  },
+  // Modern Lifestyle - Female
+  {
+    id: 'modern-lifestyle-upper-wear-female',
+    nameKey: 'templates.items.modernLifestyleUpperWearFemale',
+    descriptionKey: 'templates.items.modernLifestyleUpperWearFemaleDesc',
+    categoryId: 'upper-wear',
+    gender: 'female',
+    framing: 'full-body',
+    aspectRatio: '9:16',
+    requiredImages: 2,
+    requiresBackView: true,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 's2p1',
+        nameKey: 'templates.poses.lifestyleFrontRelaxed',
+        imagePath: '/lovable-uploads/templates/female/s2p1.png',
+        useBackView: false,
+      },
+      {
+        id: 's2p2',
+        nameKey: 'templates.poses.lifestyleBackStanding',
+        imagePath: '/lovable-uploads/templates/female/s2p2.png',
+        useBackView: true,
+      },
+      {
+        id: 's2p3',
+        nameKey: 'templates.poses.lifestyleFrontWalking',
+        imagePath: '/lovable-uploads/templates/female/s2p3.png',
+        useBackView: false,
+      },
+      {
+        id: 's2p4',
+        nameKey: 'templates.poses.lifestyleSideProfile',
+        imagePath: '/lovable-uploads/templates/female/s2p4.png',
+        useBackView: false,
+      },
+    ],
+    tags: ['lifestyle', 'modern', 'e-commerce'],
+  },
 ];
 
 // Helper functions

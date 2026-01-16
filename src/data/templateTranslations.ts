@@ -68,12 +68,20 @@ export const templateTranslations = {
     'templates.items.classicEcommerceUpperWearDesc': 'Professional e-commerce shots with neck-to-knee framing',
     'templates.items.classicEcommerceUpperWearFemale': 'Classic E-commerce – Upper Wear (Female)',
     'templates.items.classicEcommerceUpperWearFemaleDesc': 'Professional e-commerce shots with neck-to-knee framing',
+    'templates.items.modernLifestyleUpperWearMale': 'Modern Lifestyle – Upper Wear (Male)',
+    'templates.items.modernLifestyleUpperWearMaleDesc': 'Soft lighting, everyday-chic e-commerce shots',
+    'templates.items.modernLifestyleUpperWearFemale': 'Modern Lifestyle – Upper Wear (Female)',
+    'templates.items.modernLifestyleUpperWearFemaleDesc': 'Soft lighting, everyday-chic e-commerce shots',
     
     // Pose names
     'templates.poses.frontHandPocketWatch': 'Front view – hand in pocket, showing watch',
     'templates.poses.sideHandCollar': 'Side view – hand on collar',
     'templates.poses.backHandsWaist': 'Back view – hands on waist',
     'templates.poses.frontWallArmsCrossed': 'Front view – leaning on wall, arms crossed',
+    'templates.poses.lifestyleFrontRelaxed': 'Front view – relaxed stance',
+    'templates.poses.lifestyleBackStanding': 'Back view – standing',
+    'templates.poses.lifestyleFrontWalking': 'Front view – walking',
+    'templates.poses.lifestyleSideProfile': 'Side profile view',
     
     // Gender filter
     'templates.filter.all': 'All',
@@ -146,12 +154,20 @@ export const templateTranslations = {
     'templates.items.classicEcommerceUpperWearDesc': 'Boyundan dize profesyonel e-ticaret çekimleri',
     'templates.items.classicEcommerceUpperWearFemale': 'Klasik E-Ticaret – Üst Giyim (Kadın)',
     'templates.items.classicEcommerceUpperWearFemaleDesc': 'Boyundan dize profesyonel e-ticaret çekimleri',
+    'templates.items.modernLifestyleUpperWearMale': 'Modern Yaşam Tarzı – Üst Giyim (Erkek)',
+    'templates.items.modernLifestyleUpperWearMaleDesc': 'Yumuşak aydınlatma, günlük-şık e-ticaret çekimleri',
+    'templates.items.modernLifestyleUpperWearFemale': 'Modern Yaşam Tarzı – Üst Giyim (Kadın)',
+    'templates.items.modernLifestyleUpperWearFemaleDesc': 'Yumuşak aydınlatma, günlük-şık e-ticaret çekimleri',
     
     // Pose names
     'templates.poses.frontHandPocketWatch': 'Ön görünüm – el cepte, saat gösteriliyor',
     'templates.poses.sideHandCollar': 'Yan görünüm – el yakada',
     'templates.poses.backHandsWaist': 'Arka görünüm – eller belde',
     'templates.poses.frontWallArmsCrossed': 'Ön görünüm – duvara yaslanmış, kollar kavuşuk',
+    'templates.poses.lifestyleFrontRelaxed': 'Ön görünüm – rahat duruş',
+    'templates.poses.lifestyleBackStanding': 'Arka görünüm – ayakta',
+    'templates.poses.lifestyleFrontWalking': 'Ön görünüm – yürürken',
+    'templates.poses.lifestyleSideProfile': 'Yan profil görünümü',
     
     // Gender filter
     'templates.filter.all': 'Tümü',
