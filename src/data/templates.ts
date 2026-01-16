@@ -159,22 +159,22 @@ export const templates: Template[] = [
       {
         id: 'poz1',
         nameKey: 'templates.poses.frontHandPocketWatch',
-        imagePath: '/lovable-uploads/templates/male/poz1.jpg',
+        imagePath: '/lovable-uploads/templates/male/poz1.png',
       },
       {
         id: 'poz2',
         nameKey: 'templates.poses.sideHandCollar',
-        imagePath: '/lovable-uploads/templates/male/poz2.jpg',
+        imagePath: '/lovable-uploads/templates/male/poz2.png',
       },
       {
         id: 'poz3',
         nameKey: 'templates.poses.backHandsWaist',
-        imagePath: '/lovable-uploads/templates/male/poz3.jpg',
+        imagePath: '/lovable-uploads/templates/male/poz3.png',
       },
       {
         id: 'poz4',
         nameKey: 'templates.poses.frontWallArmsCrossed',
-        imagePath: '/lovable-uploads/templates/male/poz4.jpg',
+        imagePath: '/lovable-uploads/templates/male/poz4.png',
       },
     ],
     tags: ['e-commerce', 'classic'],
@@ -194,22 +194,22 @@ export const templates: Template[] = [
       {
         id: 'kpoz1',
         nameKey: 'templates.poses.frontHandPocketWatch',
-        imagePath: '/lovable-uploads/templates/female/kpoz1.jpg',
+        imagePath: '/lovable-uploads/templates/female/kpoz1.png',
       },
       {
         id: 'kpoz2',
         nameKey: 'templates.poses.sideHandCollar',
-        imagePath: '/lovable-uploads/templates/female/kpoz2.jpg',
+        imagePath: '/lovable-uploads/templates/female/kpoz2.png',
       },
       {
         id: 'kpoz3',
         nameKey: 'templates.poses.backHandsWaist',
-        imagePath: '/lovable-uploads/templates/female/kpoz3.jpg',
+        imagePath: '/lovable-uploads/templates/female/kpoz3.png',
       },
       {
         id: 'kpoz4',
         nameKey: 'templates.poses.frontWallArmsCrossed',
-        imagePath: '/lovable-uploads/templates/female/kpoz4.jpg',
+        imagePath: '/lovable-uploads/templates/female/kpoz4.png',
       },
     ],
     tags: ['e-commerce', 'classic'],
