@@ -7,7 +7,8 @@ const corsHeaders = {
 };
 
 // NanoBanana API endpoints
-const NANOBANANA_API_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana/generate';
+const NANOBANANA_STANDARD_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana/generate';
+const NANOBANANA_PRO_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana/generate-pro';
 const NANOBANANA_TASK_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana/record-info';
 
 // Credit costs per template (4 poses)
@@ -88,7 +89,7 @@ async function uploadBase64ToStorage(
 async function pollForTaskCompletion(
   taskId: string,
   apiKey: string,
-  maxAttempts: number = 60,
+  maxAttempts: number = 120,
   intervalMs: number = 5000
 ): Promise<any> {
   console.log(`Polling for task ${taskId} completion...`);
@@ -116,24 +117,26 @@ async function pollForTaskCompletion(
       }
       
       const result = await response.json();
-      console.log(`Task status (attempt ${attempt + 1}):`, JSON.stringify(result.data));
+      console.log(`Task status (attempt ${attempt + 1}):`, JSON.stringify(result));
       
-      const successFlag = result.data?.successFlag;
+      // The response structure can be either { data: { successFlag, response } } or { successFlag, response }
+      const taskData = result.data || result;
+      const successFlag = taskData.successFlag;
       
       if (successFlag === 1) {
         // SUCCESS
         console.log('Task completed successfully');
-        return result.data;
+        return taskData;
       }
       
       if (successFlag === 2) {
         // CREATE_TASK_FAILED
-        throw new Error(`Task creation failed: ${result.data?.errorMessage || 'Unknown error'}`);
+        throw new Error(`Task creation failed: ${taskData.errorMessage || 'Unknown error'}`);
       }
       
       if (successFlag === 3) {
         // GENERATE_FAILED
-        throw new Error(`Generation failed: ${result.data?.errorMessage || 'Unknown error'}`);
+        throw new Error(`Generation failed: ${taskData.errorMessage || 'Unknown error'}`);
       }
       
       // successFlag === 0 means still GENERATING, continue polling
@@ -150,8 +153,8 @@ async function pollForTaskCompletion(
   throw new Error('Task polling timeout - generation took too long');
 }
 
-// Generate image using NanoBanana API
-async function generateWithNanoBanana(
+// Generate image using NanoBanana STANDARD API (IMAGETOIAMGE mode)
+async function generateWithNanoBananaStandard(
   apiKey: string,
   prompt: string,
   poseImageUrl: string,
@@ -160,7 +163,7 @@ async function generateWithNanoBanana(
   templateId: string,
   isHijab: boolean = false
 ): Promise<string> {
-  console.log('Starting NanoBanana image-to-image generation...');
+  console.log('Starting NanoBanana STANDARD image-to-image generation...');
   console.log('Pose image URL:', poseImageUrl);
   console.log('Product image URL:', productImageUrl);
   
@@ -174,7 +177,7 @@ async function generateWithNanoBanana(
   // Create a dummy callback URL (required by API but we'll poll instead)
   const callbackUrl = 'https://webhook.site/dummy-callback';
   
-  // Build request body according to NanoBanana API spec
+  // Build request body according to NanoBanana API spec for STANDARD endpoint
   const requestBody = {
     prompt: finalPrompt,
     type: 'IMAGETOIAMGE', // Image-to-image editing mode (note: typo is in official API)
@@ -184,13 +187,13 @@ async function generateWithNanoBanana(
     image_size: '3:4' // Portrait aspect ratio for fashion
   };
   
-  console.log('NanoBanana request body:', JSON.stringify({
+  console.log('NanoBanana STANDARD request body:', JSON.stringify({
     ...requestBody,
     prompt: requestBody.prompt.substring(0, 100) + '...',
     imageUrls: requestBody.imageUrls
   }));
   
-  const response = await fetch(NANOBANANA_API_URL, {
+  const response = await fetch(NANOBANANA_STANDARD_URL, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -200,7 +203,7 @@ async function generateWithNanoBanana(
   });
   
   const responseText = await response.text();
-  console.log('NanoBanana raw response:', responseText);
+  console.log('NanoBanana STANDARD raw response:', responseText);
   
   if (!response.ok) {
     console.error('NanoBanana API error:', responseText);
@@ -231,7 +234,6 @@ async function generateWithNanoBanana(
   const taskResult = await pollForTaskCompletion(taskId, apiKey);
   
   // Extract generated image URL from task result
-  // The response structure is: { response: { originImageUrl, resultImageUrl } }
   const generatedImageUrl = taskResult.response?.resultImageUrl || taskResult.response?.originImageUrl;
   
   if (!generatedImageUrl) {
@@ -239,10 +241,111 @@ async function generateWithNanoBanana(
     throw new Error('No generated image URL in task result');
   }
   
-  console.log('Generated image URL:', generatedImageUrl);
+  return await downloadAndStoreImage(supabase, generatedImageUrl, templateId);
+}
+
+// Generate image using NanoBanana PRO API
+async function generateWithNanoBananaPro(
+  apiKey: string,
+  prompt: string,
+  poseImageUrl: string,
+  productImageUrl: string,
+  supabase: any,
+  templateId: string,
+  isHijab: boolean = false
+): Promise<string> {
+  console.log('Starting NanoBanana PRO image generation...');
+  console.log('Pose image URL:', poseImageUrl);
+  console.log('Product image URL:', productImageUrl);
+  
+  // Inject Hijab constraint if enabled
+  let finalPrompt = prompt;
+  if (isHijab) {
+    finalPrompt = buildHijabConstraint() + '\n\n' + prompt;
+    console.log('Hijab constraint injected into prompt');
+  }
+  
+  // Create a dummy callback URL (required by API but we'll poll instead)
+  const callbackUrl = 'https://webhook.site/dummy-callback';
+  
+  // Build request body according to NanoBanana PRO API spec
+  // PRO endpoint uses different parameters: resolution, aspectRatio (not image_size)
+  const requestBody = {
+    prompt: finalPrompt,
+    imageUrls: [poseImageUrl, productImageUrl], // Both pose and product images
+    resolution: '2K', // High quality: 1K, 2K, or 4K
+    aspectRatio: '3:4', // Portrait aspect ratio for fashion
+    callBackUrl: callbackUrl
+  };
+  
+  console.log('NanoBanana PRO request body:', JSON.stringify({
+    ...requestBody,
+    prompt: requestBody.prompt.substring(0, 100) + '...',
+    imageUrls: requestBody.imageUrls
+  }));
+  
+  const response = await fetch(NANOBANANA_PRO_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  });
+  
+  const responseText = await response.text();
+  console.log('NanoBanana PRO raw response:', responseText);
+  
+  if (!response.ok) {
+    console.error('NanoBanana PRO API error:', responseText);
+    throw new Error(`NanoBanana PRO API HTTP error: ${response.status} - ${responseText}`);
+  }
+  
+  let result;
+  try {
+    result = JSON.parse(responseText);
+  } catch (e) {
+    throw new Error(`Failed to parse NanoBanana PRO response: ${responseText}`);
+  }
+  
+  console.log('NanoBanana PRO parsed response:', JSON.stringify(result));
+  
+  // PRO API returns code 200 on success
+  if (result.code !== 200) {
+    throw new Error(`NanoBanana PRO API error: ${result.message || result.msg || 'Unknown error'} (code: ${result.code})`);
+  }
+  
+  const taskId = result.data?.taskId;
+  if (!taskId) {
+    throw new Error('No taskId returned from NanoBanana PRO API');
+  }
+  
+  console.log(`PRO Task submitted with ID: ${taskId}, polling for completion...`);
+  
+  // Poll for task completion (PRO may take longer, so more attempts)
+  const taskResult = await pollForTaskCompletion(taskId, apiKey, 180, 5000);
+  
+  // Extract generated image URL from task result
+  const generatedImageUrl = taskResult.response?.resultImageUrl || taskResult.response?.originImageUrl;
+  
+  if (!generatedImageUrl) {
+    console.error('No image URL in PRO task result:', JSON.stringify(taskResult));
+    throw new Error('No generated image URL in PRO task result');
+  }
+  
+  return await downloadAndStoreImage(supabase, generatedImageUrl, templateId);
+}
+
+// Download image from URL and store in Supabase storage
+async function downloadAndStoreImage(
+  supabase: any,
+  imageUrl: string,
+  templateId: string
+): Promise<string> {
+  console.log('Generated image URL:', imageUrl);
   
   // Download and re-upload to our storage for persistence
-  const imageResponse = await fetch(generatedImageUrl);
+  const imageResponse = await fetch(imageUrl);
   if (!imageResponse.ok) {
     throw new Error(`Failed to download generated image: ${imageResponse.status}`);
   }
@@ -265,7 +368,7 @@ async function generateWithNanoBanana(
   // Create signed URL for the stored image
   const { data: signedUrlData, error: signedUrlError } = await supabase.storage
     .from('generated-images')
-    .createSignedUrl(fileName, 60 * 60 * 24); // 24 hours
+    .createSignedUrl(fileName, 60 * 60 * 24 * 7); // 7 days for Creator users
   
   if (signedUrlError || !signedUrlData?.signedUrl) {
     console.error('Failed to create signed URL:', signedUrlError);
@@ -397,18 +500,34 @@ serve(async (req) => {
     const productImageUrl = await uploadBase64ToStorage(supabase, productImageBase64, templateId, 'product');
     console.log('Product image uploaded:', productImageUrl);
     
-    console.log(`Generating pose ${poseIndex + 1} for template ${templateId}...`);
+    console.log(`Generating pose ${poseIndex + 1} for template ${templateId} using ${usePro ? 'PRO' : 'STANDARD'} mode...`);
 
-    // Call NanoBanana API for image-to-image generation
-    const storedImageUrl = await generateWithNanoBanana(
-      nanoBananaApiKey,
-      prompt,
-      poseImageUrl,
-      productImageUrl,
-      supabase,
-      templateId,
-      isHijab
-    );
+    // Call appropriate NanoBanana API based on usePro flag
+    let storedImageUrl: string;
+    
+    if (usePro) {
+      // Use NanoBanana PRO API for higher quality
+      storedImageUrl = await generateWithNanoBananaPro(
+        nanoBananaApiKey,
+        prompt,
+        poseImageUrl,
+        productImageUrl,
+        supabase,
+        templateId,
+        isHijab
+      );
+    } else {
+      // Use NanoBanana STANDARD API
+      storedImageUrl = await generateWithNanoBananaStandard(
+        nanoBananaApiKey,
+        prompt,
+        poseImageUrl,
+        productImageUrl,
+        supabase,
+        templateId,
+        isHijab
+      );
+    }
     
     console.log(`Pose ${poseIndex + 1} generated and stored successfully`);
 
