@@ -4,7 +4,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { getTemplateById, TEMPLATE_CREDIT_COSTS } from "@/data/templates";
 import { templateTranslations } from "@/data/templateTranslations";
-import { ArrowLeft, Upload, Sparkles, Download, CheckCircle, Loader2, Zap, Crown } from "lucide-react";
+import { ArrowLeft, Upload, Sparkles, Download, CheckCircle, Loader2, Zap, Crown, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,19 +17,28 @@ interface GeneratedImage {
   status: 'pending' | 'generating' | 'complete' | 'error';
 }
 
+interface ProductImage {
+  preview: string | null;
+  file: File | null;
+}
+
 export default function TemplateGenerate() {
   const navigate = useNavigate();
   const { templateId } = useParams<{ templateId: string }>();
   const { language } = useLanguage();
   const { user, session } = useAuth();
   
-  const [productImage, setProductImage] = useState<string | null>(null);
-  const [productFile, setProductFile] = useState<File | null>(null);
+  // Front view image (always required)
+  const [frontImage, setFrontImage] = useState<ProductImage>({ preview: null, file: null });
+  // Back view image (required only for templates with requiresBackView)
+  const [backImage, setBackImage] = useState<ProductImage>({ preview: null, file: null });
+  
   const [usePro, setUsePro] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentPoseIndex, setCurrentPoseIndex] = useState(0);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
-  const [isDragOver, setIsDragOver] = useState(false);
+  const [isDragOverFront, setIsDragOverFront] = useState(false);
+  const [isDragOverBack, setIsDragOverBack] = useState(false);
   
   const t = (key: string) => {
     const translations = templateTranslations[language as 'en' | 'tr'] || templateTranslations.en;
@@ -37,39 +46,59 @@ export default function TemplateGenerate() {
   };
   
   const template = templateId ? getTemplateById(templateId) : null;
+  const requiresBackView = template?.requiresBackView ?? false;
   
-  const handleFile = useCallback((file: File) => {
+  const handleFile = useCallback((file: File, type: 'front' | 'back') => {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
-        setProductImage(result);
-        setProductFile(file);
+        if (type === 'front') {
+          setFrontImage({ preview: result, file });
+        } else {
+          setBackImage({ preview: result, file });
+        }
       };
       reader.readAsDataURL(file);
     }
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent, type: 'front' | 'back') => {
     e.preventDefault();
-    setIsDragOver(false);
+    if (type === 'front') setIsDragOverFront(false);
+    else setIsDragOverBack(false);
+    
     const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
+    if (file) handleFile(file, type);
   }, [handleFile]);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: React.DragEvent, type: 'front' | 'back') => {
     e.preventDefault();
-    setIsDragOver(true);
+    if (type === 'front') setIsDragOverFront(true);
+    else setIsDragOverBack(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
+  const handleDragLeave = useCallback((e: React.DragEvent, type: 'front' | 'back') => {
     e.preventDefault();
-    setIsDragOver(false);
+    if (type === 'front') setIsDragOverFront(false);
+    else setIsDragOverBack(false);
   }, []);
   
+  // Check if all required images are uploaded
+  const hasAllRequiredImages = () => {
+    if (!frontImage.preview) return false;
+    if (requiresBackView && !backImage.preview) return false;
+    return true;
+  };
+  
   const handleGenerate = async () => {
-    if (!template || !productImage || !session) {
-      toast.error("Please upload a product image first");
+    if (!template || !session) {
+      toast.error("Please sign in to generate images");
+      return;
+    }
+    
+    if (!hasAllRequiredImages()) {
+      toast.error(t('templates.uploadBothImages'));
       return;
     }
     
@@ -93,12 +122,17 @@ export default function TemplateGenerate() {
         // Build full URL for pose image
         const poseImageUrl = window.location.origin + pose.imagePath;
         
+        // Determine which product image to use based on pose
+        const productImageBase64 = pose.useBackView && backImage.preview 
+          ? backImage.preview 
+          : frontImage.preview;
+        
         const { data, error } = await supabase.functions.invoke('generate-template', {
           body: {
             templateId: template.id,
             poseIndex: i,
             poseImageUrl,
-            productImageBase64: productImage,
+            productImageBase64,
             prompt: template.prompt,
             usePro
           }
@@ -172,6 +206,84 @@ export default function TemplateGenerate() {
   const completedCount = generatedImages.filter(img => img.status === 'complete').length;
   const allComplete = completedCount === template.poses.length && completedCount > 0;
   
+  // Render image upload box
+  const renderUploadBox = (
+    type: 'front' | 'back',
+    image: ProductImage,
+    isDragOver: boolean,
+    title: string,
+    description: string
+  ) => (
+    <div
+      onDrop={(e) => handleDrop(e, type)}
+      onDragOver={(e) => handleDragOver(e, type)}
+      onDragLeave={(e) => handleDragLeave(e, type)}
+      className={cn(
+        "relative border-2 border-dashed rounded-xl p-6 transition-all cursor-pointer flex-1",
+        isDragOver 
+          ? "border-primary bg-primary/5" 
+          : "border-border/50 hover:border-primary/50",
+        image.preview && "border-solid border-primary/50 bg-primary/5"
+      )}
+      onClick={() => !image.preview && document.getElementById(`${type}-input`)?.click()}
+    >
+      <input
+        id={`${type}-input`}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleFile(file, type);
+        }}
+      />
+      
+      {image.preview ? (
+        <div className="flex items-center gap-4">
+          <img 
+            src={image.preview} 
+            alt={title} 
+            className="w-24 h-24 object-cover rounded-lg"
+          />
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-foreground flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+              <span className="truncate">
+                {type === 'front' ? t('templates.frontImageUploaded') : t('templates.backImageUploaded')}
+              </span>
+            </p>
+            <p className="text-xs text-muted-foreground mt-1 truncate">
+              {image.file?.name}
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (type === 'front') {
+                  setFrontImage({ preview: null, file: null });
+                } else {
+                  setBackImage({ preview: null, file: null });
+                }
+              }}
+            >
+              {t('templates.changeImage')}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center">
+          <div className="w-12 h-12 rounded-full bg-primary/10 mx-auto mb-3 flex items-center justify-center">
+            <Upload className="w-6 h-6 text-primary" />
+          </div>
+          <p className="font-medium text-foreground text-sm">{title}</p>
+          <p className="text-xs text-muted-foreground mt-1">{description}</p>
+        </div>
+      )}
+    </div>
+  );
+  
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -196,7 +308,7 @@ export default function TemplateGenerate() {
       </header>
       
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Step 1: Upload Product */}
+        {/* Step 1: Upload Product Images */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-foreground mb-2">
             {t('templates.uploadProduct')}
@@ -205,71 +317,37 @@ export default function TemplateGenerate() {
             {t('templates.uploadProductDesc')}
           </p>
           
-          <div
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            className={cn(
-              "relative border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer",
-              isDragOver 
-                ? "border-primary bg-primary/5" 
-                : "border-border/50 hover:border-primary/50",
-              productImage && "border-solid border-primary/50 bg-primary/5"
+          {/* Back view requirement notice */}
+          {requiresBackView && (
+            <div className="flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg mb-4">
+              <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-amber-700 dark:text-amber-300">
+                {t('templates.backViewRequired')}
+              </p>
+            </div>
+          )}
+          
+          {/* Image upload boxes */}
+          <div className={cn(
+            "flex gap-4",
+            requiresBackView ? "flex-col sm:flex-row" : ""
+          )}>
+            {/* Front view upload */}
+            {renderUploadBox(
+              'front',
+              frontImage,
+              isDragOverFront,
+              t('templates.uploadFrontView'),
+              t('templates.uploadFrontViewDesc')
             )}
-            onClick={() => !productImage && document.getElementById('product-input')?.click()}
-          >
-            <input
-              id="product-input"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleFile(file);
-              }}
-            />
             
-            {productImage ? (
-              <div className="flex items-center gap-6">
-                <img 
-                  src={productImage} 
-                  alt="Product" 
-                  className="w-32 h-32 object-cover rounded-lg"
-                />
-                <div className="flex-1">
-                  <p className="font-medium text-foreground flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    Product image uploaded
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {productFile?.name}
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setProductImage(null);
-                      setProductFile(null);
-                    }}
-                  >
-                    Change image
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 mx-auto mb-4 flex items-center justify-center">
-                  <Upload className="w-8 h-8 text-primary" />
-                </div>
-                <p className="font-medium text-foreground">
-                  Click or drag & drop your product image
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  PNG, JPG up to 10MB
-                </p>
-              </div>
+            {/* Back view upload (only if required) */}
+            {requiresBackView && renderUploadBox(
+              'back',
+              backImage,
+              isDragOverBack,
+              t('templates.uploadBackView'),
+              t('templates.uploadBackViewDesc')
             )}
           </div>
         </div>
@@ -360,6 +438,15 @@ export default function TemplateGenerate() {
                     />
                   )}
                   
+                  {/* Back view indicator */}
+                  {pose.useBackView && (
+                    <div className="absolute bottom-2 left-2">
+                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
+                        {language === 'tr' ? 'Arka' : 'Back'}
+                      </Badge>
+                    </div>
+                  )}
+                  
                   {generated?.status === 'generating' && (
                     <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
                       <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -417,7 +504,7 @@ export default function TemplateGenerate() {
             <Button
               size="lg"
               onClick={handleGenerate}
-              disabled={!productImage || !user}
+              disabled={!hasAllRequiredImages() || !user}
               className="gap-2 px-8"
             >
               <Sparkles className="w-5 h-5" />

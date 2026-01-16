@@ -4,6 +4,7 @@ export interface TemplatePose {
   id: string;
   nameKey: string; // Translation key
   imagePath: string; // Path to pose image in src/assets/templates/
+  useBackView?: boolean; // If true, use back view image for this pose
 }
 
 export interface Template {
@@ -17,7 +18,8 @@ export interface Template {
   poses: TemplatePose[];
   tags?: string[]; // Future: for filtering (instagram-ready, trendyol-ready, etc.)
   planRequired?: string; // Future: for pricing plan requirements
-  requiredImages: number; // How many product images user needs to upload (usually 1)
+  requiredImages: number; // How many product images user needs to upload (1 or 2)
+  requiresBackView?: boolean; // If true, user must upload both front and back view
   prompt: string; // Fixed prompt for this template
 }
 
@@ -153,28 +155,33 @@ export const templates: Template[] = [
     gender: 'male',
     framing: 'neck-to-knee',
     aspectRatio: '9:16',
-    requiredImages: 1,
+    requiredImages: 2,
+    requiresBackView: true,
     prompt: TEMPLATE_GENERATION_PROMPT,
     poses: [
       {
         id: 'poz1',
         nameKey: 'templates.poses.frontHandPocketWatch',
         imagePath: '/lovable-uploads/templates/male/poz1.png',
+        useBackView: false,
       },
       {
         id: 'poz2',
         nameKey: 'templates.poses.sideHandCollar',
         imagePath: '/lovable-uploads/templates/male/poz2.png',
+        useBackView: false,
       },
       {
         id: 'poz3',
         nameKey: 'templates.poses.backHandsWaist',
         imagePath: '/lovable-uploads/templates/male/poz3.png',
+        useBackView: true,
       },
       {
         id: 'poz4',
         nameKey: 'templates.poses.frontWallArmsCrossed',
         imagePath: '/lovable-uploads/templates/male/poz4.png',
+        useBackView: false,
       },
     ],
     tags: ['e-commerce', 'classic'],
@@ -188,28 +195,33 @@ export const templates: Template[] = [
     gender: 'female',
     framing: 'neck-to-knee',
     aspectRatio: '9:16',
-    requiredImages: 1,
+    requiredImages: 2,
+    requiresBackView: true,
     prompt: TEMPLATE_GENERATION_PROMPT,
     poses: [
       {
         id: 'kpoz1',
         nameKey: 'templates.poses.frontHandPocketWatch',
         imagePath: '/lovable-uploads/templates/female/kpoz1.png',
+        useBackView: false,
       },
       {
         id: 'kpoz2',
         nameKey: 'templates.poses.sideHandCollar',
         imagePath: '/lovable-uploads/templates/female/kpoz2.png',
+        useBackView: false,
       },
       {
         id: 'kpoz3',
         nameKey: 'templates.poses.backHandsWaist',
         imagePath: '/lovable-uploads/templates/female/kpoz3.png',
+        useBackView: true,
       },
       {
         id: 'kpoz4',
         nameKey: 'templates.poses.frontWallArmsCrossed',
         imagePath: '/lovable-uploads/templates/female/kpoz4.png',
+        useBackView: false,
       },
     ],
     tags: ['e-commerce', 'classic'],
