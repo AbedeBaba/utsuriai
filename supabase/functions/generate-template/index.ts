@@ -86,6 +86,53 @@ async function uploadBase64ToStorageForApi(
   return signedUrlData.signedUrl;
 }
 
+// Fetch image from URL and upload to Supabase storage, return signed URL
+async function uploadUrlImageToStorageForApi(
+  supabase: any,
+  imageUrl: string,
+  folder: string
+): Promise<string> {
+  console.log('Fetching pose image from URL:', imageUrl);
+  
+  const response = await fetch(imageUrl);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch pose image: ${response.status}`);
+  }
+  
+  const blob = await response.blob();
+  const arrayBuffer = await blob.arrayBuffer();
+  const binaryData = new Uint8Array(arrayBuffer);
+  
+  const mimeType = blob.type || 'image/png';
+  const extension = mimeType.split('/')[1] || 'png';
+  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
+  
+  const { error: uploadError } = await supabase.storage
+    .from('generated-images')
+    .upload(fileName, binaryData, {
+      contentType: mimeType,
+      upsert: true
+    });
+  
+  if (uploadError) {
+    console.error('Upload error:', uploadError);
+    throw new Error('Failed to upload pose image to storage');
+  }
+  
+  // Create signed URL for NanoBanana API
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+    .from('generated-images')
+    .createSignedUrl(fileName, 60 * 60); // 1 hour
+  
+  if (signedUrlError || !signedUrlData?.signedUrl) {
+    console.error('Signed URL error:', signedUrlError);
+    throw new Error('Failed to create signed URL for pose image');
+  }
+  
+  console.log('Pose image uploaded to storage with signed URL');
+  return signedUrlData.signedUrl;
+}
+
 // Poll for NanoBanana task completion - SAME AS generate-model
 async function pollForTaskCompletion(apiKey: string, taskId: string): Promise<string> {
   const maxWaitTime = 300000; // 5 minutes
@@ -357,20 +404,27 @@ serve(async (req) => {
 
     // Upload product image to storage and get a signed URL for NanoBanana
     console.log('Uploading product image to storage...');
-    const productImageUrl = await uploadBase64ToStorageForApi(
+    const productImageSignedUrl = await uploadBase64ToStorageForApi(
       supabase,
       productImageBase64,
       `templates/${templateId}/products`
     );
-    console.log('Product image uploaded:', productImageUrl);
+    console.log('Product image uploaded:', productImageSignedUrl);
 
-    // Prepare image URLs for NanoBanana API
-    // poseImageUrl is the template pose image (full URL)
-    // productImageUrl is the user's product image (signed URL from storage)
-    const imageUrls = [poseImageUrl, productImageUrl];
+    // Upload pose template image to storage (NanoBanana can't access lovableproject.com URLs)
+    console.log('Uploading pose template image to storage...');
+    const poseImageSignedUrl = await uploadUrlImageToStorageForApi(
+      supabase,
+      poseImageUrl,
+      `templates/${templateId}/poses`
+    );
+    console.log('Pose image uploaded:', poseImageSignedUrl);
+
+    // Prepare image URLs for NanoBanana API - BOTH must be signed URLs
+    const imageUrls = [poseImageSignedUrl, productImageSignedUrl];
     
     console.log(`Generating pose ${poseIndex + 1} for template ${templateId}...`);
-    console.log('Image URLs:', imageUrls);
+    console.log('Image URLs (signed):', imageUrls);
 
     // Call NanoBanana API - SAME AS generate-model
     const generatedImageUrl = await generateWithNanoBanana(
