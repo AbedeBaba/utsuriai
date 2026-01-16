@@ -6,9 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Nano Banana API endpoints - SAME AS generate-model
-const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
-const NANOBANANA_API_KEY = '8f40e3c4ec5e36d8bbe18354535318d7';
+// Lovable AI Gateway for Gemini image generation
+const LOVABLE_AI_GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 
 // Credit costs per template (4 poses)
 const STANDARD_CREDIT_COST = 4; // 1 credit per pose × 4 poses
@@ -43,169 +42,34 @@ The Hijab requirement OVERRIDES all default styling and takes ABSOLUTE PRIORITY.
 `;
 }
 
-// Upload base64 image to Supabase storage and get a signed URL
-async function uploadBase64ToStorageForApi(
-  supabase: any,
-  base64Image: string,
-  folder: string
-): Promise<string> {
-  const matches = base64Image.match(/^data:([^;]+);base64,(.+)$/);
-  if (!matches) {
-    throw new Error('Invalid base64 image format');
-  }
-  
-  const mimeType = matches[1];
-  const base64Data = matches[2];
-  const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-  
-  const extension = mimeType.split('/')[1] || 'png';
-  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
-  
-  const { error: uploadError } = await supabase.storage
-    .from('generated-images')
-    .upload(fileName, binaryData, {
-      contentType: mimeType,
-      upsert: true
-    });
-  
-  if (uploadError) {
-    console.error('Upload error:', uploadError);
-    throw new Error('Failed to upload image to storage');
-  }
-  
-  // Create signed URL for NanoBanana API
-  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-    .from('generated-images')
-    .createSignedUrl(fileName, 60 * 60); // 1 hour
-  
-  if (signedUrlError || !signedUrlData?.signedUrl) {
-    console.error('Signed URL error:', signedUrlError);
-    throw new Error('Failed to create signed URL');
-  }
-  
-  return signedUrlData.signedUrl;
-}
 
-// Fetch image from URL and upload to Supabase storage, return signed URL
-async function uploadUrlImageToStorageForApi(
-  supabase: any,
-  imageUrl: string,
-  folder: string
-): Promise<string> {
-  console.log('Fetching pose image from URL:', imageUrl);
+// Fetch image from URL and convert to base64
+async function fetchImageAsBase64(imageUrl: string): Promise<string> {
+  console.log('Fetching image as base64:', imageUrl.substring(0, 100));
   
   const response = await fetch(imageUrl);
   if (!response.ok) {
-    throw new Error(`Failed to fetch pose image: ${response.status}`);
+    throw new Error(`Failed to fetch image: ${response.status}`);
   }
   
-  const blob = await response.blob();
-  const arrayBuffer = await blob.arrayBuffer();
-  const binaryData = new Uint8Array(arrayBuffer);
+  const arrayBuffer = await response.arrayBuffer();
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+  const contentType = response.headers.get('content-type') || 'image/png';
   
-  // Extract extension from original URL (more reliable than blob.type for some servers)
-  const urlPath = new URL(imageUrl).pathname;
-  const urlExtension = urlPath.split('.').pop()?.toLowerCase();
-  
-  // Determine the correct extension and mime type
-  let extension = 'png';
-  let mimeType = 'image/png';
-  
-  if (urlExtension && ['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(urlExtension)) {
-    extension = urlExtension === 'jpg' ? 'jpeg' : urlExtension;
-    mimeType = `image/${extension}`;
-  } else if (blob.type && blob.type.startsWith('image/')) {
-    // Only use blob.type if it's a valid image type
-    const blobExt = blob.type.split('/')[1]?.split(';')[0]; // Handle "image/png;charset=utf-8"
-    if (blobExt && ['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(blobExt)) {
-      extension = blobExt;
-      mimeType = `image/${extension}`;
-    }
-  }
-  
-  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
-  console.log('Uploading with mimeType:', mimeType, 'extension:', extension);
-  
-  const { error: uploadError } = await supabase.storage
-    .from('generated-images')
-    .upload(fileName, binaryData, {
-      contentType: mimeType,
-      upsert: true
-    });
-  
-  if (uploadError) {
-    console.error('Upload error:', uploadError);
-    throw new Error('Failed to upload pose image to storage');
-  }
-  
-  // Create signed URL for NanoBanana API
-  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-    .from('generated-images')
-    .createSignedUrl(fileName, 60 * 60); // 1 hour
-  
-  if (signedUrlError || !signedUrlData?.signedUrl) {
-    console.error('Signed URL error:', signedUrlError);
-    throw new Error('Failed to create signed URL for pose image');
-  }
-  
-  console.log('Pose image uploaded to storage with signed URL');
-  return signedUrlData.signedUrl;
+  return `data:${contentType};base64,${base64}`;
 }
 
-// Poll for NanoBanana task completion - SAME AS generate-model
-async function pollForTaskCompletion(apiKey: string, taskId: string): Promise<string> {
-  const maxWaitTime = 300000; // 5 minutes
-  const startTime = Date.now();
-  
-  while (Date.now() - startTime < maxWaitTime) {
-    const statusResponse = await fetch(`${NANOBANANA_BASE_URL}/record-info?taskId=${taskId}`, {
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${apiKey}` }
-    });
-    
-    const statusResult = await statusResponse.json();
-    console.log('Poll response:', JSON.stringify(statusResult));
-    
-    const successFlag = statusResult.data?.successFlag ?? statusResult.successFlag;
-    const responseData = statusResult.data?.response ?? statusResult.response;
-    const infoData = statusResult.data?.info ?? null;
-    
-    if (successFlag === 1) {
-      let imageUrl = infoData?.resultImageUrl ||
-                     responseData?.resultImageUrl ||
-                     responseData?.imageUrl ||
-                     statusResult.data?.resultImageUrl;
-      
-      if (imageUrl) {
-        console.log('Found result image URL:', imageUrl);
-        return imageUrl;
-      }
-      throw new Error('No resultImageUrl in NanoBanana response');
-    }
-    
-    if (successFlag === 2 || successFlag === 3) {
-      const errorMsg = statusResult.data?.errorMessage || 'NanoBanana generation failed';
-      console.error('NanoBanana error:', errorMsg);
-      throw new Error(errorMsg);
-    }
-    
-    // Poll every 3 seconds
-    await sleep(3000);
-  }
-  
-  throw new Error('NanoBanana generation timeout after 5 minutes');
-}
-
-// Generate using NanoBanana API - SAME LOGIC AS generate-model
-async function generateWithNanoBanana(
+// Generate using Gemini via Lovable AI Gateway
+async function generateWithGemini(
   apiKey: string,
   prompt: string,
-  imageUrls: string[],
-  usePro: boolean,
+  poseImageBase64: string,
+  productImageBase64: string,
+  supabase: any,
+  templateId: string,
   isHijab: boolean = false
 ): Promise<string> {
-  console.log(`Starting NanoBanana ${usePro ? 'Pro' : 'Standard'} generation...`);
-  console.log(`Images count: ${imageUrls.length}, Hijab mode: ${isHijab}`);
+  console.log('Starting Gemini template generation...');
   
   // Inject Hijab constraint if enabled
   let finalPrompt = prompt;
@@ -214,81 +78,73 @@ async function generateWithNanoBanana(
     console.log('Hijab constraint injected into prompt');
   }
   
-  let requestBody: Record<string, any>;
-  let endpoint: string;
+  // Build the content array with images and prompt
+  const contentParts: any[] = [
+    {
+      type: "image_url",
+      image_url: { url: poseImageBase64 }
+    },
+    {
+      type: "image_url",
+      image_url: { url: productImageBase64 }
+    },
+    {
+      type: "text",
+      text: finalPrompt
+    }
+  ];
   
-  if (usePro) {
-    // Pro API uses different endpoint and parameters
-    requestBody = {
-      prompt: finalPrompt,
-      imageUrls: imageUrls,
-      resolution: '2K',
-      aspectRatio: '9:16'
-    };
-    endpoint = `${NANOBANANA_BASE_URL}/generate-pro`;
-  } else {
-    // Standard API - NanoBanana uses IMAGETOIAMGE (their API spec)
-    // Use image_size parameter for aspect ratio
-    requestBody = {
-      prompt: finalPrompt,
-      type: 'IMAGETOIAMGE',
-      numImages: 1,
-      imageUrls: imageUrls,
-      image_size: '9:16'
-    };
-    endpoint = `${NANOBANANA_BASE_URL}/generate`;
-  }
+  console.log('Sending request to Gemini...');
   
-  console.log('NanoBanana request endpoint:', endpoint);
-  console.log('NanoBanana image URLs:', JSON.stringify(imageUrls));
-  
-  const generateResponse = await fetch(endpoint, {
+  const response = await fetch(LOVABLE_AI_GATEWAY, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(requestBody)
+    body: JSON.stringify({
+      model: 'google/gemini-2.5-flash',
+      messages: [
+        {
+          role: 'user',
+          content: contentParts
+        }
+      ],
+      modalities: ['image', 'text']
+    })
   });
-
-  const generateResult = await generateResponse.json();
-  console.log('NanoBanana response:', JSON.stringify(generateResult));
   
-  if (!generateResponse.ok || generateResult.code !== 200) {
-    const errorMsg = generateResult.msg || generateResult.message || JSON.stringify(generateResult);
-    console.error('NanoBanana API error:', errorMsg);
-    throw new Error(`NanoBanana generation failed: ${errorMsg}`);
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Gemini API error:', errorText);
+    throw new Error(`Gemini API failed: ${response.status}`);
   }
   
-  const taskId = generateResult.data?.taskId;
-  if (!taskId) {
-    console.error('No taskId in response:', generateResult);
-    throw new Error('No taskId returned from NanoBanana');
+  const result = await response.json();
+  console.log('Gemini response received');
+  
+  // Extract the generated image
+  const generatedImage = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  
+  if (!generatedImage) {
+    console.error('No image in Gemini response:', JSON.stringify(result).substring(0, 500));
+    throw new Error('No image generated by Gemini');
   }
   
-  console.log(`NanoBanana Task ID: ${taskId}, starting poll...`);
-  return await pollForTaskCompletion(apiKey, taskId);
-}
-
-// Upload result image to storage for persistence
-async function uploadResultToStorage(
-  supabase: any,
-  imageUrl: string,
-  folder: string
-): Promise<string> {
-  // Fetch the image from NanoBanana
-  const imageResponse = await fetch(imageUrl);
-  if (!imageResponse.ok) {
-    throw new Error('Failed to fetch generated image from NanoBanana');
+  console.log('Generated image received, uploading to storage...');
+  
+  // Upload the base64 image to Supabase storage
+  const matches = generatedImage.match(/^data:([^;]+);base64,(.+)$/);
+  if (!matches) {
+    throw new Error('Invalid base64 image format from Gemini');
   }
   
-  const imageBlob = await imageResponse.blob();
-  const arrayBuffer = await imageBlob.arrayBuffer();
-  const binaryData = new Uint8Array(arrayBuffer);
+  const mimeType = matches[1];
+  const base64Data = matches[2];
+  const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
   
-  const mimeType = imageBlob.type || 'image/png';
   const extension = mimeType.split('/')[1] || 'png';
-  const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
+  const fileName = `templates/${templateId}/generated/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
   
   const { error: uploadError } = await supabase.storage
     .from('generated-images')
@@ -298,25 +154,27 @@ async function uploadResultToStorage(
     });
   
   if (uploadError) {
-    console.error('Upload error:', uploadError);
+    console.error('Failed to upload generated image:', uploadError);
     throw new Error('Failed to save generated image');
   }
   
-  // Create signed URL for client
+  // Create a signed URL since bucket is private
   const { data: signedUrlData, error: signedUrlError } = await supabase.storage
     .from('generated-images')
     .createSignedUrl(fileName, 60 * 60 * 24); // 24 hours
   
   if (signedUrlError || !signedUrlData?.signedUrl) {
-    console.error('Signed URL error:', signedUrlError);
+    console.error('Failed to create signed URL:', signedUrlError);
     const { data: urlData } = supabase.storage
       .from('generated-images')
       .getPublicUrl(fileName);
     return urlData?.publicUrl || '';
   }
   
+  console.log('Generated image uploaded with signed URL');
   return signedUrlData.signedUrl;
 }
+
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -335,7 +193,16 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    
+    if (!lovableApiKey) {
+      console.error('Missing LOVABLE_API_KEY');
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
@@ -422,46 +289,28 @@ serve(async (req) => {
       console.log(`Deducted ${creditCost} credits for template generation`);
     }
 
-    // Upload product image to storage and get a signed URL for NanoBanana
-    console.log('Uploading product image to storage...');
-    const productImageSignedUrl = await uploadBase64ToStorageForApi(
-      supabase,
-      productImageBase64,
-      `templates/${templateId}/products`
-    );
-    console.log('Product image uploaded:', productImageSignedUrl);
-
-    // Upload pose template image to storage (NanoBanana can't access lovableproject.com URLs)
-    console.log('Uploading pose template image to storage...');
-    const poseImageSignedUrl = await uploadUrlImageToStorageForApi(
-      supabase,
-      poseImageUrl,
-      `templates/${templateId}/poses`
-    );
-    console.log('Pose image uploaded:', poseImageSignedUrl);
-
-    // Prepare image URLs for NanoBanana API - BOTH must be signed URLs
-    const imageUrls = [poseImageSignedUrl, productImageSignedUrl];
+    // Convert product image base64 for Gemini
+    console.log('Preparing images for Gemini...');
+    
+    // Product image is already base64
+    const productBase64 = productImageBase64;
+    
+    // Fetch pose image and convert to base64
+    console.log('Fetching pose template image...');
+    const poseBase64 = await fetchImageAsBase64(poseImageUrl);
+    console.log('Pose image converted to base64');
     
     console.log(`Generating pose ${poseIndex + 1} for template ${templateId}...`);
-    console.log('Image URLs (signed):', imageUrls);
 
-    // Call NanoBanana API - SAME AS generate-model
-    const generatedImageUrl = await generateWithNanoBanana(
-      NANOBANANA_API_KEY,
+    // Call Gemini API via Lovable AI Gateway
+    const storedImageUrl = await generateWithGemini(
+      lovableApiKey,
       prompt,
-      imageUrls,
-      usePro,
+      poseBase64,
+      productBase64,
+      supabase,
+      templateId,
       isHijab
-    );
-    
-    console.log('NanoBanana generation complete, uploading result...');
-    
-    // Upload generated image to our storage for persistence
-    const storedImageUrl = await uploadResultToStorage(
-      supabase, 
-      generatedImageUrl, 
-      `templates/${templateId}/generated`
     );
     
     console.log(`Pose ${poseIndex + 1} generated and stored successfully`);
