@@ -523,19 +523,18 @@ serve(async (req) => {
     const { 
       templateId, 
       poseIndex, 
-      poseImageUrl, 
+      poseImageBase64, // Now receives base64 instead of URL
       productImageBase64, 
-      prompt,
       usePro = false,
       isHijab = false
     } = await req.json();
     
     console.log(`Template generation request - templateId: ${templateId}, poseIndex: ${poseIndex}, usePro: ${usePro}, isHijab: ${isHijab}`);
     
-    if (!templateId || typeof poseIndex !== 'number' || !poseImageUrl || !productImageBase64 || !prompt) {
+    if (!templateId || typeof poseIndex !== 'number' || !poseImageBase64 || !productImageBase64) {
       console.error('Missing required fields');
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: templateId, poseIndex, poseImageUrl, productImageBase64, prompt' }),
+        JSON.stringify({ error: 'Missing required fields: templateId, poseIndex, poseImageBase64, productImageBase64' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -592,15 +591,14 @@ serve(async (req) => {
       console.log(`Deducted ${creditCost} credits for template generation`);
     }
 
-    // Upload product image to get a public URL for NanoBanana API
+    // Upload both images to storage to get public URLs for NanoBanana API
+    console.log('Uploading pose image to storage...');
+    const poseImageUrl = await uploadBase64ToStorage(supabase, poseImageBase64, templateId, 'pose');
+    console.log('Pose image uploaded:', poseImageUrl);
+    
     console.log('Uploading product image to storage...');
     const productImageUrl = await uploadBase64ToStorage(supabase, productImageBase64, templateId, 'product');
     console.log('Product image uploaded:', productImageUrl);
-    
-    // Download and upload pose image to storage to get accessible URL for NanoBanana
-    console.log('Downloading and uploading pose image to storage...');
-    const accessiblePoseImageUrl = await downloadAndUploadImage(supabase, poseImageUrl, templateId, 'pose');
-    console.log('Pose image accessible URL:', accessiblePoseImageUrl);
     
     console.log(`Generating pose ${poseIndex + 1} for template ${templateId} using ${usePro ? 'PRO' : 'STANDARD'} mode...`);
 
@@ -611,7 +609,7 @@ serve(async (req) => {
       // Use NanoBanana PRO API for higher quality
       storedImageUrl = await generateWithNanoBananaPro(
         nanoBananaApiKey,
-        accessiblePoseImageUrl,
+        poseImageUrl,
         productImageUrl,
         supabase,
         templateId,
@@ -621,7 +619,7 @@ serve(async (req) => {
       // Use NanoBanana STANDARD API
       storedImageUrl = await generateWithNanoBananaStandard(
         nanoBananaApiKey,
-        accessiblePoseImageUrl,
+        poseImageUrl,
         productImageUrl,
         supabase,
         templateId,

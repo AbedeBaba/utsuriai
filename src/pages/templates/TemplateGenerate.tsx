@@ -91,6 +91,26 @@ export default function TemplateGenerate() {
     return true;
   };
   
+  // Helper function to fetch image and convert to base64
+  const fetchImageAsBase64 = async (imageUrl: string): Promise<string> => {
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`);
+      }
+      const blob = await response.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error('Error fetching image as base64:', error);
+      throw error;
+    }
+  };
+  
   const handleGenerate = async () => {
     if (!template || !session) {
       toast.error("Please sign in to generate images");
@@ -119,8 +139,11 @@ export default function TemplateGenerate() {
         
         const pose = template.poses[i];
         
-        // Build full URL for pose image
+        // Fetch pose image and convert to base64 (CRITICAL: same method as Generate page)
         const poseImageUrl = window.location.origin + pose.imagePath;
+        console.log(`Fetching pose image ${i + 1} from:`, poseImageUrl);
+        const poseImageBase64 = await fetchImageAsBase64(poseImageUrl);
+        console.log(`Pose image ${i + 1} converted to base64, length:`, poseImageBase64.length);
         
         // Determine which product image to use based on pose
         const productImageBase64 = pose.useBackView && backImage.preview 
@@ -131,9 +154,8 @@ export default function TemplateGenerate() {
           body: {
             templateId: template.id,
             poseIndex: i,
-            poseImageUrl,
+            poseImageBase64, // Send base64 instead of URL
             productImageBase64,
-            prompt: template.prompt,
             usePro
           }
         });
