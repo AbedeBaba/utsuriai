@@ -245,8 +245,28 @@ function buildModelDescription(config: Record<string, string | null>): string {
   if (config.facialExpression) parts.push(`Expression: ${config.facialExpression}`);
   if (config.beardType && config.gender === 'Male') parts.push(`Beard: ${config.beardType}`);
   
+  // CRITICAL: Hijab enforcement - takes priority over all other styling
   if (config.modestOption === 'Hijab') {
-    parts.push('Wearing hijab (hair fully covered)');
+    parts.push('');
+    parts.push('=== HIJAB/MODEST MODEL - MANDATORY REQUIREMENTS ===');
+    parts.push('This MUST be a hijabi (covered/modest) female model.');
+    parts.push('REQUIRED - Headscarf (hijab) fully covering ALL hair - NO hair visible whatsoever');
+    parts.push('REQUIRED - Neck must be FULLY covered by the hijab or clothing');
+    parts.push('REQUIRED - Chest/décolletage must be FULLY covered - NO cleavage');
+    parts.push('REQUIRED - Shoulders must be covered');
+    parts.push('REQUIRED - Long sleeves covering arms completely');
+    parts.push('REQUIRED - Modest, conservative clothing style');
+    parts.push('');
+    parts.push('STRICTLY FORBIDDEN when Hijab is selected:');
+    parts.push('- ANY visible hair (not a single strand)');
+    parts.push('- Exposed neck or neckline');
+    parts.push('- Any cleavage or chest exposure');
+    parts.push('- Short sleeves or exposed shoulders');
+    parts.push('- Open collar, V-neck, or transparent fabrics');
+    parts.push('- Any skin exposure beyond face and hands');
+    parts.push('');
+    parts.push('The Hijab requirement OVERRIDES all default styling and takes ABSOLUTE PRIORITY.');
+    parts.push('=== END HIJAB REQUIREMENTS ===');
   }
   
   return parts.join('\n');
@@ -672,8 +692,28 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
   }
   if (config.background) parts.push(`- Background: ${config.background}`);
   
+  // CRITICAL: Hijab enforcement - takes priority over all other styling
   if (config.modestOption === 'Hijab') {
-    parts.push('- Wearing hijab (hair fully covered)');
+    parts.push('');
+    parts.push('=== HIJAB/MODEST MODEL - MANDATORY REQUIREMENTS ===');
+    parts.push('This MUST be a hijabi (covered/modest) female model.');
+    parts.push('REQUIRED - Headscarf (hijab) fully covering ALL hair - NO hair visible whatsoever');
+    parts.push('REQUIRED - Neck must be FULLY covered by the hijab or clothing');
+    parts.push('REQUIRED - Chest/décolletage must be FULLY covered - NO cleavage');
+    parts.push('REQUIRED - Shoulders must be covered');
+    parts.push('REQUIRED - Long sleeves covering arms completely');
+    parts.push('REQUIRED - Modest, conservative clothing style');
+    parts.push('');
+    parts.push('STRICTLY FORBIDDEN when Hijab is selected:');
+    parts.push('- ANY visible hair (not a single strand)');
+    parts.push('- Exposed neck or neckline');
+    parts.push('- Any cleavage or chest exposure');
+    parts.push('- Short sleeves or exposed shoulders');
+    parts.push('- Open collar, V-neck, or transparent fabrics');
+    parts.push('- Any skin exposure beyond face and hands');
+    parts.push('');
+    parts.push('The Hijab requirement OVERRIDES all default styling and takes ABSOLUTE PRIORITY.');
+    parts.push('=== END HIJAB REQUIREMENTS ===');
   }
   
   parts.push('');
