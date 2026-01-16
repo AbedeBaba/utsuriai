@@ -20,7 +20,7 @@ const Contact = () => {
 
       {/* Main Content */}
       <main className="flex-1 py-16 px-6">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-center">
             İletişim
           </h1>
@@ -28,25 +28,25 @@ const Contact = () => {
             Sorularınız için bizimle iletişime geçin. Size yardımcı olmaktan mutluluk duyarız.
           </p>
 
-          <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {/* Name Card */}
-            <div className="bg-card border border-border rounded-2xl p-8 text-center hover:shadow-lg transition-shadow">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                <User className="h-7 w-7 text-primary" />
+            <div className="bg-card border border-border rounded-2xl p-6 text-center hover:shadow-lg transition-shadow min-h-[200px] flex flex-col justify-center">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <User className="h-6 w-6 text-primary" />
               </div>
-              <h2 className="text-lg font-semibold text-foreground mb-3">İsim</h2>
-              <p className="text-muted-foreground">
+              <h2 className="text-base font-semibold text-foreground mb-2">İsim</h2>
+              <p className="text-sm text-muted-foreground">
                 Çağatay Samet Macar
               </p>
             </div>
 
             {/* Address Card */}
-            <div className="bg-card border border-border rounded-2xl p-8 text-center hover:shadow-lg transition-shadow">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                <MapPin className="h-7 w-7 text-primary" />
+            <div className="bg-card border border-border rounded-2xl p-6 text-center hover:shadow-lg transition-shadow min-h-[200px] flex flex-col justify-center">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <MapPin className="h-6 w-6 text-primary" />
               </div>
-              <h2 className="text-lg font-semibold text-foreground mb-3">Adres</h2>
-              <p className="text-muted-foreground leading-relaxed">
+              <h2 className="text-base font-semibold text-foreground mb-2">Adres</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Çukurören Küme Evleri, No:32<br />
                 Gölpazarı / Bilecik<br />
                 Turkey
@@ -54,28 +54,28 @@ const Contact = () => {
             </div>
 
             {/* Phone Card */}
-            <div className="bg-card border border-border rounded-2xl p-8 text-center hover:shadow-lg transition-shadow">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                <Phone className="h-7 w-7 text-primary" />
+            <div className="bg-card border border-border rounded-2xl p-6 text-center hover:shadow-lg transition-shadow min-h-[200px] flex flex-col justify-center">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Phone className="h-6 w-6 text-primary" />
               </div>
-              <h2 className="text-lg font-semibold text-foreground mb-3">Telefon</h2>
+              <h2 className="text-base font-semibold text-foreground mb-2">Telefon</h2>
               <a 
                 href="tel:+905314051484" 
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 +90 531 405 14 84
               </a>
             </div>
 
             {/* Email Card */}
-            <div className="bg-card border border-border rounded-2xl p-8 text-center hover:shadow-lg transition-shadow">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                <Mail className="h-7 w-7 text-primary" />
+            <div className="bg-card border border-border rounded-2xl p-6 text-center hover:shadow-lg transition-shadow min-h-[200px] flex flex-col justify-center">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Mail className="h-6 w-6 text-primary" />
               </div>
-              <h2 className="text-lg font-semibold text-foreground mb-3">E-posta</h2>
+              <h2 className="text-base font-semibold text-foreground mb-2">E-posta</h2>
               <a 
                 href="mailto:support@utsuriai.com" 
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors break-all"
               >
                 support@utsuriai.com
               </a>
