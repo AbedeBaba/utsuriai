@@ -161,10 +161,10 @@ async function generateWithNanoBanana(
     };
     endpoint = `${NANOBANANA_BASE_URL}/generate-pro`;
   } else {
-    // Standard API - fixed typo IMAGETOIMAGE
+    // Standard API - NanoBanana uses IMAGETOIAMGE (their API spec)
     requestBody = {
       prompt: finalPrompt,
-      type: 'IMAGETOIMAGE',
+      type: 'IMAGETOIAMGE',
       numImages: 1,
       imageUrls: imageUrls,
       aspectRatio: '9:16'
