@@ -228,12 +228,12 @@ async function generateWithNanoBanana(
     endpoint = `${NANOBANANA_BASE_URL}/generate-pro`;
   } else {
     // Standard API - NanoBanana uses IMAGETOIAMGE (their API spec)
+    // NOTE: IMAGETOIAMGE mode does not support aspectRatio parameter
     requestBody = {
       prompt: finalPrompt,
       type: 'IMAGETOIAMGE',
       numImages: 1,
-      imageUrls: imageUrls,
-      aspectRatio: '9:16'
+      imageUrls: imageUrls
     };
     endpoint = `${NANOBANANA_BASE_URL}/generate`;
   }
