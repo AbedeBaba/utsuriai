@@ -91,15 +91,7 @@ Do NOT change:
 
 The result must look like a realistic product photoshoot.
 
-Clean, photorealistic, e-commerce ready output.
-
-Suitable for marketplaces such as Trendyol and Instagram.
-
-Portrait orientation.
-
-9:16 aspect ratio.
-
-No editorial, fashion magazine, or artistic styling.`;
+Clean, photorealistic, e-commerce ready output.`;
 
 // Product categories - easily extensible
 export const productCategories: ProductCategory[] = [
