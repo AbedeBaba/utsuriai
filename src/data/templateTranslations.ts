@@ -90,6 +90,16 @@ export const templateTranslations = {
     'templates.poses.seatedFrontCrossedLegs': 'Seated front view – crossed legs',
     'templates.poses.seatedSideProfile': 'Seated side profile',
     'templates.poses.seatedBackView': 'Seated back view',
+    'templates.poses.hatFrontView': 'Front view – face on',
+    'templates.poses.hatSideProfile': 'Side profile view',
+    'templates.poses.hatBackView': 'Back view',
+    'templates.poses.hatSeatedRelaxed': 'Seated – relaxed',
+    
+    // Hat template names
+    'templates.items.classicBeanieHatFemale': 'Classic Beanie – Hat (Female)',
+    'templates.items.classicBeanieHatFemaleDesc': 'Professional headwear shots with clean backgrounds',
+    'templates.items.classicBeanieHatMale': 'Classic Beanie – Hat (Male)',
+    'templates.items.classicBeanieHatMaleDesc': 'Professional headwear shots with clean backgrounds',
     
     // Gender filter
     'templates.filter.all': 'All',
@@ -184,6 +194,16 @@ export const templateTranslations = {
     'templates.poses.seatedFrontCrossedLegs': 'Oturarak ön görünüm – bacak bacak üstüne',
     'templates.poses.seatedSideProfile': 'Oturarak yan profil',
     'templates.poses.seatedBackView': 'Oturarak arka görünüm',
+    'templates.poses.hatFrontView': 'Ön görünüm – yüze dönük',
+    'templates.poses.hatSideProfile': 'Yan profil görünümü',
+    'templates.poses.hatBackView': 'Arka görünüm',
+    'templates.poses.hatSeatedRelaxed': 'Oturarak – rahat',
+    
+    // Hat template names
+    'templates.items.classicBeanieHatFemale': 'Klasik Bere – Şapka (Kadın)',
+    'templates.items.classicBeanieHatFemaleDesc': 'Temiz arka planlı profesyonel başlık çekimleri',
+    'templates.items.classicBeanieHatMale': 'Klasik Bere – Şapka (Erkek)',
+    'templates.items.classicBeanieHatMaleDesc': 'Temiz arka planlı profesyonel başlık çekimleri',
     
     // Gender filter
     'templates.filter.all': 'Tümü',

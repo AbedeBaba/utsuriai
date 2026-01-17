@@ -326,6 +326,86 @@ export const templates: Template[] = [
     ],
     tags: ['lifestyle', 'classic', 'seated', 'e-commerce'],
   },
+  // Classic Beanie - Female
+  {
+    id: 'classic-beanie-hat-female',
+    nameKey: 'templates.items.classicBeanieHatFemale',
+    descriptionKey: 'templates.items.classicBeanieHatFemaleDesc',
+    categoryId: 'hat',
+    gender: 'female',
+    framing: 'head-closeup',
+    aspectRatio: '1:1',
+    requiredImages: 1,
+    requiresBackView: false,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'hatpoz1',
+        nameKey: 'templates.poses.hatFrontView',
+        imagePath: '/lovable-uploads/templates/female/hatpoz1.png',
+        useBackView: false,
+      },
+      {
+        id: 'hatpozk2',
+        nameKey: 'templates.poses.hatSideProfile',
+        imagePath: '/lovable-uploads/templates/female/hatpozk2.png',
+        useBackView: false,
+      },
+      {
+        id: 'hatpozk3',
+        nameKey: 'templates.poses.hatBackView',
+        imagePath: '/lovable-uploads/templates/female/hatpozk3.png',
+        useBackView: false,
+      },
+      {
+        id: 'hatpozk4',
+        nameKey: 'templates.poses.hatSeatedRelaxed',
+        imagePath: '/lovable-uploads/templates/female/hatpozk4.png',
+        useBackView: false,
+      },
+    ],
+    tags: ['hat', 'beanie', 'e-commerce', 'classic'],
+  },
+  // Classic Beanie - Male (placeholder - images to be added later)
+  {
+    id: 'classic-beanie-hat-male',
+    nameKey: 'templates.items.classicBeanieHatMale',
+    descriptionKey: 'templates.items.classicBeanieHatMaleDesc',
+    categoryId: 'hat',
+    gender: 'male',
+    framing: 'head-closeup',
+    aspectRatio: '1:1',
+    requiredImages: 1,
+    requiresBackView: false,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'ehatpoz1',
+        nameKey: 'templates.poses.hatFrontView',
+        imagePath: '/lovable-uploads/templates/male/ehatpoz1.png',
+        useBackView: false,
+      },
+      {
+        id: 'ehatpoz2',
+        nameKey: 'templates.poses.hatSideProfile',
+        imagePath: '/lovable-uploads/templates/male/ehatpoz2.png',
+        useBackView: false,
+      },
+      {
+        id: 'ehatpoz3',
+        nameKey: 'templates.poses.hatBackView',
+        imagePath: '/lovable-uploads/templates/male/ehatpoz3.png',
+        useBackView: false,
+      },
+      {
+        id: 'ehatpoz4',
+        nameKey: 'templates.poses.hatSeatedRelaxed',
+        imagePath: '/lovable-uploads/templates/male/ehatpoz4.png',
+        useBackView: false,
+      },
+    ],
+    tags: ['hat', 'beanie', 'e-commerce', 'classic'],
+  },
 ];
 
 // Helper functions
