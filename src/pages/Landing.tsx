@@ -37,7 +37,6 @@ export default function Landing() {
     }
   };
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
@@ -94,56 +93,44 @@ export default function Landing() {
               <SheetContent side="right" className="w-[280px] sm:w-[320px]">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <nav className="flex flex-col gap-6 mt-8">
-                  <button 
-                    onClick={() => { navigate('/templates'); setMobileMenuOpen(false); }} 
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left"
-                  >
+                  <button onClick={() => {
+                  navigate('/templates');
+                  setMobileMenuOpen(false);
+                }} className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left">
                     {t('nav.templates')}
                   </button>
-                  <a 
-                    href="#how-it-works" 
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
+                  <a href="#how-it-works" className="text-lg font-medium text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                     {t('nav.howItWorks')}
                   </a>
-                  <a 
-                    href="#features" 
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
+                  <a href="#features" className="text-lg font-medium text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                     {t('nav.features')}
                   </a>
-                  <button 
-                    onClick={() => { navigate('/pricing'); setMobileMenuOpen(false); }} 
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left"
-                  >
+                  <button onClick={() => {
+                  navigate('/pricing');
+                  setMobileMenuOpen(false);
+                }} className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left">
                     {t('nav.pricing')}
                   </button>
                   
                   <div className="h-px bg-border my-2" />
                   
-                  {!loading && user && (
-                    <button 
-                      onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }} 
-                      className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left"
-                    >
+                  {!loading && user && <button onClick={() => {
+                  navigate('/dashboard');
+                  setMobileMenuOpen(false);
+                }} className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left">
                       {t('common.dashboard')}
-                    </button>
-                  )}
-                  {!loading && !user && (
-                    <button 
-                      onClick={() => { navigate('/auth'); setMobileMenuOpen(false); }} 
-                      className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left"
-                    >
+                    </button>}
+                  {!loading && !user && <button onClick={() => {
+                  navigate('/auth');
+                  setMobileMenuOpen(false);
+                }} className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left">
                       {t('common.login')}
-                    </button>
-                  )}
+                    </button>}
                   
-                  <Button 
-                    onClick={() => { handleStart(); setMobileMenuOpen(false); }} 
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full mt-4"
-                  >
+                  <Button onClick={() => {
+                  handleStart();
+                  setMobileMenuOpen(false);
+                }} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full mt-4">
                     {t('common.getStarted')}
                   </Button>
                 </nav>
@@ -269,7 +256,7 @@ export default function Landing() {
                 {/* Model Image */}
                 <div className="relative">
                   <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.25)]">
-                    <img alt="AI generated model" className="w-full h-full object-cover" src={exampleModelPants} />
+                    <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/05e94cfe-c952-4a43-bd78-165c0ae993b0.png" />
                   </div>
                   <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
                     {t('landing.aiModel')}
@@ -308,7 +295,10 @@ export default function Landing() {
       {/* How it Works Section */}
       <section id="how-it-works" className="py-28 relative overflow-hidden bg-gradient-to-b from-slate-50 to-white">
         {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
+        backgroundSize: '32px 32px'
+      }} />
         
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
