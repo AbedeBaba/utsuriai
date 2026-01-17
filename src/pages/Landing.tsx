@@ -9,6 +9,8 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/s
 import { Footer } from '@/components/Footer';
 import exampleProduct from '@/assets/example-product.jpeg';
 import exampleModel from '@/assets/example-model.jpeg';
+import exampleProductPants from '@/assets/example-product-pants.webp';
+import exampleModelPants from '@/assets/example-model-pants.jpg';
 import modelRealBg from '@/assets/modelreal.jpg';
 import heroBanner from '@/assets/hero-banner.jpeg';
 import diverseModelsBg from '@/assets/diverse-models-bg.jpg';
@@ -244,17 +246,12 @@ export default function Landing() {
                 </div>
               </div>
 
-              {/* Transformation Example 2 - Placeholder */}
+              {/* Transformation Example 2 */}
               <div className="flex flex-row gap-5 md:gap-8 items-center justify-center">
-                {/* Product Image Placeholder */}
+                {/* Product Image */}
                 <div className="relative">
-                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.12)] flex items-center justify-center">
-                    <div className="text-center p-6">
-                      <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center">
-                        <Upload className="w-10 h-10 text-slate-400" />
-                      </div>
-                      <p className="text-base text-slate-400 font-medium">{t('landing.productPhoto')}</p>
-                    </div>
+                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.15)]">
+                    <img alt="Product photo" className="w-full h-full object-cover" src={exampleProductPants} />
                   </div>
                   <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white border border-slate-300 text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
                     {t('landing.productPhoto')}
@@ -269,15 +266,10 @@ export default function Landing() {
                   <ArrowRight className="w-6 h-6 text-primary" />
                 </div>
 
-                {/* Model Image Placeholder */}
+                {/* Model Image */}
                 <div className="relative">
-                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.2)] flex items-center justify-center">
-                    <div className="text-center p-6">
-                      <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-primary/10 border-2 border-dashed border-primary/30 flex items-center justify-center">
-                        <Sparkles className="w-10 h-10 text-primary/50" />
-                      </div>
-                      <p className="text-base text-primary/60 font-medium">{t('landing.aiResult')}</p>
-                    </div>
+                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.25)]">
+                    <img alt="AI generated model" className="w-full h-full object-cover" src={exampleModelPants} />
                   </div>
                   <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
                     {t('landing.aiModel')}
