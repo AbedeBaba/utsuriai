@@ -20,6 +20,8 @@ export interface Template {
   planRequired?: string; // Future: for pricing plan requirements
   requiredImages: number; // How many product images user needs to upload (1 or 2)
   requiresBackView?: boolean; // If true, user must upload both front and back view
+  optionalSecondImage?: boolean; // If true, user can optionally upload a second image (e.g., bottom wear for shoes)
+  optionalSecondImageKey?: string; // Translation key for the optional second image label
   prompt: string; // Fixed prompt for this template
 }
 
@@ -565,6 +567,90 @@ export const templates: Template[] = [
       },
     ],
     tags: ['bottom-wear', 'pants', 'e-commerce', 'classic'],
+  },
+  // Classic Shoes - Female
+  {
+    id: 'classic-shoes-female',
+    nameKey: 'templates.items.classicShoesFemale',
+    descriptionKey: 'templates.items.classicShoesFemaleDesc',
+    categoryId: 'shoes',
+    gender: 'female',
+    framing: 'knee-to-floor',
+    aspectRatio: '9:16',
+    requiredImages: 1,
+    requiresBackView: true,
+    optionalSecondImage: true,
+    optionalSecondImageKey: 'templates.optionalBottomWear',
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'kshoep1',
+        nameKey: 'templates.poses.shoesFrontView',
+        imagePath: '/lovable-uploads/templates/female/shoep1.png',
+        useBackView: false,
+      },
+      {
+        id: 'kshoep2',
+        nameKey: 'templates.poses.shoesSideView',
+        imagePath: '/lovable-uploads/templates/female/shoep2.png',
+        useBackView: false,
+      },
+      {
+        id: 'kshoep3',
+        nameKey: 'templates.poses.shoesBackView',
+        imagePath: '/lovable-uploads/templates/female/shoep3.png',
+        useBackView: true,
+      },
+      {
+        id: 'kshoep4',
+        nameKey: 'templates.poses.shoesMirrorView',
+        imagePath: '/lovable-uploads/templates/female/shoep4.jpg',
+        useBackView: false,
+      },
+    ],
+    tags: ['shoes', 'footwear', 'e-commerce', 'classic'],
+  },
+  // Classic Shoes - Male (placeholder - images to be added later)
+  {
+    id: 'classic-shoes-male',
+    nameKey: 'templates.items.classicShoesMale',
+    descriptionKey: 'templates.items.classicShoesMaleDesc',
+    categoryId: 'shoes',
+    gender: 'male',
+    framing: 'knee-to-floor',
+    aspectRatio: '9:16',
+    requiredImages: 1,
+    requiresBackView: true,
+    optionalSecondImage: true,
+    optionalSecondImageKey: 'templates.optionalBottomWear',
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'eshoep1',
+        nameKey: 'templates.poses.shoesFrontView',
+        imagePath: '/lovable-uploads/templates/male/shoep1.png',
+        useBackView: false,
+      },
+      {
+        id: 'eshoep2',
+        nameKey: 'templates.poses.shoesSideView',
+        imagePath: '/lovable-uploads/templates/male/shoep2.png',
+        useBackView: false,
+      },
+      {
+        id: 'eshoep3',
+        nameKey: 'templates.poses.shoesBackView',
+        imagePath: '/lovable-uploads/templates/male/shoep3.png',
+        useBackView: true,
+      },
+      {
+        id: 'eshoep4',
+        nameKey: 'templates.poses.shoesMirrorView',
+        imagePath: '/lovable-uploads/templates/male/shoep4.png',
+        useBackView: false,
+      },
+    ],
+    tags: ['shoes', 'footwear', 'e-commerce', 'classic'],
   },
 ];
 

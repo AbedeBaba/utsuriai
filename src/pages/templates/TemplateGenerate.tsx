@@ -32,6 +32,8 @@ export default function TemplateGenerate() {
   const [frontImage, setFrontImage] = useState<ProductImage>({ preview: null, file: null });
   // Back view image (required only for templates with requiresBackView)
   const [backImage, setBackImage] = useState<ProductImage>({ preview: null, file: null });
+  // Optional second image (e.g., bottom wear for shoes template)
+  const [optionalImage, setOptionalImage] = useState<ProductImage>({ preview: null, file: null });
   
   const [usePro, setUsePro] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -39,6 +41,7 @@ export default function TemplateGenerate() {
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [isDragOverFront, setIsDragOverFront] = useState(false);
   const [isDragOverBack, setIsDragOverBack] = useState(false);
+  const [isDragOverOptional, setIsDragOverOptional] = useState(false);
   
   const t = (key: string) => {
     const translations = templateTranslations[language as 'en' | 'tr'] || templateTranslations.en;
@@ -47,41 +50,48 @@ export default function TemplateGenerate() {
   
   const template = templateId ? getTemplateById(templateId) : null;
   const requiresBackView = template?.requiresBackView ?? false;
+  const hasOptionalSecondImage = template?.optionalSecondImage ?? false;
+  const optionalSecondImageKey = template?.optionalSecondImageKey ?? '';
   
-  const handleFile = useCallback((file: File, type: 'front' | 'back') => {
+  const handleFile = useCallback((file: File, type: 'front' | 'back' | 'optional') => {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
         if (type === 'front') {
           setFrontImage({ preview: result, file });
-        } else {
+        } else if (type === 'back') {
           setBackImage({ preview: result, file });
+        } else {
+          setOptionalImage({ preview: result, file });
         }
       };
       reader.readAsDataURL(file);
     }
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent, type: 'front' | 'back') => {
+  const handleDrop = useCallback((e: React.DragEvent, type: 'front' | 'back' | 'optional') => {
     e.preventDefault();
     if (type === 'front') setIsDragOverFront(false);
-    else setIsDragOverBack(false);
+    else if (type === 'back') setIsDragOverBack(false);
+    else setIsDragOverOptional(false);
     
     const file = e.dataTransfer.files[0];
     if (file) handleFile(file, type);
   }, [handleFile]);
 
-  const handleDragOver = useCallback((e: React.DragEvent, type: 'front' | 'back') => {
+  const handleDragOver = useCallback((e: React.DragEvent, type: 'front' | 'back' | 'optional') => {
     e.preventDefault();
     if (type === 'front') setIsDragOverFront(true);
-    else setIsDragOverBack(true);
+    else if (type === 'back') setIsDragOverBack(true);
+    else setIsDragOverOptional(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent, type: 'front' | 'back') => {
+  const handleDragLeave = useCallback((e: React.DragEvent, type: 'front' | 'back' | 'optional') => {
     e.preventDefault();
     if (type === 'front') setIsDragOverFront(false);
-    else setIsDragOverBack(false);
+    else if (type === 'back') setIsDragOverBack(false);
+    else setIsDragOverOptional(false);
   }, []);
   
   // Check if all required images are uploaded
@@ -230,11 +240,12 @@ export default function TemplateGenerate() {
   
   // Render image upload box
   const renderUploadBox = (
-    type: 'front' | 'back',
+    type: 'front' | 'back' | 'optional',
     image: ProductImage,
     isDragOver: boolean,
     title: string,
-    description: string
+    description: string,
+    isOptional: boolean = false
   ) => (
     <div
       onDrop={(e) => handleDrop(e, type)}
@@ -271,7 +282,7 @@ export default function TemplateGenerate() {
             <p className="font-medium text-foreground flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
               <span className="truncate">
-                {type === 'front' ? t('templates.frontImageUploaded') : t('templates.backImageUploaded')}
+                {type === 'front' ? t('templates.frontImageUploaded') : type === 'back' ? t('templates.backImageUploaded') : title}
               </span>
             </p>
             <p className="text-xs text-muted-foreground mt-1 truncate">
@@ -285,8 +296,10 @@ export default function TemplateGenerate() {
                 e.stopPropagation();
                 if (type === 'front') {
                   setFrontImage({ preview: null, file: null });
-                } else {
+                } else if (type === 'back') {
                   setBackImage({ preview: null, file: null });
+                } else {
+                  setOptionalImage({ preview: null, file: null });
                 }
               }}
             >
@@ -372,6 +385,23 @@ export default function TemplateGenerate() {
               t('templates.uploadBackViewDesc')
             )}
           </div>
+          
+          {/* Optional second image (e.g., bottom wear for shoes) */}
+          {hasOptionalSecondImage && (
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground mb-2">
+                {t('templates.optionalBottomWearDesc')}
+              </p>
+              {renderUploadBox(
+                'optional',
+                optionalImage,
+                isDragOverOptional,
+                t(optionalSecondImageKey),
+                t('templates.optionalBottomWearDesc'),
+                true
+              )}
+            </div>
+          )}
         </div>
         
         {/* Step 2: Select Mode */}

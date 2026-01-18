@@ -125,6 +125,22 @@ export const templateTranslations = {
     'templates.poses.bottomBackView': 'Back view',
     'templates.poses.bottomCasualPose': 'Casual pose – relaxed',
     
+    // Shoes template names
+    'templates.items.classicShoesFemale': 'Classic Shoes (Female)',
+    'templates.items.classicShoesFemaleDesc': 'Professional shoes shots with back view option',
+    'templates.items.classicShoesMale': 'Classic Shoes (Male)',
+    'templates.items.classicShoesMaleDesc': 'Professional shoes shots with back view option',
+    
+    // Shoes pose names
+    'templates.poses.shoesFrontView': 'Front view – standing straight',
+    'templates.poses.shoesSideView': 'Side view – walking stance',
+    'templates.poses.shoesBackView': 'Back view – heels focus',
+    'templates.poses.shoesMirrorView': 'Mirror view – full reflection',
+    
+    // Optional second image
+    'templates.optionalBottomWear': 'Bottom Wear (Optional)',
+    'templates.optionalBottomWearDesc': 'Upload bottom wear image to change model\'s pants/leggings',
+    
     // Gender filter
     'templates.filter.all': 'All',
     'templates.filter.male': 'Male',
@@ -252,6 +268,22 @@ export const templateTranslations = {
     'templates.poses.bottomSideProfile': 'Yan profil görünümü',
     'templates.poses.bottomBackView': 'Arka görünüm',
     'templates.poses.bottomCasualPose': 'Günlük poz – rahat',
+    
+    // Shoes template names
+    'templates.items.classicShoesFemale': 'Klasik Ayakkabı (Kadın)',
+    'templates.items.classicShoesFemaleDesc': 'Arka görünüm seçenekli profesyonel ayakkabı çekimleri',
+    'templates.items.classicShoesMale': 'Klasik Ayakkabı (Erkek)',
+    'templates.items.classicShoesMaleDesc': 'Arka görünüm seçenekli profesyonel ayakkabı çekimleri',
+    
+    // Shoes pose names
+    'templates.poses.shoesFrontView': 'Ön görünüm – düz duruş',
+    'templates.poses.shoesSideView': 'Yan görünüm – yürüyüş duruşu',
+    'templates.poses.shoesBackView': 'Arka görünüm – topuk odaklı',
+    'templates.poses.shoesMirrorView': 'Ayna görünümü – tam yansıma',
+    
+    // Optional second image
+    'templates.optionalBottomWear': 'Alt Giyim (Opsiyonel)',
+    'templates.optionalBottomWearDesc': 'Modelin pantolonunu/taytını değiştirmek için alt giyim görseli yükleyin',
     
     // Gender filter
     'templates.filter.all': 'Tümü',
