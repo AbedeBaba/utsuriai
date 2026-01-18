@@ -34,11 +34,11 @@ interface CreditPack {
 }
 
 const creditPacks: CreditPack[] = [
-  { credits: 50, price: "$5.50", priceValue: 5.5 },
-  { credits: 100, price: "$10", priceValue: 10 },
-  { credits: 200, price: "$15", priceValue: 15 },
-  { credits: 500, price: "$25", priceValue: 25 },
-  { credits: 1000, price: "$40", priceValue: 40 },
+  { credits: 50, price: "$5", priceValue: 5 },
+  { credits: 100, price: "$9.50", priceValue: 9.5 },
+  { credits: 200, price: "$18", priceValue: 18 },
+  { credits: 500, price: "$45", priceValue: 45 },
+  { credits: 1000, price: "$85", priceValue: 85 },
 ];
 
 const plans: PricingPlan[] = [
