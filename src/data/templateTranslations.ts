@@ -101,6 +101,18 @@ export const templateTranslations = {
     'templates.items.classicBeanieHatMale': 'Classic Beanie – Hat (Male)',
     'templates.items.classicBeanieHatMaleDesc': 'Professional headwear shots with clean backgrounds',
     
+    // Belt template names
+    'templates.items.classicBeltFemale': 'Classic Belt (Female)',
+    'templates.items.classicBeltFemaleDesc': 'Professional belt shots with clean backgrounds',
+    'templates.items.classicBeltMale': 'Classic Belt (Male)',
+    'templates.items.classicBeltMaleDesc': 'Professional belt shots with clean backgrounds',
+    
+    // Belt pose names
+    'templates.poses.beltFrontView': 'Front view – belt buckle focus',
+    'templates.poses.beltSideProfile': 'Side profile view',
+    'templates.poses.beltCloseup': 'Close-up detail',
+    'templates.poses.beltBackView': 'Back view',
+    
     // Gender filter
     'templates.filter.all': 'All',
     'templates.filter.male': 'Male',
@@ -204,6 +216,18 @@ export const templateTranslations = {
     'templates.items.classicBeanieHatFemaleDesc': 'Temiz arka planlı profesyonel başlık çekimleri',
     'templates.items.classicBeanieHatMale': 'Klasik Bere – Şapka (Erkek)',
     'templates.items.classicBeanieHatMaleDesc': 'Temiz arka planlı profesyonel başlık çekimleri',
+    
+    // Belt template names
+    'templates.items.classicBeltFemale': 'Klasik Kemer (Kadın)',
+    'templates.items.classicBeltFemaleDesc': 'Temiz arka planlı profesyonel kemer çekimleri',
+    'templates.items.classicBeltMale': 'Klasik Kemer (Erkek)',
+    'templates.items.classicBeltMaleDesc': 'Temiz arka planlı profesyonel kemer çekimleri',
+    
+    // Belt pose names
+    'templates.poses.beltFrontView': 'Ön görünüm – toka odaklı',
+    'templates.poses.beltSideProfile': 'Yan profil görünümü',
+    'templates.poses.beltCloseup': 'Yakın çekim detay',
+    'templates.poses.beltBackView': 'Arka görünüm',
     
     // Gender filter
     'templates.filter.all': 'Tümü',
