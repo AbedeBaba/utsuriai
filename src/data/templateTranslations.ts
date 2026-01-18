@@ -113,6 +113,18 @@ export const templateTranslations = {
     'templates.poses.beltCloseup': 'Close-up detail',
     'templates.poses.beltBackView': 'Back view',
     
+    // Bottom Wear template names
+    'templates.items.classicBottomWearFemale': 'Classic Bottom Wear (Female)',
+    'templates.items.classicBottomWearFemaleDesc': 'Professional pants and bottom wear shots',
+    'templates.items.classicBottomWearMale': 'Classic Bottom Wear (Male)',
+    'templates.items.classicBottomWearMaleDesc': 'Professional pants and bottom wear shots',
+    
+    // Bottom Wear pose names
+    'templates.poses.bottomFrontView': 'Front view – standing straight',
+    'templates.poses.bottomSideProfile': 'Side profile view',
+    'templates.poses.bottomBackView': 'Back view',
+    'templates.poses.bottomCasualPose': 'Casual pose – relaxed',
+    
     // Gender filter
     'templates.filter.all': 'All',
     'templates.filter.male': 'Male',
@@ -228,6 +240,18 @@ export const templateTranslations = {
     'templates.poses.beltSideProfile': 'Yan profil görünümü',
     'templates.poses.beltCloseup': 'Yakın çekim detay',
     'templates.poses.beltBackView': 'Arka görünüm',
+    
+    // Bottom Wear template names
+    'templates.items.classicBottomWearFemale': 'Klasik Alt Giyim (Kadın)',
+    'templates.items.classicBottomWearFemaleDesc': 'Profesyonel pantolon ve alt giyim çekimleri',
+    'templates.items.classicBottomWearMale': 'Klasik Alt Giyim (Erkek)',
+    'templates.items.classicBottomWearMaleDesc': 'Profesyonel pantolon ve alt giyim çekimleri',
+    
+    // Bottom Wear pose names
+    'templates.poses.bottomFrontView': 'Ön görünüm – düz duruş',
+    'templates.poses.bottomSideProfile': 'Yan profil görünümü',
+    'templates.poses.bottomBackView': 'Arka görünüm',
+    'templates.poses.bottomCasualPose': 'Günlük poz – rahat',
     
     // Gender filter
     'templates.filter.all': 'Tümü',
