@@ -406,6 +406,86 @@ export const templates: Template[] = [
     ],
     tags: ['hat', 'beanie', 'e-commerce', 'classic'],
   },
+  // Classic Belt - Female
+  {
+    id: 'classic-belt-female',
+    nameKey: 'templates.items.classicBeltFemale',
+    descriptionKey: 'templates.items.classicBeltFemaleDesc',
+    categoryId: 'belt',
+    gender: 'female',
+    framing: 'waist-closeup',
+    aspectRatio: '1:1',
+    requiredImages: 1,
+    requiresBackView: false,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'beltp1',
+        nameKey: 'templates.poses.beltFrontView',
+        imagePath: '/lovable-uploads/templates/female/beltp1.png',
+        useBackView: false,
+      },
+      {
+        id: 'beltp2',
+        nameKey: 'templates.poses.beltSideProfile',
+        imagePath: '/lovable-uploads/templates/female/beltp2.png',
+        useBackView: false,
+      },
+      {
+        id: 'beltp3',
+        nameKey: 'templates.poses.beltCloseup',
+        imagePath: '/lovable-uploads/templates/female/beltp3.png',
+        useBackView: false,
+      },
+      {
+        id: 'beltp4',
+        nameKey: 'templates.poses.beltBackView',
+        imagePath: '/lovable-uploads/templates/female/beltp4.png',
+        useBackView: false,
+      },
+    ],
+    tags: ['belt', 'accessory', 'e-commerce', 'classic'],
+  },
+  // Classic Belt - Male (placeholder - images to be added later)
+  {
+    id: 'classic-belt-male',
+    nameKey: 'templates.items.classicBeltMale',
+    descriptionKey: 'templates.items.classicBeltMaleDesc',
+    categoryId: 'belt',
+    gender: 'male',
+    framing: 'waist-closeup',
+    aspectRatio: '1:1',
+    requiredImages: 1,
+    requiresBackView: false,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'ebeltp1',
+        nameKey: 'templates.poses.beltFrontView',
+        imagePath: '/lovable-uploads/templates/male/ebeltp1.png',
+        useBackView: false,
+      },
+      {
+        id: 'ebeltp2',
+        nameKey: 'templates.poses.beltSideProfile',
+        imagePath: '/lovable-uploads/templates/male/ebeltp2.png',
+        useBackView: false,
+      },
+      {
+        id: 'ebeltp3',
+        nameKey: 'templates.poses.beltCloseup',
+        imagePath: '/lovable-uploads/templates/male/ebeltp3.png',
+        useBackView: false,
+      },
+      {
+        id: 'ebeltp4',
+        nameKey: 'templates.poses.beltBackView',
+        imagePath: '/lovable-uploads/templates/male/ebeltp4.png',
+        useBackView: false,
+      },
+    ],
+    tags: ['belt', 'accessory', 'e-commerce', 'classic'],
+  },
 ];
 
 // Helper functions
