@@ -486,6 +486,86 @@ export const templates: Template[] = [
     ],
     tags: ['belt', 'accessory', 'e-commerce', 'classic'],
   },
+  // Classic Bottom Wear - Female
+  {
+    id: 'classic-bottom-wear-female',
+    nameKey: 'templates.items.classicBottomWearFemale',
+    descriptionKey: 'templates.items.classicBottomWearFemaleDesc',
+    categoryId: 'bottom-wear',
+    gender: 'female',
+    framing: 'waist-to-ankle',
+    aspectRatio: '9:16',
+    requiredImages: 2,
+    requiresBackView: true,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'kbottomp1',
+        nameKey: 'templates.poses.bottomFrontView',
+        imagePath: '/lovable-uploads/templates/female/bottomp1.png',
+        useBackView: false,
+      },
+      {
+        id: 'kbottomp2',
+        nameKey: 'templates.poses.bottomSideProfile',
+        imagePath: '/lovable-uploads/templates/female/bottomp2.png',
+        useBackView: false,
+      },
+      {
+        id: 'kbottomp3',
+        nameKey: 'templates.poses.bottomBackView',
+        imagePath: '/lovable-uploads/templates/female/bottomp3.png',
+        useBackView: true,
+      },
+      {
+        id: 'kbottomp4',
+        nameKey: 'templates.poses.bottomCasualPose',
+        imagePath: '/lovable-uploads/templates/female/bottomp4.png',
+        useBackView: false,
+      },
+    ],
+    tags: ['bottom-wear', 'pants', 'e-commerce', 'classic'],
+  },
+  // Classic Bottom Wear - Male
+  {
+    id: 'classic-bottom-wear-male',
+    nameKey: 'templates.items.classicBottomWearMale',
+    descriptionKey: 'templates.items.classicBottomWearMaleDesc',
+    categoryId: 'bottom-wear',
+    gender: 'male',
+    framing: 'waist-to-ankle',
+    aspectRatio: '9:16',
+    requiredImages: 2,
+    requiresBackView: true,
+    prompt: TEMPLATE_GENERATION_PROMPT,
+    poses: [
+      {
+        id: 'ebottomp1',
+        nameKey: 'templates.poses.bottomFrontView',
+        imagePath: '/lovable-uploads/templates/male/bottomp1.png',
+        useBackView: false,
+      },
+      {
+        id: 'ebottomp2',
+        nameKey: 'templates.poses.bottomSideProfile',
+        imagePath: '/lovable-uploads/templates/male/bottomp2.png',
+        useBackView: false,
+      },
+      {
+        id: 'ebottomp3',
+        nameKey: 'templates.poses.bottomBackView',
+        imagePath: '/lovable-uploads/templates/male/bottomp3.png',
+        useBackView: true,
+      },
+      {
+        id: 'ebottomp4',
+        nameKey: 'templates.poses.bottomCasualPose',
+        imagePath: '/lovable-uploads/templates/male/bottomp4.png',
+        useBackView: false,
+      },
+    ],
+    tags: ['bottom-wear', 'pants', 'e-commerce', 'classic'],
+  },
 ];
 
 // Helper functions
