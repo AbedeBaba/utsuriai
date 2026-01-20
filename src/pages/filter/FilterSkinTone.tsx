@@ -222,7 +222,7 @@ export default function FilterSkinTone() {
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
       <div className={cn(
-        "grid grid-cols-3 gap-4 md:gap-6 relative max-w-2xl mx-auto",
+        "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 relative max-w-2xl mx-auto px-4",
         hoverDisabled && "pointer-events-none"
       )}>
         {skinToneOptions.map((option, index) => (
