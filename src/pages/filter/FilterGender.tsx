@@ -1,20 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
-import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { SelectionCard } from '@/components/SelectionCard';
 import { useEffect, useState, useCallback } from 'react';
-import { User, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import maleModel from '@/assets/gender-male.jpeg';
 import femaleModel from '@/assets/gender-female.jpeg';
 import { useSubscription } from '@/hooks/useSubscription';
 import { LoadSavedModelDialog } from '@/components/LoadSavedModelDialog';
 import { useSavedModels, SavedModel } from '@/hooks/useSavedModels';
-
-const genderOptions = [
-  { id: 'Male', label: 'Male', icon: <User className="h-8 w-8" /> },
-  { id: 'Female', label: 'Female', icon: <Users className="h-8 w-8" /> },
-];
+import { ArrowLeft } from 'lucide-react';
 
 export default function FilterGender() {
   const navigate = useNavigate();
@@ -23,7 +16,6 @@ export default function FilterGender() {
   const { convertToModelConfig } = useSavedModels();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [hoveredGender, setHoveredGender] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentStep(1);
@@ -33,7 +25,6 @@ export default function FilterGender() {
   const handleLoadSavedModel = useCallback((savedModel: SavedModel) => {
     const modelConfig = convertToModelConfig(savedModel);
     loadSavedModel(modelConfig);
-    // Navigate to clothing page since all filters are pre-filled
     navigate('/clothing');
   }, [convertToModelConfig, loadSavedModel, navigate]);
 
@@ -54,117 +45,142 @@ export default function FilterGender() {
       } else {
         navigate('/filter/ethnicity');
       }
-    }, 1000);
+    }, 800);
   }, [isAnimating, navigate, updateConfig]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Muted off-white background */}
-      <div className="fixed inset-0 bg-[#eceef1]" />
-      
-      {/* Male Model - Left Side */}
-      <div 
-        className={cn(
-          "fixed left-0 top-0 bottom-0 w-[32%] z-[2] flex items-center",
-          hoveredGender === 'Male' ? "opacity-100" : "opacity-95"
-        )}
+    <div className="min-h-screen h-screen w-full overflow-hidden relative">
+      {/* Back Button - Fixed top left */}
+      <button
+        onClick={() => navigate('/')}
+        className="fixed top-4 left-4 z-50 p-2 rounded-full bg-black/30 backdrop-blur-sm text-white hover:bg-black/50 transition-colors"
+        aria-label="Go back"
       >
-        <img 
-          src={maleModel} 
-          alt="Male model"
-          className="h-full w-auto object-contain object-left"
-        />
-      </div>
+        <ArrowLeft className="h-5 w-5" />
+      </button>
 
-      {/* Female Model - Right Side */}
-      <div 
-        className={cn(
-          "fixed right-0 top-0 bottom-0 w-[32%] z-[2] flex items-center justify-end",
-          hoveredGender === 'Female' ? "opacity-100" : "opacity-95"
-        )}
-      >
-        <img 
-          src={femaleModel} 
-          alt="Female model"
-          className="h-full w-auto object-contain object-right"
-        />
-      </div>
+      {/* Load Saved Model Button - Creator Only - Fixed top right */}
+      {hasCreatorFeatureAccess && (
+        <div className="fixed top-4 right-4 z-50">
+          <LoadSavedModelDialog onSelect={handleLoadSavedModel} />
+        </div>
+      )}
 
-      {/* Center panel */}
-      <div className="fixed inset-0 z-[3] pointer-events-none flex justify-center">
-        <div className="w-[45%] h-full bg-[#eceef1]" />
-      </div>
-
-      {/* Main Content */}
-      <div className="relative z-10 min-h-screen">
-        <FilterStepLayout 
-          title="Select Gender"
-          subtitle="Choose the gender for your fashion model"
-          onBack={() => navigate('/')}
-          hideSubtitleBackground={true}
-          isCorePage={true}
-        >
-          {/* Load Saved Model Button - Creator Only */}
-          {hasCreatorFeatureAccess && (
-            <div className="flex justify-center mb-6">
-              <LoadSavedModelDialog onSelect={handleLoadSavedModel} />
-            </div>
+      {/* Split Screen Container */}
+      <div className="flex flex-row h-full w-full">
+        {/* Male Section - Left Half */}
+        <div
+          onClick={() => handleSelect('Male')}
+          className={cn(
+            "relative w-1/2 h-full cursor-pointer group overflow-hidden",
+            "transition-all duration-500 ease-out",
+            isAnimating && selectedId === 'Male' && "w-full",
+            isAnimating && selectedId === 'Female' && "w-0 opacity-0"
           )}
+        >
+          {/* Male Image */}
+          <img 
+            src={maleModel} 
+            alt="Male model"
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover object-center",
+              "transition-transform duration-500 ease-out",
+              "group-hover:scale-105",
+              isAnimating && selectedId !== 'Male' && "scale-95 opacity-50"
+            )}
+          />
           
-          <div className="grid grid-cols-2 gap-6 max-w-lg mx-auto relative outline-none" tabIndex={-1}>
-            {genderOptions.map((option) => (
-              <div
-                key={option.id}
-                onMouseEnter={() => setHoveredGender(option.id)}
-                onMouseLeave={() => setHoveredGender(null)}
-                className="group outline-none focus:outline-none"
-                tabIndex={-1}
-              >
-                <div
-                  onClick={() => handleSelect(option.id)}
-                  tabIndex={-1}
-                  className={cn(
-                    "relative flex flex-col items-center justify-center gap-4 min-h-[200px] rounded-xl cursor-pointer select-none",
-                    "transition-all duration-300 ease-out",
-                    "bg-white border border-[#e5e7eb]",
-                    "hover:border-violet-400 hover:bg-[#faf9ff]",
-                    "outline-none ring-0",
-                    config.gender === option.id && "border-violet-500 bg-violet-50/80",
-                    isAnimating && selectedId === option.id && "scale-[1.02]",
-                    isAnimating && selectedId !== option.id && "opacity-40 scale-[0.98]"
-                  )}
-                >
-                  {/* Icon container */}
-                  <div className={cn(
-                    "relative z-10 p-4 rounded-lg transition-all duration-300",
-                    "bg-[#f2f3f5] group-hover:bg-violet-100",
-                    config.gender === option.id && "bg-violet-100"
-                  )}>
-                    <div className={cn(
-                      "text-slate-500 group-hover:text-violet-600 transition-colors duration-300",
-                      config.gender === option.id && "text-violet-600"
-                    )}>
-                      {option.icon}
-                    </div>
-                  </div>
-                  
-                  {/* Label */}
-                  <span className={cn(
-                    "relative z-10 text-lg font-semibold tracking-wide transition-colors duration-300",
-                    "text-slate-800 group-hover:text-slate-900"
-                  )}>
-                    {option.label}
-                  </span>
-                  
-                  {/* Selection indicator */}
-                  {config.gender === option.id && (
-                    <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-violet-500" />
-                  )}
-                </div>
-              </div>
-            ))}
+          {/* Subtle Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          
+          {/* Label */}
+          <div className={cn(
+            "absolute bottom-8 left-0 right-0 flex justify-center",
+            "transition-all duration-300",
+            isAnimating && selectedId !== 'Male' && "opacity-0"
+          )}>
+            <span className={cn(
+              "text-white text-2xl md:text-3xl font-bold tracking-wider",
+              "px-6 py-2 rounded-lg",
+              "bg-black/20 backdrop-blur-sm",
+              "group-hover:bg-black/40 transition-colors"
+            )}>
+              Male
+            </span>
           </div>
-        </FilterStepLayout>
+
+          {/* Hover Overlay */}
+          <div className={cn(
+            "absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none",
+            config.gender === 'Male' && "opacity-100 bg-primary/20"
+          )} />
+        </div>
+
+        {/* Female Section - Right Half */}
+        <div
+          onClick={() => handleSelect('Female')}
+          className={cn(
+            "relative w-1/2 h-full cursor-pointer group overflow-hidden",
+            "transition-all duration-500 ease-out",
+            isAnimating && selectedId === 'Female' && "w-full",
+            isAnimating && selectedId === 'Male' && "w-0 opacity-0"
+          )}
+        >
+          {/* Female Image */}
+          <img 
+            src={femaleModel} 
+            alt="Female model"
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover object-center",
+              "transition-transform duration-500 ease-out",
+              "group-hover:scale-105",
+              isAnimating && selectedId !== 'Female' && "scale-95 opacity-50"
+            )}
+          />
+          
+          {/* Subtle Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          
+          {/* Label */}
+          <div className={cn(
+            "absolute bottom-8 left-0 right-0 flex justify-center",
+            "transition-all duration-300",
+            isAnimating && selectedId !== 'Female' && "opacity-0"
+          )}>
+            <span className={cn(
+              "text-white text-2xl md:text-3xl font-bold tracking-wider",
+              "px-6 py-2 rounded-lg",
+              "bg-black/20 backdrop-blur-sm",
+              "group-hover:bg-black/40 transition-colors"
+            )}>
+              Female
+            </span>
+          </div>
+
+          {/* Hover Overlay */}
+          <div className={cn(
+            "absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none",
+            config.gender === 'Female' && "opacity-100 bg-primary/20"
+          )} />
+        </div>
+      </div>
+
+      {/* Center Divider Line */}
+      <div className={cn(
+        "absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] bg-white/30 z-10 pointer-events-none",
+        "transition-opacity duration-300",
+        isAnimating && "opacity-0"
+      )} />
+
+      {/* Title Overlay */}
+      <div className={cn(
+        "absolute top-8 left-0 right-0 flex justify-center z-20 pointer-events-none",
+        "transition-opacity duration-300",
+        isAnimating && "opacity-0"
+      )}>
+        <h1 className="text-white text-xl md:text-2xl font-semibold tracking-wide px-6 py-2 rounded-lg bg-black/30 backdrop-blur-sm">
+          Select Gender
+        </h1>
       </div>
     </div>
   );
