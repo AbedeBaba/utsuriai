@@ -201,7 +201,7 @@ export default function Landing() {
             </div>
 
             {/* Right content - Stacked Transformation Examples */}
-            <div className="relative flex flex-col gap-8 sm:gap-14 items-center w-full overflow-hidden">
+            <div className="relative flex flex-col gap-8 sm:gap-14 items-center w-full overflow-hidden pb-6">
               {/* Transformation Example 1 */}
               <div className="flex flex-row gap-2 sm:gap-5 md:gap-8 items-center justify-center w-full max-w-full">
                 {/* Product Image */}
