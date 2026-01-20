@@ -161,10 +161,10 @@ export default function TemplatesList() {
   }
   
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden max-w-full">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/40">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/40 w-full">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between max-w-full">
           <button
             onClick={() => navigate("/templates")}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"

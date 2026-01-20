@@ -218,10 +218,10 @@ export default function Result() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden max-w-full">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-        <div className="flex items-center justify-between px-6 py-4">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 w-full">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4">
           <Button 
             variant="ghost" 
             onClick={handleCreateNew}

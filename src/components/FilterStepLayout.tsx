@@ -40,9 +40,9 @@ export function FilterStepLayout({
   } = useModelConfig();
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden max-w-full">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 md:p-6">
+      <header className="flex items-center justify-between p-4 md:p-6 w-full max-w-full">
         <div className="flex items-center gap-2">
           {showBack && onBack ? (
             <Button 
@@ -73,9 +73,9 @@ export function FilterStepLayout({
       </header>
 
       {/* Content */}
-      <main className="flex-1 flex flex-col items-center px-4 md:px-6 pb-8 pt-2">
-        <div className="text-center mb-4 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold mb-3 text-slate-900 tracking-tight">{title}</h1>
+      <main className="flex-1 flex flex-col items-center px-4 md:px-6 pb-8 pt-2 overflow-x-hidden max-w-full">
+        <div className="text-center mb-4 animate-fade-in w-full max-w-full px-2">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 text-slate-900 tracking-tight">{title}</h1>
           {subtitle && (
             <p className={`tracking-wide text-slate-600 mx-0 px-0 font-medium text-base ${hideSubtitleBackground ? '' : 'bg-slate-50 rounded-lg px-4 py-2'}`}>
               {subtitle}
@@ -103,7 +103,7 @@ export function FilterStepLayout({
           )}
         </div>
 
-        <div className="w-full flex-1 animate-slide-up outline-none" tabIndex={-1} style={{
+        <div className="w-full flex-1 animate-slide-up outline-none overflow-x-hidden max-w-full" tabIndex={-1} style={{
           animationDelay: '0.1s'
         }}>
           {children}

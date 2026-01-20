@@ -37,9 +37,9 @@ export default function Landing() {
     }
   };
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  return <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 w-full">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
@@ -165,13 +165,13 @@ export default function Landing() {
       {/* Hero Section */}
       <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-28 overflow-hidden bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)]">
         {/* Subtle background accents */}
-        <div className="absolute inset-0 opacity-30 pointer-events-none">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">
+          <div className="absolute top-20 left-10 w-64 sm:w-96 h-64 sm:h-96 bg-primary/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-64 sm:w-[500px] h-64 sm:h-[500px] bg-primary/10 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative z-10 max-w-[1400px] mx-auto px-8 lg:px-16">
-          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-16 items-center">
+        <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-16">
+          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-8 lg:gap-16 items-center">
             {/* Left content - shifted left with refined typography */}
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm mb-8">
@@ -201,64 +201,64 @@ export default function Landing() {
             </div>
 
             {/* Right content - Stacked Transformation Examples */}
-            <div className="relative flex flex-col gap-14 items-center">
+            <div className="relative flex flex-col gap-8 sm:gap-14 items-center w-full overflow-hidden">
               {/* Transformation Example 1 */}
-              <div className="flex flex-row gap-5 md:gap-8 items-center justify-center">
+              <div className="flex flex-row gap-2 sm:gap-5 md:gap-8 items-center justify-center w-full max-w-full">
                 {/* Product Image */}
-                <div className="relative">
-                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.15)]">
+                <div className="relative flex-shrink-0">
+                  <div className="relative w-[100px] sm:w-[150px] md:w-[200px] lg:w-[240px] aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.15)]">
                     <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/1705c0f2-68bc-4333-a1c8-ad01e24a5811.jpg" />
                   </div>
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white border border-slate-300 text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
+                  <div className="absolute -bottom-3 sm:-bottom-4 left-1/2 -translate-x-1/2 px-2 sm:px-5 py-1 sm:py-2 rounded-full bg-white border border-slate-300 text-[10px] sm:text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
                     {t('landing.productPhoto')}
                   </div>
                 </div>
 
                 {/* Arrow */}
-                <div className="flex flex-col items-center gap-3 px-2">
-                  <div className="w-14 h-14 rounded-full bg-white/80 flex items-center justify-center border border-primary/30 shadow-md">
-                    <Wand2 className="w-7 h-7 text-primary" />
+                <div className="flex flex-col items-center gap-1 sm:gap-3 px-1 sm:px-2 flex-shrink-0">
+                  <div className="w-8 h-8 sm:w-14 sm:h-14 rounded-full bg-white/80 flex items-center justify-center border border-primary/30 shadow-md">
+                    <Wand2 className="w-4 h-4 sm:w-7 sm:h-7 text-primary" />
                   </div>
-                  <ArrowRight className="w-6 h-6 text-primary" />
+                  <ArrowRight className="w-4 h-4 sm:w-6 sm:h-6 text-primary" />
                 </div>
 
                 {/* Model Image */}
-                <div className="relative">
-                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.25)]">
+                <div className="relative flex-shrink-0">
+                  <div className="relative w-[100px] sm:w-[150px] md:w-[200px] lg:w-[240px] aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.25)]">
                     <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/5212774f-8c09-42bf-b019-8f7f544f3c3b.png" />
                   </div>
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
+                  <div className="absolute -bottom-3 sm:-bottom-4 left-1/2 -translate-x-1/2 px-2 sm:px-5 py-1 sm:py-2 rounded-full bg-primary text-[10px] sm:text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
                     {t('landing.aiModel')}
                   </div>
                 </div>
               </div>
 
               {/* Transformation Example 2 */}
-              <div className="flex flex-row gap-5 md:gap-8 items-center justify-center">
+              <div className="flex flex-row gap-2 sm:gap-5 md:gap-8 items-center justify-center w-full max-w-full">
                 {/* Product Image */}
-                <div className="relative">
-                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.15)]">
+                <div className="relative flex-shrink-0">
+                  <div className="relative w-[100px] sm:w-[150px] md:w-[200px] lg:w-[240px] aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.15)]">
                     <img alt="Product photo" className="w-full h-full object-cover" src={exampleProductPants} />
                   </div>
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white border border-slate-300 text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
+                  <div className="absolute -bottom-3 sm:-bottom-4 left-1/2 -translate-x-1/2 px-2 sm:px-5 py-1 sm:py-2 rounded-full bg-white border border-slate-300 text-[10px] sm:text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
                     {t('landing.productPhoto')}
                   </div>
                 </div>
 
                 {/* Arrow */}
-                <div className="flex flex-col items-center gap-3 px-2">
-                  <div className="w-14 h-14 rounded-full bg-white/80 flex items-center justify-center border border-primary/30 shadow-md">
-                    <Wand2 className="w-7 h-7 text-primary" />
+                <div className="flex flex-col items-center gap-1 sm:gap-3 px-1 sm:px-2 flex-shrink-0">
+                  <div className="w-8 h-8 sm:w-14 sm:h-14 rounded-full bg-white/80 flex items-center justify-center border border-primary/30 shadow-md">
+                    <Wand2 className="w-4 h-4 sm:w-7 sm:h-7 text-primary" />
                   </div>
-                  <ArrowRight className="w-6 h-6 text-primary" />
+                  <ArrowRight className="w-4 h-4 sm:w-6 sm:h-6 text-primary" />
                 </div>
 
                 {/* Model Image */}
-                <div className="relative">
-                  <div className="relative w-[200px] md:w-[240px] lg:w-[280px] aspect-[3/4] rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.25)]">
+                <div className="relative flex-shrink-0">
+                  <div className="relative w-[100px] sm:w-[150px] md:w-[200px] lg:w-[240px] aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.25)]">
                     <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/05e94cfe-c952-4a43-bd78-165c0ae993b0.png" />
                   </div>
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-primary text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
+                  <div className="absolute -bottom-3 sm:-bottom-4 left-1/2 -translate-x-1/2 px-2 sm:px-5 py-1 sm:py-2 rounded-full bg-primary text-[10px] sm:text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
                     {t('landing.aiModel')}
                   </div>
                 </div>
