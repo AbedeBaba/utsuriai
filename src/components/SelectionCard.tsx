@@ -13,6 +13,7 @@ interface SelectionCardProps {
   animationDelay?: number;
   isAnimating?: boolean;
   isFadingOut?: boolean;
+  imagePosition?: string;
 }
 
 export function SelectionCard({ 
@@ -27,6 +28,7 @@ export function SelectionCard({
   animationDelay = 0,
   isAnimating = false,
   isFadingOut = false,
+  imagePosition,
 }: SelectionCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +54,7 @@ export function SelectionCard({
             src={image} 
             alt={title}
             className="w-full h-full object-cover"
+            style={imagePosition ? { objectPosition: imagePosition } : undefined}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-3 text-center">
