@@ -208,6 +208,7 @@ export default function FilterGender() {
                 selected={config.gender === option.id}
                 onClick={() => handleSelect(option.id)}
                 className="aspect-[3/4]"
+                imagePosition="center 15%"
               />
             ))}
           </div>
