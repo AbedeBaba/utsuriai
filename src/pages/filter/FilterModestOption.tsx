@@ -53,7 +53,7 @@ export default function FilterModestOption() {
     >
       <div className={cn("selection-backdrop", isAnimating && "active")} />
       
-      <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto relative">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto relative px-4">
         {modestOptions.map((option, index) => (
           <SelectionCard
             key={option.id}

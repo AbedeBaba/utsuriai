@@ -108,7 +108,7 @@ export default function FilterFaceType() {
       infoText={infoText}
     >
       <div className={cn(
-        "grid grid-cols-3 lg:grid-cols-3 gap-6 md:gap-8 relative w-full max-w-5xl mx-auto px-4",
+        "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 relative w-full max-w-5xl mx-auto px-4",
         hoverDisabled && "pointer-events-none"
       )}>
         {faceTypeOptions.map((option, index) => (
