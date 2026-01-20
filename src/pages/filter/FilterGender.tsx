@@ -90,11 +90,12 @@ export default function FilterGender() {
               src={maleModel} 
               alt="Male model"
               className={cn(
-                "absolute inset-0 w-full h-full object-cover object-top",
+                "absolute inset-0 w-full h-full object-cover",
                 "transition-transform duration-500 ease-out",
                 "group-hover:scale-105",
                 isAnimating && selectedId !== 'Male' && "scale-95 opacity-50"
               )}
+              style={{ objectPosition: 'center 15%' }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
             <div className={cn(
@@ -126,11 +127,12 @@ export default function FilterGender() {
               src={femaleModel} 
               alt="Female model"
               className={cn(
-                "absolute inset-0 w-full h-full object-cover object-top",
+                "absolute inset-0 w-full h-full object-cover",
                 "transition-transform duration-500 ease-out",
                 "group-hover:scale-105",
                 isAnimating && selectedId !== 'Female' && "scale-95 opacity-50"
               )}
+              style={{ objectPosition: 'center 15%' }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
             <div className={cn(
