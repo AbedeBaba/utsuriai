@@ -139,9 +139,9 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden max-w-full">
       {/* Header */}
-      <header className="flex items-center justify-between p-6">
+      <header className="flex items-center justify-between p-4 sm:p-6 w-full">
         <Button 
           variant="ghost" 
           size="icon" 

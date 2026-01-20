@@ -256,9 +256,9 @@ export default function ClothingSelection() {
   ].filter(item => item.value);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden max-w-full">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 md:p-6">
+      <header className="flex items-center justify-between p-4 md:p-6 w-full">
         <Button 
           variant="ghost" 
           size="icon" 

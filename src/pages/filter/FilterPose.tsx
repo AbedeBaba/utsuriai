@@ -167,10 +167,15 @@ export default function FilterPose() {
     touchStartX.current = null;
   };
 
-  // Calculate position and style for each card
+  // Calculate position and style for each card - mobile-responsive
   const getCardStyle = (index: number) => {
     const diff = index - activeIndex;
     const absDiff = Math.abs(diff);
+    
+    // Use smaller offsets on mobile
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    const baseOffset = isMobile ? 140 : 280;
+    const outerOffset = isMobile ? 130 : 260;
     
     // Base values for center card
     let scale = 1;
@@ -186,22 +191,22 @@ export default function FilterPose() {
       translateX = 0;
     } else if (absDiff === 1) {
       // Adjacent cards
-      scale = 0.75;
-      opacity = 0.7;
+      scale = 0.7;
+      opacity = 0.6;
       zIndex = 8;
-      translateX = diff * 351;
+      translateX = diff * baseOffset;
     } else if (absDiff === 2) {
       // Outer cards
-      scale = 0.55;
-      opacity = 0.4;
+      scale = 0.5;
+      opacity = 0.3;
       zIndex = 6;
-      translateX = diff * 312;
+      translateX = diff * outerOffset;
     } else {
       // Hidden cards
       scale = 0.4;
       opacity = 0;
       zIndex = 1;
-      translateX = diff * 273;
+      translateX = diff * outerOffset;
     }
     
     return {
@@ -225,7 +230,7 @@ export default function FilterPose() {
       {/* Carousel Container */}
       <div 
         ref={containerRef}
-        className="relative flex items-center justify-center h-[975px] sm:h-[1073px] md:h-[1170px] overflow-hidden"
+        className="relative flex items-center justify-center h-[500px] sm:h-[700px] md:h-[900px] lg:h-[1000px] overflow-hidden w-full max-w-full"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -257,7 +262,7 @@ export default function FilterPose() {
         </button>
 
         {/* Cards */}
-        <div className="relative flex items-center justify-center w-full h-full">
+        <div className="relative flex items-center justify-center w-full h-full overflow-visible">
           {poseOptions.map((option, index) => {
             const style = getCardStyle(index);
             const isActive = index === activeIndex;
@@ -281,8 +286,8 @@ export default function FilterPose() {
                 <div
                   className={cn(
                     "relative overflow-hidden rounded-2xl",
-                    "w-[312px] sm:w-[351px] md:w-[390px]",
-                    "h-[546px] sm:h-[663px] md:h-[741px]",
+                    "w-[180px] sm:w-[240px] md:w-[300px] lg:w-[350px]",
+                    "h-[300px] sm:h-[420px] md:h-[525px] lg:h-[612px]",
                     "border-2 transition-all duration-300",
                     isActive 
                       ? "border-primary shadow-2xl shadow-primary/20" 
