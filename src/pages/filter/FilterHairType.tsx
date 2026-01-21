@@ -45,7 +45,7 @@ export default function FilterHairType() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
   const { t } = useLanguage();
-  const { hasProFeatureAccess } = useSubscription();
+  const { hasProFeatureAccess, loading } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -56,16 +56,27 @@ export default function FilterHairType() {
     setCurrentStep(config.gender === 'Female' ? 8 : 7);
   }, [setCurrentStep, config.gender]);
 
-  // Redirect to pose/beard if Hijab is selected (hair won't be visible)
+  // Redirect to next step if Hijab is selected (hair won't be visible)
+  // Hijab users should continue through ALL filter steps, just skip hair-related ones
+  // IMPORTANT: Wait for subscription to load before redirecting
   useEffect(() => {
+    if (loading) return; // Wait for subscription data to load
+    
     if (config.modestOption === 'Hijab') {
       if (config.gender === 'Male') {
+        // Males go to beard type
         navigate('/filter/beard-type');
       } else {
-        navigate(hasProFeatureAccess ? '/filter/pose' : '/clothing');
+        // Females continue to pose (Pro/Creator) or clothing (Trial/Starter)
+        if (hasProFeatureAccess) {
+          navigate('/filter/pose');
+        } else {
+          // For non-Pro females with hijab, skip to clothing
+          navigate('/clothing');
+        }
       }
     }
-  }, [config.modestOption, config.gender, navigate, hasProFeatureAccess]);
+  }, [config.modestOption, config.gender, navigate, hasProFeatureAccess, loading]);
 
   const handleSelect = useCallback((hairType: string) => {
     if (isAnimating) return;

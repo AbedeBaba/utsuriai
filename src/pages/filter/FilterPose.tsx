@@ -222,7 +222,16 @@ export default function FilterPose() {
     <FilterStepLayout 
       title="Select Pose"
       subtitle="Scroll left or right to choose the pose"
-      onBack={() => config.gender === 'Male' ? navigate('/filter/beard-type') : navigate('/filter/hair-type')}
+      onBack={() => {
+        // For hijab females, go back to body-type (skipping hair-type)
+        if (config.gender === 'Male') {
+          navigate('/filter/beard-type');
+        } else if (config.modestOption === 'Hijab') {
+          navigate('/filter/body-type');
+        } else {
+          navigate('/filter/hair-type');
+        }
+      }}
       onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}
       infoText={infoText}
