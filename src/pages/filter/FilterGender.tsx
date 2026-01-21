@@ -9,6 +9,7 @@ import { LoadSavedModelDialog } from '@/components/LoadSavedModelDialog';
 import { useSavedModels, SavedModel } from '@/hooks/useSavedModels';
 import { ArrowLeft } from 'lucide-react';
 import { SelectionCard } from '@/components/SelectionCard';
+import { startFilterFlow } from '@/hooks/useFilterFlowGuard';
 
 export default function FilterGender() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export default function FilterGender() {
 
   useEffect(() => {
     setCurrentStep(1);
+    // Mark filter flow as active when entering gender selection
+    startFilterFlow();
   }, [setCurrentStep]);
 
   // Handle loading a saved model

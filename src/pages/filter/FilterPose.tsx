@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 
 // Female pose images
 import femaleFaceCloseup from '@/assets/poses/female-face-closeup.png';
@@ -49,6 +50,9 @@ export default function FilterPose() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Guard: redirect to gender selection on page refresh
+  useFilterFlowGuard();
   
   const isFemale = config.gender === 'Female';
 

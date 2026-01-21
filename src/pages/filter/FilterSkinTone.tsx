@@ -5,6 +5,7 @@ import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 
 const skinToneOptions = [
   { id: 'Fair', label: 'Fair', color: '#FFE5D4', darkColor: '#e6cfc0' },
@@ -125,6 +126,9 @@ export default function FilterSkinTone() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
+
+  // Guard: redirect to gender selection on page refresh
+  useFilterFlowGuard();
 
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 4 : 3);
