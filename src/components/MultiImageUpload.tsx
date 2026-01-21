@@ -27,7 +27,7 @@ const imageTypes = [
 export function MultiImageUpload({
   onImagesChange,
   images,
-  maxImages = 10,
+  maxImages = 5,
   className,
 }: MultiImageUploadProps) {
   const [isDragOver, setIsDragOver] = useState(false);
