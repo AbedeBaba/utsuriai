@@ -4,6 +4,7 @@ import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 
 // Background images
 import cityBg from '@/assets/backgrounds/city.jpg';
@@ -36,6 +37,9 @@ export default function FilterBackground() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
+
+  // Guard: redirect to gender selection on page refresh
+  useFilterFlowGuard();
 
   // Redirect Trial and Starter users (no Pro feature access)
   useEffect(() => {

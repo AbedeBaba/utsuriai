@@ -12,6 +12,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ProgressIndicator } from '@/components/ProgressIndicator';
 import { useSubscription } from '@/hooks/useSubscription';
 import { SaveModelDialog } from '@/components/SaveModelDialog';
+import { useFilterFlowGuard, endFilterFlow } from '@/hooks/useFilterFlowGuard';
 
 // Backend-ready data structure for API communication
 interface GenerationPayload {
@@ -58,6 +59,9 @@ export default function ClothingSelection() {
   } = useSubscription();
   const [loading, setLoading] = useState(false);
   const [proLoading, setProLoading] = useState(false);
+
+  // Guard: redirect to gender selection on page refresh
+  useFilterFlowGuard();
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [isGenerating, setIsGenerating] = useState(false); // Prevent duplicate calls
 
@@ -219,6 +223,9 @@ export default function ClothingSelection() {
         .single();
 
       if (error) throw error;
+
+      // End the filter flow on successful generation
+      endFilterFlow();
 
       // Navigate with Pro mode flag
       navigate(`/result/${data.id}${usePro ? '?pro=true' : ''}`);

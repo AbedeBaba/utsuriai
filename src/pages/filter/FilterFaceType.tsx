@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { Circle, Square, Diamond, Heart, Hexagon } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 
 // Female face type images
 import femaleOval from '@/assets/face-types/female-oval.png';
@@ -41,6 +42,9 @@ export default function FilterFaceType() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
+
+  // Guard: redirect to gender selection on page refresh
+  useFilterFlowGuard();
 
   const isFemale = config.gender === 'Female';
 

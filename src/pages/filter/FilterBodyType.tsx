@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 
 // Female body type images
 import femaleSlim from '@/assets/body-types/female-slim.png';
@@ -54,6 +55,9 @@ export default function FilterBodyType() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Guard: redirect to gender selection on page refresh
+  useFilterFlowGuard();
   
   const isFemale = config.gender === 'Female';
 

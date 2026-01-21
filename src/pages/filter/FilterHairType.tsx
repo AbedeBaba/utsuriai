@@ -5,6 +5,7 @@ import { FilterStepLayout } from '@/components/FilterStepLayout';
 import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 
 // Female hair type images
 import femaleStraight from '@/assets/hair-types/female-straight.png';
@@ -49,6 +50,9 @@ export default function FilterHairType() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
+
+  // Guard: redirect to gender selection on page refresh
+  useFilterFlowGuard();
 
   const isFemale = config.gender === 'Female';
 

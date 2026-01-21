@@ -7,6 +7,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import standardImage from '@/assets/modest-options/standard.png';
 import hijabImage from '@/assets/modest-options/hijab.png';
+import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 
 const modestOptions = [
   { id: 'Standard', label: 'Standard', subtitle: 'Regular appearance', image: standardImage },
@@ -19,6 +20,9 @@ export default function FilterModestOption() {
   const { t } = useLanguage();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Guard: redirect to gender selection on page refresh
+  useFilterFlowGuard();
 
   useEffect(() => {
     // Coverage is step 2 for females only
