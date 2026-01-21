@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { Sparkles, ArrowLeft, Loader2 } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { z } from 'zod';
 
@@ -152,7 +152,7 @@ export default function Auth() {
         </Button>
         
         <div className="flex items-center gap-2">
-          <img src="/favicon.png" alt="UtsuriAI" className="h-6 w-6" />
+          <Sparkles className="h-5 w-5 text-primary" />
           <span className="font-medium text-foreground italic">Utsuri</span>
         </div>
         
