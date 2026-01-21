@@ -82,7 +82,8 @@ export default function FilterHairColor() {
     setCurrentStep(config.gender === 'Female' ? 5 : 4);
   }, [setCurrentStep, config.gender]);
 
-  // Redirect to eye color if Hijab is selected (hair won't be visible)
+  // Redirect to eye color if Hijab is selected (hair color won't be visible)
+  // This ensures hijab users skip hair-related steps but continue through ALL other filter steps
   useEffect(() => {
     if (config.modestOption === 'Hijab') {
       navigate('/filter/eye-color');

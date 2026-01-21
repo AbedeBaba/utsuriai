@@ -140,6 +140,7 @@ export default function FilterSkinTone() {
 
     setTimeout(() => {
       // Skip hair color if Hijab is selected (hair won't be visible)
+      // Hijab users continue through ALL other filter steps sequentially
       if (config.modestOption === 'Hijab') {
         navigate('/filter/eye-color');
       } else {
