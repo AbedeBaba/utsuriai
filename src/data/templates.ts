@@ -50,7 +50,7 @@ export const productCategories: ProductCategory[] = [
     nameKey: 'templates.categories.hat',
     descriptionKey: 'templates.categories.hatDesc',
     icon: 'Crown',
-    imagePlaceholder: '/placeholder.svg',
+    imagePlaceholder: '/brand-logo.png',
     order: 1,
   },
   {
@@ -58,7 +58,7 @@ export const productCategories: ProductCategory[] = [
     nameKey: 'templates.categories.upperWear',
     descriptionKey: 'templates.categories.upperWearDesc',
     icon: 'Shirt',
-    imagePlaceholder: '/placeholder.svg',
+    imagePlaceholder: '/brand-logo.png',
     order: 2,
   },
   {
@@ -66,7 +66,7 @@ export const productCategories: ProductCategory[] = [
     nameKey: 'templates.categories.belt',
     descriptionKey: 'templates.categories.beltDesc',
     icon: 'Minus',
-    imagePlaceholder: '/placeholder.svg',
+    imagePlaceholder: '/brand-logo.png',
     order: 3,
   },
   {
@@ -74,7 +74,7 @@ export const productCategories: ProductCategory[] = [
     nameKey: 'templates.categories.bottomWear',
     descriptionKey: 'templates.categories.bottomWearDesc',
     icon: 'RectangleVertical',
-    imagePlaceholder: '/placeholder.svg',
+    imagePlaceholder: '/brand-logo.png',
     order: 4,
   },
   {
@@ -82,7 +82,7 @@ export const productCategories: ProductCategory[] = [
     nameKey: 'templates.categories.shoes',
     descriptionKey: 'templates.categories.shoesDesc',
     icon: 'Footprints',
-    imagePlaceholder: '/placeholder.svg',
+    imagePlaceholder: '/brand-logo.png',
     order: 5,
   },
 ];

@@ -1,10 +1,11 @@
-import { Check, Sparkles, Crown, Zap, Star, Lock, Image, Plus, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Check, Crown, Zap, Star, Lock, Image, Plus, AlertTriangle, ArrowLeft } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Footer } from "@/components/Footer";
+import { BrandLogoMark } from "@/components/BrandLogo";
 
 interface PlanFeature {
   textKey: string;
@@ -252,7 +253,7 @@ const Pricing = () => {
                   >
                     {feature.included ? (
                       feature.isUltra ? (
-                        <Sparkles className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                        <BrandLogoMark size="xs" className="mt-0.5" />
                       ) : (
                         <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                       )
@@ -360,7 +361,7 @@ const Pricing = () => {
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><Sparkles className="w-4 h-4 text-amber-400 mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><BrandLogoMark size="xs" className="mx-auto" /></td>
                 </tr>
               </tbody>
             </table>

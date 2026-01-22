@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BrandLogo } from '@/components/BrandLogo';
 
 export default function PrivacyPolicy() {
   const navigate = useNavigate();
@@ -19,8 +20,7 @@ export default function PrivacyPolicy() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <Sparkles className="h-5 w-5 text-primary" />
-            <span className="font-medium text-foreground italic">UtsuriAI</span>
+            <BrandLogo size="sm" withText text="UtsuriAI" />
           </div>
           <div className="w-10" />
         </div>

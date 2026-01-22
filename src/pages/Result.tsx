@@ -6,9 +6,10 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Download, RefreshCw, Sparkles, Loader2, ImageIcon, LayoutDashboard, Crown } from 'lucide-react';
+import { ArrowLeft, Download, RefreshCw, Loader2, ImageIcon, LayoutDashboard, Crown } from 'lucide-react';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { BrandLogo, BrandLogoMark } from '@/components/BrandLogo';
 
 interface GenerationData {
   id: string;
@@ -232,8 +233,7 @@ export default function Result() {
           </Button>
           
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <Sparkles className="h-5 w-5 text-primary" />
-            <span className="text-xl font-semibold text-foreground italic">Utsuri</span>
+            <BrandLogo size="sm" withText text="Utsuri" />
           </div>
           
           <div className="flex items-center gap-3">
@@ -292,7 +292,7 @@ export default function Result() {
           {generation && (
             <div className="bg-card border border-border rounded-xl p-4 mb-8">
               <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
+                <BrandLogoMark size="xs" />
                 Selected Filters
                 {isProMode && (
                   <span className="ml-auto flex items-center gap-1.5 px-2 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 text-xs font-medium border border-amber-500/30">
