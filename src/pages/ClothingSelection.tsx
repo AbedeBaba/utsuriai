@@ -337,7 +337,7 @@ export default function ClothingSelection() {
             <MultiImageUpload
               images={uploadedImages}
               onImagesChange={handleImagesChange}
-              maxImages={10}
+              maxImages={5}
               className="min-h-[220px]"
             />
           </div>
