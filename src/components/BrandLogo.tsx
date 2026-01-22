@@ -1,7 +1,7 @@
 import logo from "@/assets/utsuri-logo.svg";
 import { cn } from "@/lib/utils";
 
-type BrandLogoSize = "xs" | "sm" | "md" | "lg";
+type BrandLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 const sizeMap: Record<BrandLogoSize, string> = {
   // Slightly larger across the app for stronger brand presence
@@ -9,6 +9,7 @@ const sizeMap: Record<BrandLogoSize, string> = {
   sm: "h-7 w-7",
   md: "h-10 w-10",
   lg: "h-12 w-12",
+  xl: "h-14 w-14",
 };
 
 interface BrandLogoProps {
