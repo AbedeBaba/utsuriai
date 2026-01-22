@@ -41,10 +41,15 @@ export default function Landing() {
   return <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 w-full">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 h-20 md:h-32 flex items-center justify-between">
           <div className="cursor-pointer" onClick={() => navigate('/')}
           >
-            <BrandLogo size="md" withText text="Utsuri" textClassName="font-bold text-xl not-italic" />
+            <div className="hidden md:block">
+              <BrandLogo size="xl" withText text="Utsuri" textClassName="font-bold text-2xl md:text-3xl not-italic" />
+            </div>
+            <div className="md:hidden">
+              <BrandLogo size="lg" withText text="Utsuri" textClassName="font-bold text-xl not-italic" />
+            </div>
           </div>
           
           {/* Desktop Navigation */}

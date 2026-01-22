@@ -142,7 +142,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden max-w-full">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 sm:p-6 w-full">
+      <header className="flex items-center justify-between p-4 sm:p-6 xl:py-8 w-full">
         <Button 
           variant="ghost" 
           size="icon" 
@@ -154,7 +154,12 @@ export default function Auth() {
         
          <div className="cursor-pointer" onClick={() => navigate('/')}
          >
-           <BrandLogo size="md" withText text="Utsuri" />
+           <div className="hidden xl:block">
+             <BrandLogo size="xl" withText text="Utsuri" />
+           </div>
+           <div className="xl:hidden">
+             <BrandLogo size="lg" withText text="Utsuri" />
+           </div>
          </div>
         
         <LanguageSwitcher />
