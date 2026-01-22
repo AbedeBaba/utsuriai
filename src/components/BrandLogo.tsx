@@ -4,10 +4,11 @@ import { cn } from "@/lib/utils";
 type BrandLogoSize = "xs" | "sm" | "md" | "lg";
 
 const sizeMap: Record<BrandLogoSize, string> = {
-  xs: "h-5 w-5",
-  sm: "h-6 w-6",
-  md: "h-8 w-8",
-  lg: "h-10 w-10",
+  // Slightly larger across the app for stronger brand presence
+  xs: "h-6 w-6",
+  sm: "h-7 w-7",
+  md: "h-10 w-10",
+  lg: "h-12 w-12",
 };
 
 interface BrandLogoProps {
