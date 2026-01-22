@@ -241,7 +241,7 @@ export default function AccountSettings() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 py-4 xl:py-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -252,7 +252,12 @@ export default function AccountSettings() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <BrandLogo size="md" withText text="Utsuri" />
+              <div className="hidden xl:block">
+                <BrandLogo size="xl" withText text="Utsuri" />
+              </div>
+              <div className="xl:hidden">
+                <BrandLogo size="lg" withText text="Utsuri" />
+              </div>
             </div>
           </div>
           

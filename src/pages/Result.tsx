@@ -222,7 +222,7 @@ export default function Result() {
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden max-w-full">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 w-full">
-        <div className="flex items-center justify-between px-4 sm:px-6 py-4">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 xl:py-6">
           <Button 
             variant="ghost" 
             onClick={handleCreateNew}
@@ -233,7 +233,12 @@ export default function Result() {
           </Button>
           
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <BrandLogo size="md" withText text="Utsuri" />
+            <div className="hidden xl:block">
+              <BrandLogo size="xl" withText text="Utsuri" />
+            </div>
+            <div className="xl:hidden">
+              <BrandLogo size="lg" withText text="Utsuri" />
+            </div>
           </div>
           
           <div className="flex items-center gap-3">
