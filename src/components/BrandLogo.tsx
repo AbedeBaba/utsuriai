@@ -1,4 +1,4 @@
-import logo from "@/assets/utsuri-logo.png";
+import logo from "@/assets/utsuri-logo.svg";
 import { cn } from "@/lib/utils";
 
 type BrandLogoSize = "xs" | "sm" | "md" | "lg";
