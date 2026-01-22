@@ -9,7 +9,8 @@ const sizeMap: Record<BrandLogoSize, string> = {
   sm: "h-9 w-9",
   md: "h-12 w-12",
   lg: "h-14 w-14",
-  xl: "h-16 w-16",
+  // Extra large for hero/footer usage (8rem x 8rem)
+  xl: "h-32 w-32",
 };
 
 interface BrandLogoProps {
