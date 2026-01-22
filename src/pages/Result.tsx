@@ -233,7 +233,7 @@ export default function Result() {
           </Button>
           
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <BrandLogo size="sm" withText text="Utsuri" />
+            <BrandLogo size="md" withText text="Utsuri" />
           </div>
           
           <div className="flex items-center gap-3">
@@ -292,7 +292,7 @@ export default function Result() {
           {generation && (
             <div className="bg-card border border-border rounded-xl p-4 mb-8">
               <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                <BrandLogoMark size="xs" />
+                <BrandLogoMark size="sm" />
                 Selected Filters
                 {isProMode && (
                   <span className="ml-auto flex items-center gap-1.5 px-2 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 text-xs font-medium border border-amber-500/30">

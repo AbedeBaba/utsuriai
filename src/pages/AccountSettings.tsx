@@ -252,7 +252,7 @@ export default function AccountSettings() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <BrandLogo size="sm" withText text="Utsuri" />
+              <BrandLogo size="md" withText text="Utsuri" />
             </div>
           </div>
           

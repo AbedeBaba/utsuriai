@@ -154,7 +154,7 @@ export default function Auth() {
         
          <div className="cursor-pointer" onClick={() => navigate('/')}
          >
-           <BrandLogo size="sm" withText text="Utsuri" />
+           <BrandLogo size="md" withText text="Utsuri" />
          </div>
         
         <LanguageSwitcher />

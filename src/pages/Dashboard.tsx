@@ -341,7 +341,7 @@ export default function Dashboard() {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <BrandLogo size="sm" withText text="Utsuri" />
+            <BrandLogo size="md" withText text="Utsuri" />
           </div>
           
           <div className="flex items-center gap-4">
@@ -393,7 +393,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-3 mb-3">
                 <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold ${getPlanBadgeStyles(subscription.plan)}`}>
                   {subscription.plan === 'creator' && <Crown className="h-3.5 w-3.5" />}
-                  {subscription.plan === 'pro' && <BrandLogoMark size="xs" className="brightness-0 invert" />}
+                  {subscription.plan === 'pro' && <BrandLogoMark size="sm" className="brightness-0 invert" />}
                   {getPlanDisplayName(subscription.plan)}
                 </div>
               </div>
