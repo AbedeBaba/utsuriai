@@ -7,9 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { z } from 'zod';
+import { BrandLogo } from '@/components/BrandLogo';
 
 const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -151,10 +152,10 @@ export default function Auth() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <span className="font-medium text-foreground italic">Utsuri</span>
-        </div>
+         <div className="cursor-pointer" onClick={() => navigate('/')}
+         >
+           <BrandLogo size="sm" withText text="Utsuri" />
+         </div>
         
         <LanguageSwitcher />
       </header>

@@ -7,6 +7,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Footer } from '@/components/Footer';
+import { BrandLogo } from '@/components/BrandLogo';
 import exampleProduct from '@/assets/example-product.jpeg';
 import exampleModel from '@/assets/example-model.jpeg';
 import exampleProductPants from '@/assets/example-product-pants.webp';
@@ -41,11 +42,9 @@ export default function Landing() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 w-full">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-xl text-foreground">Utsuri</span>
+          <div className="cursor-pointer" onClick={() => navigate('/')}
+          >
+            <BrandLogo size="md" withText text="Utsuri" textClassName="font-bold text-xl not-italic" />
           </div>
           
           {/* Desktop Navigation */}
