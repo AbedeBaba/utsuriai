@@ -253,7 +253,7 @@ const Pricing = () => {
                   >
                     {feature.included ? (
                       feature.isUltra ? (
-                        <BrandLogoMark size="xs" className="mt-0.5" />
+                        <BrandLogoMark size="sm" className="mt-0.5" />
                       ) : (
                         <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                       )
@@ -361,7 +361,7 @@ const Pricing = () => {
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
                   <td className="py-3 px-4 text-center"><Lock className="w-4 h-4 text-gray-600 mx-auto" /></td>
-                  <td className="py-3 px-4 text-center"><BrandLogoMark size="xs" className="mx-auto" /></td>
+                  <td className="py-3 px-4 text-center"><BrandLogoMark size="sm" className="mx-auto" /></td>
                 </tr>
               </tbody>
             </table>

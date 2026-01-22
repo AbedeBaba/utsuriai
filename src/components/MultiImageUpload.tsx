@@ -212,7 +212,7 @@ export function MultiImageUpload({
           )}
         >
           <p className="text-sm text-muted-foreground">
-            <BrandLogoMark size="xs" className="inline mr-1" />
+            <BrandLogoMark size="sm" className="inline mr-1" />
             Drop more images here or click "Add More" above
           </p>
         </div>

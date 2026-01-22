@@ -87,7 +87,7 @@ export function ImageUpload({
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
           <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
             <div className="flex items-center gap-2 text-foreground">
-              <BrandLogoMark size="xs" />
+              <BrandLogoMark size="sm" />
               <span className="text-sm font-medium">Reference uploaded</span>
             </div>
             <Button
