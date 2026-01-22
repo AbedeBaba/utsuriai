@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap, Shield, Save, User, Loader2 } from 'lucide-react';
+import { ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap, Shield, Save, User, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, addHours } from 'date-fns';
 import {
@@ -22,6 +22,7 @@ import { useAdminCheck } from '@/hooks/useAdminCheck';
 import { useSavedModels, SavedModel } from '@/hooks/useSavedModels';
 import { useModelConfig, ModelConfig } from '@/context/ModelConfigContext';
 import { SaveModelDialog } from '@/components/SaveModelDialog';
+import { BrandLogo, BrandLogoMark } from '@/components/BrandLogo';
 
 type Category = 'Bottomwear' | 'Topwear' | 'Shoes' | 'Dresses';
 
@@ -323,7 +324,13 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+        <div className="flex flex-col items-center gap-4">
+          <BrandLogo size="lg" withText={false} />
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Loading…</span>
+          </div>
+        </div>
       </div>
     );
   }
@@ -334,8 +341,7 @@ export default function Dashboard() {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <Sparkles className="h-6 w-6 text-primary" />
-            <span className="text-xl font-semibold text-foreground italic">Utsuri</span>
+            <BrandLogo size="sm" withText text="Utsuri" />
           </div>
           
           <div className="flex items-center gap-4">
@@ -387,7 +393,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-3 mb-3">
                 <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold ${getPlanBadgeStyles(subscription.plan)}`}>
                   {subscription.plan === 'creator' && <Crown className="h-3.5 w-3.5" />}
-                  {subscription.plan === 'pro' && <Sparkles className="h-3.5 w-3.5" />}
+                  {subscription.plan === 'pro' && <BrandLogoMark size="xs" className="brightness-0 invert" />}
                   {getPlanDisplayName(subscription.plan)}
                 </div>
               </div>
@@ -445,9 +451,9 @@ export default function Dashboard() {
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
               </div>
-            ) : savedModels.length === 0 ? (
+             ) : savedModels.length === 0 ? (
               <div className="text-center py-8 bg-card border border-border rounded-xl">
-                <User className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+                 <BrandLogoMark size="lg" className="mx-auto mb-3 opacity-80" />
                 <p className="text-muted-foreground text-sm mb-3">No saved models yet</p>
                 <p className="text-muted-foreground/70 text-xs max-w-md mx-auto">
                   Create a model configuration and save it from the Clothing Selection page to reuse it later.
@@ -554,7 +560,7 @@ export default function Dashboard() {
         ) : filteredImages.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-              <Sparkles className="h-10 w-10 text-primary" />
+              <BrandLogoMark size="lg" className="opacity-90" />
             </div>
             <h2 className="text-2xl font-semibold text-foreground mb-3">
               {activeCategory === 'All' ? 'No images yet' : `No ${activeCategory} images`}
