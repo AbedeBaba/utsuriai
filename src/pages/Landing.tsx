@@ -174,7 +174,7 @@ export default function Landing() {
             {/* Left content - shifted left with refined typography */}
             <div className="text-center lg:text-left">
                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm mb-8">
-                 <BrandLogoMark size="xs" />
+                  <BrandLogoMark size="sm" />
                 <span className="text-foreground font-medium">{t('landing.hero.aiPowered')}</span>
               </div>
               

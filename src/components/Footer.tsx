@@ -19,7 +19,7 @@ export function Footer({ variant = 'light' }: FooterProps) {
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <BrandLogo
-                size="md"
+                size="xl"
                 withText
                 text="UtsuriAI"
                 textClassName={
