@@ -1,7 +1,8 @@
 import { useState, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { Upload, X, Image as ImageIcon, Sparkles, Plus } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BrandLogoMark } from '@/components/BrandLogo';
 
 export interface UploadedImage {
   id: string;
@@ -211,7 +212,7 @@ export function MultiImageUpload({
           )}
         >
           <p className="text-sm text-muted-foreground">
-            <Sparkles className="inline h-4 w-4 mr-1 text-primary" />
+            <BrandLogoMark size="xs" className="inline mr-1" />
             Drop more images here or click "Add More" above
           </p>
         </div>

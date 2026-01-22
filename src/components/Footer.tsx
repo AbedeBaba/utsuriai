@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Sparkles, MapPin, Phone, Mail, User } from 'lucide-react';
+import { MapPin, Phone, Mail, User } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { BrandLogo } from '@/components/BrandLogo';
 
 interface FooterProps {
   variant?: 'light' | 'dark';
@@ -17,10 +18,16 @@ export function Footer({ variant = 'light' }: FooterProps) {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-primary-foreground" />
-              </div>
-              <span className={`font-bold text-xl ${isDark ? 'text-white' : 'text-foreground'}`}>UtsuriAI</span>
+              <BrandLogo
+                size="md"
+                withText
+                text="UtsuriAI"
+                textClassName={
+                  isDark
+                    ? 'text-white font-bold text-xl not-italic'
+                    : 'font-bold text-xl not-italic'
+                }
+              />
             </div>
             <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-muted-foreground'}`}>
               {t('footer.brandDescription')}

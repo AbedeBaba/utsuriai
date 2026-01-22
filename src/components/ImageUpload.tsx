@@ -1,7 +1,8 @@
 import { useState, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { Upload, X, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { Upload, X, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BrandLogoMark } from '@/components/BrandLogo';
 
 interface ImageUploadProps {
   onImageSelect: (file: File | null, preview: string | null) => void;
@@ -86,7 +87,7 @@ export function ImageUpload({
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
           <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
             <div className="flex items-center gap-2 text-foreground">
-              <Sparkles className="h-4 w-4 text-primary" />
+              <BrandLogoMark size="xs" />
               <span className="text-sm font-medium">Reference uploaded</span>
             </div>
             <Button

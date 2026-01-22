@@ -8,11 +8,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, ArrowLeft, User, Mail, Calendar, Loader2, Save, Lock, Eye, EyeOff, AlertTriangle, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Mail, Calendar, Loader2, Save, Lock, Eye, EyeOff, AlertTriangle, Trash2 } from 'lucide-react';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
 import { format } from 'date-fns';
+import { BrandLogo } from '@/components/BrandLogo';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -251,8 +252,7 @@ export default function AccountSettings() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <Sparkles className="h-6 w-6 text-primary" />
-              <span className="text-xl font-semibold text-foreground italic">Utsuri</span>
+              <BrandLogo size="sm" withText text="Utsuri" />
             </div>
           </div>
           

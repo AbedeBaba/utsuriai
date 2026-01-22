@@ -4,7 +4,7 @@ import { useModelConfig } from '@/context/ModelConfigContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Loader2, CheckCircle, LayoutDashboard, Crown, Save } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle, LayoutDashboard, Crown, Save } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { MultiImageUpload, UploadedImage } from '@/components/MultiImageUpload';
@@ -13,6 +13,7 @@ import { ProgressIndicator } from '@/components/ProgressIndicator';
 import { useSubscription } from '@/hooks/useSubscription';
 import { SaveModelDialog } from '@/components/SaveModelDialog';
 import { useFilterFlowGuard, endFilterFlow } from '@/hooks/useFilterFlowGuard';
+import { BrandLogoMark } from '@/components/BrandLogo';
 
 // Backend-ready data structure for API communication
 interface GenerationPayload {
@@ -385,12 +386,12 @@ export default function ClothingSelection() {
                 </>
               ) : !canGenerate ? (
                 <>
-                  <Sparkles className="mr-2 h-5 w-5" />
+                  <BrandLogoMark size="sm" className="mr-2" />
                   {isTrial ? 'Trial limit reached' : 'Insufficient credits'}
                 </>
               ) : (
                 <>
-                  <Sparkles className="mr-2 h-5 w-5" />
+                  <BrandLogoMark size="sm" className="mr-2" />
                   {t('clothing.generate')}
                   {isTrial && (
                     <span className="ml-2 text-sm opacity-80">

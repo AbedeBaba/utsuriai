@@ -4,12 +4,13 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { getTemplateById, TEMPLATE_CREDIT_COSTS } from "@/data/templates";
 import { templateTranslations } from "@/data/templateTranslations";
-import { ArrowLeft, Upload, Sparkles, Download, CheckCircle, Loader2, Zap, Crown, AlertCircle } from "lucide-react";
+import { ArrowLeft, Upload, Download, CheckCircle, Loader2, Zap, Crown, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { BrandLogoMark } from "@/components/BrandLogo";
 
 interface GeneratedImage {
   poseIndex: number;
@@ -559,7 +560,7 @@ export default function TemplateGenerate() {
               disabled={!hasAllRequiredImages() || !user}
               className="gap-2 px-8"
             >
-              <Sparkles className="w-5 h-5" />
+              <BrandLogoMark size="sm" />
               {t('templates.generate')} ({creditCost} {language === 'tr' ? 'kredi' : 'credits'})
             </Button>
           )}
