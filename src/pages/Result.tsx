@@ -29,6 +29,9 @@ interface GenerationData {
   pose: string | null;
   background: string | null;
   reference_image: string | null;
+  face_type: string | null;
+  facial_expression: string | null;
+  modest_option: string | null;
 }
 
 
@@ -115,6 +118,9 @@ export default function Result() {
             shoes: data.shoes,
             pose: data.pose,
             background: data.background,
+            faceType: data.face_type,
+            facialExpression: data.facial_expression,
+            modestOption: data.modest_option,
           },
           referenceImage: data.reference_image,
           usePro: usePro, // Pass Pro mode flag
@@ -260,7 +266,7 @@ export default function Result() {
       <main className="flex-1 flex flex-col items-center justify-center px-6 pb-12">
         <div className="w-full max-w-2xl animate-fade-in">
           {/* Image Display */}
-          <div className="relative aspect-[3/4] bg-card rounded-2xl border overflow-hidden mb-8 shadow-lg">
+          <div className="relative aspect-[9/16] bg-card rounded-2xl border overflow-hidden mb-8 shadow-lg">
             {/* Pro Badge */}
             {isProMode && (
               <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold shadow-lg">
@@ -279,7 +285,7 @@ export default function Result() {
               <img 
                 src={generation.image_url} 
                 alt="Generated fashion model" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain bg-muted/10"
               />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-muted-foreground">
@@ -365,6 +371,24 @@ export default function Result() {
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
                     <span className="text-muted-foreground">Background</span>
                     <span className="font-medium text-foreground">{generation.background}</span>
+                  </div>
+                )}
+                {generation.face_type && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Face Type</span>
+                    <span className="font-medium text-foreground">{generation.face_type}</span>
+                  </div>
+                )}
+                {generation.facial_expression && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Expression</span>
+                    <span className="font-medium text-foreground">{generation.facial_expression}</span>
+                  </div>
+                )}
+                {generation.modest_option && (
+                  <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
+                    <span className="text-muted-foreground">Coverage</span>
+                    <span className="font-medium text-foreground">{generation.modest_option}</span>
                   </div>
                 )}
               </div>
