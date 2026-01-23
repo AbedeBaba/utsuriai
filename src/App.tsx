@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import Landing from "./pages/Landing";
 import Pricing from "./pages/Pricing";
 import Auth from "./pages/Auth";
+import FAQ from "./pages/FAQ";
 import FilterGender from "./pages/filter/FilterGender";
 import FilterEthnicity from "./pages/filter/FilterEthnicity";
 import FilterSkinTone from "./pages/filter/FilterSkinTone";
@@ -58,6 +59,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/faq" element={<FAQ />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/account-settings" element={<AccountSettings />} />

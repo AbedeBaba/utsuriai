@@ -40,6 +40,14 @@ export function Footer({ variant = 'light' }: FooterProps) {
             <ul className="space-y-2">
               <li>
                 <Link 
+                  to="/faq" 
+                  className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  {t('footer.faq')}
+                </Link>
+              </li>
+              <li>
+                <Link 
                   to="/legal/privacy-policy" 
                   className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
                 >
@@ -140,6 +148,12 @@ export function Footer({ variant = 'light' }: FooterProps) {
             © {new Date().getFullYear()} UtsuriAI. {t('footer.allRightsReserved')}
           </p>
           <div className="flex items-center gap-6">
+            <Link 
+              to="/faq" 
+              className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              {t('footer.faqShort')}
+            </Link>
             <Link 
               to="/legal/privacy-policy" 
               className={`text-sm transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'}`}
