@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandLogoMark } from "@/components/BrandLogo";
+import { AIDisclaimer } from "@/components/AIDisclaimer";
 
 interface GeneratedImage {
   poseIndex: number;
@@ -570,6 +571,8 @@ export default function TemplateGenerate() {
               Please <button onClick={() => navigate('/auth')} className="text-primary underline">sign in</button> to generate images
             </p>
           )}
+
+          <AIDisclaimer text={t('templates.aiDisclaimerShort')} className="w-full max-w-xl" />
         </div>
       </main>
     </div>

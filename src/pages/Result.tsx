@@ -10,6 +10,7 @@ import { ArrowLeft, Download, RefreshCw, Loader2, ImageIcon, LayoutDashboard, Cr
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { BrandLogo, BrandLogoMark } from '@/components/BrandLogo';
+import { AIDisclaimer } from '@/components/AIDisclaimer';
 
 interface GenerationData {
   id: string;
@@ -396,6 +397,8 @@ export default function Result() {
           )}
 
           {/* Actions */}
+          <AIDisclaimer className="mb-4" />
+
           <div className="flex gap-4">
             <Button
               variant="outline"

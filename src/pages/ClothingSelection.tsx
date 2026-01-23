@@ -14,6 +14,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { SaveModelDialog } from '@/components/SaveModelDialog';
 import { useFilterFlowGuard, endFilterFlow } from '@/hooks/useFilterFlowGuard';
 import { BrandLogoMark } from '@/components/BrandLogo';
+import { AIDisclaimer } from '@/components/AIDisclaimer';
 
 // Backend-ready data structure for API communication
 interface GenerationPayload {
@@ -449,6 +450,8 @@ export default function ClothingSelection() {
           <p className="text-xs text-center text-muted-foreground animate-fade-in" style={{ animationDelay: '300ms' }}>
             Add different angles, accessories, and jewelry - the AI will dress your model accordingly
           </p>
+
+          <AIDisclaimer className="animate-fade-in" />
 
           {/* Go to Dashboard Button */}
           <Button
