@@ -1,4 +1,4 @@
-import logo from "@/assets/utsuri-logo.svg";
+import logo from "@/assets/arcane-mask.svg";
 import { cn } from "@/lib/utils";
 
 type BrandLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
@@ -37,7 +37,7 @@ export function BrandLogo({
     <div className={cn("flex items-center gap-2", className)}>
       <img
         src={logo}
-        alt="Utsuri logo"
+        alt="Utsuri brand mark"
         className={cn(
           sizeMap[size],
           "object-contain select-none",
@@ -66,7 +66,7 @@ export function BrandLogoMark({
   return (
     <img
       src={logo}
-      alt="Utsuri logo"
+      alt="Utsuri brand mark"
       className={cn(sizeMap[size], "object-contain select-none", className)}
       draggable={false}
       loading="eager"
