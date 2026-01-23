@@ -67,7 +67,7 @@ const beardTypeOptions = ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard'
 export default function FilterHairColor() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, getNextStepPath } = useModelConfig();
-  const { hasProFeatureAccess } = useSubscription();
+  const { hasProFeatureAccess, hasCreatorFeatureAccess, loading } = useSubscription();
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoverDisabled, setHoverDisabled] = useState(false);
@@ -126,6 +126,8 @@ export default function FilterHairColor() {
 
   const handleRandomAll = useCallback(() => {
     if (isAnimating) return;
+    // Subscription might not be loaded yet; avoid running randomization with stale feature flags.
+    if (loading) return;
     
     setIsAnimating(true);
     setHoverDisabled(true);
@@ -155,10 +157,14 @@ export default function FilterHairColor() {
     if (hasProFeatureAccess) {
       const randomPose = poseOptions[Math.floor(Math.random() * poseOptions.length)];
       const randomBackground = backgroundOptions[Math.floor(Math.random() * backgroundOptions.length)];
-      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
-      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
       updateConfig('pose', randomPose);
       updateConfig('background', randomBackground);
+    }
+
+    // Only set Creator features (Face Type, Expression) if user has Creator access
+    if (hasCreatorFeatureAccess) {
+      const randomFaceType = faceTypeOptions[Math.floor(Math.random() * faceTypeOptions.length)];
+      const randomExpression = expressionOptions[Math.floor(Math.random() * expressionOptions.length)];
       updateConfig('faceType', randomFaceType);
       updateConfig('facialExpression', randomExpression);
     }
@@ -171,7 +177,7 @@ export default function FilterHairColor() {
     setTimeout(() => {
       navigate('/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig, hairColorOptions, config.gender, config.modestOption, hasProFeatureAccess]);
+  }, [isAnimating, loading, navigate, updateConfig, hairColorOptions, config.gender, config.modestOption, hasProFeatureAccess, hasCreatorFeatureAccess]);
 
   const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
 
