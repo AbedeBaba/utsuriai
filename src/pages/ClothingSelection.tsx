@@ -217,6 +217,9 @@ export default function ClothingSelection() {
           beard_type: payload.filters.beard_type || null,
           pose: payload.filters.pose || null,
           background: payload.filters.background || null,
+          face_type: payload.filters.face_type || null,
+          facial_expression: payload.filters.facial_expression || null,
+          modest_option: payload.filters.modest_option || null,
           reference_image: referenceImageData,
           status: 'pending',
         })

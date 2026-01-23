@@ -26,11 +26,14 @@ export type Database = {
           custom_name: string | null
           ethnicity: string
           eye_color: string
+          face_type: string | null
+          facial_expression: string | null
           gender: string
           hair_color: string
           hair_type: string
           id: string
           image_url: string | null
+          modest_option: string | null
           pose: string | null
           reference_image: string | null
           shoes: string | null
@@ -49,11 +52,14 @@ export type Database = {
           custom_name?: string | null
           ethnicity: string
           eye_color: string
+          face_type?: string | null
+          facial_expression?: string | null
           gender: string
           hair_color: string
           hair_type: string
           id?: string
           image_url?: string | null
+          modest_option?: string | null
           pose?: string | null
           reference_image?: string | null
           shoes?: string | null
@@ -72,11 +78,14 @@ export type Database = {
           custom_name?: string | null
           ethnicity?: string
           eye_color?: string
+          face_type?: string | null
+          facial_expression?: string | null
           gender?: string
           hair_color?: string
           hair_type?: string
           id?: string
           image_url?: string | null
+          modest_option?: string | null
           pose?: string | null
           reference_image?: string | null
           shoes?: string | null
