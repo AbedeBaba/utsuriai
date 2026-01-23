@@ -50,6 +50,8 @@ export const templateTranslations = {
     'templates.needCredits': 'You need {credits} credits for this generation.',
     'templates.backToTemplate': 'Back to Template',
     'templates.uploadBothImages': 'Please upload both front and back view images',
+
+    'templates.aiDisclaimerShort': 'AI may make mistakes; please review the output before using it.',
     
     // Categories
     'templates.categories.hat': 'Hat / Beanie',
@@ -194,6 +196,8 @@ export const templateTranslations = {
     'templates.needCredits': 'Bu üretim için {credits} krediye ihtiyacınız var.',
     'templates.backToTemplate': 'Şablona Dön',
     'templates.uploadBothImages': 'Lütfen hem ön hem de arka görsel yükleyin',
+
+    'templates.aiDisclaimerShort': 'Yapay zekâ hata yapabilir; lütfen çıktıyı kullanmadan önce kontrol edin.',
     
     // Categories
     'templates.categories.hat': 'Şapka / Bere',

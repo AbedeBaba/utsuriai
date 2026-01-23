@@ -30,6 +30,10 @@ export const translations: Translations = {
   'common.learnMore': { en: 'Learn More', tr: 'Daha Fazla' },
   'common.contact': { en: 'Contact', tr: 'İletişim' },
   'common.home': { en: 'Home', tr: 'Ana Sayfa' },
+  'common.aiDisclaimerShort': {
+    en: 'AI may make mistakes; please review the output before using it.',
+    tr: 'Yapay zekâ hata yapabilir; lütfen çıktıyı kullanmadan önce kontrol edin.',
+  },
   
   // Navigation
   'nav.howItWorks': { en: 'How it Works', tr: 'Nasıl Çalışır' },
