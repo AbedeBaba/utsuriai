@@ -57,6 +57,9 @@ export default function Landing() {
             <button onClick={() => navigate('/templates')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {t('nav.templates')}
             </button>
+            <button onClick={() => navigate('/faq')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              {t('nav.faq')}
+            </button>
             <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {t('nav.howItWorks')}
             </a>
@@ -102,6 +105,12 @@ export default function Landing() {
                   setMobileMenuOpen(false);
                 }} className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left">
                     {t('nav.templates')}
+                  </button>
+                  <button onClick={() => {
+                  navigate('/faq');
+                  setMobileMenuOpen(false);
+                }} className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left">
+                    {t('nav.faq')}
                   </button>
                   <a href="#how-it-works" className="text-lg font-medium text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                     {t('nav.howItWorks')}

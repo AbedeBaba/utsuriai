@@ -36,7 +36,12 @@ export const translations: Translations = {
   'nav.features': { en: 'Features', tr: 'Özellikler' },
   'nav.pricing': { en: 'Pricing', tr: 'Fiyatlandırma' },
   'nav.templates': { en: 'Templates', tr: 'Şablonlar' },
+  'nav.faq': { en: 'FAQ', tr: 'SSS' },
   'nav.watchDemo': { en: 'Watch Demo', tr: 'Demo İzle' },
+
+  // Footer
+  'footer.faq': { en: 'Frequently Asked Questions', tr: 'Sıkça Sorulan Sorular (SSS)' },
+  'footer.faqShort': { en: 'FAQ', tr: 'SSS' },
   
   // Auth
   'auth.welcomeBack': { en: 'Welcome back', tr: 'Tekrar hoş geldiniz' },
