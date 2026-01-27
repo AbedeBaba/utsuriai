@@ -3,22 +3,46 @@ import { useLanguage } from "@/context/LanguageContext";
 import { getSortedCategories, ProductCategory } from "@/data/templates";
 import { templateTranslations } from "@/data/templateTranslations";
 import { 
-  Crown, 
   Shirt, 
-  Minus, 
-  RectangleVertical, 
   Footprints,
-  ArrowLeft
+  ArrowLeft,
+  type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Icon mapping for categories
-const iconMap: Record<string, React.ElementType> = {
-  Crown,
-  Shirt,
-  Minus,
-  RectangleVertical,
-  Footprints,
+// Custom SVG icons for categories without good Lucide equivalents
+const BeanieIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <ellipse cx="12" cy="8" rx="3" ry="2" />
+    <path d="M5 14c0-4 3.5-7 7-7s7 3 7 7" />
+    <path d="M4 14h16v2c0 1.5-1 3-4 3H8c-3 0-4-1.5-4-3v-2z" />
+  </svg>
+);
+
+const BeltIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="2" y="9" width="20" height="6" rx="1" />
+    <rect x="9" y="8" width="6" height="8" rx="1" />
+    <circle cx="12" cy="12" r="1.5" />
+  </svg>
+);
+
+const PantsIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M6 2h12v4c0 1-1 2-2 2H8c-1 0-2-1-2-2V2z" />
+    <path d="M6 6v16l3-2V8" />
+    <path d="M18 6v16l-3-2V8" />
+    <path d="M9 8h6" />
+  </svg>
+);
+
+// Icon mapping for categories - using custom SVG where Lucide lacks good options
+const iconMap: Record<string, LucideIcon | React.FC<{ className?: string }>> = {
+  Crown: BeanieIcon,      // Hat/Beanie - custom beanie icon
+  Shirt,                  // Upper Wear - Lucide shirt
+  Minus: BeltIcon,        // Belt - custom belt icon
+  RectangleVertical: PantsIcon, // Bottom Wear - custom pants icon
+  Footprints,             // Shoes - Lucide footprints
 };
 
 function CategoryCard({ category }: { category: ProductCategory }) {
