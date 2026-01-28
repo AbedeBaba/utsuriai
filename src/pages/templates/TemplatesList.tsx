@@ -8,10 +8,77 @@ import {
   TemplatePose
 } from "@/data/templates";
 import { templateTranslations } from "@/data/templateTranslations";
-import { ArrowLeft, Filter } from "lucide-react";
+import { ArrowLeft, Filter, Store, Camera, Armchair, Footprints, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+
+// Custom SVG icons for templates
+const BeanieIcon = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+    width="20"
+    height="20"
+  >
+    <ellipse cx="12" cy="8" rx="3" ry="2" />
+    <path d="M5 14c0-4 3.5-7 7-7s7 3 7 7" />
+    <path d="M4 14h16v2c0 1.5-1 3-4 3H8c-3 0-4-1.5-4-3v-2z" />
+  </svg>
+);
+
+const BeltIcon = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+    width="20"
+    height="20"
+  >
+    <rect x="2" y="9" width="20" height="6" rx="1" />
+    <rect x="9" y="8" width="6" height="8" rx="1" />
+    <circle cx="12" cy="12" r="1.5" />
+  </svg>
+);
+
+const PantsIcon = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+    width="20"
+    height="20"
+  >
+    <path d="M6 2h12v4c0 1-1 2-2 2H8c-1 0-2-1-2-2V2z" />
+    <path d="M6 6v16l3-2V8" />
+    <path d="M18 6v16l-3-2V8" />
+    <path d="M9 8h6" />
+  </svg>
+);
+
+// Icon mapping for templates
+const templateIconMap: Record<string, LucideIcon | React.FC<{ className?: string }>> = {
+  Store,       // Classic E-commerce
+  Camera,      // Modern Lifestyle
+  Armchair,    // Classic Sitting
+  Beanie: BeanieIcon,
+  Belt: BeltIcon,
+  Pants: PantsIcon,
+  Footprints,  // Shoes
+};
 
 function PoseCard({ pose, isMain = false }: { pose: TemplatePose; isMain?: boolean }) {
   const { language } = useLanguage();
@@ -60,21 +127,28 @@ function TemplateCard({ template }: { template: Template }) {
   
   const mainPose = template.poses[0];
   const secondaryPoses = template.poses.slice(1, 4);
+  const IconComponent = templateIconMap[template.icon] || Store;
   
   return (
     <div className="bg-card rounded-xl border border-border/50 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
       {/* Template header */}
       <div className="p-4 border-b border-border/30">
         <div className="flex items-start justify-between gap-2">
-          <div>
-            <h3 className="font-semibold text-foreground text-lg">
-              {t(template.nameKey)}
-            </h3>
-            {template.descriptionKey && (
-              <p className="text-sm text-muted-foreground mt-1">
-                {t(template.descriptionKey)}
-              </p>
-            )}
+          <div className="flex items-center gap-3">
+            {/* Template Icon */}
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <IconComponent className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground text-lg">
+                {t(template.nameKey)}
+              </h3>
+              {template.descriptionKey && (
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {t(template.descriptionKey)}
+                </p>
+              )}
+            </div>
           </div>
           <Badge variant="secondary" className="text-xs shrink-0">
             {template.gender === 'male' 
@@ -85,7 +159,7 @@ function TemplateCard({ template }: { template: Template }) {
             }
           </Badge>
         </div>
-        <div className="flex gap-2 mt-2 text-xs text-muted-foreground">
+        <div className="flex gap-2 mt-2 text-xs text-muted-foreground ml-13">
           <span>📐 {template.framing}</span>
           <span>•</span>
           <span>📱 {template.aspectRatio}</span>
