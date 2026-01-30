@@ -175,7 +175,7 @@ export const translations: Translations = {
   'landing.cta.title': { en: 'Ready to Transform Your Fashion Photography?', tr: 'Moda Fotoğrafçılığınızı Dönüştürmeye Hazır mısınız?' },
   'landing.cta.subtitle': { en: 'Join thousands of fashion brands using AI to create stunning product photos', tr: 'Çarpıcı ürün fotoğrafları oluşturmak için AI kullanan binlerce moda markasına katılın' },
   'landing.stats.costReduction': { en: 'Cost Reduction', tr: 'Maliyet Düşüşü' },
-  'landing.stats.fasterToMarket': { en: 'Faster to Market', tr: 'Pazara Daha Hızlı' },
+  'landing.stats.fasterToMarket': { en: 'Faster to Market', tr: 'Daha Hızlı Pazar' },
   'landing.stats.conversionBoost': { en: 'Conversion Boost', tr: 'Dönüşüm Artışı' },
   'landing.stats.modelDiversity': { en: 'Model Diversity', tr: 'Model Çeşitliliği' },
   'landing.howItWorks.title': { en: 'How Utsuri Works', tr: 'Utsuri Nasıl Çalışır' },
