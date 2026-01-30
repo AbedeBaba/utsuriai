@@ -6,11 +6,12 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Download, RefreshCw, Loader2, ImageIcon, LayoutDashboard, Crown } from 'lucide-react';
+import { ArrowLeft, Download, RefreshCw, Loader2, ImageIcon, LayoutDashboard, Crown, ShoppingCart } from 'lucide-react';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { BrandLogo, BrandLogoMark } from '@/components/BrandLogo';
 import { AIDisclaimer } from '@/components/AIDisclaimer';
+import { PaymentRequestModal } from '@/components/PaymentRequestModal';
 
 interface GenerationData {
   id: string;
@@ -49,6 +50,7 @@ export default function Result() {
   const [generation, setGeneration] = useState<GenerationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const generationInProgressRef = useRef(false); // Prevent duplicate API calls
 
   useEffect(() => {
@@ -427,8 +429,29 @@ export default function Result() {
           >
             {t('result.createAnother')}
           </Button>
+
+          {/* Post-Demo Purchase Button */}
+          <div className="mt-6 pt-6 border-t border-border">
+            <Button
+              onClick={() => setIsPaymentModalOpen(true)}
+              className="w-full py-6 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-500/90 hover:to-orange-500/90 text-white font-semibold shadow-lg"
+            >
+              <ShoppingCart className="mr-2 h-5 w-5" />
+              Demo Sonrası Satın Al
+            </Button>
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              Tüm özelliklere erişmek için planlarımızı inceleyin
+            </p>
+          </div>
         </div>
       </main>
+
+      {/* Payment Request Modal */}
+      <PaymentRequestModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        packageName="Demo Sonrası Satın Alma"
+      />
     </div>
   );
 }
