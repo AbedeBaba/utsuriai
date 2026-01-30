@@ -102,6 +102,50 @@ async function generateWithGeminiTryOn(
   // Determine if this is a portrait-only pose
   const isPortraitPose = config.pose === 'Face Close-up';
   
+  // Check if this is a Hijab/modest model
+  const isHijabModel = config.modestOption === 'Hijab';
+  
+  // Build Hijab-specific prompt sections
+  const hijabPromptSection = isHijabModel ? `
+
+CRITICAL - TESETTÜR / MODEST HIJABI MODEL REQUIREMENTS:
+This is a fully modest hijabi female model for e-commerce product photography.
+
+ABSOLUTE COVERAGE REQUIREMENTS:
+- Hijab (headscarf) MUST fully cover ALL hair - NO hair visible whatsoever, not a single strand
+- Neck MUST be FULLY covered by hijab fabric or high-neck clothing
+- Chest and décolletage MUST be FULLY covered - absolutely NO cleavage
+- Shoulders MUST be completely covered
+- Arms MUST be covered with long sleeves to the wrist
+- Only face and hands may show skin
+
+MODEST FASHION STYLING:
+- Modern, elegant, premium modest fashion aesthetic
+- Turkey / Middle East hijab fashion style
+- Loose-fitting silhouettes only
+- NO Western runway or editorial styling
+- Conservative but stylish modest wear
+
+POSE & EXPRESSION FOR MODEST MODEL:
+- Natural, dignified, product-focused pose
+- Professional e-commerce model posture
+- NO provocative or exaggerated poses
+- Subtle, confident expression
+
+NEGATIVE CONSTRAINTS (ABSOLUTELY FORBIDDEN):
+- no visible hair
+- no cleavage
+- no open neck
+- no transparent fabric
+- no tight clothing
+- no western fashion look
+- no sheer fabric
+- no body-hugging silhouettes
+- no exposed shoulders
+- no short sleeves
+- no V-neck or low neckline
+` : '';
+
   const tryOnPrompt = `You are a professional fashion photographer AI. Generate a hyper-realistic fashion photography image.
 
 CRITICAL TASK: VIRTUAL TRY-ON / CLOTHING TRANSFER
@@ -109,7 +153,7 @@ The image(s) above show clothing/outfit items. Your task is to:
 1. Generate a photorealistic fashion model with the specified attributes below
 2. The model MUST wear the EXACT clothing shown in the reference image(s) above
 3. This is a VIRTUAL TRY-ON task - the clothing from the reference images must appear on the generated model
-
+${hijabPromptSection}
 MODEL ATTRIBUTES TO GENERATE:
 ${modelDescription}
 
@@ -140,6 +184,12 @@ ${isPortraitPose ? `- Model pose: Face close-up portrait` : `- Model pose: ${con
 
 IMPORTANT: The clothing in the output image MUST be identical to the clothing in the input reference images. Do not create different clothing.
 ${!isPortraitPose ? 'CRITICAL: Generate a FULL-BODY image. The entire model from head to feet MUST be visible. NO cropping or zooming.' : ''}
+${isHijabModel ? `
+FINAL REMINDER FOR HIJAB MODEL:
+- Hair MUST be completely invisible under the hijab
+- Neck, chest, shoulders MUST be fully covered
+- Modest, conservative styling only
+- This is for Turkish/Middle East modest fashion e-commerce` : ''}
 
 OUTPUT: A single photorealistic ${isPortraitPose ? 'portrait' : 'FULL-BODY (head to feet visible)'} image of the described model wearing the exact clothing from the reference images in 9:16 vertical format.`;
 
@@ -234,6 +284,50 @@ OUTPUT: A single photorealistic ${isPortraitPose ? 'portrait' : 'FULL-BODY (head
 function buildModelDescription(config: Record<string, string | null>): string {
   const parts: string[] = [];
   
+  // CRITICAL: If Hijab is selected, override all styling with modest requirements FIRST
+  if (config.modestOption === 'Hijab') {
+    parts.push('=== TESETTÜR / MODEST HIJABI MODEL - ABSOLUTE REQUIREMENTS ===');
+    parts.push('');
+    parts.push('CORE IDENTITY: Fully modest hijabi female model for e-commerce product photography.');
+    parts.push('');
+    parts.push('MANDATORY COVERAGE REQUIREMENTS:');
+    parts.push('- Hijab (headscarf) MUST fully cover ALL hair - NO hair visible whatsoever, not a single strand');
+    parts.push('- Neck MUST be FULLY covered by hijab fabric or high-neck clothing');
+    parts.push('- Chest and décolletage MUST be FULLY covered - absolutely NO cleavage');
+    parts.push('- Shoulders MUST be completely covered');
+    parts.push('- Arms MUST be covered with long sleeves to the wrist');
+    parts.push('- Only face and hands may show skin');
+    parts.push('');
+    parts.push('CLOTHING STYLE REQUIREMENTS:');
+    parts.push('- Fully modest outfit with long sleeves and loose fit');
+    parts.push('- Modern, elegant, premium modest fashion aesthetic');
+    parts.push('- Turkey / Middle East hijab fashion style');
+    parts.push('- NO transparent, sheer, or see-through fabrics');
+    parts.push('- NO tight or body-hugging silhouettes');
+    parts.push('- NO Western runway or editorial styling');
+    parts.push('- Conservative but stylish modest wear');
+    parts.push('');
+    parts.push('POSE & EXPRESSION:');
+    parts.push('- Natural, dignified, product-focused pose');
+    parts.push('- Professional e-commerce model posture');
+    parts.push('- NO provocative or exaggerated poses');
+    parts.push('- Subtle, confident expression');
+    parts.push('');
+    parts.push('=== END TESETTÜR REQUIREMENTS ===');
+    parts.push('');
+    parts.push('MODEL ATTRIBUTES (within modest constraints):');
+    if (config.ethnicity) parts.push(`- Ethnicity: ${config.ethnicity}`);
+    if (config.skinTone) parts.push(`- Skin tone: ${config.skinTone}`);
+    if (config.eyeColor) parts.push(`- Eye color: ${config.eyeColor}`);
+    if (config.bodyType) parts.push(`- Body type: ${config.bodyType}`);
+    if (config.faceType) parts.push(`- Face shape: ${config.faceType}`);
+    if (config.facialExpression) parts.push(`- Expression: ${config.facialExpression}`);
+    // Hair color and type are NOT shown for Hijab models
+    
+    return parts.join('\n');
+  }
+  
+  // Standard (non-Hijab) model description
   if (config.gender) parts.push(`Gender: ${config.gender}`);
   if (config.ethnicity) parts.push(`Ethnicity: ${config.ethnicity}`);
   if (config.skinTone) parts.push(`Skin tone: ${config.skinTone}`);
@@ -244,30 +338,6 @@ function buildModelDescription(config: Record<string, string | null>): string {
   if (config.faceType) parts.push(`Face shape: ${config.faceType}`);
   if (config.facialExpression) parts.push(`Expression: ${config.facialExpression}`);
   if (config.beardType && config.gender === 'Male') parts.push(`Beard: ${config.beardType}`);
-  
-  // CRITICAL: Hijab enforcement - takes priority over all other styling
-  if (config.modestOption === 'Hijab') {
-    parts.push('');
-    parts.push('=== HIJAB/MODEST MODEL - MANDATORY REQUIREMENTS ===');
-    parts.push('This MUST be a hijabi (covered/modest) female model.');
-    parts.push('REQUIRED - Headscarf (hijab) fully covering ALL hair - NO hair visible whatsoever');
-    parts.push('REQUIRED - Neck must be FULLY covered by the hijab or clothing');
-    parts.push('REQUIRED - Chest/décolletage must be FULLY covered - NO cleavage');
-    parts.push('REQUIRED - Shoulders must be covered');
-    parts.push('REQUIRED - Long sleeves covering arms completely');
-    parts.push('REQUIRED - Modest, conservative clothing style');
-    parts.push('');
-    parts.push('STRICTLY FORBIDDEN when Hijab is selected:');
-    parts.push('- ANY visible hair (not a single strand)');
-    parts.push('- Exposed neck or neckline');
-    parts.push('- Any cleavage or chest exposure');
-    parts.push('- Short sleeves or exposed shoulders');
-    parts.push('- Open collar, V-neck, or transparent fabrics');
-    parts.push('- Any skin exposure beyond face and hands');
-    parts.push('');
-    parts.push('The Hijab requirement OVERRIDES all default styling and takes ABSOLUTE PRIORITY.');
-    parts.push('=== END HIJAB REQUIREMENTS ===');
-  }
   
   return parts.join('\n');
 }
@@ -654,6 +724,93 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
   // Determine if this is a portrait-only pose
   const isPortraitPose = config.pose === 'Face Close-up';
   
+  // Check if this is a Hijab/modest model - handle this FIRST
+  const isHijabModel = config.modestOption === 'Hijab';
+  
+  if (isHijabModel) {
+    // ========================================
+    // TESETTÜR / MODEST HIJABI MODEL PROMPT
+    // ========================================
+    parts.push('VIRTUAL TRY-ON TASK: Generate a fully modest hijabi female model wearing the EXACT clothing shown in the input images.');
+    parts.push('');
+    parts.push('=== TESETTÜR / MODEST HIJABI MODEL - ABSOLUTE REQUIREMENTS ===');
+    parts.push('');
+    parts.push('CORE IDENTITY:');
+    parts.push('- Fully modest hijabi female model for e-commerce product photography');
+    parts.push('- Turkey / Middle East hijab fashion aesthetic');
+    parts.push('- Modern, elegant, premium modest fashion');
+    parts.push('');
+    parts.push('MANDATORY COVERAGE REQUIREMENTS (NO EXCEPTIONS):');
+    parts.push('- Hijab (headscarf) MUST fully cover ALL hair - NO hair visible whatsoever, not a single strand');
+    parts.push('- Neck MUST be FULLY covered by hijab fabric or high-neck clothing');
+    parts.push('- Chest and décolletage MUST be FULLY covered - absolutely NO cleavage');
+    parts.push('- Shoulders MUST be completely covered');
+    parts.push('- Arms MUST be covered with long sleeves to the wrist');
+    parts.push('- Only face and hands may show skin');
+    parts.push('');
+    parts.push('CLOTHING STYLE REQUIREMENTS:');
+    parts.push('- Fully modest outfit with loose fit');
+    parts.push('- NO transparent, sheer, or see-through fabrics');
+    parts.push('- NO tight or body-hugging silhouettes');
+    parts.push('- NO Western runway or editorial styling');
+    parts.push('- Conservative but stylish modest wear');
+    parts.push('');
+    parts.push('POSE & EXPRESSION:');
+    parts.push('- Natural, dignified, product-focused pose');
+    parts.push('- Professional e-commerce model posture');
+    parts.push('- NO provocative or exaggerated poses');
+    parts.push('- Subtle, confident expression');
+    parts.push('');
+    parts.push('=== NEGATIVE PROMPT (ABSOLUTELY FORBIDDEN) ===');
+    parts.push('no visible hair, no cleavage, no open neck, no transparent fabric, no tight clothing, no western fashion look, no sheer fabric, no body-hugging silhouettes, no exposed shoulders, no short sleeves, no V-neck, no low neckline, no exposed skin except face and hands');
+    parts.push('=== END NEGATIVE PROMPT ===');
+    parts.push('');
+    parts.push('MODEL ATTRIBUTES (within modest constraints):');
+    if (config.ethnicity) parts.push(`- Ethnicity: ${config.ethnicity}`);
+    if (config.skinTone) parts.push(`- Skin tone: ${config.skinTone}`);
+    if (config.eyeColor) parts.push(`- Eye color: ${config.eyeColor}`);
+    if (config.bodyType) parts.push(`- Body type: ${config.bodyType}`);
+    if (config.faceType) parts.push(`- Face shape: ${config.faceType}`);
+    if (config.facialExpression) parts.push(`- Expression: ${config.facialExpression}`);
+    // Hair color and type are NOT shown for Hijab models
+    if (isPortraitPose) {
+      parts.push(`- Pose: Face close-up portrait`);
+    } else {
+      parts.push(`- Pose: ${config.pose || 'Natural full-body standing pose, head to feet visible'}`);
+    }
+    if (config.background) parts.push(`- Background: ${config.background}`);
+    parts.push('');
+    
+    // CRITICAL: Full-body framing requirements
+    if (!isPortraitPose) {
+      parts.push('MANDATORY FULL-BODY FRAMING:');
+      parts.push('- Generate a FULL-BODY shot showing the ENTIRE model from head to toe');
+      parts.push('- DO NOT crop, zoom in, or create upper-body/half-body shots');
+      parts.push('- The complete figure must be visible: head, torso, arms, legs, and FEET');
+      parts.push('- Use vertical 9:16 portrait orientation for full-body fashion photography');
+      parts.push('- Natural standing pose with feet visible at the bottom of the frame');
+      parts.push('');
+    }
+    
+    parts.push('CLOTHING TRANSFER RULES:');
+    parts.push('- The model MUST wear the SAME outfit from the input images');
+    parts.push('- Do NOT create new or different clothing');
+    parts.push('- Preserve exact fabric, colors, patterns, and design');
+    parts.push('');
+    parts.push('IMAGE FORMAT: Vertical 9:16 aspect ratio');
+    if (isPortraitPose) {
+      parts.push('OUTPUT: Ultra-realistic modest fashion portrait photography with the hijabi model wearing the exact input clothing.');
+    } else {
+      parts.push('OUTPUT: Ultra-realistic FULL-BODY modest fashion photography (head to feet visible) with the hijabi model wearing the exact input clothing.');
+      parts.push('REMINDER: The ENTIRE body from head to feet MUST be in frame. No cropping. Hair MUST be fully covered by hijab.');
+    }
+    
+    return parts.join('\n');
+  }
+  
+  // ========================================
+  // STANDARD (NON-HIJAB) MODEL PROMPT
+  // ========================================
   parts.push('VIRTUAL TRY-ON TASK: Generate a fashion model wearing the EXACT clothing shown in the input images.');
   parts.push('');
   parts.push('CRITICAL RULES:');
@@ -691,30 +848,6 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
     parts.push(`- Pose: ${config.pose || 'Natural full-body standing pose, head to feet visible'}`);
   }
   if (config.background) parts.push(`- Background: ${config.background}`);
-  
-  // CRITICAL: Hijab enforcement - takes priority over all other styling
-  if (config.modestOption === 'Hijab') {
-    parts.push('');
-    parts.push('=== HIJAB/MODEST MODEL - MANDATORY REQUIREMENTS ===');
-    parts.push('This MUST be a hijabi (covered/modest) female model.');
-    parts.push('REQUIRED - Headscarf (hijab) fully covering ALL hair - NO hair visible whatsoever');
-    parts.push('REQUIRED - Neck must be FULLY covered by the hijab or clothing');
-    parts.push('REQUIRED - Chest/décolletage must be FULLY covered - NO cleavage');
-    parts.push('REQUIRED - Shoulders must be covered');
-    parts.push('REQUIRED - Long sleeves covering arms completely');
-    parts.push('REQUIRED - Modest, conservative clothing style');
-    parts.push('');
-    parts.push('STRICTLY FORBIDDEN when Hijab is selected:');
-    parts.push('- ANY visible hair (not a single strand)');
-    parts.push('- Exposed neck or neckline');
-    parts.push('- Any cleavage or chest exposure');
-    parts.push('- Short sleeves or exposed shoulders');
-    parts.push('- Open collar, V-neck, or transparent fabrics');
-    parts.push('- Any skin exposure beyond face and hands');
-    parts.push('');
-    parts.push('The Hijab requirement OVERRIDES all default styling and takes ABSOLUTE PRIORITY.');
-    parts.push('=== END HIJAB REQUIREMENTS ===');
-  }
   
   parts.push('');
   parts.push('IMAGE FORMAT: Vertical 9:16 aspect ratio');
