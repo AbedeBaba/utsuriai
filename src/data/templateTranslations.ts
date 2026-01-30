@@ -147,6 +147,11 @@ export const templateTranslations = {
     'templates.filter.all': 'All',
     'templates.filter.male': 'Male',
     'templates.filter.female': 'Female',
+    
+    // Hijab option
+    'templates.hijabOption': 'Hijab / Modest Option',
+    'templates.hijabOptionDesc': 'Enable modest clothing for Muslim women (headscarf, long skirt, covered arms)',
+    'templates.hijabEnabled': 'Modest mode enabled',
   },
   tr: {
     // Page titles
@@ -293,5 +298,10 @@ export const templateTranslations = {
     'templates.filter.all': 'Tümü',
     'templates.filter.male': 'Erkek',
     'templates.filter.female': 'Kadın',
+    
+    // Hijab option
+    'templates.hijabOption': 'Tesettür Seçeneği',
+    'templates.hijabOptionDesc': 'Müslüman kadınlar için tesettür giyim (başörtüsü, uzun etek, kapalı kollar)',
+    'templates.hijabEnabled': 'Tesettür modu açık',
   },
 };
