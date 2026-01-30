@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Check, Crown, Zap, Star, Lock, Image, Plus, AlertTriangle, ArrowLeft } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Footer } from "@/components/Footer";
 import { BrandLogoMark } from "@/components/BrandLogo";
-
+import { PaymentRequestModal } from "@/components/PaymentRequestModal";
 interface PlanFeature {
   textKey: string;
   included: boolean;
@@ -129,9 +130,15 @@ const Pricing = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { isTrial, isPaid, isTrialProExhausted, trialStandardRemaining } = useSubscription();
+  
+  // Payment modal state
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<string>('');
 
   const handleSelectPlan = (planName: string) => {
-    navigate("/auth");
+    // Open payment request modal instead of navigating to auth
+    setSelectedPackage(planName);
+    setIsPaymentModalOpen(true);
   };
 
   return (
@@ -441,6 +448,13 @@ const Pricing = () => {
       
       {/* Footer */}
       <Footer variant="dark" />
+      
+      {/* Payment Request Modal */}
+      <PaymentRequestModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        packageName={selectedPackage}
+      />
     </div>
   );
 };

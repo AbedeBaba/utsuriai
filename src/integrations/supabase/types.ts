@@ -95,6 +95,39 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_requests: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          ip_address: string | null
+          package_name: string | null
+          phone: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          ip_address?: string | null
+          package_name?: string | null
+          phone?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          ip_address?: string | null
+          package_name?: string | null
+          phone?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
