@@ -42,8 +42,7 @@ export default function Landing() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 w-full">
         <div className="max-w-7xl mx-auto px-6 h-20 md:h-32 flex items-center justify-between">
-          <div className="cursor-pointer" onClick={() => navigate('/')}
-          >
+          <div className="cursor-pointer" onClick={() => navigate('/')}>
             <div className="hidden md:block">
               <BrandLogo size="xl" withText text="Utsuri" textClassName="font-bold text-2xl md:text-3xl not-italic" />
             </div>
@@ -229,7 +228,7 @@ export default function Landing() {
                 {/* Product Image */}
                 <div className="relative flex-shrink-0">
                   <div className="relative w-[100px] sm:w-[150px] md:w-[200px] lg:w-[240px] aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.15)]">
-                    <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/1705c0f2-68bc-4333-a1c8-ad01e24a5811.jpg" />
+                    <img alt="Product photo" className="w-full h-full object-cover" src="/lovable-uploads/0a8bd301-eb61-4dc4-ae1f-d010546646eb.png" />
                   </div>
                   <div className="absolute -bottom-3 sm:-bottom-4 left-1/2 -translate-x-1/2 px-2 sm:px-5 py-1 sm:py-2 rounded-full bg-white border border-slate-300 text-[10px] sm:text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
                     {t('landing.productPhoto')}
