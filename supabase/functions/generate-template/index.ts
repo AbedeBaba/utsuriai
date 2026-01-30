@@ -64,52 +64,6 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Build Hijab constraint prompt injection
-function buildHijabConstraint(isUpperWear: boolean = false): string {
-  let constraint = `
-=== HIJAB/MODEST MODEL - MANDATORY REQUIREMENTS ===
-This MUST be a hijabi (covered/modest) female model.
-REQUIRED - Headscarf (eşarp/şal) fully covering ALL hair - NO hair visible whatsoever
-REQUIRED - Neck must be FULLY covered by the hijab or clothing
-REQUIRED - Chest/décolletage must be FULLY covered - NO cleavage
-REQUIRED - Shoulders must be covered
-REQUIRED - Long sleeves covering arms completely - wrists and above must NOT be visible
-REQUIRED - ONLY face and hands can be visible
-REQUIRED - Modest, conservative clothing style
-
-STRICTLY FORBIDDEN when Hijab is selected:
-- ANY visible hair (not a single strand)
-- Exposed neck or neckline
-- Any cleavage or chest exposure
-- Short sleeves or exposed shoulders
-- Open collar, V-neck, or transparent fabrics
-- Any skin exposure beyond face and hands (including wrists)
-`;
-
-  // Add modest skirt requirement for upper wear templates
-  if (isUpperWear) {
-    constraint += `
-=== MODEST SKIRT REQUIREMENT FOR UPPER WEAR ===
-REQUIRED - The model MUST wear a long, ankle-length "Tesettür Giyim Eteği" (modest/Islamic fashion long skirt)
-REQUIRED - The skirt must reach down to the feet/ankles - NO short or knee-length skirts
-REQUIRED - NO pants, jeans, or fitted bottom wear - ONLY long flowing modest skirts
-REQUIRED - The skirt should be loose-fitting, not tight or form-fitting
-REQUIRED - Appropriate for Islamic modest fashion (tesettür giyim)
-
-STRICTLY FORBIDDEN for bottom wear:
-- Mini skirts, short skirts, knee-length skirts
-- Tight pants, jeans, leggings
-- Any bottom wear that reveals body shape or legs
-`;
-  }
-
-  constraint += `
-The Hijab requirement OVERRIDES all default styling and takes ABSOLUTE PRIORITY.
-=== END HIJAB REQUIREMENTS ===
-`;
-
-  return constraint;
-}
 
 // Upload base64 image to storage and return public URL for NanoBanana
 async function uploadBase64ToStorage(
@@ -280,20 +234,14 @@ async function generateWithNanoBananaStandard(
   poseImageUrl: string,
   productImageUrl: string,
   supabase: any,
-  templateId: string,
-  isHijab: boolean = false,
-  isUpperWear: boolean = false
+  templateId: string
 ): Promise<string> {
   console.log('Starting NanoBanana STANDARD image-to-image generation...');
   console.log('Pose image URL:', poseImageUrl);
   console.log('Product image URL:', productImageUrl);
   
-  // Use fixed template prompt, optionally with Hijab constraint
-  let finalPrompt = TEMPLATE_PROMPT;
-  if (isHijab) {
-    finalPrompt = buildHijabConstraint(isUpperWear) + '\n\n' + TEMPLATE_PROMPT;
-    console.log('Hijab constraint injected into prompt (isUpperWear:', isUpperWear, ')');
-  }
+  // Use fixed template prompt
+  const finalPrompt = TEMPLATE_PROMPT;
   
   // Create a dummy callback URL (required by API but we'll poll instead)
   const callbackUrl = 'https://webhook.site/dummy-callback';
@@ -371,20 +319,14 @@ async function generateWithNanoBananaPro(
   poseImageUrl: string,
   productImageUrl: string,
   supabase: any,
-  templateId: string,
-  isHijab: boolean = false,
-  isUpperWear: boolean = false
+  templateId: string
 ): Promise<string> {
   console.log('Starting NanoBanana PRO image generation...');
   console.log('Pose image URL:', poseImageUrl);
   console.log('Product image URL:', productImageUrl);
   
-  // Use fixed template prompt, optionally with Hijab constraint
-  let finalPrompt = TEMPLATE_PROMPT;
-  if (isHijab) {
-    finalPrompt = buildHijabConstraint(isUpperWear) + '\n\n' + TEMPLATE_PROMPT;
-    console.log('Hijab constraint injected into prompt (isUpperWear:', isUpperWear, ')');
-  }
+  // Use fixed template prompt
+  const finalPrompt = TEMPLATE_PROMPT;
   
   // Create a dummy callback URL (required by API but we'll poll instead)
   const callbackUrl = 'https://webhook.site/dummy-callback';
@@ -549,12 +491,10 @@ serve(async (req) => {
       poseIndex, 
       poseImageBase64, // Now receives base64 instead of URL
       productImageBase64, 
-      usePro = false,
-      isHijab = false,
-      isUpperWear = false
+      usePro = false
     } = await req.json();
     
-    console.log(`Template generation request - templateId: ${templateId}, poseIndex: ${poseIndex}, usePro: ${usePro}, isHijab: ${isHijab}, isUpperWear: ${isUpperWear}`);
+    console.log(`Template generation request - templateId: ${templateId}, poseIndex: ${poseIndex}, usePro: ${usePro}`);
     
     if (!templateId || typeof poseIndex !== 'number' || !poseImageBase64 || !productImageBase64) {
       console.error('Missing required fields');
@@ -637,9 +577,7 @@ serve(async (req) => {
         poseImageUrl,
         productImageUrl,
         supabase,
-        templateId,
-        isHijab,
-        isUpperWear
+        templateId
       );
     } else {
       // Use NanoBanana STANDARD API
@@ -648,9 +586,7 @@ serve(async (req) => {
         poseImageUrl,
         productImageUrl,
         supabase,
-        templateId,
-        isHijab,
-        isUpperWear
+        templateId
       );
     }
     

@@ -38,7 +38,6 @@ export default function TemplateGenerate() {
   const [optionalImage, setOptionalImage] = useState<ProductImage>({ preview: null, file: null });
   
   const [usePro, setUsePro] = useState(false);
-  const [isHijab, setIsHijab] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentPoseIndex, setCurrentPoseIndex] = useState(0);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
@@ -56,10 +55,6 @@ export default function TemplateGenerate() {
   const hasOptionalSecondImage = template?.optionalSecondImage ?? false;
   const optionalSecondImageKey = template?.optionalSecondImageKey ?? '';
   
-  // Check if template is female
-  const isFemaleTemplate = template?.gender === 'female';
-  // Check if template is upper wear (for modest skirt requirement)
-  const isUpperWearTemplate = template?.categoryId === 'upper-wear';
   
   const handleFile = useCallback((file: File, type: 'front' | 'back' | 'optional') => {
     if (file && file.type.startsWith('image/')) {
@@ -174,9 +169,7 @@ export default function TemplateGenerate() {
             poseIndex: i,
             poseImageBase64, // Send base64 instead of URL
             productImageBase64,
-            usePro,
-            isHijab: isFemaleTemplate && isHijab, // Only send isHijab for female templates
-            isUpperWear: isUpperWearTemplate // Flag to add modest skirt for upper wear templates
+            usePro
           }
         });
         
@@ -463,50 +456,6 @@ export default function TemplateGenerate() {
             {t('templates.creditInfo')}: <span className="font-medium text-foreground">{creditCost} {language === 'tr' ? 'kredi' : 'credits'}</span> {t('templates.perTemplate')}
           </p>
         </div>
-        
-        {/* Step 3: Hijab Option (only for female templates) */}
-        {isFemaleTemplate && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-foreground mb-2">
-              {t('templates.hijabOption')}
-            </h2>
-            <p className="text-muted-foreground text-sm mb-4">
-              {t('templates.hijabOptionDesc')}
-            </p>
-            
-            <button
-              onClick={() => setIsHijab(!isHijab)}
-              className={cn(
-                "w-full p-4 rounded-xl border-2 text-left transition-all flex items-center gap-4",
-                isHijab 
-                  ? "border-primary bg-primary/5" 
-                  : "border-border/50 hover:border-primary/30"
-              )}
-            >
-              <div className={cn(
-                "w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all",
-                isHijab 
-                  ? "border-primary bg-primary" 
-                  : "border-muted-foreground/30"
-              )}>
-                {isHijab && (
-                  <CheckCircle className="w-4 h-4 text-primary-foreground" />
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  <span className="font-semibold">{t('templates.hijabOption')}</span>
-                </div>
-                {isHijab && (
-                  <p className="text-sm text-primary mt-1">
-                    {t('templates.hijabEnabled')}
-                  </p>
-                )}
-              </div>
-            </button>
-          </div>
-        )}
         
         {/* Template Preview */}
         <div className="mb-8">
