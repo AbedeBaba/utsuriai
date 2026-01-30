@@ -15,6 +15,7 @@ import forestBg from '@/assets/backgrounds/forest.jpg';
 import snowyBg from '@/assets/backgrounds/snowy.jpg';
 import cafeBg from '@/assets/backgrounds/cafe.jpg';
 import underwaterBg from '@/assets/backgrounds/underwater.png';
+import homeBg from '@/assets/backgrounds/home.jpg';
 
 const backgroundOptions = [
   { id: 'City', label: 'City', subtitle: 'Urban backdrop', image: cityBg },
@@ -25,6 +26,7 @@ const backgroundOptions = [
   { id: 'Snowy', label: 'Snowy', subtitle: 'Winter scene', image: snowyBg },
   { id: 'Cafe', label: 'Cafe', subtitle: 'Cozy interior', image: cafeBg },
   { id: 'Underwater', label: 'Underwater', subtitle: 'Aquatic theme', image: underwaterBg },
+  { id: 'Home', label: 'Home', subtitle: 'Cozy home', image: homeBg },
 ];
 
 const faceTypeOptions = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
