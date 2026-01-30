@@ -10,6 +10,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Category background images
+import hatImage from "@/assets/categories/hat.webp";
+import upperWearImage from "@/assets/categories/upper-wear.webp";
+import beltImage from "@/assets/categories/belt.webp";
+import bottomWearImage from "@/assets/categories/bottom-wear.webp";
+import shoesImage from "@/assets/categories/shoes.webp";
+
 // Custom SVG icons for categories without good Lucide equivalents
 const BeanieIcon = ({ className }: { className?: string }) => (
   <svg 
@@ -75,6 +82,15 @@ const iconMap: Record<string, LucideIcon | React.FC<{ className?: string }>> = {
   Footprints,             // Shoes - Lucide footprints
 };
 
+// Category background image mapping
+const categoryImageMap: Record<string, string> = {
+  'hat': hatImage,
+  'upper-wear': upperWearImage,
+  'belt': beltImage,
+  'bottom-wear': bottomWearImage,
+  'shoes': shoesImage,
+};
+
 function CategoryCard({ category }: { category: ProductCategory }) {
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -85,45 +101,55 @@ function CategoryCard({ category }: { category: ProductCategory }) {
   
   const IconComponent = iconMap[category.icon] || Shirt;
   
+  const categoryImage = categoryImageMap[category.id];
+  
   return (
     <button
       onClick={() => navigate(`/templates/${category.id}`)}
       className={cn(
-        "group relative flex flex-col items-center justify-center p-8 rounded-xl",
-        "bg-card border border-border/50 shadow-sm",
-        "hover:shadow-md hover:border-primary/30 hover:bg-accent/30",
+        "group relative flex flex-col items-center justify-center p-6 rounded-xl",
+        "border border-border/50 shadow-sm overflow-hidden",
+        "hover:shadow-lg hover:border-primary/40",
         "transition-all duration-300 ease-out",
-        "min-h-[220px] w-full"
+        "min-h-[260px] w-full"
       )}
     >
-      {/* Image placeholder area */}
-      <div className="relative w-24 h-24 mb-4 rounded-lg bg-muted/50 flex items-center justify-center overflow-hidden">
-        {category.imagePlaceholder !== '/placeholder.svg' ? (
+      {/* Background image */}
+      {categoryImage && (
+        <div className="absolute inset-0 z-0">
           <img 
-            src={category.imagePlaceholder} 
+            src={categoryImage} 
             alt={t(category.nameKey)}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-        ) : (
-          <IconComponent className="w-10 h-10 text-muted-foreground/60 group-hover:text-primary transition-colors" />
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 group-hover:from-black/70 transition-colors" />
+        </div>
+      )}
+      
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center justify-end h-full pb-2">
+        {/* Icon */}
+        <div className="mb-auto mt-4 p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+          <IconComponent className="w-8 h-8 text-white group-hover:text-primary transition-colors" />
+        </div>
+        
+        {/* Category name */}
+        <h3 className="text-xl font-bold text-white mb-1 group-hover:text-primary transition-colors drop-shadow-lg">
+          {t(category.nameKey)}
+        </h3>
+        
+        {/* Category description */}
+        {category.descriptionKey && (
+          <p className="text-sm text-white/80 text-center max-w-[180px] drop-shadow">
+            {t(category.descriptionKey)}
+          </p>
         )}
       </div>
       
-      {/* Category name */}
-      <h3 className="text-lg font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-        {t(category.nameKey)}
-      </h3>
-      
-      {/* Category description */}
-      {category.descriptionKey && (
-        <p className="text-sm text-muted-foreground text-center max-w-[200px]">
-          {t(category.descriptionKey)}
-        </p>
-      )}
-      
       {/* Hover indicator */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <span className="text-xs text-primary font-medium">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <span className="text-sm text-primary font-semibold bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
           →
         </span>
       </div>
