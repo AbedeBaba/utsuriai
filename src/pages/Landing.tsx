@@ -12,6 +12,8 @@ import exampleProduct from '@/assets/example-product.jpeg';
 import exampleModel from '@/assets/example-model.jpeg';
 import exampleProductPants from '@/assets/example-product-pants.webp';
 import exampleModelPants from '@/assets/example-model-pants.jpg';
+import exampleProductSweater from '@/assets/example-product-sweater.webp';
+import exampleModelSweater from '@/assets/example-model-sweater.png';
 import modelRealBg from '@/assets/modelreal.jpg';
 import heroBanner from '@/assets/hero-banner.jpeg';
 import diverseModelsBg from '@/assets/diverse-models-bg.jpg';
@@ -259,7 +261,7 @@ export default function Landing() {
                 {/* Product Image */}
                 <div className="relative flex-shrink-0">
                   <div className="relative w-[100px] sm:w-[150px] md:w-[200px] lg:w-[240px] aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden bg-white border-2 border-slate-300 shadow-[0_8px_30px_-8px_rgba(0,0,0,0.15)]">
-                    <img alt="Product photo" className="w-full h-full object-cover" src={exampleProductPants} />
+                    <img alt="Product photo" className="w-full h-full object-cover" src={exampleProductSweater} />
                   </div>
                   <div className="absolute -bottom-3 sm:-bottom-4 left-1/2 -translate-x-1/2 px-2 sm:px-5 py-1 sm:py-2 rounded-full bg-white border border-slate-300 text-[10px] sm:text-sm font-medium text-muted-foreground whitespace-nowrap shadow-md">
                     {t('landing.productPhoto')}
@@ -277,7 +279,7 @@ export default function Landing() {
                 {/* Model Image */}
                 <div className="relative flex-shrink-0">
                   <div className="relative w-[100px] sm:w-[150px] md:w-[200px] lg:w-[240px] aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden bg-white border-2 border-primary/50 shadow-[0_8px_30px_-8px_rgba(139,92,246,0.25)]">
-                    <img alt="AI generated model" className="w-full h-full object-cover" src="/lovable-uploads/05e94cfe-c952-4a43-bd78-165c0ae993b0.png" />
+                    <img alt="AI generated model" className="w-full h-full object-cover" src={exampleModelSweater} />
                   </div>
                   <div className="absolute -bottom-3 sm:-bottom-4 left-1/2 -translate-x-1/2 px-2 sm:px-5 py-1 sm:py-2 rounded-full bg-primary text-[10px] sm:text-sm font-medium text-primary-foreground whitespace-nowrap shadow-md">
                     {t('landing.aiModel')}
