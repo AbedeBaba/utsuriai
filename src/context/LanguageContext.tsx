@@ -170,7 +170,7 @@ export const translations: Translations = {
   'landing.hero.mainTitle': { en: 'Transform Fashion with AI', tr: 'Modanızı AI ile Tasarlayın...' },
   'landing.hero.mainSubtitle': { en: 'Create stunning AI-generated model photos for your fashion brand', tr: 'Moda markanız için çarpıcı AI model fotoğrafları oluşturun' },
   'landing.hero.createStunning': { en: 'Create stunning fashion photos with AI generated models', tr: 'AI tarafından oluşturulan modellerle çarpıcı moda fotoğrafları oluşturun' },
-  'landing.hero.perfectFor': { en: 'Perfect for fashion brands that value quality, speed, and flexibility. Bring your products to life at a fraction of the cost.', tr: 'Kalite, hız ve esneklik değer veren moda markaları için mükemmel. Ürünlerinizi çok daha düşük maliyetle hayata geçirin.' },
+  'landing.hero.perfectFor': { en: 'Perfect for fashion brands that value quality, speed, and flexibility. Bring your products to life at a fraction of the cost.', tr: 'Kalite, hız ve esnekliğe değer veren moda markaları için mükemmel. Ürünlerinizi çok daha düşük maliyetle hayata geçirin.' },
   'landing.hero.aiPowered': { en: 'AI-Powered Fashion Photography', tr: 'AI Destekli Moda Fotoğrafçılığı' },
   'landing.cta.title': { en: 'Ready to Transform Your Fashion Photography?', tr: 'Moda Fotoğrafçılığınızı Dönüştürmeye Hazır mısınız?' },
   'landing.cta.subtitle': { en: 'Join thousands of fashion brands using AI to create stunning product photos', tr: 'Çarpıcı ürün fotoğrafları oluşturmak için AI kullanan binlerce moda markasına katılın' },
