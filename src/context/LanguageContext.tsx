@@ -172,7 +172,7 @@ export const translations: Translations = {
   'landing.hero.createStunning': { en: 'Create stunning fashion photos with AI generated models', tr: 'AI tarafından oluşturulan modellerle çarpıcı moda fotoğrafları oluşturun' },
   'landing.hero.perfectFor': { en: 'Perfect for fashion brands that value quality, speed, and flexibility. Bring your products to life at a fraction of the cost.', tr: 'Kalite, hız ve esnekliğe değer veren moda markaları için mükemmel. Ürünlerinizi çok daha düşük maliyetle hayata geçirin.' },
   'landing.hero.aiPowered': { en: 'AI-Powered Fashion Photography', tr: 'AI Destekli Moda Fotoğrafçılığı' },
-  'landing.cta.title': { en: 'Ready to Transform Your Fashion Photography?', tr: 'Moda Fotoğrafçılığınızı Dönüştürmeye Hazır mısınız?' },
+  'landing.cta.title': { en: 'Ready to Transform Your Fashion Photography?', tr: 'Moda Fotoğrafçılığınızı Geliştirmeye Hazır mısınız?' },
   'landing.cta.subtitle': { en: 'Join thousands of fashion brands using AI to create stunning product photos', tr: 'Çarpıcı ürün fotoğrafları oluşturmak için AI kullanan binlerce moda markasına katılın' },
   'landing.stats.costReduction': { en: 'Cost Reduction', tr: 'Maliyet Düşüşü' },
   'landing.stats.fasterToMarket': { en: 'Faster to Market', tr: 'Daha Hızlı Pazar' },
