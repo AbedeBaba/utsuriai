@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 // Female body type images
 import femaleSlim from '@/assets/body-types/female-slim.png';
@@ -325,10 +326,11 @@ export default function FilterBodyType() {
                   )}
                 >
                   {/* Image */}
-                  <img
+                  <OptimizedImage
                     src={imageToShow || ''}
                     alt={option.label}
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-cover"
+                    objectPosition="top"
                   />
                   
                   {/* Gradient Overlay */}

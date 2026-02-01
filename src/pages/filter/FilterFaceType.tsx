@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Circle, Square, Diamond, Heart, Hexagon } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 // Female face type images
 import femaleOval from '@/assets/face-types/female-oval.png';
@@ -139,13 +140,14 @@ export default function FilterFaceType() {
           >
             {/* Background Image */}
             <div className="absolute inset-0">
-              <img 
+              <OptimizedImage 
                 src={isFemale ? option.femaleImage : option.maleImage} 
                 alt={option.label}
                 className={cn(
-                  "w-full h-full object-cover object-top transition-transform duration-700",
+                  "w-full h-full object-cover transition-transform duration-700",
                   !hoverDisabled && "group-hover:scale-110"
                 )}
+                objectPosition="top"
               />
               {/* Premium gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />

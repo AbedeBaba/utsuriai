@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 // Female pose images
 import femaleFaceCloseup from '@/assets/poses/female-face-closeup.png';
@@ -308,10 +309,11 @@ export default function FilterPose() {
                   )}
                 >
                   {/* Image */}
-                  <img
+                  <OptimizedImage
                     src={imageToShow}
                     alt={option.label}
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-cover"
+                    objectPosition="top"
                   />
                   
                   {/* Gradient Overlay */}
