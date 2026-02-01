@@ -186,7 +186,7 @@ export default function Landing() {
       </section>
 
       {/* Hero Section */}
-      <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-28 overflow-hidden bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)]">
+      <section className="relative pt-32 pb-28 lg:pt-44 lg:pb-36 overflow-hidden bg-gradient-to-br from-[hsl(250,60%,88%)] via-[hsl(260,55%,85%)] to-[hsl(270,50%,88%)]">
         {/* Subtle background accents */}
         <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">
           <div className="absolute top-20 left-10 w-64 sm:w-96 h-64 sm:h-96 bg-primary/20 rounded-full blur-3xl" />
@@ -292,7 +292,7 @@ export default function Landing() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 my-12 bg-secondary/30">
+      <section className="py-20 my-20 bg-secondary/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
@@ -316,7 +316,7 @@ export default function Landing() {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" className="py-28 relative overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+      <section id="how-it-works" className="py-32 lg:py-40 relative overflow-hidden bg-gradient-to-b from-slate-50 to-white">
         {/* Subtle background pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
@@ -400,7 +400,7 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 relative">
+      <section id="features" className="py-32 lg:py-40 relative">
         {/* Background image container - works on all devices including mobile */}
         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat md:bg-fixed" style={{
         backgroundImage: `url(${aiSolutionsBg})`
@@ -503,7 +503,7 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="mt-12 py-24 relative overflow-hidden">
+      <section className="mt-24 py-32 lg:py-40 relative overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{
         backgroundImage: `url(${ctaBackground})`
       }} />
