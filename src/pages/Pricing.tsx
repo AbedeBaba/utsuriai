@@ -134,10 +134,12 @@ const Pricing = () => {
   // Payment modal state
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<string>('');
+  const [selectedPrice, setSelectedPrice] = useState<string>('');
 
-  const handleSelectPlan = (planName: string) => {
+  const handleSelectPlan = (planName: string, price: string) => {
     // Open payment request modal instead of navigating to auth
     setSelectedPackage(planName);
+    setSelectedPrice(price);
     setIsPaymentModalOpen(true);
   };
 
@@ -291,7 +293,7 @@ const Pricing = () => {
 
               {/* CTA Button */}
               <Button
-                onClick={() => handleSelectPlan(t(plan.nameKey))}
+                onClick={() => handleSelectPlan(t(plan.nameKey), plan.price + (plan.periodKey ? ` ${t(plan.periodKey)}` : ''))}
                 className={`w-full py-6 font-semibold transition-all duration-300 ${
                   plan.highlighted
                     ? "bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 text-white shadow-lg shadow-primary/25"
@@ -402,7 +404,7 @@ const Pricing = () => {
                   </div>
                   
                   <Button
-                    onClick={() => handleSelectPlan(`${pack.credits} credits`)}
+                    onClick={() => handleSelectPlan(`${pack.credits} credits`, pack.price)}
                     size="sm"
                     className="w-full mt-4 bg-white/5 hover:bg-primary/20 text-white border border-white/10 hover:border-primary/50 transition-all"
                   >
@@ -454,6 +456,7 @@ const Pricing = () => {
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
         packageName={selectedPackage}
+        packagePrice={selectedPrice}
       />
     </div>
   );
