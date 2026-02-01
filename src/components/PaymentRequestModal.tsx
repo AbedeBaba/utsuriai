@@ -109,12 +109,27 @@ export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice
     }
   };
 
-  const handleCopyIBAN = () => {
+  const handleCopyIBAN = async () => {
     navigator.clipboard.writeText(IBAN_INFO.iban.replace(/\s/g, ''));
     toast({
       title: 'Kopyalandı',
       description: 'IBAN panoya kopyalandı.',
     });
+    
+    // Track IBAN copy event
+    if (paymentRequestId) {
+      try {
+        await supabase
+          .from('payment_requests')
+          .update({
+            iban_copied: true,
+            iban_copied_at: new Date().toISOString(),
+          })
+          .eq('id', paymentRequestId);
+      } catch (error) {
+        console.error('Failed to track IBAN copy:', error);
+      }
+    }
   };
 
   const handleConfirmPayment = async () => {

@@ -100,6 +100,8 @@ export type Database = {
           created_at: string
           email: string
           full_name: string
+          iban_copied: boolean | null
+          iban_copied_at: string | null
           id: string
           ip_address: string | null
           package_name: string | null
@@ -112,6 +114,8 @@ export type Database = {
           created_at?: string
           email: string
           full_name: string
+          iban_copied?: boolean | null
+          iban_copied_at?: string | null
           id?: string
           ip_address?: string | null
           package_name?: string | null
@@ -124,6 +128,8 @@ export type Database = {
           created_at?: string
           email?: string
           full_name?: string
+          iban_copied?: boolean | null
+          iban_copied_at?: string | null
           id?: string
           ip_address?: string | null
           package_name?: string | null
