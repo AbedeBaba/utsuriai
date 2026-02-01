@@ -252,6 +252,8 @@ export const translations: Translations = {
   'pricing.getStarted': { en: 'Get Started', tr: 'Başla' },
   'pricing.upgradeToPro': { en: 'Upgrade to Pro', tr: "Pro'ya Yükselt" },
   'pricing.goCreator': { en: 'Go Creator', tr: 'Yaratıcı Ol' },
+  'pricing.freeWithSignup': { en: 'Free with signup', tr: 'Kayıt olunca başla' },
+  'pricing.autoActivated': { en: 'Automatically activated for new accounts', tr: 'Yeni hesaplar için otomatik aktif' },
   
   // Features
   'pricing.imageGenerations': { en: 'image generations', tr: 'görsel oluşturma' },
