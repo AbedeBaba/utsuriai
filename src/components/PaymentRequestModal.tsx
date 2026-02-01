@@ -278,7 +278,7 @@ export function PaymentRequestModal({ isOpen, onClose, packageName }: PaymentReq
                   <span className="font-medium text-right">{IBAN_INFO.recipientName}</span>
                 </div>
 
-                <div className="flex justify-between items-start py-2 border-b border-border/50">
+                <div className="flex justify-between items-start py-2">
                   <span className="text-muted-foreground text-sm">IBAN</span>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-medium text-right text-sm">
@@ -292,15 +292,6 @@ export function PaymentRequestModal({ isOpen, onClose, packageName }: PaymentReq
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
-                  </div>
-                </div>
-
-                <div className="py-2">
-                  <span className="text-muted-foreground text-sm block mb-1">
-                    Açıklama <span className="text-destructive">(zorunlu)</span>
-                  </span>
-                  <div className="p-3 rounded-lg bg-muted/50 font-mono text-sm break-all">
-                    UTSURI – {packageName || 'Paket'} – {submittedEmail}
                   </div>
                 </div>
               </div>
