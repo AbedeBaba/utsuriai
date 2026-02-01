@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { FILTER_IMAGES } from '@/data/filterImages';
 
 // Female pose images
 import femaleFaceCloseup from '@/assets/poses/female-face-closeup.png';
@@ -67,6 +69,9 @@ export default function FilterPose() {
   useEffect(() => {
     setCurrentStep(config.gender === 'Male' ? 9 : 9);
   }, [setCurrentStep, config.gender]);
+
+  // Prefetch next step images (background)
+  useImagePrefetch(FILTER_IMAGES.background.all);
 
   // Handle scroll/swipe
   const scrollToIndex = useCallback((index: number) => {

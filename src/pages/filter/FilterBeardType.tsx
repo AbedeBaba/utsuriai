@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { getFilterImages } from '@/data/filterImages';
 
 // Beard type images
 import cleanShavenImg from '@/assets/beard-types/clean-shaven.png';
@@ -50,6 +52,16 @@ export default function FilterBeardType() {
   useEffect(() => {
     setCurrentStep(8);
   }, [setCurrentStep]);
+
+  // Prefetch next step images (pose for Pro users)
+  const nextStepImages = useMemo(() => {
+    if (hasProFeatureAccess) {
+      return getFilterImages('pose', 'Male');
+    }
+    return []; // No prefetch for clothing
+  }, [hasProFeatureAccess]);
+  
+  useImagePrefetch(nextStepImages);
 
   useEffect(() => {
     if (config.gender !== 'Male') {

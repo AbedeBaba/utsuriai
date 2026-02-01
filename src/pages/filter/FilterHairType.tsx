@@ -2,11 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { getFilterImages, FILTER_IMAGES } from '@/data/filterImages';
 
 // Female hair type images
 import femaleStraight from '@/assets/hair-types/female-straight.png';
@@ -60,6 +62,20 @@ export default function FilterHairType() {
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 8 : 7);
   }, [setCurrentStep, config.gender]);
+
+  // Prefetch next step images
+  const nextStepImages = useMemo(() => {
+    if (config.gender === 'Male') {
+      return FILTER_IMAGES.beardType.all;
+    }
+    // Female goes to pose (Pro) or clothing
+    if (hasProFeatureAccess) {
+      return getFilterImages('pose', config.gender as 'Male' | 'Female');
+    }
+    return []; // No prefetch for clothing
+  }, [config.gender, hasProFeatureAccess]);
+  
+  useImagePrefetch(nextStepImages);
 
   // Redirect to next step if Hijab is selected (hair won't be visible)
   // Hijab users should continue through ALL filter steps, just skip hair-related ones

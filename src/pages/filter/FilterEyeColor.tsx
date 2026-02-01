@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { getFilterImages } from '@/data/filterImages';
 
 // Female eye color images
 import femaleBrown from '@/assets/eye-colors/female-brown.png';
@@ -74,6 +76,13 @@ export default function FilterEyeColor() {
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 6 : 5);
   }, [setCurrentStep, config.gender]);
+
+  // Prefetch next step images (body type)
+  const nextStepImages = useMemo(() => {
+    return getFilterImages('bodyType', config.gender as 'Male' | 'Female');
+  }, [config.gender]);
+  
+  useImagePrefetch(nextStepImages);
 
   const handleSelect = useCallback((eyeColor: string) => {
     if (isAnimating) return;

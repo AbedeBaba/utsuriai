@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Circle, Square, Diamond, Heart, Hexagon } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { getFilterImages } from '@/data/filterImages';
 
 // Female face type images
 import femaleOval from '@/assets/face-types/female-oval.png';
@@ -59,6 +61,13 @@ export default function FilterFaceType() {
   useEffect(() => {
     setCurrentStep(11);
   }, [setCurrentStep]);
+
+  // Prefetch next step images (expression)
+  const nextStepImages = useMemo(() => {
+    return getFilterImages('expression', config.gender as 'Male' | 'Female');
+  }, [config.gender]);
+  
+  useImagePrefetch(nextStepImages);
 
   const handleSelect = useCallback((faceType: string) => {
     if (isAnimating) return;

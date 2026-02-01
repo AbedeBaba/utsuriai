@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils';
 import standardImage from '@/assets/modest-options/standard.png';
 import hijabImage from '@/assets/modest-options/hijab.png';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { FILTER_IMAGES } from '@/data/filterImages';
 
 const modestOptions = [
   { id: 'Standard', label: 'Standard', subtitle: 'Regular appearance', image: standardImage },
@@ -28,6 +30,9 @@ export default function FilterModestOption() {
     // Coverage is step 2 for females only
     setCurrentStep(2);
   }, [setCurrentStep]);
+
+  // Prefetch next step images (ethnicity - females only)
+  useImagePrefetch(FILTER_IMAGES.ethnicity.female);
 
   // Redirect males to ethnicity
   useEffect(() => {

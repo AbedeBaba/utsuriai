@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { getFilterImages } from '@/data/filterImages';
 
 // Import female ethnicity images
 import arabicImg from '@/assets/ethnicities/arabic.png';
@@ -97,6 +99,17 @@ export default function FilterEthnicity() {
     // For females: step 3 (after gender, coverage). For males: step 2 (after gender)
     setCurrentStep(config.gender === 'Female' ? 3 : 2);
   }, [setCurrentStep, config.gender]);
+
+  // Prefetch next step images (skin tone has no images, so prefetch hair color)
+  const nextStepImages = useMemo(() => {
+    // Skin tone page has no images, so prefetch hair color or eye color
+    if (config.modestOption === 'Hijab') {
+      return getFilterImages('eyeColor', config.gender as 'Male' | 'Female');
+    }
+    return getFilterImages('hairColor', config.gender as 'Male' | 'Female');
+  }, [config.gender, config.modestOption]);
+  
+  useImagePrefetch(nextStepImages);
 
   const handleSelect = useCallback((ethnicity: string) => {
     if (isAnimating) return;
