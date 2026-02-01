@@ -11,7 +11,8 @@ import { ArrowLeft } from 'lucide-react';
 import { SelectionCard } from '@/components/SelectionCard';
 import { startFilterFlow } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
-
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { FILTER_IMAGES } from '@/data/filterImages';
 export default function FilterGender() {
   const navigate = useNavigate();
   const { config, updateConfig, setCurrentStep, loadSavedModel } = useModelConfig();
@@ -25,6 +26,14 @@ export default function FilterGender() {
     // Mark filter flow as active when entering gender selection
     startFilterFlow();
   }, [setCurrentStep]);
+
+  // Prefetch next step images (modest option for females, ethnicity for males)
+  // Prefetch both since we don't know which gender will be selected
+  useImagePrefetch([
+    ...FILTER_IMAGES.modestOption.all,
+    ...FILTER_IMAGES.ethnicity.male,
+    ...FILTER_IMAGES.ethnicity.female,
+  ]);
 
   // Handle loading a saved model
   const handleLoadSavedModel = useCallback((savedModel: SavedModel) => {

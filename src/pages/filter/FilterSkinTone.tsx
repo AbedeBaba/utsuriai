@@ -2,10 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { getFilterImages } from '@/data/filterImages';
 
 const skinToneOptions = [
   { id: 'Fair', label: 'Fair', color: '#FFE5D4', darkColor: '#e6cfc0' },
@@ -133,6 +135,17 @@ export default function FilterSkinTone() {
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 4 : 3);
   }, [setCurrentStep, config.gender]);
+
+  // Prefetch next step images
+  const nextStepImages = useMemo(() => {
+    // Skip hair color for Hijab users
+    if (config.modestOption === 'Hijab') {
+      return getFilterImages('eyeColor', config.gender as 'Male' | 'Female');
+    }
+    return getFilterImages('hairColor', config.gender as 'Male' | 'Female');
+  }, [config.gender, config.modestOption]);
+  
+  useImagePrefetch(nextStepImages);
 
   const handleSelect = useCallback((skinTone: string) => {
     if (isAnimating) return;

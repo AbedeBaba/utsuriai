@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { getFilterImages } from '@/data/filterImages';
 
 // Female hair color images
 import femaleBlack from '@/assets/hair-colors/female-black.png';
@@ -86,6 +88,13 @@ export default function FilterHairColor() {
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 5 : 4);
   }, [setCurrentStep, config.gender]);
+
+  // Prefetch next step images (eye color)
+  const nextStepImages = useMemo(() => {
+    return getFilterImages('eyeColor', config.gender as 'Male' | 'Female');
+  }, [config.gender]);
+  
+  useImagePrefetch(nextStepImages);
 
   // Redirect to eye color if Hijab is selected (hair color won't be visible)
   // This ensures hijab users skip hair-related steps but continue through ALL other filter steps

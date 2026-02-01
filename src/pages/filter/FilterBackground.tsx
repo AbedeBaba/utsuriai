@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useModelConfig } from '@/context/ModelConfigContext';
 import { FilterStepLayout } from '@/components/FilterStepLayout';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { getFilterImages } from '@/data/filterImages';
 
 // Background images
 import cityBg from '@/assets/backgrounds/city.jpg';
@@ -54,6 +56,16 @@ export default function FilterBackground() {
   useEffect(() => {
     setCurrentStep(10);
   }, [setCurrentStep]);
+
+  // Prefetch next step images (face type for Creator users)
+  const nextStepImages = useMemo(() => {
+    if (hasCreatorFeatureAccess) {
+      return getFilterImages('faceType', config.gender as 'Male' | 'Female');
+    }
+    return []; // No prefetch for clothing
+  }, [hasCreatorFeatureAccess, config.gender]);
+  
+  useImagePrefetch(nextStepImages);
 
   const handleSelect = useCallback((background: string) => {
     if (isAnimating) return;

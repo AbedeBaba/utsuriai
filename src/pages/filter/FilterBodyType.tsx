@@ -8,6 +8,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
 import { OptimizedImage } from '@/components/OptimizedImage';
+import { useImagePrefetch } from '@/hooks/useImagePrefetch';
+import { getFilterImages, FILTER_IMAGES } from '@/data/filterImages';
 
 // Female body type images
 import femaleSlim from '@/assets/body-types/female-slim.png';
@@ -73,6 +75,20 @@ export default function FilterBodyType() {
   useEffect(() => {
     setCurrentStep(config.gender === 'Female' ? 7 : 6);
   }, [setCurrentStep, config.gender]);
+
+  // Prefetch next step images (hair type)
+  const nextStepImages = useMemo(() => {
+    // Skip hair type for Hijab, go to beard (male) or pose
+    if (config.modestOption === 'Hijab') {
+      if (config.gender === 'Male') {
+        return FILTER_IMAGES.beardType.all;
+      }
+      return getFilterImages('pose', config.gender as 'Male' | 'Female');
+    }
+    return getFilterImages('hairType', config.gender as 'Male' | 'Female');
+  }, [config.gender, config.modestOption]);
+  
+  useImagePrefetch(nextStepImages);
 
   // Handle scroll/swipe
   const scrollToIndex = useCallback((index: number) => {
