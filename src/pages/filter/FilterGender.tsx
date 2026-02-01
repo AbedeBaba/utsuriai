@@ -10,6 +10,7 @@ import { useSavedModels, SavedModel } from '@/hooks/useSavedModels';
 import { ArrowLeft } from 'lucide-react';
 import { SelectionCard } from '@/components/SelectionCard';
 import { startFilterFlow } from '@/hooks/useFilterFlowGuard';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 export default function FilterGender() {
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ export default function FilterGender() {
               isAnimating && selectedId === 'Female' && "w-0 opacity-0"
             )}
           >
-            <img 
+            <OptimizedImage 
               src={maleModel} 
               alt="Male model"
               className={cn(
@@ -98,7 +99,7 @@ export default function FilterGender() {
                 "group-hover:scale-105",
                 isAnimating && selectedId !== 'Male' && "scale-95 opacity-50"
               )}
-              style={{ objectPosition: 'center 15%' }}
+              objectPosition="center 15%"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
             <div className={cn(
@@ -126,7 +127,7 @@ export default function FilterGender() {
               isAnimating && selectedId === 'Male' && "w-0 opacity-0"
             )}
           >
-            <img 
+            <OptimizedImage 
               src={femaleModel} 
               alt="Female model"
               className={cn(
@@ -135,7 +136,7 @@ export default function FilterGender() {
                 "group-hover:scale-105",
                 isAnimating && selectedId !== 'Female' && "scale-95 opacity-50"
               )}
-              style={{ objectPosition: 'center 15%' }}
+              objectPosition="center 15%"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
             <div className={cn(

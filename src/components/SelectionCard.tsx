@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useRef } from 'react';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 interface SelectionCardProps {
   title: string;
@@ -50,11 +51,11 @@ export function SelectionCard({
     >
       {image ? (
         <div className="relative w-full h-full">
-          <img 
+          <OptimizedImage 
             src={image} 
             alt={title}
             className="w-full h-full object-cover"
-            style={imagePosition ? { objectPosition: imagePosition } : undefined}
+            objectPosition={imagePosition}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-3 text-center">

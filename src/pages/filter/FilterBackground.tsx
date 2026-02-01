@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 // Background images
 import cityBg from '@/assets/backgrounds/city.jpg';
@@ -136,13 +137,14 @@ export default function FilterBackground() {
           >
             {/* Background Image */}
             <div className="absolute inset-0">
-              <img 
+              <OptimizedImage 
                 src={option.image} 
                 alt={option.label}
                 className={cn(
-                  "w-full h-full object-cover object-center transition-transform duration-700",
+                  "w-full h-full object-cover transition-transform duration-700",
                   !hoverDisabled && "group-hover:scale-110"
                 )}
+                objectPosition="center"
               />
               {/* Premium gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />

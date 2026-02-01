@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useFilterFlowGuard } from '@/hooks/useFilterFlowGuard';
+import { OptimizedImage } from '@/components/OptimizedImage';
 
 // Import female ethnicity images
 import arabicImg from '@/assets/ethnicities/arabic.png';
@@ -227,13 +228,14 @@ export default function FilterEthnicity() {
             {/* Background Image */}
             {option.image && (
               <div className="absolute inset-0">
-                <img 
+                <OptimizedImage 
                   src={option.image} 
                   alt={option.label}
                   className={cn(
-                    "w-full h-full object-cover object-top transition-transform duration-700",
+                    "w-full h-full object-cover transition-transform duration-700",
                     !hoverDisabled && "group-hover:scale-110"
                   )}
+                  objectPosition="top"
                 />
                 {/* Premium gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
