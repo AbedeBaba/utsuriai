@@ -27,7 +27,10 @@ export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isConfirmingPayment, setIsConfirmingPayment] = useState(false);
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState('');
+  const [paymentRequestId, setPaymentRequestId] = useState<string | null>(null);
   
   // Form state
   const [fullName, setFullName] = useState('');
@@ -73,17 +76,20 @@ export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice
     setIsSubmitting(true);
     
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('payment_requests')
         .insert({
           full_name: fullName.trim(),
           email: email.trim().toLowerCase(),
           phone: phone.trim() || null,
           package_name: packageName || null,
-        });
+        })
+        .select('id')
+        .single();
       
       if (error) throw error;
       
+      setPaymentRequestId(data.id);
       setSubmittedEmail(email.trim().toLowerCase());
       setIsSubmitted(true);
       
@@ -111,6 +117,39 @@ export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice
     });
   };
 
+  const handleConfirmPayment = async () => {
+    if (!paymentRequestId) return;
+    
+    setIsConfirmingPayment(true);
+    
+    try {
+      const { error } = await supabase
+        .from('payment_requests')
+        .update({
+          payment_confirmed: true,
+          payment_confirmed_at: new Date().toISOString(),
+        })
+        .eq('id', paymentRequestId);
+      
+      if (error) throw error;
+      
+      setPaymentConfirmed(true);
+      toast({
+        title: 'Teşekkürler!',
+        description: 'Ödeme bildiriminiz alındı. En kısa sürede hesabınız aktif edilecektir.',
+      });
+    } catch (error) {
+      console.error('Payment confirmation error:', error);
+      toast({
+        title: 'Hata',
+        description: 'Bir hata oluştu. Lütfen tekrar deneyin.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsConfirmingPayment(false);
+    }
+  };
+
   const handleClose = () => {
     // Reset form on close
     setFullName('');
@@ -120,6 +159,8 @@ export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice
     setErrors({});
     setIsSubmitted(false);
     setSubmittedEmail('');
+    setPaymentRequestId(null);
+    setPaymentConfirmed(false);
     onClose();
   };
 
@@ -312,12 +353,43 @@ export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice
               </p>
             </div>
 
-            {/* Notice */}
-            <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 text-center">
-              <p className="text-sm text-amber-700 dark:text-amber-300">
-                Ödemenizi yaptıktan sonra en kısa sürede hesabınız aktif edilecektir.
-              </p>
-            </div>
+            {/* Payment Confirmation Section */}
+            {!paymentConfirmed ? (
+              <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 space-y-3">
+                <p className="text-sm text-center text-muted-foreground">
+                  Ödemenizi yaptıktan sonra aşağıdaki butona tıklayarak bize bildirin.
+                </p>
+                <Button
+                  onClick={handleConfirmPayment}
+                  disabled={isConfirmingPayment}
+                  className="w-full py-5 font-semibold bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-500/90 hover:to-emerald-600/90 text-white"
+                >
+                  {isConfirmingPayment ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Gönderiliyor...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Ödemeyi Tamamladım
+                    </>
+                  )}
+                </Button>
+              </div>
+            ) : (
+              <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-center">
+                <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-400">
+                  <CheckCircle className="h-5 w-5" />
+                  <p className="font-medium">
+                    Ödeme bildiriminiz alındı!
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  En kısa sürede hesabınız aktif edilecektir.
+                </p>
+              </div>
+            )}
 
             {/* Close Button */}
             <Button

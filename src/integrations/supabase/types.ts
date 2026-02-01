@@ -103,6 +103,8 @@ export type Database = {
           id: string
           ip_address: string | null
           package_name: string | null
+          payment_confirmed: boolean | null
+          payment_confirmed_at: string | null
           phone: string | null
           user_agent: string | null
         }
@@ -113,6 +115,8 @@ export type Database = {
           id?: string
           ip_address?: string | null
           package_name?: string | null
+          payment_confirmed?: boolean | null
+          payment_confirmed_at?: string | null
           phone?: string | null
           user_agent?: string | null
         }
@@ -123,6 +127,8 @@ export type Database = {
           id?: string
           ip_address?: string | null
           package_name?: string | null
+          payment_confirmed?: boolean | null
+          payment_confirmed_at?: string | null
           phone?: string | null
           user_agent?: string | null
         }
