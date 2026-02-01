@@ -19,7 +19,7 @@ interface PaymentRequestModalProps {
 const IBAN_INFO = {
   bankName: 'Ziraat Bankası',
   recipientName: 'UtsuriAI Teknoloji A.Ş.',
-  iban: 'TR00 0000 0000 0000 0000 0000 00', // Replace with actual IBAN
+  iban: 'TR62 0006 2000 4240 0006 5731 15',
 };
 
 export function PaymentRequestModal({ isOpen, onClose, packageName }: PaymentRequestModalProps) {
