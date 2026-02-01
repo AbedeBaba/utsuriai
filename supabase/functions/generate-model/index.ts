@@ -28,7 +28,7 @@ const ALLOWED_VALUES = {
   hairType: ['Straight', 'Wavy', 'Curly', 'Coily', 'Short', 'Long', 'Bald'],
   beardType: ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard', 'Goatee', 'Mustache', 'Van Dyke', 'Circle Beard', 'Mutton Chops', null],
   pose: ['Face Close-up', 'Standing', 'Sitting', 'Leaning', 'Arms Crossed', 'Back View', 'Low-Angle', 'Hands on Hips', 'Top-down'],
-  background: ['Fashion White', 'City', 'Beach', 'Forest', 'Mountain', 'Cafe', 'Snowy', 'Underwater'],
+  background: ['Fashion White', 'City', 'Beach', 'Forest', 'Mountain', 'Cafe', 'Snowy', 'Underwater', 'Home'],
   faceType: ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'],
   facialExpression: ['Neutral', 'Smile', 'Serious', 'Confident'],
   modestOption: ['Standard', 'Hijab', null]
