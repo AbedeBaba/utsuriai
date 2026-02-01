@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Crown, Zap, Star, Lock, Image, Plus, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Check, Crown, Zap, Star, Lock, Image, Plus, AlertTriangle, ArrowLeft, UserPlus } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
@@ -291,22 +291,30 @@ const Pricing = () => {
                 ))}
               </ul>
 
-              {/* CTA Button */}
-              <Button
-                onClick={() => handleSelectPlan(t(plan.nameKey), plan.price + (plan.periodKey ? ` ${t(plan.periodKey)}` : ''))}
-                className={`w-full py-6 font-semibold transition-all duration-300 ${
-                  plan.highlighted
-                    ? "bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 text-white shadow-lg shadow-primary/25"
-                    : plan.badgeType === "powerful"
-                    ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-500/90 hover:to-orange-500/90 text-white"
-                    : plan.badgeType === "trial"
-                    ? "bg-white/10 hover:bg-white/15 text-white border border-white/20"
-                    : "bg-white/5 hover:bg-white/10 text-white border border-white/10"
-                }`}
-              >
-                {plan.badgeType === "powerful" && <Zap className="w-4 h-4 mr-2" />}
-                {t(plan.buttonTextKey)}
-              </Button>
+              {/* CTA Button or Trial Badge */}
+              {isTrialCard ? (
+                <div className="w-full py-4 rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 text-center">
+                  <div className="flex items-center justify-center gap-2 text-emerald-400">
+                    <UserPlus className="w-4 h-4" />
+                    <span className="font-medium text-sm">{t('pricing.freeWithSignup')}</span>
+                  </div>
+                  <p className="text-xs text-emerald-400/70 mt-1">{t('pricing.autoActivated')}</p>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => handleSelectPlan(t(plan.nameKey), plan.price + (plan.periodKey ? ` ${t(plan.periodKey)}` : ''))}
+                  className={`w-full py-6 font-semibold transition-all duration-300 ${
+                    plan.highlighted
+                      ? "bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 text-white shadow-lg shadow-primary/25"
+                      : plan.badgeType === "powerful"
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-500/90 hover:to-orange-500/90 text-white"
+                      : "bg-white/5 hover:bg-white/10 text-white border border-white/10"
+                  }`}
+                >
+                  {plan.badgeType === "powerful" && <Zap className="w-4 h-4 mr-2" />}
+                  {t(plan.buttonTextKey)}
+                </Button>
+              )}
               </div>
             );
           })}
