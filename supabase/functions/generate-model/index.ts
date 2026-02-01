@@ -146,7 +146,14 @@ NEGATIVE CONSTRAINTS (ABSOLUTELY FORBIDDEN):
 - no V-neck or low neckline
 ` : '';
 
+  // Quality enhancement prompts
+  const POSITIVE_PROMPT_ADDITIONS = `high-end fashion photography, editorial fashion shoot, real human model, natural skin texture, visible skin pores, soft natural lighting, diffused light, realistic shadows, premium studio or lifestyle background, clean and minimal environment, natural color grading, neutral tones, true-to-life colors, professional camera look, DSLR photography, shallow depth of field, authentic fabric texture, realistic clothing folds, relaxed and natural pose, confident posture, editorial fashion pose, candid feeling, luxury brand aesthetic, modern fashion campaign`;
+
+  const NEGATIVE_PROMPT = `NEGATIVE PROMPT (AVOID THESE): plastic skin, overly smooth skin, artificial skin texture, waxy skin, CGI skin, doll-like face, porcelain skin, uncanny valley, over-processed face, excessive skin retouching, beauty filter look, AI-generated look, synthetic appearance, low-quality background, cheap background, blurry background, pixelated background, noisy background, flat lighting, unnatural lighting, harsh shadows, overexposed highlights, washed-out colors, unrealistic proportions, distorted anatomy, deformed hands, extra fingers, missing fingers, warped body, asymmetrical face, over-sharpening, oversaturated colors, HDR look, fake depth of field, unnatural bokeh, 3D render, game engine look, illustration style, stiff pose, robotic posture, stock photo look, artificial expression`;
+
   const tryOnPrompt = `You are a professional fashion photographer AI. Generate a hyper-realistic fashion photography image.
+
+${POSITIVE_PROMPT_ADDITIONS}
 
 CRITICAL TASK: VIRTUAL TRY-ON / CLOTHING TRANSFER
 The image(s) above show clothing/outfit items. Your task is to:
@@ -190,6 +197,8 @@ FINAL REMINDER FOR HIJAB MODEL:
 - Neck, chest, shoulders MUST be fully covered
 - Modest, conservative styling only
 - This is for Turkish/Middle East modest fashion e-commerce` : ''}
+
+${NEGATIVE_PROMPT}
 
 OUTPUT: A single photorealistic ${isPortraitPose ? 'portrait' : 'FULL-BODY (head to feet visible)'} image of the described model wearing the exact clothing from the reference images in 9:16 vertical format.`;
 
@@ -727,11 +736,18 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
   // Check if this is a Hijab/modest model - handle this FIRST
   const isHijabModel = config.modestOption === 'Hijab';
   
+  // Quality enhancement prompts (shared)
+  const POSITIVE_PROMPT = 'high-end fashion photography, editorial fashion shoot, real human model, natural skin texture, visible skin pores, soft natural lighting, diffused light, realistic shadows, premium studio or lifestyle background, clean and minimal environment, natural color grading, neutral tones, true-to-life colors, professional camera look, DSLR photography, shallow depth of field, authentic fabric texture, realistic clothing folds, relaxed and natural pose, confident posture, editorial fashion pose, candid feeling, luxury brand aesthetic, modern fashion campaign';
+
+  const NEGATIVE_PROMPT_GENERAL = 'plastic skin, overly smooth skin, artificial skin texture, waxy skin, CGI skin, doll-like face, porcelain skin, uncanny valley, over-processed face, excessive skin retouching, beauty filter look, AI-generated look, synthetic appearance, low-quality background, cheap background, blurry background, pixelated background, noisy background, flat lighting, unnatural lighting, harsh shadows, overexposed highlights, washed-out colors, unrealistic proportions, distorted anatomy, deformed hands, extra fingers, missing fingers, warped body, asymmetrical face, over-sharpening, oversaturated colors, HDR look, fake depth of field, unnatural bokeh, 3D render, game engine look, illustration style, stiff pose, robotic posture, stock photo look, artificial expression';
+  
   if (isHijabModel) {
     // ========================================
     // TESETTÜR / MODEST HIJABI MODEL PROMPT
     // ========================================
     parts.push('VIRTUAL TRY-ON TASK: Generate a fully modest hijabi female model wearing the EXACT clothing shown in the input images.');
+    parts.push('');
+    parts.push(`STYLE REQUIREMENTS: ${POSITIVE_PROMPT}`);
     parts.push('');
     parts.push('=== TESETTÜR / MODEST HIJABI MODEL - ABSOLUTE REQUIREMENTS ===');
     parts.push('');
@@ -762,7 +778,7 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
     parts.push('- Subtle, confident expression');
     parts.push('');
     parts.push('=== NEGATIVE PROMPT (ABSOLUTELY FORBIDDEN) ===');
-    parts.push('no visible hair, no cleavage, no open neck, no transparent fabric, no tight clothing, no western fashion look, no sheer fabric, no body-hugging silhouettes, no exposed shoulders, no short sleeves, no V-neck, no low neckline, no exposed skin except face and hands');
+    parts.push(`${NEGATIVE_PROMPT_GENERAL}, no visible hair, no cleavage, no open neck, no transparent fabric, no tight clothing, no western fashion look, no sheer fabric, no body-hugging silhouettes, no exposed shoulders, no short sleeves, no V-neck, no low neckline, no exposed skin except face and hands`);
     parts.push('=== END NEGATIVE PROMPT ===');
     parts.push('');
     parts.push('MODEL ATTRIBUTES (within modest constraints):');
@@ -811,7 +827,11 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
   // ========================================
   // STANDARD (NON-HIJAB) MODEL PROMPT
   // ========================================
+  // Uses POSITIVE_PROMPT and NEGATIVE_PROMPT_GENERAL defined above
+  
   parts.push('VIRTUAL TRY-ON TASK: Generate a fashion model wearing the EXACT clothing shown in the input images.');
+  parts.push('');
+  parts.push(`STYLE REQUIREMENTS: ${POSITIVE_PROMPT}`);
   parts.push('');
   parts.push('CRITICAL RULES:');
   parts.push('- The model MUST wear the SAME outfit from the input images');
@@ -849,6 +869,8 @@ function buildFallbackPrompt(config: Record<string, string | null>): string {
   }
   if (config.background) parts.push(`- Background: ${config.background}`);
   
+  parts.push('');
+  parts.push(`NEGATIVE PROMPT (AVOID THESE): ${NEGATIVE_PROMPT_GENERAL}`);
   parts.push('');
   parts.push('IMAGE FORMAT: Vertical 9:16 aspect ratio');
   if (isPortraitPose) {
