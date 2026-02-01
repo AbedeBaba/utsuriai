@@ -13,6 +13,7 @@ interface PaymentRequestModalProps {
   isOpen: boolean;
   onClose: () => void;
   packageName?: string;
+  packagePrice?: string;
 }
 
 // IBAN info - stored as image for security
@@ -22,7 +23,7 @@ const IBAN_INFO = {
   iban: 'TR62 0006 2000 4240 0006 5731 15',
 };
 
-export function PaymentRequestModal({ isOpen, onClose, packageName }: PaymentRequestModalProps) {
+export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice }: PaymentRequestModalProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -132,9 +133,16 @@ export function PaymentRequestModal({ isOpen, onClose, packageName }: PaymentReq
           </DialogTitle>
           <DialogDescription>
             {packageName && (
-              <span className="inline-flex items-center gap-1.5 mt-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                {packageName}
-              </span>
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                  {packageName}
+                </span>
+                {packagePrice && (
+                  <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-sm font-medium">
+                    {packagePrice}
+                  </span>
+                )}
+              </div>
             )}
           </DialogDescription>
         </DialogHeader>
@@ -295,6 +303,13 @@ export function PaymentRequestModal({ isOpen, onClose, packageName }: PaymentReq
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Description Warning */}
+            <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-center">
+              <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                ⚠️ Lütfen açıklamayı boş bırakınız!
+              </p>
             </div>
 
             {/* Notice */}
