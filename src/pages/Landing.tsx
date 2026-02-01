@@ -164,8 +164,9 @@ export default function Landing() {
       </header>
 
       {/* Full-Screen Hero Banner */}
-      <section className="relative min-h-screen w-full bg-cover bg-top md:bg-center bg-no-repeat flex items-center justify-center" style={{
-      backgroundImage: `url(${heroBanner})`
+      <section className="relative min-h-screen w-full bg-cover bg-no-repeat flex items-center justify-center" style={{
+      backgroundImage: `url(${heroBanner})`,
+      backgroundPosition: 'center 25%'
     }}>
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/40" />
