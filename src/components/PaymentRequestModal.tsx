@@ -17,8 +17,8 @@ interface PaymentRequestModalProps {
 
 // IBAN info - stored as image for security
 const IBAN_INFO = {
-  bankName: 'Ziraat Bankası',
-  recipientName: 'UtsuriAI Teknoloji A.Ş.',
+  bankName: 'Garanti BBVA',
+  recipientName: 'Çağatay Samet Macar',
   iban: 'TR62 0006 2000 4240 0006 5731 15',
 };
 
