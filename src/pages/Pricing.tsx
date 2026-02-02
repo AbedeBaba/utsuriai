@@ -37,17 +37,17 @@ interface CreditPack {
 }
 
 const creditPacks: CreditPack[] = [
-  { credits: 50, price: "$5", priceValue: 5 },
-  { credits: 100, price: "$9.50", priceValue: 9.5 },
-  { credits: 200, price: "$18", priceValue: 18 },
-  { credits: 500, price: "$45", priceValue: 45 },
-  { credits: 1000, price: "$85", priceValue: 85 },
+  { credits: 50, price: "₺199", priceValue: 199 },
+  { credits: 100, price: "₺379", priceValue: 379 },
+  { credits: 200, price: "₺719", priceValue: 719 },
+  { credits: 500, price: "₺1.799", priceValue: 1799 },
+  { credits: 1000, price: "₺3.399", priceValue: 3399 },
 ];
 
 const plans: PricingPlan[] = [
   {
     nameKey: "pricing.trial",
-    price: "Free",
+    price: "Ücretsiz",
     descriptionKey: "pricing.testPlatform",
     creditsKey: "pricing.generationsTotal",
     badgeKey: "pricing.demo",
@@ -65,7 +65,7 @@ const plans: PricingPlan[] = [
   },
   {
     nameKey: "pricing.starter",
-    price: "$9.99",
+    price: "₺399",
     periodKey: "pricing.perMonth",
     descriptionKey: "pricing.entryLevel",
     creditsValue: "100",
@@ -84,7 +84,7 @@ const plans: PricingPlan[] = [
   },
   {
     nameKey: "pricing.pro",
-    price: "$39.99",
+    price: "₺1.599",
     periodKey: "pricing.perMonth",
     descriptionKey: "pricing.professionalFeatures",
     creditsValue: "400",
@@ -106,7 +106,7 @@ const plans: PricingPlan[] = [
   },
   {
     nameKey: "pricing.creator",
-    price: "$49.99",
+    price: "₺1.999",
     periodKey: "pricing.perMonth",
     descriptionKey: "pricing.ultimatePower",
     creditsValue: "500",
