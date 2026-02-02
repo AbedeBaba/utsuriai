@@ -8,6 +8,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { Footer } from "@/components/Footer";
 import { BrandLogoMark } from "@/components/BrandLogo";
 import { PaymentRequestModal } from "@/components/PaymentRequestModal";
+import { PaymentMethodInfoDialog } from "@/components/PaymentMethodInfoDialog";
 interface PlanFeature {
   textKey: string;
   included: boolean;
@@ -133,13 +134,20 @@ const Pricing = () => {
   
   // Payment modal state
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isPaymentInfoDialogOpen, setIsPaymentInfoDialogOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<string>('');
   const [selectedPrice, setSelectedPrice] = useState<string>('');
 
   const handleSelectPlan = (planName: string, price: string) => {
-    // Open payment request modal instead of navigating to auth
+    // First show the payment method info dialog
     setSelectedPackage(planName);
     setSelectedPrice(price);
+    setIsPaymentInfoDialogOpen(true);
+  };
+
+  const handleContinueToPayment = () => {
+    // Close info dialog and open payment request modal
+    setIsPaymentInfoDialogOpen(false);
     setIsPaymentModalOpen(true);
   };
 
@@ -458,6 +466,13 @@ const Pricing = () => {
       
       {/* Footer */}
       <Footer variant="dark" />
+      
+      {/* Payment Method Info Dialog */}
+      <PaymentMethodInfoDialog
+        isOpen={isPaymentInfoDialogOpen}
+        onClose={() => setIsPaymentInfoDialogOpen(false)}
+        onContinue={handleContinueToPayment}
+      />
       
       {/* Payment Request Modal */}
       <PaymentRequestModal
