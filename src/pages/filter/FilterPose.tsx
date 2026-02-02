@@ -32,14 +32,14 @@ import maleLowAngle from '@/assets/poses/male-low-angle.png';
 import maleHandsOnHips from '@/assets/poses/male-hands-on-hips.png';
 
 const poseOptions = [
-  { id: 'Face Close-up', label: 'Face Close-up', subtitle: 'Portrait shot', femaleImage: femaleFaceCloseup, maleImage: maleFaceCloseup },
-  { id: 'Standing', label: 'Standing', subtitle: 'Full body upright', femaleImage: femaleStanding, maleImage: maleStanding },
-  { id: 'Sitting', label: 'Sitting', subtitle: 'Seated position', femaleImage: femaleSitting, maleImage: maleSitting },
-  { id: 'Leaning', label: 'Leaning', subtitle: 'Casual lean', femaleImage: femaleLeaning, maleImage: maleLeaning },
-  { id: 'Arms Crossed', label: 'Arms Crossed', subtitle: 'Confident pose', femaleImage: femaleArmsCrossed, maleImage: maleArmsCrossed },
-  { id: 'Back View', label: 'Back View', subtitle: 'Rear angle', femaleImage: femaleBackView, maleImage: maleBackView },
-  { id: 'Low-angle', label: 'Low-angle', subtitle: 'Dramatic upward', femaleImage: femaleLowAngle, maleImage: maleLowAngle },
-  { id: 'Hands on Hips', label: 'Hands on Hips', subtitle: 'Power stance', femaleImage: femaleHandsOnHips, maleImage: maleHandsOnHips },
+  { id: 'Face Close-up', label: 'Yüz Yakın Çekim', subtitle: 'Portre çekimi', femaleImage: femaleFaceCloseup, maleImage: maleFaceCloseup },
+  { id: 'Standing', label: 'Ayakta', subtitle: 'Tam boy dik duruş', femaleImage: femaleStanding, maleImage: maleStanding },
+  { id: 'Sitting', label: 'Oturarak', subtitle: 'Oturma pozisyonu', femaleImage: femaleSitting, maleImage: maleSitting },
+  { id: 'Leaning', label: 'Yaslanmış', subtitle: 'Rahat duruş', femaleImage: femaleLeaning, maleImage: maleLeaning },
+  { id: 'Arms Crossed', label: 'Kollar Kavuşuk', subtitle: 'Özgüvenli poz', femaleImage: femaleArmsCrossed, maleImage: maleArmsCrossed },
+  { id: 'Back View', label: 'Arkadan Görünüm', subtitle: 'Arka açı', femaleImage: femaleBackView, maleImage: maleBackView },
+  { id: 'Low-angle', label: 'Alt Açı', subtitle: 'Dramatik yukarı', femaleImage: femaleLowAngle, maleImage: maleLowAngle },
+  { id: 'Hands on Hips', label: 'Eller Belde', subtitle: 'Güç duruşu', femaleImage: femaleHandsOnHips, maleImage: maleHandsOnHips },
 ];
 
 const backgroundOptions = ['City', 'Fashion White', 'Beach', 'Mountain', 'Forest', 'Snowy', 'Cafe', 'Underwater'];
@@ -226,12 +226,12 @@ export default function FilterPose() {
     };
   };
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   return (
     <FilterStepLayout 
-      title="Select Pose"
-      subtitle="Scroll left or right to choose the pose"
+      title="Poz Seçin"
+      subtitle="Pozu seçmek için sola veya sağa kaydırın"
       onBack={() => {
         // For hijab females, go back to body-type (skipping hair-type)
         if (config.gender === 'Male') {
@@ -359,7 +359,7 @@ export default function FilterPose() {
                       "font-medium rounded-full shadow-lg shadow-primary/30"
                     )}
                   >
-                    Select
+                    Seç
                   </Button>
                 )}
               </div>

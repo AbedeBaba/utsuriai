@@ -12,8 +12,8 @@ import { useImagePrefetch } from '@/hooks/useImagePrefetch';
 import { FILTER_IMAGES } from '@/data/filterImages';
 
 const modestOptions = [
-  { id: 'Standard', label: 'Standard', subtitle: 'Regular appearance', image: standardImage },
-  { id: 'Hijab', label: 'Hijab', subtitle: 'Head covering', image: hijabImage },
+  { id: 'Standard', label: 'Standart', subtitle: 'Normal görünüm', image: standardImage },
+  { id: 'Hijab', label: 'Tesettür', subtitle: 'Baş örtüsü', image: hijabImage },
 ];
 
 export default function FilterModestOption() {

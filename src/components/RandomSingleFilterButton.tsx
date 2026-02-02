@@ -8,7 +8,7 @@ interface RandomSingleFilterButtonProps {
   label?: string;
 }
 
-export function RandomSingleFilterButton({ onClick, className, label = "Random for this filter" }: RandomSingleFilterButtonProps) {
+export function RandomSingleFilterButton({ onClick, className, label = "Bu Filtre İçin Rastgele Seç" }: RandomSingleFilterButtonProps) {
   return (
     <Button
       variant="outline"

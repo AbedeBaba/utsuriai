@@ -21,15 +21,15 @@ import underwaterBg from '@/assets/backgrounds/underwater.png';
 import homeBg from '@/assets/backgrounds/home.jpg';
 
 const backgroundOptions = [
-  { id: 'City', label: 'City', subtitle: 'Urban backdrop', image: cityBg },
-  { id: 'Fashion White', label: 'Fashion White', subtitle: 'Studio clean', image: fashionWhiteBg },
-  { id: 'Beach', label: 'Beach', subtitle: 'Coastal vibes', image: beachBg },
-  { id: 'Mountain', label: 'Mountain', subtitle: 'Scenic peaks', image: mountainBg },
-  { id: 'Forest', label: 'Forest', subtitle: 'Natural green', image: forestBg },
-  { id: 'Snowy', label: 'Snowy', subtitle: 'Winter scene', image: snowyBg },
-  { id: 'Cafe', label: 'Cafe', subtitle: 'Cozy interior', image: cafeBg },
-  { id: 'Underwater', label: 'Underwater', subtitle: 'Aquatic theme', image: underwaterBg },
-  { id: 'Home', label: 'Home', subtitle: 'Cozy home', image: homeBg },
+  { id: 'City', label: 'Şehir', subtitle: 'Kentsel arka plan', image: cityBg },
+  { id: 'Fashion White', label: 'Moda Beyaz', subtitle: 'Stüdyo temiz', image: fashionWhiteBg },
+  { id: 'Beach', label: 'Plaj', subtitle: 'Sahil havası', image: beachBg },
+  { id: 'Mountain', label: 'Dağ', subtitle: 'Manzaralı zirveler', image: mountainBg },
+  { id: 'Forest', label: 'Orman', subtitle: 'Doğal yeşillik', image: forestBg },
+  { id: 'Snowy', label: 'Karlı', subtitle: 'Kış manzarası', image: snowyBg },
+  { id: 'Cafe', label: 'Kafe', subtitle: 'Sıcak iç mekan', image: cafeBg },
+  { id: 'Underwater', label: 'Su Altı', subtitle: 'Deniz teması', image: underwaterBg },
+  { id: 'Home', label: 'Ev', subtitle: 'Sıcak ev ortamı', image: homeBg },
 ];
 
 const faceTypeOptions = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
@@ -111,12 +111,12 @@ export default function FilterBackground() {
     navigate('/clothing');
   }, [updateConfig, navigate, hasCreatorFeatureAccess]);
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   return (
     <FilterStepLayout 
-      title="Select Background"
-      subtitle="Choose the background scene for your image"
+      title="Arka Plan Seçin"
+      subtitle="Görseliniz için arka plan sahnesi seçin"
       onBack={() => navigate('/filter/pose')}
       onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}

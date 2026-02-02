@@ -33,28 +33,28 @@ import malePurple from '@/assets/hair-colors/male-purple.png';
 import maleGreen from '@/assets/hair-colors/male-green.png';
 
 const femaleHairColorOptions = [
-  { id: 'Black', label: 'Black', color: '#1C1C1C', image: femaleBlack },
-  { id: 'White', label: 'White', color: '#F5F5F5', image: femaleWhite },
-  { id: 'Brown', label: 'Brown', color: '#6A4E42', image: femaleBrown },
-  { id: 'Red', label: 'Red', color: '#922B21', image: femaleRed },
-  { id: 'Blonde', label: 'Blonde', color: '#E8D5B5', image: femaleBlonde },
-  { id: 'Dark Blonde', label: 'Dark Blonde', color: '#B89B72', image: femaleDarkBlonde },
-  { id: 'Blue', label: 'Blue', color: '#4A90D9', image: femaleBlue },
-  { id: 'Purple', label: 'Purple', color: '#7B4B8A', image: femalePurple },
-  { id: 'Green', label: 'Green', color: '#4A7C59', image: femaleGreen },
-  { id: 'Platinum', label: 'Platinum', color: '#E5E4E2', image: femalePlatinum },
+  { id: 'Black', label: 'Siyah', color: '#1C1C1C', image: femaleBlack },
+  { id: 'White', label: 'Beyaz', color: '#F5F5F5', image: femaleWhite },
+  { id: 'Brown', label: 'Kahverengi', color: '#6A4E42', image: femaleBrown },
+  { id: 'Red', label: 'Kızıl', color: '#922B21', image: femaleRed },
+  { id: 'Blonde', label: 'Sarı', color: '#E8D5B5', image: femaleBlonde },
+  { id: 'Dark Blonde', label: 'Koyu Sarı', color: '#B89B72', image: femaleDarkBlonde },
+  { id: 'Blue', label: 'Mavi', color: '#4A90D9', image: femaleBlue },
+  { id: 'Purple', label: 'Mor', color: '#7B4B8A', image: femalePurple },
+  { id: 'Green', label: 'Yeşil', color: '#4A7C59', image: femaleGreen },
+  { id: 'Platinum', label: 'Platin', color: '#E5E4E2', image: femalePlatinum },
 ];
 
 const maleHairColorOptions = [
-  { id: 'Black', label: 'Black', color: '#1C1C1C', image: maleBlack },
-  { id: 'White', label: 'White', color: '#F5F5F5', image: maleWhite },
-  { id: 'Brown', label: 'Brown', color: '#6A4E42', image: maleBrown },
-  { id: 'Red', label: 'Red', color: '#922B21', image: maleRed },
-  { id: 'Blonde', label: 'Blonde', color: '#E8D5B5', image: maleBlonde },
-  { id: 'Dark Blonde', label: 'Dark Blonde', color: '#B89B72', image: maleDarkBlonde },
-  { id: 'Blue', label: 'Blue', color: '#4A90D9', image: maleBlue },
-  { id: 'Purple', label: 'Purple', color: '#7B4B8A', image: malePurple },
-  { id: 'Green', label: 'Green', color: '#4A7C59', image: maleGreen },
+  { id: 'Black', label: 'Siyah', color: '#1C1C1C', image: maleBlack },
+  { id: 'White', label: 'Beyaz', color: '#F5F5F5', image: maleWhite },
+  { id: 'Brown', label: 'Kahverengi', color: '#6A4E42', image: maleBrown },
+  { id: 'Red', label: 'Kızıl', color: '#922B21', image: maleRed },
+  { id: 'Blonde', label: 'Sarı', color: '#E8D5B5', image: maleBlonde },
+  { id: 'Dark Blonde', label: 'Koyu Sarı', color: '#B89B72', image: maleDarkBlonde },
+  { id: 'Blue', label: 'Mavi', color: '#4A90D9', image: maleBlue },
+  { id: 'Purple', label: 'Mor', color: '#7B4B8A', image: malePurple },
+  { id: 'Green', label: 'Yeşil', color: '#4A7C59', image: maleGreen },
 ];
 
 // Options for random all
@@ -189,12 +189,12 @@ export default function FilterHairColor() {
     }, 1000);
   }, [isAnimating, loading, navigate, updateConfig, hairColorOptions, config.gender, config.modestOption, hasProFeatureAccess, hasCreatorFeatureAccess]);
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   return (
     <FilterStepLayout 
-      title="Select Hair Color"
-      subtitle="Choose the hair color for your model"
+      title="Saç Rengi Seçin"
+      subtitle="Modeliniz için saç rengi seçin"
       onBack={() => navigate('/filter/skin-tone')}
       onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}

@@ -19,7 +19,7 @@ export function RandomFilterButton({ onClick, className }: RandomFilterButtonPro
       )}
     >
       <Shuffle className="h-4 w-4" />
-      Select Random All
+      Rastgele Tümünü Seç
     </Button>
   );
 }

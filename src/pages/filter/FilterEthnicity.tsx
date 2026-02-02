@@ -38,33 +38,33 @@ import maleItalianImg from '@/assets/ethnicities/male-italian.png';
 import maleEuropeanImg from '@/assets/ethnicities/male-european.png';
 
 const femaleEthnicityOptions = [
-  { id: 'Arabic', label: 'Arabic', image: arabicImg },
-  { id: 'Turkish', label: 'Turkish', image: turkishImg },
-  { id: 'Russian', label: 'Russian', image: russianImg },
-  { id: 'Asian', label: 'Asian', image: asianImg },
+  { id: 'Arabic', label: 'Arap', image: arabicImg },
+  { id: 'Turkish', label: 'Türk', image: turkishImg },
+  { id: 'Russian', label: 'Rus', image: russianImg },
+  { id: 'Asian', label: 'Asyalı', image: asianImg },
   { id: 'Latin', label: 'Latin', image: latinImg },
-  { id: 'Scandinavian', label: 'Scandinavian', image: scandinavianImg },
-  { id: 'Australian', label: 'Australian', image: australianImg },
-  { id: 'Indian', label: 'Indian', image: indianImg },
-  { id: 'Local American', label: 'Local American', image: localAmericanImg },
-  { id: 'Afro American', label: 'Afro American', image: afroAmericanImg },
-  { id: 'Italian', label: 'Italian', image: italianImg },
-  { id: 'European', label: 'European', image: europeanImg },
+  { id: 'Scandinavian', label: 'İskandinav', image: scandinavianImg },
+  { id: 'Australian', label: 'Avustralyalı', image: australianImg },
+  { id: 'Indian', label: 'Hintli', image: indianImg },
+  { id: 'Local American', label: 'Yerli Amerikalı', image: localAmericanImg },
+  { id: 'Afro American', label: 'Afro-Amerikalı', image: afroAmericanImg },
+  { id: 'Italian', label: 'İtalyan', image: italianImg },
+  { id: 'European', label: 'Avrupalı', image: europeanImg },
 ];
 
 const maleEthnicityOptions = [
-  { id: 'Arabic', label: 'Arabic', image: maleArabicImg },
-  { id: 'Turkish', label: 'Turkish', image: maleTurkishImg },
-  { id: 'Russian', label: 'Russian', image: maleRussianImg },
-  { id: 'Asian', label: 'Asian', image: maleAsianImg },
+  { id: 'Arabic', label: 'Arap', image: maleArabicImg },
+  { id: 'Turkish', label: 'Türk', image: maleTurkishImg },
+  { id: 'Russian', label: 'Rus', image: maleRussianImg },
+  { id: 'Asian', label: 'Asyalı', image: maleAsianImg },
   { id: 'Latin', label: 'Latin', image: maleLatinImg },
-  { id: 'Scandinavian', label: 'Scandinavian', image: maleScandinavianImg },
-  { id: 'Australian', label: 'Australian', image: maleAustralianImg },
-  { id: 'Indian', label: 'Indian', image: maleIndianImg },
-  { id: 'Local American', label: 'Local American', image: maleLocalAmericanImg },
-  { id: 'Afro American', label: 'Afro American', image: maleAfroAmericanImg },
-  { id: 'Italian', label: 'Italian', image: maleItalianImg },
-  { id: 'European', label: 'European', image: maleEuropeanImg },
+  { id: 'Scandinavian', label: 'İskandinav', image: maleScandinavianImg },
+  { id: 'Australian', label: 'Avustralyalı', image: maleAustralianImg },
+  { id: 'Indian', label: 'Hintli', image: maleIndianImg },
+  { id: 'Local American', label: 'Yerli Amerikalı', image: maleLocalAmericanImg },
+  { id: 'Afro American', label: 'Afro-Amerikalı', image: maleAfroAmericanImg },
+  { id: 'Italian', label: 'İtalyan', image: maleItalianImg },
+  { id: 'European', label: 'Avrupalı', image: maleEuropeanImg },
 ];
 
 const skinToneOptions = ['Fair', 'Light', 'Medium Light', 'Medium', 'Medium Dark', 'Dark', 'Deep', 'Ebony', 'Olive'];
@@ -200,12 +200,12 @@ export default function FilterEthnicity() {
     }, 800);
   }, [isAnimating, updateConfig, ethnicityOptions, navigate, getNextStepPath, hasProFeatureAccess, hasCreatorFeatureAccess]);
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   return (
     <FilterStepLayout 
-      title="Select Ethnicity"
-      subtitle="Choose the ethnicity for your model"
+      title="Etnik Köken Seçin"
+      subtitle="Modeliniz için etnik köken seçin"
       onBack={() => config.gender === 'Female' ? navigate('/filter/modest-option') : navigate('/filter/gender')}
       onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}

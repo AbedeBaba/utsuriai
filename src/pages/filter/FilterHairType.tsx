@@ -29,13 +29,13 @@ import maleShort from '@/assets/hair-types/male-short.png';
 import maleLong from '@/assets/hair-types/male-long.png';
 
 const hairTypeOptions = [
-  { id: 'Straight', label: 'Straight', subtitle: 'Sleek and smooth', femaleImage: femaleStraight, maleImage: maleStraight },
-  { id: 'Wavy', label: 'Wavy', subtitle: 'Soft waves', femaleImage: femaleWavy, maleImage: maleWavy },
-  { id: 'Curly', label: 'Curly', subtitle: 'Defined curls', femaleImage: femaleCurly, maleImage: maleCurly },
-  { id: 'Coily', label: 'Coily', subtitle: 'Tight coils', femaleImage: femaleCoily, maleImage: maleCoily },
-  { id: 'Bald', label: 'Bald', subtitle: 'Clean shaved', femaleImage: femaleBald, maleImage: maleBald },
-  { id: 'Short', label: 'Short', subtitle: 'Cropped style', femaleImage: femaleShort, maleImage: maleShort },
-  { id: 'Long', label: 'Long', subtitle: 'Flowing length', femaleImage: femaleLong, maleImage: maleLong },
+  { id: 'Straight', label: 'Düz', subtitle: 'Pürüzsüz ve kaygan', femaleImage: femaleStraight, maleImage: maleStraight },
+  { id: 'Wavy', label: 'Dalgalı', subtitle: 'Yumuşak dalgalar', femaleImage: femaleWavy, maleImage: maleWavy },
+  { id: 'Curly', label: 'Kıvırcık', subtitle: 'Belirgin bukleler', femaleImage: femaleCurly, maleImage: maleCurly },
+  { id: 'Coily', label: 'Spiral', subtitle: 'Sıkı spiraller', femaleImage: femaleCoily, maleImage: maleCoily },
+  { id: 'Bald', label: 'Kel', subtitle: 'Tamamen tıraşlı', femaleImage: femaleBald, maleImage: maleBald },
+  { id: 'Short', label: 'Kısa', subtitle: 'Kısa kesim', femaleImage: femaleShort, maleImage: maleShort },
+  { id: 'Long', label: 'Uzun', subtitle: 'Uzun saç', femaleImage: femaleLong, maleImage: maleLong },
 ];
 
 // Options for random all
@@ -169,7 +169,7 @@ export default function FilterHairType() {
     setTimeout(() => { navigate('/clothing'); }, 1000);
   }, [isAnimating, loading, navigate, updateConfig, config.gender, hasProFeatureAccess, hasCreatorFeatureAccess]);
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   return (
     <FilterStepLayout 
