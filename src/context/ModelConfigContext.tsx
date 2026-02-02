@@ -2,6 +2,7 @@ import { createContext, useContext, useState, ReactNode, useCallback } from 'rea
 
 export interface ModelConfig {
   gender: string;
+  age: number;
   ethnicity: string;
   skinTone: string;
   hairColor: string;
@@ -51,7 +52,7 @@ export const FILTER_STEPS: FilterStep[] = [
 
 interface ModelConfigContextType {
   config: ModelConfig;
-  updateConfig: (key: keyof ModelConfig, value: string) => void;
+  updateConfig: (key: keyof ModelConfig, value: string | number) => void;
   resetConfig: () => void;
   resetSubsequentFilters: (fromKey: keyof ModelConfig) => void;
   loadSavedModel: (savedConfig: Partial<ModelConfig>) => void;
@@ -66,6 +67,7 @@ interface ModelConfigContextType {
 
 const initialConfig: ModelConfig = {
   gender: '',
+  age: 25,
   ethnicity: '',
   skinTone: '',
   hairColor: '',
@@ -109,6 +111,7 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
   const isStepCompleted = useCallback((stepId: string): boolean => {
     if (stepId === 'clothing') return false; // Clothing is never "completed" until generation
     const value = config[stepId as keyof ModelConfig];
+    if (typeof value === 'number') return value > 0;
     return !!value && value.length > 0;
   }, [config]);
 
@@ -136,44 +139,50 @@ export function ModelConfigProvider({ children }: { children: ReactNode }) {
     setConfig(prev => {
       const newConfig = { ...prev };
       subsequentSteps.forEach(step => {
-        if (step.id in newConfig) {
-          (newConfig as Record<string, string>)[step.id] = '';
+        if (step.id in newConfig && step.id !== 'age') {
+          (newConfig[step.id as keyof ModelConfig] as string) = '';
         }
       });
       return newConfig;
     });
   }, []);
 
-  const updateConfig = useCallback((key: keyof ModelConfig, value: string) => {
+  const updateConfig = useCallback((key: keyof ModelConfig, value: string | number) => {
     setConfig(prev => {
       // Check if this is a core field change (gender or modestOption)
       const isGenderChange = key === 'gender' && prev.gender !== value && prev.gender !== '';
       const isModestChange = key === 'modestOption' && prev.modestOption !== value && prev.modestOption !== '';
       
-      const newConfig = { ...prev, [key]: value };
+      const newConfig = { ...prev, [key]: value } as ModelConfig;
       
       // If gender changes, reset all subsequent filters
       if (isGenderChange) {
-        const subsequentKeys: (keyof ModelConfig)[] = [
-          'modestOption', 'ethnicity', 'skinTone', 'hairColor', 'eyeColor', 
-          'bodyType', 'hairType', 'beardType', 'pose', 'background', 
-          'faceType', 'facialExpression'
-        ];
-        subsequentKeys.forEach(k => {
-          newConfig[k] = '';
-        });
+        newConfig.modestOption = '';
+        newConfig.ethnicity = '';
+        newConfig.skinTone = '';
+        newConfig.hairColor = '';
+        newConfig.eyeColor = '';
+        newConfig.bodyType = '';
+        newConfig.hairType = '';
+        newConfig.beardType = '';
+        newConfig.pose = '';
+        newConfig.background = '';
+        newConfig.faceType = '';
+        newConfig.facialExpression = '';
       }
       
       // If modest option changes (for females), reset subsequent filters
       if (isModestChange) {
-        const subsequentKeys: (keyof ModelConfig)[] = [
-          'ethnicity', 'skinTone', 'hairColor', 'eyeColor', 
-          'bodyType', 'hairType', 'pose', 'background', 
-          'faceType', 'facialExpression'
-        ];
-        subsequentKeys.forEach(k => {
-          newConfig[k] = '';
-        });
+        newConfig.ethnicity = '';
+        newConfig.skinTone = '';
+        newConfig.hairColor = '';
+        newConfig.eyeColor = '';
+        newConfig.bodyType = '';
+        newConfig.hairType = '';
+        newConfig.pose = '';
+        newConfig.background = '';
+        newConfig.faceType = '';
+        newConfig.facialExpression = '';
       }
       
       return newConfig;
