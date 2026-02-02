@@ -45,9 +45,17 @@ function sanitizeConfigValue(key: string, value: any): string | null {
   return strValue;
 }
 
-function sanitizeConfig(config: any): Record<string, string | null> {
+function sanitizeAge(age: any): number {
+  if (age === null || age === undefined) return 25; // default age
+  const numAge = Number(age);
+  if (isNaN(numAge) || numAge < 18 || numAge > 60) return 25;
+  return Math.round(numAge);
+}
+
+function sanitizeConfig(config: any): Record<string, string | number | null> {
   return {
     gender: sanitizeConfigValue('gender', config?.gender),
+    age: sanitizeAge(config?.age),
     ethnicity: sanitizeConfigValue('ethnicity', config?.ethnicity),
     skinTone: sanitizeConfigValue('skinTone', config?.skinTone),
     hairColor: sanitizeConfigValue('hairColor', config?.hairColor),
@@ -72,7 +80,7 @@ function sleep(ms: number): Promise<void> {
 async function generateWithGeminiTryOn(
   apiKey: string,
   clothingBase64Images: string[], // Already base64 encoded
-  config: Record<string, string | null>,
+  config: Record<string, string | number | null>,
   supabase: any
 ): Promise<string> {
   console.log('Starting Gemini virtual try-on generation...');
@@ -290,7 +298,7 @@ OUTPUT: A single photorealistic ${isPortraitPose ? 'portrait' : 'FULL-BODY (head
 }
 
 // Build model description from config
-function buildModelDescription(config: Record<string, string | null>): string {
+function buildModelDescription(config: Record<string, string | number | null>): string {
   const parts: string[] = [];
   
   // CRITICAL: If Hijab is selected, override all styling with modest requirements FIRST
@@ -325,6 +333,7 @@ function buildModelDescription(config: Record<string, string | null>): string {
     parts.push('=== END TESETTÜR REQUIREMENTS ===');
     parts.push('');
     parts.push('MODEL ATTRIBUTES (within modest constraints):');
+    if (config.age) parts.push(`- Age: ${config.age} years old`);
     if (config.ethnicity) parts.push(`- Ethnicity: ${config.ethnicity}`);
     if (config.skinTone) parts.push(`- Skin tone: ${config.skinTone}`);
     if (config.eyeColor) parts.push(`- Eye color: ${config.eyeColor}`);
@@ -338,6 +347,7 @@ function buildModelDescription(config: Record<string, string | null>): string {
   
   // Standard (non-Hijab) model description
   if (config.gender) parts.push(`Gender: ${config.gender}`);
+  if (config.age) parts.push(`Age: ${config.age} years old`);
   if (config.ethnicity) parts.push(`Ethnicity: ${config.ethnicity}`);
   if (config.skinTone) parts.push(`Skin tone: ${config.skinTone}`);
   if (config.hairColor) parts.push(`Hair color: ${config.hairColor}`);
@@ -727,7 +737,7 @@ serve(async (req) => {
   }
 });
 
-function buildFallbackPrompt(config: Record<string, string | null>): string {
+function buildFallbackPrompt(config: Record<string, string | number | null>): string {
   const parts: string[] = [];
   
   // Determine if this is a portrait-only pose

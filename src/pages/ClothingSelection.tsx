@@ -20,6 +20,7 @@ import { AIDisclaimer } from '@/components/AIDisclaimer';
 interface GenerationPayload {
   filters: {
     gender: string;
+    age: number;
     ethnicity: string;
     skin_tone: string;
     hair_color: string;
@@ -78,6 +79,7 @@ export default function ClothingSelection() {
     return {
       filters: {
         gender: config.gender,
+        age: config.age,
         ethnicity: config.ethnicity,
         skin_tone: config.skinTone,
         hair_color: config.hairColor,
@@ -89,7 +91,6 @@ export default function ClothingSelection() {
         ...(config.background && { background: config.background }),
         ...(config.facialExpression && { facial_expression: config.facialExpression }),
         ...(config.faceType && { face_type: config.faceType }),
-        ...(config.modestOption && { modest_option: config.modestOption }),
         ...(config.modestOption && { modest_option: config.modestOption }),
       },
       reference_images: uploadedImages.length > 0 
@@ -253,6 +254,7 @@ export default function ClothingSelection() {
   
   const filterSummary = [
     { label: 'Gender', value: config.gender },
+    { label: 'Age', value: config.age?.toString() },
     { label: 'Ethnicity', value: config.ethnicity },
     { label: 'Skin Tone', value: config.skinTone },
     ...(!isHijab ? [{ label: 'Hair Color', value: config.hairColor }] : []),
