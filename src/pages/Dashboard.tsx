@@ -65,11 +65,11 @@ export default function Dashboard() {
 
   const getPlanDisplayName = (plan: string | undefined) => {
     switch (plan) {
-      case 'trial': return 'Trial';
-      case 'starter': return 'Starter';
+      case 'trial': return 'Deneme';
+      case 'starter': return 'Başlangıç';
       case 'pro': return 'Pro';
-      case 'creator': return 'Creator';
-      default: return 'Trial';
+      case 'creator': return 'Yaratıcı';
+      default: return 'Deneme';
     }
   };
 
@@ -120,7 +120,7 @@ export default function Dashboard() {
 
     if (error) {
       toast({
-        title: 'Error fetching images',
+        title: 'Görseller yüklenirken hata oluştu',
         description: error.message,
         variant: 'destructive',
       });
@@ -135,7 +135,7 @@ export default function Dashboard() {
     const now = new Date();
     const msLeft = expiryTime.getTime() - now.getTime();
     
-    if (msLeft <= 0) return 'Expired';
+    if (msLeft <= 0) return 'Süresi doldu';
     
     const daysLeft = Math.floor(msLeft / (1000 * 60 * 60 * 24));
     const hoursLeft = Math.floor((msLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -144,17 +144,17 @@ export default function Dashboard() {
     // For Creator users (7 days), show days
     if (imageRetentionHours > 24) {
       if (daysLeft > 0) {
-        return `${daysLeft}d ${hoursLeft}h left`;
+        return `${daysLeft}g ${hoursLeft}s kaldı`;
       }
       if (hoursLeft > 0) {
-        return `${hoursLeft}h ${minutesLeft}m left`;
+        return `${hoursLeft}s ${minutesLeft}dk kaldı`;
       }
-      return `${minutesLeft}m left`;
+      return `${minutesLeft}dk kaldı`;
     }
     
     // For 24-hour retention
-    if (hoursLeft < 1) return `${minutesLeft}m left`;
-    return `${hoursLeft}h ${minutesLeft}m left`;
+    if (hoursLeft < 1) return `${minutesLeft}dk kaldı`;
+    return `${hoursLeft}s ${minutesLeft}dk kaldı`;
   };
 
   const handleDelete = async (id: string) => {
@@ -165,15 +165,15 @@ export default function Dashboard() {
 
     if (error) {
       toast({
-        title: 'Error deleting image',
+        title: 'Görsel silinirken hata oluştu',
         description: error.message,
         variant: 'destructive',
       });
     } else {
       setImages(images.filter(img => img.id !== id));
       toast({
-        title: 'Image deleted',
-        description: 'The image has been removed from your gallery.',
+        title: 'Görsel silindi',
+        description: 'Görsel galerinizden kaldırıldı.',
       });
     }
   };
@@ -207,8 +207,8 @@ export default function Dashboard() {
       }, 100);
       
       toast({
-        title: 'Download started',
-        description: `Downloading ${fileName}.png`,
+        title: 'İndirme başladı',
+        description: `${fileName}.png indiriliyor`,
       });
     } catch (error) {
       console.error('Blob download failed, trying direct link:', error);
@@ -242,8 +242,8 @@ export default function Dashboard() {
                 }, 100);
                 
                 toast({
-                  title: 'Download started',
-                  description: `Downloading ${fileName}.png`,
+                  title: 'İndirme başladı',
+                  description: `${fileName}.png indiriliyor`,
                 });
                 resolve();
               } else {
@@ -259,8 +259,8 @@ export default function Dashboard() {
         // Final fallback: open in new tab
         window.open(imageUrl, '_blank');
         toast({
-          title: 'Opening image',
-          description: 'The image opened in a new tab. Right-click and save as to download.',
+          title: 'Görsel açılıyor',
+          description: 'Görsel yeni sekmede açıldı. İndirmek için sağ tıklayıp "Farklı Kaydet" seçeneğini kullanın.',
         });
       }
     }
@@ -274,13 +274,13 @@ export default function Dashboard() {
 
     if (error) {
       toast({
-        title: 'Error updating category',
+        title: 'Kategori güncellenirken hata oluştu',
         description: error.message,
         variant: 'destructive',
       });
     } else {
       setImages(images.map(img => img.id === id ? { ...img, category } : img));
-      toast({ title: 'Category updated' });
+      toast({ title: 'Kategori güncellendi' });
     }
   };
 
@@ -297,14 +297,14 @@ export default function Dashboard() {
 
     if (error) {
       toast({
-        title: 'Error updating name',
+        title: 'İsim güncellenirken hata oluştu',
         description: error.message,
         variant: 'destructive',
       });
     } else {
       setImages(images.map(img => img.id === id ? { ...img, custom_name: editName || null } : img));
       setEditingId(null);
-      toast({ title: 'Name updated' });
+      toast({ title: 'İsim güncellendi' });
     }
   };
 
@@ -328,7 +328,7 @@ export default function Dashboard() {
           <BrandLogo size="lg" withText={false} />
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Loading…</span>
+            <span>Yükleniyor…</span>
           </div>
         </div>
       </div>
@@ -379,14 +379,14 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-foreground mb-2">
-              Welcome back, <span className="text-primary">{displayName}</span>!
+              Tekrar hoş geldin, <span className="text-primary">{displayName}</span>!
             </h1>
             <p className="text-muted-foreground">
-              Your generated images are stored for {imageRetentionDays === 7 ? '7 days' : '24 hours'}. Download them before they expire.
+              Oluşturulan görselleriniz {imageRetentionDays === 7 ? '7 gün' : '24 saat'} saklanır. Süresi dolmadan indirin.
               {hasCreatorFeatureAccess && (
                 <span className="ml-2 inline-flex items-center gap-1 text-amber-500 font-medium">
                   <Crown className="h-3.5 w-3.5" />
-                  Extended storage
+                  Uzun süreli depolama
                 </span>
               )}
             </p>
@@ -407,20 +407,20 @@ export default function Dashboard() {
                 {subscription.plan === 'trial' ? (
                   <>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Standard Gens</span>
+                      <span className="text-muted-foreground">Standart Üretim</span>
                       <span className="font-medium text-foreground flex items-center gap-1">
                         <Zap className="h-3.5 w-3.5 text-primary" />
                         {subscription.standard_generations_remaining}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Pro Gens</span>
+                      <span className="text-muted-foreground">Pro Üretim</span>
                       <span className="font-medium text-foreground">{subscription.pro_generations_remaining}</span>
                     </div>
                   </>
                 ) : (
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Credits</span>
+                    <span className="text-muted-foreground">Kredi</span>
                     <span className="font-medium text-foreground flex items-center gap-1">
                       <Zap className="h-3.5 w-3.5 text-primary" />
                       {subscription.credits_remaining}
@@ -435,7 +435,7 @@ export default function Dashboard() {
                 onClick={() => navigate('/pricing')}
                 className="w-full mt-3 text-xs"
               >
-                {subscription.plan === 'trial' ? 'Upgrade Plan' : 'Manage Plan'}
+                {subscription.plan === 'trial' ? 'Planı Yükselt' : 'Planı Yönet'}
               </Button>
             </div>
           )}
@@ -447,8 +447,8 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Save className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-semibold text-foreground">Saved Models</h2>
-                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600 text-xs font-medium">Creator</span>
+                <h2 className="text-xl font-semibold text-foreground">Kayıtlı Modeller</h2>
+                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600 text-xs font-medium">Yaratıcı</span>
               </div>
             </div>
             
@@ -459,9 +459,9 @@ export default function Dashboard() {
              ) : savedModels.length === 0 ? (
               <div className="text-center py-8 bg-card border border-border rounded-xl">
                  <BrandLogoMark size="lg" className="mx-auto mb-3 opacity-80" />
-                <p className="text-muted-foreground text-sm mb-3">No saved models yet</p>
+                <p className="text-muted-foreground text-sm mb-3">Henüz kayıtlı model yok</p>
                 <p className="text-muted-foreground/70 text-xs max-w-md mx-auto">
-                  Create a model configuration and save it from the Clothing Selection page to reuse it later.
+                  Model yapılandırması oluşturun ve daha sonra tekrar kullanmak için Kıyafet Seçimi sayfasından kaydedin.
                 </p>
               </div>
             ) : (
@@ -489,15 +489,15 @@ export default function Dashboard() {
                     </div>
                     
                     <div className="grid grid-cols-2 gap-1 text-xs mb-4">
-                      <span className="text-muted-foreground">Gender:</span>
-                      <span className="text-foreground capitalize">{model.gender}</span>
-                      <span className="text-muted-foreground">Ethnicity:</span>
+                      <span className="text-muted-foreground">Cinsiyet:</span>
+                      <span className="text-foreground capitalize">{model.gender === 'male' ? 'Erkek' : 'Kadın'}</span>
+                      <span className="text-muted-foreground">Etnik Köken:</span>
                       <span className="text-foreground capitalize">{model.ethnicity}</span>
-                      <span className="text-muted-foreground">Body:</span>
+                      <span className="text-muted-foreground">Vücut:</span>
                       <span className="text-foreground capitalize">{model.body_type}</span>
                       {model.hair_color && (
                         <>
-                          <span className="text-muted-foreground">Hair:</span>
+                          <span className="text-muted-foreground">Saç:</span>
                           <span className="text-foreground capitalize">{model.hair_color}</span>
                         </>
                       )}
@@ -526,7 +526,7 @@ export default function Dashboard() {
                       }}
                     >
                       <ArrowRight className="h-4 w-4 mr-2" />
-                      Use Model
+                      Modeli Kullan
                     </Button>
                   </div>
                 ))}
@@ -542,18 +542,26 @@ export default function Dashboard() {
             onClick={() => setActiveCategory('All')}
             className={activeCategory === 'All' ? 'btn-gold' : ''}
           >
-            All ({getCategoryCount('All')})
+            Tümü ({getCategoryCount('All')})
           </Button>
-          {CATEGORIES.map(cat => (
-            <Button
-              key={cat}
-              variant={activeCategory === cat ? 'default' : 'outline'}
-              onClick={() => setActiveCategory(cat)}
-              className={activeCategory === cat ? 'btn-gold' : ''}
-            >
-              {cat} ({getCategoryCount(cat)})
-            </Button>
-          ))}
+          {CATEGORIES.map(cat => {
+            const categoryLabels: Record<Category, string> = {
+              'Topwear': 'Üst Giyim',
+              'Bottomwear': 'Alt Giyim',
+              'Shoes': 'Ayakkabı',
+              'Dresses': 'Elbise'
+            };
+            return (
+              <Button
+                key={cat}
+                variant={activeCategory === cat ? 'default' : 'outline'}
+                onClick={() => setActiveCategory(cat)}
+                className={activeCategory === cat ? 'btn-gold' : ''}
+              >
+                {categoryLabels[cat]} ({getCategoryCount(cat)})
+              </Button>
+            );
+          })}
         </div>
 
         {loadingImages ? (
@@ -568,16 +576,16 @@ export default function Dashboard() {
               <BrandLogoMark size="lg" className="opacity-90" />
             </div>
             <h2 className="text-2xl font-semibold text-foreground mb-3">
-              {activeCategory === 'All' ? 'No images yet' : `No ${activeCategory} images`}
+              {activeCategory === 'All' ? 'Henüz görsel yok' : `Henüz ${activeCategory === 'Topwear' ? 'Üst Giyim' : activeCategory === 'Bottomwear' ? 'Alt Giyim' : activeCategory === 'Shoes' ? 'Ayakkabı' : 'Elbise'} görseli yok`}
             </h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">
               {activeCategory === 'All' 
-                ? 'Start creating AI-generated fashion models for your products. Your images will appear here.'
-                : `You haven't categorized any images as ${activeCategory} yet.`}
+                ? 'Ürünleriniz için yapay zeka destekli moda modelleri oluşturmaya başlayın. Görselleriniz burada görünecek.'
+                : `Henüz bu kategoride görsel oluşturmadınız.`}
             </p>
             {activeCategory === 'All' && (
               <Button onClick={() => navigate('/filter/gender')} className="btn-gold">
-                Create Your First Model
+                İlk Modelinizi Oluşturun
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             )}
@@ -610,7 +618,7 @@ export default function Dashboard() {
                         <Input
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
-                          placeholder="Enter custom name..."
+                          placeholder="Özel isim girin..."
                           className="h-8 text-sm bg-white/10 border-white/20 text-white placeholder:text-white/50"
                           autoFocus
                         />
@@ -637,7 +645,7 @@ export default function Dashboard() {
                         onClick={() => handleNameEdit(image.id, image.custom_name)}
                       >
                         <span className="text-white font-medium truncate">
-                          {image.custom_name || 'Untitled'}
+                          {image.custom_name || 'İsimsiz'}
                         </span>
                         <Pencil className="h-3.5 w-3.5 text-white/50 opacity-0 group-hover/name:opacity-100 transition-opacity" />
                       </div>
@@ -651,12 +659,20 @@ export default function Dashboard() {
                       onValueChange={(value) => handleCategoryChange(image.id, value as Category)}
                     >
                       <SelectTrigger className="h-8 text-xs bg-white/10 border-white/20 text-white w-full">
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Kategori seçin" />
                       </SelectTrigger>
                       <SelectContent>
-                        {CATEGORIES.map(cat => (
-                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                        ))}
+                        {CATEGORIES.map(cat => {
+                          const categoryLabels: Record<Category, string> = {
+                            'Topwear': 'Üst Giyim',
+                            'Bottomwear': 'Alt Giyim',
+                            'Shoes': 'Ayakkabı',
+                            'Dresses': 'Elbise'
+                          };
+                          return (
+                            <SelectItem key={cat} value={cat}>{categoryLabels[cat]}</SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </div>
@@ -688,7 +704,7 @@ export default function Dashboard() {
                               size="icon"
                               variant="ghost"
                               className="h-8 w-8 text-amber-400 hover:text-amber-300 hover:bg-amber-400/20"
-                              title="Save model configuration"
+                              title="Model yapılandırmasını kaydet"
                             >
                               <Save className="h-4 w-4" />
                             </Button>
@@ -726,7 +742,7 @@ export default function Dashboard() {
                 {/* Category badge if set */}
                 {image.category && (
                   <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-primary/90 backdrop-blur-sm text-xs text-primary-foreground font-medium">
-                    {image.category}
+                    {image.category === 'Topwear' ? 'Üst Giyim' : image.category === 'Bottomwear' ? 'Alt Giyim' : image.category === 'Shoes' ? 'Ayakkabı' : 'Elbise'}
                   </div>
                 )}
               </div>
@@ -736,9 +752,9 @@ export default function Dashboard() {
 
         {/* Legal Links */}
         <div className="mt-12 pt-8 border-t border-border flex flex-wrap items-center justify-center gap-6 text-sm">
-          <a href="/legal/privacy-policy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</a>
-          <a href="/legal/terms-of-use" className="text-muted-foreground hover:text-foreground transition-colors">Terms of Use</a>
-          <a href="/legal/membership-agreement" className="text-muted-foreground hover:text-foreground transition-colors">Membership Agreement</a>
+          <a href="/legal/privacy-policy" className="text-muted-foreground hover:text-foreground transition-colors">Gizlilik Politikası</a>
+          <a href="/legal/terms-of-use" className="text-muted-foreground hover:text-foreground transition-colors">Kullanım Koşulları</a>
+          <a href="/legal/membership-agreement" className="text-muted-foreground hover:text-foreground transition-colors">Üyelik Sözleşmesi</a>
         </div>
       </main>
     </div>
