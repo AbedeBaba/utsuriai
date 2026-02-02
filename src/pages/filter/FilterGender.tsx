@@ -64,8 +64,8 @@ export default function FilterGender() {
   }, [isAnimating, navigate, updateConfig]);
 
   const genderOptions = [
-    { id: 'Male', label: 'Male', image: maleModel },
-    { id: 'Female', label: 'Female', image: femaleModel },
+    { id: 'Male', label: 'Erkek', image: maleModel },
+    { id: 'Female', label: 'Kadın', image: femaleModel },
   ];
 
   return (
@@ -118,7 +118,7 @@ export default function FilterGender() {
               isAnimating && selectedId !== 'Male' && "opacity-0"
             )}>
               <span className="text-white text-2xl font-bold tracking-wider px-6 py-2 rounded-lg bg-black/20 backdrop-blur-sm">
-                Male
+                Erkek
               </span>
             </div>
             <div className={cn(
@@ -155,7 +155,7 @@ export default function FilterGender() {
               isAnimating && selectedId !== 'Female' && "opacity-0"
             )}>
               <span className="text-white text-2xl font-bold tracking-wider px-6 py-2 rounded-lg bg-black/20 backdrop-blur-sm">
-                Female
+                Kadın
               </span>
             </div>
             <div className={cn(
@@ -179,7 +179,7 @@ export default function FilterGender() {
           isAnimating && "opacity-0"
         )}>
           <h1 className="text-white text-xl font-semibold tracking-wide px-6 py-2 rounded-lg bg-black/30 backdrop-blur-sm">
-            Select Gender
+            Cinsiyet Seçin
           </h1>
         </div>
 
@@ -191,7 +191,7 @@ export default function FilterGender() {
         )}>
           <div className="bg-black/40 backdrop-blur-md rounded-xl p-4 pointer-events-auto">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-white text-sm font-medium">Age</span>
+              <span className="text-white text-sm font-medium">Yaş</span>
               <span className="text-white text-lg font-bold">{config.age}</span>
             </div>
             <Slider
@@ -231,10 +231,10 @@ export default function FilterGender() {
           {/* Title */}
           <div className="text-center mb-12">
             <h1 className="text-3xl lg:text-4xl font-bold text-foreground mb-2">
-              Select Gender
+              Cinsiyet Seçin
             </h1>
             <p className="text-muted-foreground">
-              Choose the gender for your model
+              Modeliniz için cinsiyet seçin
             </p>
           </div>
 
@@ -242,7 +242,7 @@ export default function FilterGender() {
           <div className="max-w-md mx-auto mb-12">
             <div className="bg-card border border-border rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-foreground font-medium">Model Age</span>
+                <span className="text-foreground font-medium">Model Yaşı</span>
                 <span className="text-2xl font-bold text-primary">{config.age}</span>
               </div>
               <Slider

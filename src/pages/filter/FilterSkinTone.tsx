@@ -10,15 +10,15 @@ import { useImagePrefetch } from '@/hooks/useImagePrefetch';
 import { getFilterImages } from '@/data/filterImages';
 
 const skinToneOptions = [
-  { id: 'Fair', label: 'Fair', color: '#FFE5D4', darkColor: '#e6cfc0' },
-  { id: 'Light', label: 'Light', color: '#F5D0B5', darkColor: '#dbb9a0' },
-  { id: 'Medium Light', label: 'Medium Light', color: '#D9A87C', darkColor: '#c4956b' },
-  { id: 'Medium', label: 'Medium', color: '#C68642', darkColor: '#a87038' },
-  { id: 'Medium Dark', label: 'Medium Dark', color: '#8D5524', darkColor: '#704419' },
-  { id: 'Dark', label: 'Dark', color: '#6B4423', darkColor: '#52351a' },
-  { id: 'Deep', label: 'Deep', color: '#4A2C17', darkColor: '#3a2212' },
-  { id: 'Ebony', label: 'Ebony', color: '#3A1F0D', darkColor: '#2a170a' },
-  { id: 'Olive', label: 'Olive', color: '#C4A77D', darkColor: '#a89068' },
+  { id: 'Fair', label: 'Açık Ten', color: '#FFE5D4', darkColor: '#e6cfc0' },
+  { id: 'Light', label: 'Beyaz Ten', color: '#F5D0B5', darkColor: '#dbb9a0' },
+  { id: 'Medium Light', label: 'Orta Açık', color: '#D9A87C', darkColor: '#c4956b' },
+  { id: 'Medium', label: 'Orta', color: '#C68642', darkColor: '#a87038' },
+  { id: 'Medium Dark', label: 'Orta Koyu', color: '#8D5524', darkColor: '#704419' },
+  { id: 'Dark', label: 'Koyu', color: '#6B4423', darkColor: '#52351a' },
+  { id: 'Deep', label: 'Çok Koyu', color: '#4A2C17', darkColor: '#3a2212' },
+  { id: 'Ebony', label: 'Abanoz', color: '#3A1F0D', darkColor: '#2a170a' },
+  { id: 'Olive', label: 'Zeytin', color: '#C4A77D', darkColor: '#a89068' },
 ];
 
 // Options for random all

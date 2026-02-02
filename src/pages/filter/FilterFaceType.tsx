@@ -27,12 +27,12 @@ import maleOblong from '@/assets/face-types/male-oblong.png';
 import maleDiamond from '@/assets/face-types/male-diamond.png';
 
 const faceTypeOptions = [
-  { id: 'Oval', label: 'Oval', subtitle: 'Balanced proportions', icon: <Circle className="h-6 w-6" />, femaleImage: femaleOval, maleImage: maleOval },
-  { id: 'Round', label: 'Round', subtitle: 'Soft curves', icon: <Circle className="h-6 w-6" />, femaleImage: femaleRound, maleImage: maleRound },
-  { id: 'Square', label: 'Square', subtitle: 'Strong jawline', icon: <Square className="h-6 w-6" />, femaleImage: femaleSquare, maleImage: maleSquare },
-  { id: 'Heart', label: 'Heart', subtitle: 'Pointed chin', icon: <Heart className="h-6 w-6" />, femaleImage: femaleHeart, maleImage: maleHeart },
-  { id: 'Oblong', label: 'Oblong', subtitle: 'Elongated shape', icon: <Hexagon className="h-6 w-6" />, femaleImage: femaleOblong, maleImage: maleOblong },
-  { id: 'Diamond', label: 'Diamond', subtitle: 'Angular features', icon: <Diamond className="h-6 w-6" />, femaleImage: femaleDiamond, maleImage: maleDiamond },
+  { id: 'Oval', label: 'Oval', subtitle: 'Dengeli oranlar', icon: <Circle className="h-6 w-6" />, femaleImage: femaleOval, maleImage: maleOval },
+  { id: 'Round', label: 'Yuvarlak', subtitle: 'Yumuşak hatlar', icon: <Circle className="h-6 w-6" />, femaleImage: femaleRound, maleImage: maleRound },
+  { id: 'Square', label: 'Kare', subtitle: 'Güçlü çene hattı', icon: <Square className="h-6 w-6" />, femaleImage: femaleSquare, maleImage: maleSquare },
+  { id: 'Heart', label: 'Kalp', subtitle: 'Sivri çene', icon: <Heart className="h-6 w-6" />, femaleImage: femaleHeart, maleImage: maleHeart },
+  { id: 'Oblong', label: 'Uzun', subtitle: 'Uzun şekil', icon: <Hexagon className="h-6 w-6" />, femaleImage: femaleOblong, maleImage: maleOblong },
+  { id: 'Diamond', label: 'Elmas', subtitle: 'Köşeli hatlar', icon: <Diamond className="h-6 w-6" />, femaleImage: femaleDiamond, maleImage: maleDiamond },
 ];
 
 // Options for random all
@@ -110,12 +110,12 @@ export default function FilterFaceType() {
     setTimeout(() => { navigate('/clothing'); }, 1000);
   }, [isAnimating, navigate, updateConfig]);
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   return (
     <FilterStepLayout 
-      title="Select Face Type"
-      subtitle="Choose the face shape for your model"
+      title="Yüz Tipi Seçin"
+      subtitle="Modeliniz için yüz şekli seçin"
       onBack={() => navigate('/filter/background')}
       onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}

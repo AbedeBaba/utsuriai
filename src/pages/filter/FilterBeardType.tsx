@@ -21,15 +21,15 @@ import circleBeardImg from '@/assets/beard-types/circle-beard.png';
 import muttonChopsImg from '@/assets/beard-types/mutton-chops.png';
 
 const beardTypeOptions = [
-  { id: 'Clean Shaven', label: 'Clean Shaven', subtitle: 'No facial hair', image: cleanShavenImg },
-  { id: 'Stubble', label: 'Stubble', subtitle: '2-3 day growth', image: stubbleImg },
-  { id: 'Short Beard', label: 'Short Beard', subtitle: 'Trimmed close', image: shortBeardImg },
-  { id: 'Full Beard', label: 'Full Beard', subtitle: 'Full coverage', image: fullBeardImg },
-  { id: 'Goatee', label: 'Goatee', subtitle: 'Chin beard', image: goateeImg },
-  { id: 'Mustache', label: 'Mustache', subtitle: 'Upper lip only', image: mustacheImg },
-  { id: 'Van Dyke', label: 'Van Dyke', subtitle: 'Goatee + mustache', image: vanDykeImg },
-  { id: 'Circle Beard', label: 'Circle Beard', subtitle: 'Connected style', image: circleBeardImg },
-  { id: 'Mutton Chops', label: 'Mutton Chops', subtitle: 'Side whiskers', image: muttonChopsImg },
+  { id: 'Clean Shaven', label: 'Tıraşlı', subtitle: 'Sakal yok', image: cleanShavenImg },
+  { id: 'Stubble', label: 'Kirli Sakal', subtitle: '2-3 günlük uzama', image: stubbleImg },
+  { id: 'Short Beard', label: 'Kısa Sakal', subtitle: 'Düzgün kesilmiş', image: shortBeardImg },
+  { id: 'Full Beard', label: 'Uzun Sakal', subtitle: 'Tam kaplama', image: fullBeardImg },
+  { id: 'Goatee', label: 'Keçi Sakalı', subtitle: 'Çene sakalı', image: goateeImg },
+  { id: 'Mustache', label: 'Bıyık', subtitle: 'Sadece üst dudak', image: mustacheImg },
+  { id: 'Van Dyke', label: 'Van Dyke', subtitle: 'Keçi sakalı + bıyık', image: vanDykeImg },
+  { id: 'Circle Beard', label: 'Çember Sakal', subtitle: 'Bağlantılı stil', image: circleBeardImg },
+  { id: 'Mutton Chops', label: 'Favori', subtitle: 'Yan bıyıklar', image: muttonChopsImg },
 ];
 
 // Options for random all
@@ -121,12 +121,12 @@ export default function FilterBeardType() {
     setTimeout(() => { navigate('/clothing'); }, 1000);
   }, [isAnimating, navigate, updateConfig, hasProFeatureAccess]);
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   return (
     <FilterStepLayout 
-      title="Select Beard Type"
-      subtitle="Choose the facial hair style for your model"
+      title="Sakal Tipi Seçin"
+      subtitle="Modeliniz için yüz kılı stili seçin"
       onBack={() => navigate('/filter/hair-type')}
       onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}

@@ -20,10 +20,10 @@ import maleSerious from '@/assets/expressions/male-serious.png';
 import maleConfident from '@/assets/expressions/male-confident.png';
 
 const expressionOptions = [
-  { id: 'Neutral', label: 'Neutral', femaleImage: femaleNeutral, maleImage: maleNeutral },
-  { id: 'Smile', label: 'Smile', femaleImage: femaleSmile, maleImage: maleSmile },
-  { id: 'Serious', label: 'Serious', femaleImage: femaleSerious, maleImage: maleSerious },
-  { id: 'Confident', label: 'Confident', femaleImage: femaleConfident, maleImage: maleConfident },
+  { id: 'Neutral', label: 'Nötr', femaleImage: femaleNeutral, maleImage: maleNeutral },
+  { id: 'Smile', label: 'Gülümseyen', femaleImage: femaleSmile, maleImage: maleSmile },
+  { id: 'Serious', label: 'Ciddi', femaleImage: femaleSerious, maleImage: maleSerious },
+  { id: 'Confident', label: 'Özgüvenli', femaleImage: femaleConfident, maleImage: maleConfident },
 ];
 
 export default function FilterExpression() {
@@ -86,12 +86,12 @@ export default function FilterExpression() {
     navigate('/clothing');
   }, [updateConfig, navigate]);
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   return (
     <FilterStepLayout 
-      title="Select Expression"
-      subtitle="Choose the facial expression for your model"
+      title="İfade Seçin"
+      subtitle="Modeliniz için yüz ifadesi seçin"
       onBack={() => navigate('/filter/face-type')}
       onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}

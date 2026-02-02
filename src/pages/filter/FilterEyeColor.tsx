@@ -28,23 +28,23 @@ import maleAmber from '@/assets/eye-colors/male-amber.png';
 import maleGrey from '@/assets/eye-colors/male-grey.png';
 
 const femaleEyeColorOptions = [
-  { id: 'Blue', label: 'Blue', color: '#4682B4', image: femaleBlue },
-  { id: 'Brown', label: 'Brown', color: '#634E34', image: femaleBrown },
-  { id: 'Black', label: 'Black', color: '#1C1C1C', image: femaleBlack },
-  { id: 'Hazel', label: 'Hazel', color: '#8E7618', image: femaleHazel },
-  { id: 'Green', label: 'Green', color: '#3D6B4F', image: femaleGreen },
-  { id: 'Amber', label: 'Amber', color: '#CF9B52', image: femaleAmber },
-  { id: 'Grey', label: 'Grey', color: '#808080', image: femaleGrey },
+  { id: 'Blue', label: 'Mavi', color: '#4682B4', image: femaleBlue },
+  { id: 'Brown', label: 'Kahverengi', color: '#634E34', image: femaleBrown },
+  { id: 'Black', label: 'Siyah', color: '#1C1C1C', image: femaleBlack },
+  { id: 'Hazel', label: 'Ela', color: '#8E7618', image: femaleHazel },
+  { id: 'Green', label: 'Yeşil', color: '#3D6B4F', image: femaleGreen },
+  { id: 'Amber', label: 'Kehribar', color: '#CF9B52', image: femaleAmber },
+  { id: 'Grey', label: 'Gri', color: '#808080', image: femaleGrey },
 ];
 
 const maleEyeColorOptions = [
-  { id: 'Blue', label: 'Blue', color: '#4682B4', image: maleBlue },
-  { id: 'Brown', label: 'Brown', color: '#634E34', image: maleBrown },
-  { id: 'Black', label: 'Black', color: '#1C1C1C', image: maleBlack },
-  { id: 'Hazel', label: 'Hazel', color: '#8E7618', image: maleHazel },
-  { id: 'Green', label: 'Green', color: '#3D6B4F', image: maleGreen },
-  { id: 'Amber', label: 'Amber', color: '#CF9B52', image: maleAmber },
-  { id: 'Grey', label: 'Grey', color: '#808080', image: maleGrey },
+  { id: 'Blue', label: 'Mavi', color: '#4682B4', image: maleBlue },
+  { id: 'Brown', label: 'Kahverengi', color: '#634E34', image: maleBrown },
+  { id: 'Black', label: 'Siyah', color: '#1C1C1C', image: maleBlack },
+  { id: 'Hazel', label: 'Ela', color: '#8E7618', image: maleHazel },
+  { id: 'Green', label: 'Yeşil', color: '#3D6B4F', image: maleGreen },
+  { id: 'Amber', label: 'Kehribar', color: '#CF9B52', image: maleAmber },
+  { id: 'Grey', label: 'Gri', color: '#808080', image: maleGrey },
 ];
 
 // Options for random all
@@ -164,7 +164,7 @@ export default function FilterEyeColor() {
     }, 1000);
   }, [isAnimating, loading, navigate, updateConfig, config.gender, config.modestOption, eyeColorOptions, hasProFeatureAccess, hasCreatorFeatureAccess]);
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   // Handle back navigation - skip hair color if Hijab is selected
   const handleBack = useCallback(() => {
@@ -177,8 +177,8 @@ export default function FilterEyeColor() {
 
   return (
     <FilterStepLayout 
-      title="Select Eye Color"
-      subtitle="Choose the eye color for your model"
+      title="Göz Rengi Seçin"
+      subtitle="Modeliniz için göz rengi seçin"
       onBack={handleBack}
       onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}

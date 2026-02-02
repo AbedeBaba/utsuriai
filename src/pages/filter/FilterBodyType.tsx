@@ -33,15 +33,15 @@ import malePetite from '@/assets/body-types/male-petite.png';
 import maleTall from '@/assets/body-types/male-tall.png';
 
 const allBodyTypeOptions = [
-  { id: 'Slim', label: 'Slim', subtitle: 'Lean and slender', femaleImage: femaleSlim, maleImage: maleSlim },
-  { id: 'Athletic', label: 'Athletic', subtitle: 'Toned and fit', femaleImage: femaleAthletic, maleImage: maleAthletic },
-  { id: 'Average', label: 'Average', subtitle: 'Balanced build', femaleImage: femaleAverage, maleImage: maleAverage },
-  { id: 'Muscular', label: 'Muscular', subtitle: 'Strong and defined', femaleImage: femaleMuscular, maleImage: maleMuscular },
-  { id: 'Curvy', label: 'Curvy', subtitle: 'Full figured', femaleImage: femaleCurvy, maleImage: maleCurvy },
-  { id: 'Plus Size', label: 'Plus Size', subtitle: 'Full bodied', femaleImage: femalePlusSize, maleImage: malePlusSize },
-  { id: 'Petite', label: 'Petite', subtitle: 'Small and delicate', femaleImage: femalePetite, maleImage: malePetite },
-  { id: 'Tall', label: 'Tall', subtitle: 'Long and lean', femaleImage: femaleTall, maleImage: maleTall },
-  { id: 'Hourglass', label: 'Hourglass', subtitle: 'Balanced proportions', femaleImage: femaleHourglass, maleImage: null, femaleOnly: true },
+  { id: 'Slim', label: 'İnce', subtitle: 'Narin ve zarif', femaleImage: femaleSlim, maleImage: maleSlim },
+  { id: 'Athletic', label: 'Atletik', subtitle: 'Formlu ve fit', femaleImage: femaleAthletic, maleImage: maleAthletic },
+  { id: 'Average', label: 'Ortalama', subtitle: 'Dengeli yapı', femaleImage: femaleAverage, maleImage: maleAverage },
+  { id: 'Muscular', label: 'Kaslı', subtitle: 'Güçlü ve belirgin', femaleImage: femaleMuscular, maleImage: maleMuscular },
+  { id: 'Curvy', label: 'Dolgun', subtitle: 'Kıvrımlı', femaleImage: femaleCurvy, maleImage: maleCurvy },
+  { id: 'Plus Size', label: 'Büyük Beden', subtitle: 'Geniş yapılı', femaleImage: femalePlusSize, maleImage: malePlusSize },
+  { id: 'Petite', label: 'Minyon', subtitle: 'Küçük ve zarif', femaleImage: femalePetite, maleImage: malePetite },
+  { id: 'Tall', label: 'Uzun Boylu', subtitle: 'Uzun ve narin', femaleImage: femaleTall, maleImage: maleTall },
+  { id: 'Hourglass', label: 'Kum Saati', subtitle: 'Dengeli oranlar', femaleImage: femaleHourglass, maleImage: null, femaleOnly: true },
 ];
 
 const hairTypeOptions = ['Straight', 'Wavy', 'Curly', 'Coily', 'Bald', 'Short', 'Long'];
@@ -263,12 +263,12 @@ export default function FilterBodyType() {
     };
   };
 
-  const infoText = "Images shown in the cards are for example purposes only. UtsuriAI does not recreate the exact same models; it generates random and unique models based on the selected filters.";
+  const infoText = "Kartlarda gösterilen görseller yalnızca örnek amaçlıdır. UtsuriAI aynı modelleri yeniden oluşturmaz; seçilen filtrelere göre rastgele ve benzersiz modeller üretir.";
 
   return (
     <FilterStepLayout 
-      title="Select Body Type"
-      subtitle="Scroll left or right to choose the body type"
+      title="Vücut Tipi Seçin"
+      subtitle="Vücut tipini seçmek için sola veya sağa kaydırın"
       onBack={() => navigate('/filter/eye-color')}
       onRandom={handleRandomAll}
       onRandomSingle={handleRandomSingle}
@@ -387,7 +387,7 @@ export default function FilterBodyType() {
                       "font-medium rounded-full shadow-lg shadow-primary/30"
                     )}
                   >
-                    Select
+                    Seç
                   </Button>
                 )}
               </div>
