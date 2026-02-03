@@ -157,11 +157,39 @@ NEGATIVE CONSTRAINTS (ABSOLUTELY FORBIDDEN):
   // Quality enhancement prompts
   const POSITIVE_PROMPT_ADDITIONS = `high-end fashion photography, editorial fashion shoot, real human model, natural skin texture, visible skin pores, soft natural lighting, diffused light, realistic shadows, premium studio or lifestyle background, clean and minimal environment, natural color grading, neutral tones, true-to-life colors, professional camera look, DSLR photography, shallow depth of field, authentic fabric texture, realistic clothing folds, relaxed and natural pose, confident posture, editorial fashion pose, candid feeling, luxury brand aesthetic, modern fashion campaign`;
 
+  // Social media optimization requirements
+  const SOCIAL_MEDIA_OPTIMIZATION = `
+CRITICAL - SOCIAL MEDIA & E-COMMERCE OPTIMIZATION:
+This image is for businesses selling products on social media platforms (Instagram, TikTok, Facebook) and e-commerce sites (Trendyol, Hepsiburada, Amazon, Shopify).
+
+IMAGE DIMENSION REQUIREMENTS:
+- Output MUST be in 9:16 vertical aspect ratio (1080x1920 pixels equivalent)
+- This format is optimized for: Instagram Reels/Stories, TikTok, Facebook Stories, and mobile e-commerce listings
+- The image should fill the entire vertical frame without black bars or empty space
+- Product/clothing must be clearly visible and centered
+
+COMMERCIAL QUALITY STANDARDS:
+- Professional e-commerce product photography quality
+- Clothing must be the HERO of the image - clear, unobstructed, well-lit
+- Colors must be TRUE TO LIFE for accurate online shopping
+- High enough resolution for zooming on mobile devices
+- Clean, distraction-free composition that highlights the product
+- Suitable for thumbnail preview on mobile apps
+
+PLATFORM-SPECIFIC CONSIDERATIONS:
+- Model and clothing must look appealing in small thumbnail sizes
+- Avoid complex backgrounds that compete with the product
+- Ensure the product is visible even in small preview sizes
+- Image should work for both feed posts and stories/reels format
+`;
+
   const NEGATIVE_PROMPT = `NEGATIVE PROMPT (AVOID THESE): plastic skin, overly smooth skin, artificial skin texture, waxy skin, CGI skin, doll-like face, porcelain skin, uncanny valley, over-processed face, excessive skin retouching, beauty filter look, AI-generated look, synthetic appearance, low-quality background, cheap background, blurry background, pixelated background, noisy background, flat lighting, unnatural lighting, harsh shadows, overexposed highlights, washed-out colors, unrealistic proportions, distorted anatomy, deformed hands, extra fingers, missing fingers, warped body, asymmetrical face, over-sharpening, oversaturated colors, HDR look, fake depth of field, unnatural bokeh, 3D render, game engine look, illustration style, stiff pose, robotic posture, stock photo look, artificial expression`;
 
-  const tryOnPrompt = `You are a professional fashion photographer AI. Generate a hyper-realistic fashion photography image.
+  const tryOnPrompt = `You are a professional fashion photographer AI. Generate a hyper-realistic fashion photography image for social media and e-commerce use.
 
 ${POSITIVE_PROMPT_ADDITIONS}
+
+${SOCIAL_MEDIA_OPTIMIZATION}
 
 CRITICAL TASK: VIRTUAL TRY-ON / CLOTHING TRANSFER
 The image(s) above show clothing/outfit items. Your task is to:
@@ -749,15 +777,29 @@ function buildFallbackPrompt(config: Record<string, string | number | null>): st
   // Quality enhancement prompts (shared)
   const POSITIVE_PROMPT = 'high-end fashion photography, editorial fashion shoot, real human model, natural skin texture, visible skin pores, soft natural lighting, diffused light, realistic shadows, premium studio or lifestyle background, clean and minimal environment, natural color grading, neutral tones, true-to-life colors, professional camera look, DSLR photography, shallow depth of field, authentic fabric texture, realistic clothing folds, relaxed and natural pose, confident posture, editorial fashion pose, candid feeling, luxury brand aesthetic, modern fashion campaign';
 
+  // Social media optimization requirements (shared)
+  const SOCIAL_MEDIA_OPTIMIZATION = `
+SOCIAL MEDIA & E-COMMERCE OPTIMIZATION:
+This image is for businesses selling products on Instagram, TikTok, Facebook, and e-commerce platforms.
+- Output MUST be 9:16 vertical aspect ratio (optimized for Instagram Reels/Stories, TikTok, mobile e-commerce)
+- Image should fill entire vertical frame without black bars
+- Clothing/product must be clearly visible, well-lit, and centered
+- Professional e-commerce quality with TRUE TO LIFE colors
+- Clean composition that highlights the product
+- Must look appealing in thumbnail sizes on mobile apps
+`;
+
   const NEGATIVE_PROMPT_GENERAL = 'plastic skin, overly smooth skin, artificial skin texture, waxy skin, CGI skin, doll-like face, porcelain skin, uncanny valley, over-processed face, excessive skin retouching, beauty filter look, AI-generated look, synthetic appearance, low-quality background, cheap background, blurry background, pixelated background, noisy background, flat lighting, unnatural lighting, harsh shadows, overexposed highlights, washed-out colors, unrealistic proportions, distorted anatomy, deformed hands, extra fingers, missing fingers, warped body, asymmetrical face, over-sharpening, oversaturated colors, HDR look, fake depth of field, unnatural bokeh, 3D render, game engine look, illustration style, stiff pose, robotic posture, stock photo look, artificial expression';
   
   if (isHijabModel) {
     // ========================================
     // TESETTÜR / MODEST HIJABI MODEL PROMPT
     // ========================================
-    parts.push('VIRTUAL TRY-ON TASK: Generate a fully modest hijabi female model wearing the EXACT clothing shown in the input images.');
+    parts.push('VIRTUAL TRY-ON TASK: Generate a fully modest hijabi female model wearing the EXACT clothing shown in the input images for social media and e-commerce use.');
     parts.push('');
     parts.push(`STYLE REQUIREMENTS: ${POSITIVE_PROMPT}`);
+    parts.push('');
+    parts.push(SOCIAL_MEDIA_OPTIMIZATION);
     parts.push('');
     parts.push('=== TESETTÜR / MODEST HIJABI MODEL - ABSOLUTE REQUIREMENTS ===');
     parts.push('');
@@ -839,9 +881,11 @@ function buildFallbackPrompt(config: Record<string, string | number | null>): st
   // ========================================
   // Uses POSITIVE_PROMPT and NEGATIVE_PROMPT_GENERAL defined above
   
-  parts.push('VIRTUAL TRY-ON TASK: Generate a fashion model wearing the EXACT clothing shown in the input images.');
+  parts.push('VIRTUAL TRY-ON TASK: Generate a fashion model wearing the EXACT clothing shown in the input images for social media and e-commerce use.');
   parts.push('');
   parts.push(`STYLE REQUIREMENTS: ${POSITIVE_PROMPT}`);
+  parts.push('');
+  parts.push(SOCIAL_MEDIA_OPTIMIZATION);
   parts.push('');
   parts.push('CRITICAL RULES:');
   parts.push('- The model MUST wear the SAME outfit from the input images');
