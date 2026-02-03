@@ -19,10 +19,10 @@ interface MultiImageUploadProps {
 }
 
 const imageTypes = [
-  { id: 'outfit', label: 'Outfit' },
-  { id: 'accessory', label: 'Accessory' },
-  { id: 'jewelry', label: 'Jewelry' },
-  { id: 'other', label: 'Other' },
+  { id: 'outfit', label: 'Kıyafet' },
+  { id: 'accessory', label: 'Aksesuar' },
+  { id: 'jewelry', label: 'Takı' },
+  { id: 'other', label: 'Diğer' },
 ] as const;
 
 export function MultiImageUpload({
@@ -161,7 +161,7 @@ export function MultiImageUpload({
               className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-border rounded-xl hover:border-primary/50 hover:bg-secondary/30 transition-colors"
             >
               <Plus className="h-8 w-8 text-muted-foreground mb-1" />
-              <span className="text-xs text-muted-foreground">Add More</span>
+              <span className="text-xs text-muted-foreground">Daha Fazla Ekle</span>
             </button>
           )}
         </div>
@@ -187,13 +187,13 @@ export function MultiImageUpload({
             )}
           </div>
           <div className="text-center">
-            <p className="font-medium text-foreground">Upload Clothing & Accessories</p>
+            <p className="font-medium text-foreground">Kıyafet & Aksesuar Yükleyin</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Add outfits, jewelry, accessories - up to {maxImages} images
+              Kıyafet, takı, aksesuar ekleyin - en fazla {maxImages} görsel
             </p>
           </div>
           <p className="text-xs text-muted-foreground">
-            {isDragOver ? "Drop your images here" : "Click or drag & drop multiple images"}
+            {isDragOver ? "Görsellerinizi buraya bırakın" : "Tıklayın veya birden fazla görseli sürükleyip bırakın"}
           </p>
         </div>
       )}
@@ -213,14 +213,14 @@ export function MultiImageUpload({
         >
           <p className="text-sm text-muted-foreground">
             <BrandLogoMark size="sm" className="inline mr-1" />
-            Drop more images here or click "Add More" above
+            Daha fazla görsel buraya bırakın veya yukarıdaki "Daha Fazla Ekle"ye tıklayın
           </p>
         </div>
       )}
 
       {/* Counter */}
       <p className="text-xs text-muted-foreground text-center">
-        {images.length} of {maxImages} images uploaded
+        {maxImages} görselden {images.length} tanesi yüklendi
       </p>
     </div>
   );

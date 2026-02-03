@@ -113,8 +113,8 @@ export default function ClothingSelection() {
     
     if (missingFields.length > 0) {
       toast({
-        title: 'Missing selections',
-        description: 'Please complete all filter steps before generating.',
+        title: 'Eksik seçimler',
+        description: 'Lütfen oluşturmadan önce tüm filtre adımlarını tamamlayın.',
         variant: 'destructive',
       });
       return false;
@@ -131,8 +131,8 @@ export default function ClothingSelection() {
 
     if (!user) {
       toast({
-        title: 'Not authenticated',
-        description: 'Please sign in to generate models.',
+        title: 'Oturum açılmadı',
+        description: 'Lütfen model oluşturmak için giriş yapın.',
         variant: 'destructive',
       });
       navigate('/auth');
@@ -142,8 +142,8 @@ export default function ClothingSelection() {
     // CRITICAL: Validate at least 1 clothing image is uploaded (Image-to-Image only)
     if (uploadedImages.length === 0) {
       toast({
-        title: 'Clothing image required',
-        description: 'Please upload at least 1 clothing image to generate a model.',
+        title: 'Kıyafet görseli gerekli',
+        description: 'Lütfen model oluşturmak için en az 1 kıyafet görseli yükleyin.',
         variant: 'destructive',
       });
       return;
@@ -160,16 +160,16 @@ export default function ClothingSelection() {
     if (isTrial) {
       if (usePro && trialProRemaining <= 0) {
         toast({
-          title: 'Pro generation limit reached',
-          description: 'You have used all your trial Pro generations.',
+          title: 'Pro üretim limiti doldu',
+          description: 'Tüm deneme Pro üretimlerinizi kullandınız.',
           variant: 'destructive',
         });
         return;
       }
       if (!usePro && trialStandardRemaining <= 0) {
         toast({
-          title: 'Generation limit reached',
-          description: 'You have used all your trial generations.',
+          title: 'Üretim limiti doldu',
+          description: 'Tüm deneme üretimlerinizi kullandınız.',
           variant: 'destructive',
         });
         return;
@@ -180,8 +180,8 @@ export default function ClothingSelection() {
       const requiredCredits = usePro ? 4 : 1;
       if (creditsRemaining < requiredCredits) {
         toast({
-          title: 'Insufficient credits',
-          description: usePro ? 'Pro generation requires 4 credits.' : 'Not enough credits.',
+          title: 'Yetersiz kredi',
+          description: usePro ? 'Pro üretim için 4 kredi gerekli.' : 'Yeterli krediniz yok.',
           variant: 'destructive',
         });
         return;
@@ -238,8 +238,8 @@ export default function ClothingSelection() {
     } catch (error) {
       console.error('Error saving generation:', error);
       toast({
-        title: 'Generation failed',
-        description: 'Something went wrong. Please try again.',
+        title: 'Oluşturma başarısız',
+        description: 'Bir şeyler yanlış gitti. Lütfen tekrar deneyin.',
         variant: 'destructive',
       });
     } finally {
@@ -253,20 +253,20 @@ export default function ClothingSelection() {
   const isHijab = config.modestOption === 'Hijab';
   
   const filterSummary = [
-    { label: 'Gender', value: config.gender },
-    { label: 'Age', value: config.age?.toString() },
-    { label: 'Ethnicity', value: config.ethnicity },
-    { label: 'Skin Tone', value: config.skinTone },
-    ...(!isHijab ? [{ label: 'Hair Color', value: config.hairColor }] : []),
-    { label: 'Eye Color', value: config.eyeColor },
-    { label: 'Body Type', value: config.bodyType },
-    ...(!isHijab ? [{ label: 'Hair Type', value: config.hairType }] : []),
-    ...(config.beardType ? [{ label: 'Beard Type', value: config.beardType }] : []),
-    { label: 'Coverage', value: config.modestOption },
-    { label: 'Pose', value: config.pose },
-    { label: 'Background', value: config.background },
-    { label: 'Face Type', value: config.faceType },
-    { label: 'Expression', value: config.facialExpression },
+    { label: 'Cinsiyet', value: config.gender },
+    { label: 'Yaş', value: config.age?.toString() },
+    { label: 'Etnik Köken', value: config.ethnicity },
+    { label: 'Ten Rengi', value: config.skinTone },
+    ...(!isHijab ? [{ label: 'Saç Rengi', value: config.hairColor }] : []),
+    { label: 'Göz Rengi', value: config.eyeColor },
+    { label: 'Vücut Tipi', value: config.bodyType },
+    ...(!isHijab ? [{ label: 'Saç Tipi', value: config.hairType }] : []),
+    ...(config.beardType ? [{ label: 'Sakal Tipi', value: config.beardType }] : []),
+    { label: 'Kaplama', value: config.modestOption },
+    { label: 'Poz', value: config.pose },
+    { label: 'Arka Plan', value: config.background },
+    { label: 'Yüz Tipi', value: config.faceType },
+    { label: 'İfade', value: config.facialExpression },
   ].filter(item => item.value);
 
   return (
@@ -292,7 +292,7 @@ export default function ClothingSelection() {
               trigger={
                 <Button variant="outline" size="sm" className="gap-2 border-primary/50 hover:border-primary">
                   <Save className="h-4 w-4" />
-                  <span className="hidden sm:inline">Save Model</span>
+                  <span className="hidden sm:inline">Modeli Kaydet</span>
                 </Button>
               }
             />
@@ -314,7 +314,7 @@ export default function ClothingSelection() {
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                Selected Attributes
+                Seçilen Özellikler
               </h3>
               {/* Save Model Button - Creator Only */}
               {hasCreatorFeatureAccess && (
@@ -323,7 +323,7 @@ export default function ClothingSelection() {
                   trigger={
                     <Button variant="outline" size="sm" className="gap-2 text-xs">
                       <Save className="h-3.5 w-3.5" />
-                      Save Model
+                      Modeli Kaydet
                     </Button>
                   }
                 />
@@ -356,10 +356,10 @@ export default function ClothingSelection() {
               <div className="bg-card/50 border border-border rounded-lg p-3 text-sm">
                 {isTrial ? (
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Trial Remaining:</span>
+                    <span className="text-muted-foreground">Deneme Hakkı:</span>
                     <div className="flex gap-4">
                       <span className="text-foreground">
-                        Standard: <strong className={trialStandardRemaining > 0 ? 'text-green-500' : 'text-destructive'}>{trialStandardRemaining}/5</strong>
+                        Standart: <strong className={trialStandardRemaining > 0 ? 'text-green-500' : 'text-destructive'}>{trialStandardRemaining}/5</strong>
                       </span>
                       <span className="text-foreground">
                         Pro: <strong className={trialProRemaining > 0 ? 'text-amber-500' : 'text-destructive'}>{trialProRemaining}/2</strong>
@@ -368,9 +368,9 @@ export default function ClothingSelection() {
                   </div>
                 ) : isPaid ? (
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Credits:</span>
+                    <span className="text-muted-foreground">Krediler:</span>
                     <span className="text-foreground">
-                      <strong className={creditsRemaining >= 1 ? 'text-green-500' : 'text-destructive'}>{creditsRemaining}</strong> credits
+                      <strong className={creditsRemaining >= 1 ? 'text-green-500' : 'text-destructive'}>{creditsRemaining}</strong> kredi
                       <span className="text-xs text-muted-foreground ml-2">(Std: 1, Pro: 4)</span>
                     </span>
                   </div>
@@ -393,7 +393,7 @@ export default function ClothingSelection() {
               ) : !canGenerate ? (
                 <>
                   <BrandLogoMark size="sm" className="mr-2" />
-                  {isTrial ? 'Trial limit reached' : 'Insufficient credits'}
+                  {isTrial ? 'Deneme limiti doldu' : 'Yetersiz kredi'}
                 </>
               ) : (
                 <>
@@ -401,12 +401,12 @@ export default function ClothingSelection() {
                   {t('clothing.generate')}
                   {isTrial && (
                     <span className="ml-2 text-sm opacity-80">
-                      ({trialStandardRemaining} left)
+                      ({trialStandardRemaining} kaldı)
                     </span>
                   )}
                   {isPaid && (
                     <span className="ml-2 text-sm opacity-80">
-                      (1 credit)
+                      (1 kredi)
                     </span>
                   )}
                 </>
@@ -428,20 +428,20 @@ export default function ClothingSelection() {
               ) : !canUseProGeneration ? (
                 <>
                   <Crown className="mr-2 h-5 w-5" />
-                  {isTrial ? 'Trial Pro limit reached' : 'Insufficient credits (4 required)'}
+                  {isTrial ? 'Deneme Pro limiti doldu' : 'Yetersiz kredi (4 gerekli)'}
                 </>
               ) : (
                 <>
                   <Crown className="mr-2 h-5 w-5" />
-                  Generate Model With Utsuri Pro
+                  Utsuri Pro ile Model Oluştur
                   {isTrial && (
                     <span className="ml-2 text-sm opacity-80">
-                      ({trialProRemaining} left)
+                      ({trialProRemaining} kaldı)
                     </span>
                   )}
                   {isPaid && (
                     <span className="ml-2 text-sm opacity-80">
-                      (4 credits)
+                      (4 kredi)
                     </span>
                   )}
                 </>
@@ -450,7 +450,7 @@ export default function ClothingSelection() {
           </div>
 
           <p className="text-xs text-center text-muted-foreground animate-fade-in" style={{ animationDelay: '300ms' }}>
-            Add different angles, accessories, and jewelry - the AI will dress your model accordingly
+            Farklı açılar, aksesuarlar ve takılar ekleyin - yapay zeka modelinizi buna göre giydirecek
           </p>
 
           <AIDisclaimer className="animate-fade-in" />
@@ -464,7 +464,7 @@ export default function ClothingSelection() {
             style={{ animationDelay: '400ms' }}
           >
             <LayoutDashboard className="mr-2 h-5 w-5" />
-            Go to Dashboard
+            Panele Git
           </Button>
         </div>
       </main>
