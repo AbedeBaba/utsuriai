@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap, Shield, Save, User, Loader2 } from 'lucide-react';
+import { ArrowRight, Clock, Trash2, Download, Plus, Pencil, Check, X, Crown, Zap, Shield, Save, User, Loader2, Menu } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, addHours } from 'date-fns';
 import {
@@ -14,6 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
@@ -62,6 +69,7 @@ export default function Dashboard() {
   const [activeCategory, setActiveCategory] = useState<Category | 'All'>('All');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getPlanDisplayName = (plan: string | undefined) => {
     switch (plan) {
@@ -349,7 +357,8 @@ export default function Dashboard() {
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-4">
             {isAdmin && (
               <Button
                 variant="outline"
@@ -369,6 +378,126 @@ export default function Dashboard() {
             </Button>
             <LanguageSwitcher />
             <ProfileDropdown />
+          </div>
+
+          {/* Mobile Hamburger Menu */}
+          <div className="md:hidden flex items-center gap-2">
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-10 w-10">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Menüyü aç</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[350px]">
+                <SheetHeader>
+                  <SheetTitle className="flex items-center gap-2">
+                    <BrandLogo size="md" withText text="Utsuri" />
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-4 mt-8">
+                  {/* User Info */}
+                  <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <User className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                    </div>
+                  </div>
+
+                  {/* Plan Badge */}
+                  {!subscriptionLoading && subscription && (
+                    <div className="p-3 bg-card border border-border rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getPlanBadgeStyles(subscription.plan)}`}>
+                          {subscription.plan === 'creator' && <Crown className="h-3 w-3 inline mr-1" />}
+                          {getPlanDisplayName(subscription.plan)}
+                        </span>
+                      </div>
+                      {subscription.plan === 'trial' ? (
+                        <p className="text-xs text-muted-foreground">
+                          Standart: {subscription.standard_generations_remaining} | Pro: {subscription.pro_generations_remaining}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          Kredi: {subscription.credits_remaining}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Navigation Links */}
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      onClick={() => {
+                        navigate('/filter/gender');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="btn-gold w-full justify-start"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      {t('dashboard.newModel')}
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        navigate('/templates');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full justify-start"
+                    >
+                      Şablonlar
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        navigate('/pricing');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full justify-start"
+                    >
+                      Fiyatlandırma
+                    </Button>
+
+                    {isAdmin && (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          navigate('/admin');
+                          setMobileMenuOpen(false);
+                        }}
+                        className="w-full justify-start border-primary/50 text-primary"
+                      >
+                        <Shield className="h-4 w-4 mr-2" />
+                        Admin Paneli
+                      </Button>
+                    )}
+
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        navigate('/account-settings');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full justify-start"
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      Hesap Ayarları
+                    </Button>
+                  </div>
+
+                  {/* Language Switcher */}
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-xs text-muted-foreground mb-2">Dil</p>
+                    <LanguageSwitcher />
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
