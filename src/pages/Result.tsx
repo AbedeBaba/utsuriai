@@ -81,8 +81,8 @@ export default function Result() {
     } catch (error) {
       console.error('Error fetching generation:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to load generation data.',
+        title: 'Hata',
+        description: 'Oluşturma verileri yüklenemedi.',
         variant: 'destructive',
       });
     } finally {
@@ -134,17 +134,17 @@ export default function Result() {
       setGeneration(prev => prev ? { ...prev, status: 'completed', image_url: result.imageUrl } : null);
 
       toast({
-        title: 'Success!',
+        title: 'Başarılı!',
         description: usePro 
-          ? 'Your Utsuri Pro fashion model has been generated.' 
-          : 'Your fashion model has been generated.',
+          ? 'Utsuri Pro moda modeliniz oluşturuldu.' 
+          : 'Moda modeliniz oluşturuldu.',
       });
     } catch (error) {
       console.error('Error generating image:', error);
       setGeneration(prev => prev ? { ...prev, status: 'failed' } : null);
       toast({
-        title: 'Generation failed',
-        description: error instanceof Error ? error.message : 'AI image generation failed. Please try again.',
+        title: 'Oluşturma başarısız',
+        description: error instanceof Error ? error.message : 'AI görsel oluşturma başarısız oldu. Lütfen tekrar deneyin.',
         variant: 'destructive',
       });
     } finally {
@@ -190,8 +190,8 @@ export default function Result() {
       }, 100);
       
       toast({
-        title: 'Download started',
-        description: 'Your image is being downloaded.',
+        title: 'İndirme başladı',
+        description: 'Görseliniz indiriliyor.',
       });
     } catch (error) {
       console.error('Download error:', error);
@@ -199,13 +199,13 @@ export default function Result() {
       try {
         window.open(generation.image_url, '_blank');
         toast({
-          title: 'Opening image',
-          description: 'The image opened in a new tab. Right-click to save it.',
+          title: 'Görsel açılıyor',
+          description: 'Görsel yeni sekmede açıldı. Kaydetmek için sağ tıklayın.',
         });
       } catch {
         toast({
-          title: 'Download failed',
-          description: 'Could not download the image. Please try again.',
+          title: 'İndirme başarısız',
+          description: 'Görsel indirilemedi. Lütfen tekrar deneyin.',
           variant: 'destructive',
         });
       }
@@ -279,13 +279,13 @@ export default function Result() {
               <div className="w-full h-full flex flex-col items-center justify-center gap-4">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
                 <p className="text-muted-foreground">
-                  {isProMode ? 'Generating with Utsuri Pro...' : t('result.generating')}
+                  {isProMode ? 'Utsuri Pro ile oluşturuluyor...' : t('result.generating')}
                 </p>
               </div>
             ) : generation?.image_url ? (
               <img 
                 src={generation.image_url} 
-                alt="Generated fashion model" 
+                alt="Oluşturulan moda modeli" 
                 className="w-full h-full object-contain bg-muted/10"
               />
             ) : (
@@ -293,8 +293,8 @@ export default function Result() {
                 <ImageIcon className="h-16 w-16" />
                 <p>{t('result.pending')}</p>
                 <p className="text-sm text-center px-8">
-                  The AI integration is prepared but not yet active. 
-                  Your configuration has been saved.
+                  AI entegrasyonu hazır ancak henüz aktif değil. 
+                  Yapılandırmanız kaydedildi.
                 </p>
               </div>
             )}
@@ -305,90 +305,90 @@ export default function Result() {
             <div className="bg-card border border-border rounded-xl p-4 mb-8">
               <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
                 <BrandLogoMark size="sm" />
-                Selected Filters
+                Seçilen Filtreler
                 {isProMode && (
                   <span className="ml-auto flex items-center gap-1.5 px-2 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 text-xs font-medium border border-amber-500/30">
                     <Crown className="h-3 w-3" />
-                    Pro Quality
+                    Pro Kalite
                   </span>
                 )}
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 {generation.gender && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Gender</span>
+                    <span className="text-muted-foreground">Cinsiyet</span>
                     <span className="font-medium text-foreground">{generation.gender}</span>
                   </div>
                 )}
                 {generation.ethnicity && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Ethnicity</span>
+                    <span className="text-muted-foreground">Etnik Köken</span>
                     <span className="font-medium text-foreground">{generation.ethnicity}</span>
                   </div>
                 )}
                 {generation.skin_tone && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Skin Tone</span>
+                    <span className="text-muted-foreground">Ten Rengi</span>
                     <span className="font-medium text-foreground">{generation.skin_tone}</span>
                   </div>
                 )}
                 {generation.hair_color && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Hair Color</span>
+                    <span className="text-muted-foreground">Saç Rengi</span>
                     <span className="font-medium text-foreground">{generation.hair_color}</span>
                   </div>
                 )}
                 {generation.eye_color && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Eye Color</span>
+                    <span className="text-muted-foreground">Göz Rengi</span>
                     <span className="font-medium text-foreground">{generation.eye_color}</span>
                   </div>
                 )}
                 {generation.body_type && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Body Type</span>
+                    <span className="text-muted-foreground">Vücut Tipi</span>
                     <span className="font-medium text-foreground">{generation.body_type}</span>
                   </div>
                 )}
                 {generation.hair_type && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Hair Type</span>
+                    <span className="text-muted-foreground">Saç Tipi</span>
                     <span className="font-medium text-foreground">{generation.hair_type}</span>
                   </div>
                 )}
                 {generation.beard_type && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Beard Type</span>
+                    <span className="text-muted-foreground">Sakal Tipi</span>
                     <span className="font-medium text-foreground">{generation.beard_type}</span>
                   </div>
                 )}
                 {generation.pose && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Pose</span>
+                    <span className="text-muted-foreground">Poz</span>
                     <span className="font-medium text-foreground">{generation.pose}</span>
                   </div>
                 )}
                 {generation.background && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Background</span>
+                    <span className="text-muted-foreground">Arka Plan</span>
                     <span className="font-medium text-foreground">{generation.background}</span>
                   </div>
                 )}
                 {generation.face_type && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Face Type</span>
+                    <span className="text-muted-foreground">Yüz Tipi</span>
                     <span className="font-medium text-foreground">{generation.face_type}</span>
                   </div>
                 )}
                 {generation.facial_expression && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Expression</span>
+                    <span className="text-muted-foreground">İfade</span>
                     <span className="font-medium text-foreground">{generation.facial_expression}</span>
                   </div>
                 )}
                 {generation.modest_option && (
                   <div className="flex justify-between text-sm py-1.5 px-2 rounded-lg bg-secondary/50">
-                    <span className="text-muted-foreground">Coverage</span>
+                    <span className="text-muted-foreground">Örtünme</span>
                     <span className="font-medium text-foreground">{generation.modest_option}</span>
                   </div>
                 )}
