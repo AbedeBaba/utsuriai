@@ -127,13 +127,34 @@ serve(async (req) => {
             .from("user_subscriptions")
             .select("credits_remaining")
             .eq("user_id", user_id)
-            .single();
+            .maybeSingle();
 
           if (fetchError) {
             throw new Error(`Failed to fetch current credits: ${fetchError.message}`);
           }
 
-          const newCredits = (currentSub?.credits_remaining || 0) + add_credits;
+          // If no subscription exists, create one first
+          if (!currentSub) {
+            const { error: createError } = await supabaseAdmin
+              .from("user_subscriptions")
+              .insert({
+                user_id,
+                plan: "trial",
+                credits_remaining: Math.max(0, add_credits),
+                pro_generations_remaining: 2,
+                standard_generations_remaining: 5,
+              });
+
+            if (createError) {
+              throw new Error(`Failed to create subscription: ${createError.message}`);
+            }
+
+            return new Response(JSON.stringify({ success: true, new_credits: Math.max(0, add_credits) }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+
+          const newCredits = (currentSub.credits_remaining || 0) + add_credits;
           const { error: updateError } = await supabaseAdmin
             .from("user_subscriptions")
             .update({ credits_remaining: Math.max(0, newCredits) })
