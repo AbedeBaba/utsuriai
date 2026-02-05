@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Nano Banana API endpoints (same as generate-model)
+// Nano Banana API endpoints - ONLY API used for image generation (same as generate-model)
 const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
 
 // Credit costs per template (4 poses)
@@ -56,7 +56,7 @@ async function pollForTaskCompletion(apiKey: string, taskId: string): Promise<st
   throw new Error('Nano Banana generation timeout');
 }
 
-// Generate image using Nano Banana API
+// Generate using Nano Banana API (same structure as generate-model)
 async function generateWithNanoBanana(
   apiKey: string,
   prompt: string,
@@ -114,50 +114,7 @@ async function generateWithNanoBanana(
   return await pollForTaskCompletion(apiKey, taskId);
 }
 
-// Upload base64 image to Supabase storage and return signed URL
-async function uploadBase64AndGetUrl(
-  supabase: any,
-  base64Data: string,
-  prefix: string
-): Promise<string> {
-  const matches = base64Data.match(/^data:([^;]+);base64,(.+)$/);
-  if (!matches) {
-    throw new Error('Invalid base64 image format');
-  }
-  
-  const mimeType = matches[1];
-  const rawBase64 = matches[2];
-  const binaryData = Uint8Array.from(atob(rawBase64), c => c.charCodeAt(0));
-  
-  const extension = mimeType.split('/')[1] || 'png';
-  const fileName = `${prefix}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
-  
-  const { error: uploadError } = await supabase.storage
-    .from('generated-images')
-    .upload(fileName, binaryData, {
-      contentType: mimeType,
-      upsert: true
-    });
-  
-  if (uploadError) {
-    console.error('Failed to upload image to storage:', uploadError);
-    throw new Error('Failed to upload image to storage');
-  }
-  
-  const { data: signedData, error: signedError } = await supabase.storage
-    .from('generated-images')
-    .createSignedUrl(fileName, 60 * 60); // 1 hour
-  
-  if (signedError || !signedData?.signedUrl) {
-    console.error('Failed to create signed URL:', signedError);
-    throw new Error('Failed to create signed URL for uploaded image');
-  }
-  
-  console.log(`Image uploaded and signed URL created: ${fileName}`);
-  return signedData.signedUrl;
-}
-
-// Build the clothing replacement prompt for NanoBanana
+// Build prompt for template clothing replacement - ONLY replaces clothing, nothing else changes
 function buildTemplatePrompt(): string {
   return `VIRTUAL TRY-ON / CLOTHING REPLACEMENT TASK for social media and e-commerce use.
 
@@ -312,20 +269,85 @@ serve(async (req) => {
 
     console.log(`Generating pose ${poseIndex + 1} for template ${templateId} using Nano Banana...`);
 
-    // Step 1: Upload both base64 images to storage to get URLs for Nano Banana
-    const storagePrefix = `templates/${templateId}`;
+    // Upload base64 images to storage and get signed URLs for Nano Banana
+    const imageUrls: string[] = [];
     
-    console.log('Uploading pose image to storage...');
-    const poseImageUrl = await uploadBase64AndGetUrl(supabase, poseImageBase64, `${storagePrefix}/pose`);
+    // Upload pose image
+    try {
+      const poseMatches = poseImageBase64.match(/^data:([^;]+);base64,(.+)$/);
+      if (poseMatches) {
+        const mimeType = poseMatches[1];
+        const base64Data = poseMatches[2];
+        const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+        
+        const extension = mimeType.split('/')[1] || 'png';
+        const fileName = `templates/${templateId}/pose-${poseIndex}-${Date.now()}.${extension}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('generated-images')
+          .upload(fileName, binaryData, { contentType: mimeType, upsert: true });
+        
+        if (!uploadError) {
+          const { data: signedData } = await supabase.storage
+            .from('generated-images')
+            .createSignedUrl(fileName, 60 * 60); // 1 hour
+          
+          if (signedData?.signedUrl) {
+            imageUrls.push(signedData.signedUrl);
+            console.log(`Uploaded pose image with signed URL`);
+          }
+        } else {
+          console.error('Error uploading pose image:', uploadError);
+        }
+      }
+    } catch (err) {
+      console.error('Error processing pose image:', err);
+    }
     
-    console.log('Uploading product image to storage...');
-    const productImageUrl = await uploadBase64AndGetUrl(supabase, productImageBase64, `${storagePrefix}/product`);
+    // Upload product image
+    try {
+      const productMatches = productImageBase64.match(/^data:([^;]+);base64,(.+)$/);
+      if (productMatches) {
+        const mimeType = productMatches[1];
+        const base64Data = productMatches[2];
+        const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+        
+        const extension = mimeType.split('/')[1] || 'png';
+        const fileName = `templates/${templateId}/product-${poseIndex}-${Date.now()}.${extension}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('generated-images')
+          .upload(fileName, binaryData, { contentType: mimeType, upsert: true });
+        
+        if (!uploadError) {
+          const { data: signedData } = await supabase.storage
+            .from('generated-images')
+            .createSignedUrl(fileName, 60 * 60); // 1 hour
+          
+          if (signedData?.signedUrl) {
+            imageUrls.push(signedData.signedUrl);
+            console.log(`Uploaded product image with signed URL`);
+          }
+        } else {
+          console.error('Error uploading product image:', uploadError);
+        }
+      }
+    } catch (err) {
+      console.error('Error processing product image:', err);
+    }
     
-    // Step 2: Send both image URLs to Nano Banana with clothing replacement prompt
+    if (imageUrls.length < 2) {
+      console.error('Failed to upload both images');
+      return new Response(
+        JSON.stringify({ error: 'Failed to process images for generation' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`Ready: ${imageUrls.length} image URLs for Nano Banana`);
+
+    // Build prompt and generate with Nano Banana
     const prompt = buildTemplatePrompt();
-    const imageUrls = [poseImageUrl, productImageUrl];
-    
-    console.log(`Sending ${imageUrls.length} image URLs to Nano Banana...`);
     const generatedImageUrl = await generateWithNanoBanana(nanoBananaApiKey, prompt, imageUrls, usePro);
     
     console.log(`Pose ${poseIndex + 1} generated successfully: ${generatedImageUrl}`);
