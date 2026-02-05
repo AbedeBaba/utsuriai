@@ -6,12 +6,198 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Lovable AI Gateway for Gemini (same as generate-model)
-const LOVABLE_AI_GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
+// Nano Banana API endpoints (same as generate-model)
+const NANOBANANA_BASE_URL = 'https://api.nanobananaapi.ai/api/v1/nanobanana';
 
 // Credit costs per template (4 poses)
 const STANDARD_CREDIT_COST = 4; // 1 credit per pose × 4 poses
 const PRO_CREDIT_COST = 16; // 4 credits per pose × 4 poses
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Poll Nano Banana for task completion (same as generate-model)
+async function pollForTaskCompletion(apiKey: string, taskId: string): Promise<string> {
+  const maxWaitTime = 300000; // 5 minutes
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < maxWaitTime) {
+    const statusResponse = await fetch(`${NANOBANANA_BASE_URL}/record-info?taskId=${taskId}`, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${apiKey}` }
+    });
+    
+    const statusResult = await statusResponse.json();
+    const successFlag = statusResult.data?.successFlag ?? statusResult.successFlag;
+    const responseData = statusResult.data?.response ?? statusResult.response;
+    const infoData = statusResult.data?.info ?? null;
+    
+    if (successFlag === 1) {
+      let imageUrl = infoData?.resultImageUrl ||
+                     responseData?.resultImageUrl ||
+                     responseData?.imageUrl ||
+                     statusResult.data?.resultImageUrl;
+      
+      if (imageUrl) {
+        console.log('Found result image URL from Nano Banana');
+        return imageUrl;
+      }
+      throw new Error('No resultImageUrl in Nano Banana response');
+    }
+    
+    if (successFlag === 2 || successFlag === 3) {
+      throw new Error(statusResult.data?.errorMessage || 'Nano Banana generation failed');
+    }
+    
+    await sleep(3000);
+  }
+  
+  throw new Error('Nano Banana generation timeout');
+}
+
+// Generate image using Nano Banana API
+async function generateWithNanoBanana(
+  apiKey: string,
+  prompt: string,
+  imageUrls: string[],
+  usePro: boolean
+): Promise<string> {
+  console.log(`Starting Nano Banana ${usePro ? 'Pro' : 'Standard'} template generation...`);
+  
+  let requestBody: Record<string, any>;
+  let endpoint: string;
+  
+  if (usePro) {
+    requestBody = {
+      prompt: prompt,
+      imageUrls: imageUrls,
+      resolution: '2K',
+      aspectRatio: '9:16'
+    };
+    endpoint = `${NANOBANANA_BASE_URL}/generate-pro`;
+  } else {
+    requestBody = {
+      prompt: prompt,
+      type: 'IMAGETOIAMGE',
+      numImages: 1,
+      imageUrls: imageUrls,
+      aspectRatio: '9:16'
+    };
+    endpoint = `${NANOBANANA_BASE_URL}/generate`;
+  }
+  
+  console.log('Nano Banana request:', JSON.stringify({ endpoint, imageCount: imageUrls.length }));
+  
+  const generateResponse = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  });
+
+  const generateResult = await generateResponse.json();
+  console.log('Nano Banana response:', JSON.stringify(generateResult));
+  
+  if (!generateResponse.ok || generateResult.code !== 200) {
+    throw new Error(`Nano Banana generation failed: ${generateResult.msg || 'Unknown error'}`);
+  }
+  
+  const taskId = generateResult.data?.taskId;
+  if (!taskId) {
+    throw new Error('No taskId returned from Nano Banana');
+  }
+  
+  console.log(`Nano Banana Task ID: ${taskId}, polling for result...`);
+  return await pollForTaskCompletion(apiKey, taskId);
+}
+
+// Upload base64 image to Supabase storage and return signed URL
+async function uploadBase64AndGetUrl(
+  supabase: any,
+  base64Data: string,
+  prefix: string
+): Promise<string> {
+  const matches = base64Data.match(/^data:([^;]+);base64,(.+)$/);
+  if (!matches) {
+    throw new Error('Invalid base64 image format');
+  }
+  
+  const mimeType = matches[1];
+  const rawBase64 = matches[2];
+  const binaryData = Uint8Array.from(atob(rawBase64), c => c.charCodeAt(0));
+  
+  const extension = mimeType.split('/')[1] || 'png';
+  const fileName = `${prefix}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
+  
+  const { error: uploadError } = await supabase.storage
+    .from('generated-images')
+    .upload(fileName, binaryData, {
+      contentType: mimeType,
+      upsert: true
+    });
+  
+  if (uploadError) {
+    console.error('Failed to upload image to storage:', uploadError);
+    throw new Error('Failed to upload image to storage');
+  }
+  
+  const { data: signedData, error: signedError } = await supabase.storage
+    .from('generated-images')
+    .createSignedUrl(fileName, 60 * 60); // 1 hour
+  
+  if (signedError || !signedData?.signedUrl) {
+    console.error('Failed to create signed URL:', signedError);
+    throw new Error('Failed to create signed URL for uploaded image');
+  }
+  
+  console.log(`Image uploaded and signed URL created: ${fileName}`);
+  return signedData.signedUrl;
+}
+
+// Build the clothing replacement prompt for NanoBanana
+function buildTemplatePrompt(): string {
+  return `VIRTUAL TRY-ON / CLOTHING REPLACEMENT TASK for social media and e-commerce use.
+
+You have TWO images:
+1. FIRST IMAGE: A professional model photo showing a person in a specific pose, environment, and outfit
+2. SECOND IMAGE: A product photo showing a clothing item that needs to replace the clothing on the model
+
+CRITICAL TASK - CLOTHING REPLACEMENT ONLY:
+Replace ONLY the relevant clothing item on the model with the product from the second image.
+
+ABSOLUTE PRESERVATION REQUIREMENTS - DO NOT CHANGE:
+- The model's face, skin tone, hair, and body MUST remain EXACTLY the same
+- The model's pose and body position MUST remain EXACTLY the same
+- The background and environment MUST remain EXACTLY the same
+- The lighting conditions and shadows MUST remain EXACTLY the same
+- The camera angle and framing MUST remain EXACTLY the same
+- Any accessories or other clothing items that are not being replaced MUST stay the same
+
+CLOTHING REPLACEMENT RULES:
+- Identify the clothing type from the product image (shirt, pants, dress, etc.)
+- Replace ONLY that specific type of clothing on the model
+- Maintain EXACT color, fabric texture, pattern, print, design, style, cut, and silhouette
+- Preserve ALL details: buttons, zippers, logos, embroidery, stitching
+- Natural fabric folds and draping based on the model's pose
+- Proper shadows and lighting interaction with the new clothing
+
+QUALITY REQUIREMENTS:
+- Photorealistic, high-end fashion photography quality
+- Natural skin texture on any visible body parts
+- Sharp focus and professional studio quality
+- 9:16 vertical aspect ratio (portrait orientation)
+- E-commerce and social media ready output
+- TRUE TO LIFE colors for accurate online shopping
+
+high-end fashion photography, editorial fashion shoot, real human model, natural skin texture, soft natural lighting, realistic shadows, professional camera look, DSLR photography, authentic fabric texture, realistic clothing folds
+
+NEGATIVE: plastic skin, CGI skin, AI-generated look, synthetic appearance, distorted anatomy, deformed hands, oversaturated colors, 3D render, illustration style
+
+OUTPUT: A single photorealistic image where ONLY the specified clothing has been replaced, with everything else remaining EXACTLY identical to the original model photo.`;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -30,11 +216,11 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    const nanoBananaApiKey = Deno.env.get('NANOBANANA_API_KEY');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
-    if (!lovableApiKey) {
-      console.error('Missing LOVABLE_API_KEY');
+    if (!nanoBananaApiKey) {
+      console.error('Missing NANOBANANA_API_KEY');
       return new Response(
         JSON.stringify({ error: 'Server configuration error - missing API key' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -124,24 +310,30 @@ serve(async (req) => {
       console.log(`Deducted ${creditCost} credits for template generation`);
     }
 
-    console.log(`Generating pose ${poseIndex + 1} for template ${templateId} using Gemini...`);
+    console.log(`Generating pose ${poseIndex + 1} for template ${templateId} using Nano Banana...`);
 
-    // Generate using Gemini via Lovable AI Gateway
-    const storedImageUrl = await generateWithGemini(
-      lovableApiKey,
-      poseImageBase64,
-      productImageBase64,
-      supabase,
-      templateId,
-      usePro
-    );
+    // Step 1: Upload both base64 images to storage to get URLs for Nano Banana
+    const storagePrefix = `templates/${templateId}`;
     
-    console.log(`Pose ${poseIndex + 1} generated and stored successfully`);
+    console.log('Uploading pose image to storage...');
+    const poseImageUrl = await uploadBase64AndGetUrl(supabase, poseImageBase64, `${storagePrefix}/pose`);
+    
+    console.log('Uploading product image to storage...');
+    const productImageUrl = await uploadBase64AndGetUrl(supabase, productImageBase64, `${storagePrefix}/product`);
+    
+    // Step 2: Send both image URLs to Nano Banana with clothing replacement prompt
+    const prompt = buildTemplatePrompt();
+    const imageUrls = [poseImageUrl, productImageUrl];
+    
+    console.log(`Sending ${imageUrls.length} image URLs to Nano Banana...`);
+    const generatedImageUrl = await generateWithNanoBanana(nanoBananaApiKey, prompt, imageUrls, usePro);
+    
+    console.log(`Pose ${poseIndex + 1} generated successfully: ${generatedImageUrl}`);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        imageUrl: storedImageUrl,
+        imageUrl: generatedImageUrl,
         poseIndex
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -158,174 +350,3 @@ serve(async (req) => {
     );
   }
 });
-
-// Generate image using Gemini via Lovable AI Gateway
-async function generateWithGemini(
-  apiKey: string,
-  poseImageBase64: string,
-  productImageBase64: string,
-  supabase: any,
-  templateId: string,
-  usePro: boolean
-): Promise<string> {
-  console.log('Starting Gemini template generation...');
-  
-  // Build the content array with both images and the prompt
-  const contentParts: any[] = [];
-  
-  // First image: the template model/pose image
-  contentParts.push({
-    type: "image_url",
-    image_url: { url: poseImageBase64 }
-  });
-  console.log('Added pose image to request');
-  
-  // Second image: the user's product image
-  contentParts.push({
-    type: "image_url",
-    image_url: { url: productImageBase64 }
-  });
-  console.log('Added product image to request');
-  
-  // Template-specific prompt that ONLY replaces clothing
-  const templatePrompt = `You are an expert fashion photo editor. Your task is to perform a CLOTHING REPLACEMENT on a model photo.
-
-CRITICAL TASK - CLOTHING REPLACEMENT ONLY:
-You have TWO images:
-1. FIRST IMAGE: A professional model photo showing a person in a specific pose, environment, and outfit
-2. SECOND IMAGE: A product photo showing a clothing item that needs to replace the clothing on the model
-
-YOUR MISSION:
-Replace ONLY the relevant clothing item on the model with the product from the second image.
-
-ABSOLUTE PRESERVATION REQUIREMENTS - DO NOT CHANGE:
-- The model's face, skin tone, hair, and body MUST remain EXACTLY the same
-- The model's pose and body position MUST remain EXACTLY the same
-- The background and environment MUST remain EXACTLY the same
-- The lighting conditions and shadows MUST remain EXACTLY the same
-- The camera angle and framing MUST remain EXACTLY the same
-- The image composition MUST remain EXACTLY the same
-- Any accessories or other clothing items that are not being replaced MUST stay the same
-
-CLOTHING REPLACEMENT RULES:
-- Look at the product image and identify what type of clothing it is (shirt, pants, dress, etc.)
-- Replace ONLY that specific type of clothing on the model
-- The product must maintain its EXACT:
-  - Color and color accuracy
-  - Fabric texture and material appearance
-  - Pattern, print, or design
-  - Style, cut, and silhouette
-  - All details: buttons, zippers, logos, embroidery, stitching
-- The product must fit naturally on the model's body
-- Realistic fabric folds and draping based on the model's pose
-- Proper shadows and lighting interaction with the new clothing
-
-QUALITY REQUIREMENTS:
-- Photorealistic, high-end fashion photography quality
-- Natural skin texture on any visible body parts
-- Sharp focus and professional studio quality
-- 9:16 vertical aspect ratio (portrait orientation)
-- E-commerce and social media ready output
-
-NEGATIVE CONSTRAINTS - AVOID:
-- Changing the model's face or appearance in any way
-- Changing the model's pose or body position
-- Changing the background or environment
-- Changing the lighting or shadows inappropriately
-- Creating plastic or artificial-looking skin
-- CGI or AI-generated appearance
-- Distorting the product's colors or design
-- Adding or removing any elements not related to the clothing change
-
-OUTPUT: A single photorealistic image where ONLY the specified clothing has been replaced, with everything else remaining EXACTLY identical to the original model photo.`;
-
-  contentParts.push({
-    type: "text",
-    text: templatePrompt
-  });
-  
-  console.log('Sending request to Gemini for clothing replacement...');
-  
-  // Use pro model for better quality if usePro is true
-  const model = usePro ? 'google/gemini-2.5-pro' : 'google/gemini-2.5-flash';
-  console.log(`Using model: ${model}`);
-  
-  const response = await fetch(LOVABLE_AI_GATEWAY, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: [
-        {
-          role: 'user',
-          content: contentParts
-        }
-      ],
-      modalities: ['image', 'text']
-    })
-  });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Gemini API error:', errorText);
-    throw new Error(`Gemini API failed: ${response.status} - ${errorText}`);
-  }
-  
-  const result = await response.json();
-  console.log('Gemini response received');
-  
-  // Extract the generated image
-  const generatedImage = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-  
-  if (!generatedImage) {
-    console.error('No image in Gemini response:', JSON.stringify(result).substring(0, 500));
-    throw new Error('No image generated by Gemini');
-  }
-  
-  console.log('Generated image received, uploading to storage...');
-  
-  // Upload the base64 image to Supabase storage
-  const matches = generatedImage.match(/^data:([^;]+);base64,(.+)$/);
-  if (!matches) {
-    throw new Error('Invalid base64 image format from Gemini');
-  }
-  
-  const mimeType = matches[1];
-  const base64Data = matches[2];
-  const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-  
-  const extension = mimeType.split('/')[1] || 'png';
-  const fileName = `templates/${templateId}/generated/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
-  
-  const { error: uploadError } = await supabase.storage
-    .from('generated-images')
-    .upload(fileName, binaryData, {
-      contentType: mimeType,
-      upsert: true
-    });
-  
-  if (uploadError) {
-    console.error('Failed to upload generated image:', uploadError);
-    throw new Error('Failed to save generated image');
-  }
-  
-  // Create a signed URL for the stored image (7 days for template users)
-  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-    .from('generated-images')
-    .createSignedUrl(fileName, 60 * 60 * 24 * 7); // 7 days
-  
-  if (signedUrlError || !signedUrlData?.signedUrl) {
-    console.error('Failed to create signed URL:', signedUrlError);
-    // Fallback to public URL attempt
-    const { data: urlData } = supabase.storage
-      .from('generated-images')
-      .getPublicUrl(fileName);
-    return urlData?.publicUrl || '';
-  }
-  
-  console.log('Generated image uploaded with signed URL');
-  return signedUrlData.signedUrl;
-}
