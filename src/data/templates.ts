@@ -487,13 +487,13 @@ export const templates: Template[] = [
       {
         id: 'ebeltp3',
         nameKey: 'templates.poses.beltCloseup',
-        imagePath: '/lovable-uploads/templates/male/beltp3.png',
+        imagePath: '/lovable-uploads/templates/male/beltp4.png',
         useBackView: false,
       },
       {
         id: 'ebeltp4',
         nameKey: 'templates.poses.beltBackView',
-        imagePath: '/lovable-uploads/templates/male/beltp4.png',
+        imagePath: '/lovable-uploads/templates/male/beltp3.png',
         useBackView: false,
       },
     ],
