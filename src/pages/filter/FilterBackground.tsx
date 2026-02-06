@@ -76,9 +76,10 @@ export default function FilterBackground() {
     updateConfig('background', background);
 
     setTimeout(() => {
-      navigate('/filter/face-type');
+      // Creator users go to face-type, others go directly to clothing
+      navigate(hasCreatorFeatureAccess ? '/filter/face-type' : '/clothing');
     }, 1000);
-  }, [isAnimating, navigate, updateConfig]);
+  }, [isAnimating, navigate, updateConfig, hasCreatorFeatureAccess]);
 
   const handleRandomSingle = useCallback(() => {
     if (isAnimating) return;
@@ -90,9 +91,10 @@ export default function FilterBackground() {
     updateConfig('background', randomBackground.id);
     
     setTimeout(() => {
-      navigate('/filter/face-type');
+      // Creator users go to face-type, others go directly to clothing
+      navigate(hasCreatorFeatureAccess ? '/filter/face-type' : '/clothing');
     }, 600);
-  }, [isAnimating, updateConfig, navigate]);
+  }, [isAnimating, updateConfig, navigate, hasCreatorFeatureAccess]);
 
   const handleRandomAll = useCallback(() => {
     // Select random for this filter
