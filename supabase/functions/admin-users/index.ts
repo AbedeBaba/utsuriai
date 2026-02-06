@@ -245,7 +245,7 @@ serve(async (req) => {
             credits_remaining = 400;
             break;
           case "creator":
-            credits_remaining = 1000;
+            credits_remaining = 500;
             break;
         }
 
