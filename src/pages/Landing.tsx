@@ -58,6 +58,9 @@ export default function Landing() {
             <button onClick={() => navigate('/templates')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {t('nav.templates')}
             </button>
+            <button onClick={() => navigate('/jewelry')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              {t('nav.jewelry')}
+            </button>
             <button onClick={() => navigate('/faq')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {t('nav.faq')}
             </button>
@@ -109,6 +112,12 @@ export default function Landing() {
                   setMobileMenuOpen(false);
                 }} className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left">
                     {t('nav.templates')}
+                  </button>
+                  <button onClick={() => {
+                  navigate('/jewelry');
+                  setMobileMenuOpen(false);
+                }} className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left">
+                    {t('nav.jewelry')}
                   </button>
                   <button onClick={() => {
                   navigate('/faq');

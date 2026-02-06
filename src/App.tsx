@@ -36,6 +36,10 @@ import TemplatesHome from "./pages/templates/TemplatesHome";
 import TemplatesList from "./pages/templates/TemplatesList";
 import TemplateGenerate from "./pages/templates/TemplateGenerate";
 
+// Jewelry pages
+import JewelryHome from "./pages/jewelry/JewelryHome";
+import JewelryGenerate from "./pages/jewelry/JewelryGenerate";
+
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfUse from "./pages/legal/TermsOfUse";
@@ -68,6 +72,9 @@ const App = () => (
               <Route path="/templates" element={<TemplatesHome />} />
               <Route path="/templates/:categoryId" element={<TemplatesList />} />
               <Route path="/templates/generate/:templateId" element={<TemplateGenerate />} />
+              {/* Jewelry routes */}
+              <Route path="/jewelry" element={<JewelryHome />} />
+              <Route path="/jewelry/generate/:presetId" element={<JewelryGenerate />} />
               <Route path="/filter/gender" element={<FilterGender />} />
               <Route path="/filter/ethnicity" element={<FilterEthnicity />} />
               <Route path="/filter/skin-tone" element={<FilterSkinTone />} />
