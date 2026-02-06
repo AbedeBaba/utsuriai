@@ -370,6 +370,57 @@ export const translations: Translations = {
   'jewelry.openedInTab': { en: 'Image opened in new tab. Right-click to save.', tr: 'Görsel yeni sekmede açıldı. Kaydetmek için sağ tıklayın.' },
   'jewelry.signInRequired': { en: 'Sign in to generate images', tr: 'Görsel oluşturmak için giriş yapın' },
 
+  // FAQ Page
+  'faq.pageTitle': { en: 'Frequently Asked Questions', tr: 'Sıkça Sorulan Sorular (SSS)' },
+  'faq.pageSubtitle': { en: 'Everything you need to know about UtsuriAI — from image generation to pricing and support.', tr: 'UtsuriAI kullanımı, görsel üretimi ve destek hakkında en sık sorulan sorular.' },
+  'faq.metaTitle': { en: 'Frequently Asked Questions (FAQ) | UtsuriAI', tr: 'Sıkça Sorulan Sorular (SSS) | UtsuriAI' },
+  'faq.metaDescription': { en: 'UtsuriAI FAQ: Common questions about AI fashion model image generation, usage, downloads, pricing, and support.', tr: 'UtsuriAI SSS: Ürün fotoğrafından AI moda model görselleri üretme, kullanım, indirme ve destek hakkında sıkça sorulan sorular.' },
+
+  'faq.q1': { en: 'What is UtsuriAI?', tr: 'UtsuriAI nedir?' },
+  'faq.a1': { en: 'UtsuriAI is a platform that helps you generate AI-powered fashion model images from your product photos in minutes.', tr: 'UtsuriAI, ürün fotoğraflarınızı kullanarak dakikalar içinde AI destekli moda model görselleri üretmenize yardımcı olan bir platformdur.' },
+
+  'faq.q2': { en: 'How do I generate images?', tr: 'Görselleri nasıl oluştururum?' },
+  'faq.a2': { en: 'Upload your clothing images, select model features (gender, ethnicity, pose, etc.), and start the generation process. You can download your results once they are ready.', tr: 'Kıyafet görsellerinizi yükleyin, model özelliklerini (cinsiyet, etnik köken, poz vb.) seçin ve oluşturma işlemini başlatın. Sonuçlarınız hazır olduğunda indirebilirsiniz.' },
+
+  'faq.q3': { en: 'How long are generated images stored?', tr: 'Oluşturulan görseller ne kadar süre saklanır?' },
+  'faq.a3': { en: 'Your generated images are stored for 24 hours. We recommend downloading them before they expire.', tr: 'Oluşturulan görselleriniz 24 saat boyunca saklanır. Süresi dolmadan indirmeniz önerilir.' },
+
+  'faq.q4': { en: 'Do I have commercial usage rights?', tr: 'Ticari kullanım hakkım var mı?' },
+  'faq.a4': { en: 'Yes, you can use the images you generate in your brand\'s content. Please review the relevant legal documents for full details.', tr: 'Oluşturduğunuz görselleri markanızın içeriklerinde kullanabilirsiniz. Detaylar için ilgili yasal dokümanları incelemenizi öneririz.' },
+
+  'faq.q5': { en: 'How can I reach the support team?', tr: 'Destek ekibine nasıl ulaşabilirim?' },
+  'faq.a5': { en: 'You can reach us via the Contact page or by emailing support@utsuriai.com.', tr: 'Bize İletişim sayfasından veya support@utsuriai.com adresinden ulaşabilirsiniz.' },
+
+  'faq.q6': { en: 'What image formats are supported for uploading?', tr: 'Yükleme için hangi görsel formatları desteklenir?' },
+  'faq.a6': { en: 'We support PNG, JPG, and WEBP formats. For best results, use high-resolution images with a clean background.', tr: 'PNG, JPG ve WEBP formatlarını destekliyoruz. En iyi sonuçlar için temiz arka planlı, yüksek çözünürlüklü görseller kullanın.' },
+
+  'faq.q7': { en: 'What is the difference between Standard and Pro quality?', tr: 'Standart ve Pro kalite arasındaki fark nedir?' },
+  'faq.a7': { en: 'Standard quality offers fast generation with good results. Pro quality provides higher detail, better lighting, and more realistic output — ideal for e-commerce listings.', tr: 'Standart kalite hızlı oluşturma ile iyi sonuçlar sunar. Pro kalite daha yüksek detay, daha iyi aydınlatma ve daha gerçekçi çıktı sağlar — e-ticaret listeleri için idealdir.' },
+
+  'faq.q8': { en: 'Can I customize the model\'s appearance?', tr: 'Modelin görünümünü özelleştirebilir miyim?' },
+  'faq.a8': { en: 'Absolutely! You can choose gender, ethnicity, skin tone, hair color and type, eye color, body type, facial expression, pose, and background.', tr: 'Elbette! Cinsiyet, etnik köken, ten rengi, saç rengi ve tipi, göz rengi, vücut tipi, yüz ifadesi, poz ve arka plan seçebilirsiniz.' },
+
+  'faq.q9': { en: 'What are credits and how do they work?', tr: 'Krediler nedir ve nasıl çalışır?' },
+  'faq.a9': { en: '1 credit equals 1 AI-generated image. Credits are included in your subscription plan and reset monthly. You can also purchase additional credit packs.', tr: '1 kredi = 1 AI tarafından oluşturulan görsel. Krediler abonelik planınıza dahildir ve aylık olarak yenilenir. Ek kredi paketleri de satın alabilirsiniz.' },
+
+  'faq.q10': { en: 'Is there a free trial?', tr: 'Ücretsiz deneme var mı?' },
+  'faq.a10': { en: 'Yes! New accounts get a free Trial plan with 5 image generations so you can try the platform before subscribing.', tr: 'Evet! Yeni hesaplar, abone olmadan önce platformu deneyebilmeniz için 5 görsel oluşturma hakkı içeren ücretsiz bir Deneme planı alır.' },
+
+  'faq.q11': { en: 'Can I save and reuse model configurations?', tr: 'Model yapılandırmalarını kaydedip tekrar kullanabilir miyim?' },
+  'faq.a11': { en: 'Yes, you can save your model settings and reuse them for future generations. This saves time when generating images for the same model across different products.', tr: 'Evet, model ayarlarınızı kaydedebilir ve gelecekteki oluşturmalarda tekrar kullanabilirsiniz. Bu, aynı model için farklı ürünlerde görsel oluştururken zaman kazandırır.' },
+
+  'faq.q12': { en: 'Does UtsuriAI support jewelry photography?', tr: 'UtsuriAI takı fotoğrafçılığını destekliyor mu?' },
+  'faq.a12': { en: 'Yes! Our Jewelry Studio lets you generate realistic images of jewelry on body parts like hands, wrists, neck, ears, and ankles.', tr: 'Evet! Takı Stüdyomuz ile el, bilek, boyun, kulak ve ayak bileği gibi vücut bölgelerinde gerçekçi takı görselleri oluşturabilirsiniz.' },
+
+  'faq.q13': { en: 'What should I do if the generated image has errors?', tr: 'Oluşturulan görselde hata varsa ne yapmalıyım?' },
+  'faq.a13': { en: 'AI-generated images may occasionally have imperfections. You can regenerate the image using the same settings or try adjusting your product photo for better results.', tr: 'AI tarafından oluşturulan görsellerde zaman zaman hatalar olabilir. Aynı ayarlarla görseli yeniden oluşturabilir veya daha iyi sonuçlar için ürün fotoğrafınızı düzenlemeyi deneyebilirsiniz.' },
+
+  'faq.q14': { en: 'Can I use UtsuriAI for multiple brands?', tr: 'UtsuriAI\'yı birden fazla marka için kullanabilir miyim?' },
+  'faq.a14': { en: 'Yes, there are no restrictions on the number of brands. You can generate images for as many brands and products as your credits allow.', tr: 'Evet, marka sayısında herhangi bir sınırlama yoktur. Krediniz yettiği kadar çok marka ve ürün için görsel oluşturabilirsiniz.' },
+
+  'faq.q15': { en: 'How do I change the language?', tr: 'Dili nasıl değiştirebilirim?' },
+  'faq.a15': { en: 'Click the globe icon in the top navigation bar to switch between English and Turkish.', tr: 'Üst gezinme çubuğundaki küre simgesine tıklayarak İngilizce ve Türkçe arasında geçiş yapabilirsiniz.' },
+
   // Jewelry Presets
   'jewelry.presets.handOnly': { en: 'Hand Only', tr: 'Sadece El' },
   'jewelry.presets.handOnlyDesc': { en: 'Extreme close-up from mid-palm to fingertips with soft directional lighting', tr: 'Avuç ortasından parmak uçlarına aşırı yakın çekim, yönlü yumuşak ışık' },
