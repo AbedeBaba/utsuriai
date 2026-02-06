@@ -437,7 +437,7 @@ export default function Admin() {
                   <SelectItem value="trial">Trial (2 Pro + 5 Standard)</SelectItem>
                   <SelectItem value="starter">Starter (100 credits)</SelectItem>
                   <SelectItem value="pro">Pro (400 credits)</SelectItem>
-                  <SelectItem value="creator">Creator (1000 credits)</SelectItem>
+                  <SelectItem value="creator">Creator (500 credits)</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
