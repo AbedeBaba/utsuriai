@@ -16,6 +16,7 @@ import exampleProductSweater from '@/assets/example-product-sweater.webp';
 import exampleModelSweater from '@/assets/example-model-sweater.png';
 import modelRealBg from '@/assets/modelreal.jpg';
 import heroBanner from '@/assets/hero-banner.jpeg';
+import heroBannerMobile from '@/assets/hero-banner-mobile.jpeg';
 import diverseModelsBg from '@/assets/diverse-models-bg.jpg';
 import instantGenerationBg from '@/assets/instant-generation-bg.jpg';
 import studioQualityBg from '@/assets/studio-quality-bg.jpg';
@@ -173,10 +174,17 @@ export default function Landing() {
       </header>
 
       {/* Full-Screen Hero Banner */}
-      <section className="relative min-h-screen w-full bg-cover bg-no-repeat flex items-center justify-center" style={{
-      backgroundImage: `url(${heroBanner})`,
-      backgroundPosition: 'center 25%'
-    }}>
+      <section className="relative min-h-screen w-full flex items-center justify-center">
+        {/* Desktop background */}
+        <div className="absolute inset-0 hidden md:block bg-cover bg-no-repeat" style={{
+          backgroundImage: `url(${heroBanner})`,
+          backgroundPosition: 'center 25%'
+        }} />
+        {/* Mobile background - vertical crop showing face */}
+        <div className="absolute inset-0 md:hidden bg-cover bg-no-repeat" style={{
+          backgroundImage: `url(${heroBannerMobile})`,
+          backgroundPosition: 'center top'
+        }} />
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/40" />
         
