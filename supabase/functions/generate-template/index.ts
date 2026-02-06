@@ -116,7 +116,7 @@ async function generateWithNanoBanana(
 
 // Build prompt for template clothing replacement - ONLY replaces clothing, nothing else changes
 function buildTemplatePrompt(): string {
-  return `VIRTUAL TRY-ON / CLOTHING REPLACEMENT TASK for social media and e-commerce use.
+  return `VIRTUAL TRY-ON / CLOTHING REPLACEMENT TASK — Editorial Fashion Photography Standard.
 
 You have TWO images:
 1. FIRST IMAGE: A professional model photo showing a person in a specific pose, environment, and outfit
@@ -141,19 +141,38 @@ CLOTHING REPLACEMENT RULES:
 - Natural fabric folds and draping based on the model's pose
 - Proper shadows and lighting interaction with the new clothing
 
+CAMERA & COMPOSITION:
+- Maintain existing camera angle from the template
+- Ensure editorial framing with visual balance
+- Natural depth with subtle foreground/background separation
+
+LIGHTING (HIGH-END STUDIO):
+- Soft key light from side/front (window-like softness)
+- Gentle shadow falloff for depth and dimension
+- Neutral-premium color temperature (no yellow or blue cast)
+- Lighting must enhance texture and material, not wash it out
+
+PRODUCT LOCK (NON-NEGOTIABLE):
+- Product shape, color, texture, proportions = 100% unchanged from input
+- No stylization, no redesign, no "AI improvement"
+- Fabric details must remain sharp and realistic
+
 QUALITY REQUIREMENTS:
-- Photorealistic, high-end fashion photography quality
+- Photorealistic, high-end editorial fashion photography quality
 - Natural skin texture on any visible body parts
-- Sharp focus and professional studio quality
+- Sharp focus and professional DSLR camera look
 - 9:16 vertical aspect ratio (portrait orientation)
 - E-commerce and social media ready output
 - TRUE TO LIFE colors for accurate online shopping
+- Must look like a premium brand campaign, not AI-generated
 
-high-end fashion photography, editorial fashion shoot, real human model, natural skin texture, soft natural lighting, realistic shadows, professional camera look, DSLR photography, authentic fabric texture, realistic clothing folds
+high-end editorial fashion photography, premium brand campaign, real human model, natural skin texture, soft directional lighting, realistic shadows, professional camera look, DSLR photography, authentic fabric texture, realistic clothing folds, quiet confidence, luxury brand aesthetic
 
-NEGATIVE: plastic skin, CGI skin, AI-generated look, synthetic appearance, distorted anatomy, deformed hands, oversaturated colors, 3D render, illustration style
+NEGATIVE: flat angle, straight-on camera, stiff mannequin pose, plastic skin, over-smoothing, harsh studio flash, washed-out lighting, distorted proportions, fashion illustration look, AI artifacts, unrealistic blur, cheap catalog photo, symmetry lock, robotic posture, CGI skin, AI-generated look, synthetic appearance, distorted anatomy, deformed hands, oversaturated colors, 3D render, illustration style, fake gradient background
 
-OUTPUT: A single photorealistic image where ONLY the specified clothing has been replaced, with everything else remaining EXACTLY identical to the original model photo.`;
+FINAL OVERRIDE: If there is any conflict, prioritize fashion photography realism and editorial aesthetics while strictly preserving the original product. The final image must look like it was shot by a senior fashion photographer for a premium brand campaign.
+
+OUTPUT: A single photorealistic editorial image where ONLY the specified clothing has been replaced, with everything else remaining EXACTLY identical to the original model photo.`;
 }
 
 serve(async (req) => {
