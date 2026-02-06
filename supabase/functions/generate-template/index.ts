@@ -252,9 +252,9 @@ serve(async (req) => {
         );
       }
 
-      const hasCredits = subscription.credits_remaining >= creditCost;
-      
-      if (!hasCredits) {
+      // Templates require credits (not trial generations)
+      // Check credits_remaining regardless of plan (supports admin-added credits for trial users too)
+      if (subscription.credits_remaining < creditCost) {
         console.error(`Insufficient credits: ${subscription.credits_remaining} < ${creditCost}`);
         return new Response(
           JSON.stringify({ 

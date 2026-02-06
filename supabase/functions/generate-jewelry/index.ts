@@ -236,34 +236,44 @@ serve(async (req) => {
     const isTrial = subscriptionData.plan === 'trial';
     const creditCost = usePro ? PRO_CREDIT_COST : STANDARD_CREDIT_COST;
     
-    // Check credits
+    // Determine credit source: trial generations first, then credits_remaining as fallback
+    let useTrialGenerations = false;
+    let useCredits = false;
+    
     if (isTrial) {
-      if (usePro && subscriptionData.pro_generations_remaining <= 0) {
+      if (usePro && subscriptionData.pro_generations_remaining > 0) {
+        useTrialGenerations = true;
+      } else if (!usePro && subscriptionData.standard_generations_remaining > 0) {
+        useTrialGenerations = true;
+      }
+      // Fallback: check credits_remaining (admin-added credits)
+      else if (subscriptionData.credits_remaining >= creditCost) {
+        useCredits = true;
+      } else {
+        const errorMsg = usePro ? 'No Pro generations remaining' : 'No Standard generations remaining';
         return new Response(
-          JSON.stringify({ error: 'No Pro generations remaining' }),
+          JSON.stringify({ error: errorMsg }),
           { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      if (!usePro && subscriptionData.standard_generations_remaining <= 0) {
+    } else {
+      if (subscriptionData.credits_remaining >= creditCost) {
+        useCredits = true;
+      } else {
         return new Response(
-          JSON.stringify({ error: 'No Standard generations remaining' }),
+          JSON.stringify({ error: `Insufficient credits. Need ${creditCost} credits.` }),
           { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-    } else if (subscriptionData.credits_remaining < creditCost) {
-      return new Response(
-        JSON.stringify({ error: `Insufficient credits. Need ${creditCost} credits.` }),
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
     }
 
-    // Pre-deduct credits
-    if (isTrial) {
+    // Pre-deduct credits based on source
+    if (useTrialGenerations) {
       const field = usePro ? 'pro_generations_remaining' : 'standard_generations_remaining';
       const value = usePro ? subscriptionData.pro_generations_remaining : subscriptionData.standard_generations_remaining;
       await supabase.from('user_subscriptions').update({ [field]: value - 1 }).eq('user_id', user.id);
-      console.log(`Pre-deducted 1 ${usePro ? 'pro' : 'standard'} generation for jewelry`);
-    } else {
+      console.log(`Pre-deducted 1 ${usePro ? 'pro' : 'standard'} trial generation for jewelry`);
+    } else if (useCredits) {
       const newBalance = subscriptionData.credits_remaining - creditCost;
       await supabase.from('user_subscriptions').update({ credits_remaining: newBalance }).eq('user_id', user.id);
       console.log(`Pre-deducted ${creditCost} credits for jewelry. New balance: ${newBalance}`);
@@ -304,12 +314,12 @@ serve(async (req) => {
     }
     
     if (imageUrls.length === 0) {
-      // Refund credits
-      if (isTrial) {
+      // Refund credits based on deduction source
+      if (useTrialGenerations) {
         const field = usePro ? 'pro_generations_remaining' : 'standard_generations_remaining';
         const value = usePro ? subscriptionData.pro_generations_remaining : subscriptionData.standard_generations_remaining;
         await supabase.from('user_subscriptions').update({ [field]: value }).eq('user_id', user.id);
-      } else {
+      } else if (useCredits) {
         await supabase.from('user_subscriptions').update({ credits_remaining: subscriptionData.credits_remaining }).eq('user_id', user.id);
       }
       

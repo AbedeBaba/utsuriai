@@ -60,8 +60,9 @@ export function useSubscription() {
                  subscription?.plan === 'creator';
 
   // ==========================================
-  // TRIAL PACKAGE CHECKS (NO CREDITS)
+  // TRIAL PACKAGE CHECKS
   // Trial: 5 standard generations + 2 pro generations
+  // Also supports admin-added credits as fallback
   // ==========================================
   const trialStandardRemaining = subscription?.standard_generations_remaining ?? 0;
   const trialProRemaining = subscription?.pro_generations_remaining ?? 0;
@@ -70,24 +71,28 @@ export function useSubscription() {
   const canTrialGeneratePro = isTrial && trialProRemaining > 0;
 
   // ==========================================
-  // PAID PACKAGE CHECKS (CREDITS)
+  // CREDITS CHECK (works for ALL plans including trial with admin-added credits)
   // Standard: 1 credit, Pro: 4 credits
   // ==========================================
   const creditsRemaining = subscription?.credits_remaining ?? 0;
   
   const canPaidGenerate = isPaid && creditsRemaining >= 1;
   const canPaidGeneratePro = isPaid && creditsRemaining >= 4;
+  
+  // Trial users can also use admin-added credits as fallback
+  const canTrialUseCredits = isTrial && creditsRemaining >= 1;
+  const canTrialUseCreditsPro = isTrial && creditsRemaining >= 4;
 
   // ==========================================
   // UNIFIED CHECKS
   // ==========================================
-  // Can use standard generation?
-  const canGenerate = canTrialGenerate || canPaidGenerate;
+  // Can use standard generation? (trial generations OR credits from any plan)
+  const canGenerate = canTrialGenerate || canPaidGenerate || canTrialUseCredits;
   
-  // Can use pro generation?
-  const canUseProGeneration = canTrialGeneratePro || canPaidGeneratePro;
+  // Can use pro generation? (trial pro generations OR credits from any plan)
+  const canUseProGeneration = canTrialGeneratePro || canPaidGeneratePro || canTrialUseCreditsPro;
 
-  // Has any credits (for paid packages)
+  // Has any credits (for any plan)
   const hasCredits = creditsRemaining > 0;
 
   // Legacy: hasProAccess means user is on a paid plan
