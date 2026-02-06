@@ -55,7 +55,6 @@ export default function JewelryGenerate() {
     }
     
     setIsGenerating(true);
-    setGeneratedImageUrl(null);
     
     try {
       const { data, error } = await supabase.functions.invoke('generate-jewelry', {
@@ -68,7 +67,19 @@ export default function JewelryGenerate() {
       
       if (error) {
         console.error('Jewelry generation error:', error);
-        toast.error(error.message || t('jewelry.generationFailed'));
+        // Extract actual error message from FunctionsHttpError context
+        let errorMessage = t('jewelry.generationFailed');
+        try {
+          if (error.context && typeof error.context.json === 'function') {
+            const errorBody = await error.context.json();
+            errorMessage = errorBody?.error || errorMessage;
+          } else if (error.message && !error.message.includes('non-2xx')) {
+            errorMessage = error.message;
+          }
+        } catch {
+          // fallback to default error message
+        }
+        toast.error(errorMessage);
         return;
       }
       
