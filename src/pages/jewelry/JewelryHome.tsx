@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { jewelryPresets, JewelryPreset } from "@/data/jewelryPresets";
-import { ArrowLeft, Gem } from "lucide-react";
+import { ArrowLeft, Gem, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "@/components/BrandLogo";
+import { useSubscription } from "@/hooks/useSubscription";
 
 // Import preset images
 import handOnlyImg from "@/assets/jewelry/preset-hand-only.jpg";
@@ -22,21 +23,32 @@ const presetImageMap: Record<string, string> = {
   'preset-anklet': ankletImg,
 };
 
-function PresetCard({ preset }: { preset: JewelryPreset }) {
+// Pro plan can only access these preset IDs
+const PRO_ACCESSIBLE_PRESETS = ['hand-only', 'neck-closeup'];
+
+function PresetCard({ preset, accessLevel }: { preset: JewelryPreset; accessLevel: 'full' | 'locked' }) {
   const navigate = useNavigate();
   const { t } = useLanguage();
   
   const image = presetImageMap[preset.imagePath];
+  const isLocked = accessLevel === 'locked';
   
   return (
     <button
-      onClick={() => navigate(`/jewelry/generate/${preset.id}`)}
+      onClick={() => {
+        if (!isLocked) {
+          navigate(`/jewelry/generate/${preset.id}`);
+        }
+      }}
+      disabled={isLocked}
       className={cn(
         "group relative flex flex-col items-center justify-end p-6 rounded-xl",
         "border border-border/50 shadow-sm overflow-hidden",
-        "hover:shadow-lg hover:border-primary/40",
         "transition-all duration-300 ease-out",
-        "min-h-[280px] w-full"
+        "min-h-[280px] w-full",
+        isLocked
+          ? "opacity-60 cursor-not-allowed"
+          : "hover:shadow-lg hover:border-primary/40"
       )}
     >
       {/* Background image */}
@@ -45,9 +57,29 @@ function PresetCard({ preset }: { preset: JewelryPreset }) {
           <img 
             src={image} 
             alt={t(preset.nameKey)}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className={cn(
+              "w-full h-full object-cover transition-transform duration-500",
+              !isLocked && "group-hover:scale-105"
+            )}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 group-hover:from-black/70 transition-colors" />
+          <div className={cn(
+            "absolute inset-0 bg-gradient-to-t transition-colors",
+            isLocked
+              ? "from-black/90 via-black/60 to-black/30"
+              : "from-black/80 via-black/40 to-black/10 group-hover:from-black/70"
+          )} />
+        </div>
+      )}
+
+      {/* Lock overlay for restricted presets */}
+      {isLocked && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-black/40 backdrop-blur-sm border border-white/10">
+            <Lock className="w-8 h-8 text-white/80" />
+            <span className="text-xs text-white/70 font-medium text-center max-w-[140px]">
+              {t('jewelry.lockedPreset')}
+            </span>
+          </div>
         </div>
       )}
       
@@ -55,26 +87,37 @@ function PresetCard({ preset }: { preset: JewelryPreset }) {
       <div className="relative z-10 flex flex-col items-center justify-end h-full pb-2 text-center">
         {/* Icon */}
         <div className="mb-auto mt-4 p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
-          <Gem className="w-7 h-7 text-white group-hover:text-primary transition-colors" />
+          <Gem className={cn(
+            "w-7 h-7 transition-colors",
+            isLocked ? "text-white/50" : "text-white group-hover:text-primary"
+          )} />
         </div>
         
         {/* Name */}
-        <h3 className="text-lg font-bold text-white mb-1 group-hover:text-primary transition-colors drop-shadow-lg">
+        <h3 className={cn(
+          "text-lg font-bold mb-1 drop-shadow-lg transition-colors",
+          isLocked ? "text-white/60" : "text-white group-hover:text-primary"
+        )}>
           {t(preset.nameKey)}
         </h3>
         
         {/* Use for */}
-        <p className="text-xs text-white/70 drop-shadow">
+        <p className={cn(
+          "text-xs drop-shadow",
+          isLocked ? "text-white/40" : "text-white/70"
+        )}>
           {t(preset.useForKey)}
         </p>
       </div>
       
-      {/* Hover indicator */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-        <span className="text-sm text-primary font-semibold bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-          →
-        </span>
-      </div>
+      {/* Hover indicator - only for accessible presets */}
+      {!isLocked && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+          <span className="text-sm text-primary font-semibold bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+            →
+          </span>
+        </div>
+      )}
     </button>
   );
 }
@@ -82,6 +125,13 @@ function PresetCard({ preset }: { preset: JewelryPreset }) {
 export default function JewelryHome() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { hasProFeatureAccess, hasCreatorFeatureAccess } = useSubscription();
+
+  const getAccessLevel = (presetId: string): 'full' | 'locked' => {
+    if (hasCreatorFeatureAccess) return 'full';
+    if (hasProFeatureAccess && PRO_ACCESSIBLE_PRESETS.includes(presetId)) return 'full';
+    return 'locked';
+  };
   
   return (
     <div className="min-h-screen bg-background overflow-x-hidden max-w-full">
@@ -130,7 +180,7 @@ export default function JewelryHome() {
         {/* Preset grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {jewelryPresets.map((preset) => (
-            <PresetCard key={preset.id} preset={preset} />
+            <PresetCard key={preset.id} preset={preset} accessLevel={getAccessLevel(preset.id)} />
           ))}
         </div>
 

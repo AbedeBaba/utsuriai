@@ -344,6 +344,7 @@ export const translations: Translations = {
   'jewelry.subtitle': { en: 'Choose the preset that matches your jewelry type. The AI will generate a photorealistic image focused only on that body part.', tr: 'Takı türünüze uygun bölgeyi seçin. AI yalnızca o vücut bölgesine odaklı fotogerçekçi bir görsel oluşturacak.' },
   'jewelry.infoTitle': { en: 'How It Works', tr: 'Nasıl Çalışır' },
   'jewelry.infoDesc': { en: 'Upload your jewelry photo, select a body part preset, and our AI will generate a premium e-commerce-ready image. The jewelry is the visual hero — the body part is only a natural carrier.', tr: 'Takı fotoğrafınızı yükleyin, vücut bölgesi seçin ve AI\'mız premium e-ticaret hazır bir görsel oluşturacak. Takı görsel kahramandır — vücut bölgesi yalnızca doğal bir taşıyıcıdır.' },
+  'jewelry.lockedPreset': { en: 'Upgrade your plan to access', tr: 'Erişmek için planınızı yükseltin' },
   'jewelry.backToPresets': { en: 'Back to Presets', tr: 'Bölgelere Dön' },
   'jewelry.presetNotFound': { en: 'Preset not found', tr: 'Bölge bulunamadı' },
   'jewelry.uploadTitle': { en: 'Upload Your Jewelry', tr: 'Takınızı Yükleyin' },
