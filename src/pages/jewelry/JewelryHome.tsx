@@ -5,6 +5,7 @@ import { ArrowLeft, Gem, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useSubscription } from "@/hooks/useSubscription";
+import { toast } from "@/hooks/use-toast";
 
 // Import preset images
 import handOnlyImg from "@/assets/jewelry/preset-hand-only.jpg";
@@ -36,11 +37,23 @@ function PresetCard({ preset, accessLevel }: { preset: JewelryPreset; accessLeve
   return (
     <button
       onClick={() => {
-        if (!isLocked) {
-          navigate(`/jewelry/generate/${preset.id}`);
+        if (isLocked) {
+          toast({
+            title: t('jewelry.lockedTitle'),
+            description: t('jewelry.lockedDesc'),
+            action: (
+              <button
+                onClick={() => navigate('/pricing')}
+                className="shrink-0 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                {t('jewelry.viewPlans')}
+              </button>
+            ),
+          });
+          return;
         }
+        navigate(`/jewelry/generate/${preset.id}`);
       }}
-      disabled={isLocked}
       className={cn(
         "group relative flex flex-col items-center justify-end p-6 rounded-xl",
         "border border-border/50 shadow-sm overflow-hidden",
