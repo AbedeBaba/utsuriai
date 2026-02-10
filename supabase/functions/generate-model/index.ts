@@ -435,111 +435,19 @@ serve(async (req) => {
   }
 });
 
-// Build prompt for Nano Banana
+// Build prompt for Nano Banana (MUST stay under 5000 chars)
 function buildPrompt(config: Record<string, string | number | null>): string {
   const parts: string[] = [];
   
   const isPortraitPose = config.pose === 'Face Close-up';
   const isHijabModel = config.modestOption === 'Hijab';
   
-  // ── EDITORIAL FASHION PHOTOGRAPHY SYSTEM ──
-  const POSITIVE_PROMPT = 'high-end editorial fashion photography, premium brand campaign aesthetic, shot by a senior fashion photographer, real human model with natural skin texture and visible pores, slight 3/4 camera angle (15-25 degrees) for depth and presence, eye-level or slightly low angle for confidence, editorial framing with visual balance (not mechanically centered), soft key light from side/front with window-like softness, gentle shadow falloff for dimensionality, neutral-premium color temperature (no yellow or blue cast), natural depth with subtle foreground/background separation, DSLR photography with shallow depth of field, authentic fabric texture with realistic clothing folds, relaxed natural posture with subtle weight shift and quiet confidence, clean premium minimal environment, luxury brand aesthetic like Zara/COS/Aritzia studio shoot';
-
-  const CAMERA_DIRECTION = `
-CAMERA & COMPOSITION (CRITICAL):
-- Use a slight 3/4 angle (15-25 degrees) instead of flat front view
-- Eye-level or slightly low angle to give presence and confidence
-- Natural depth with subtle foreground/background separation (no fake blur)
-- Editorial framing — subject visually balanced, NOT mechanically centered
-- AVOID: flat catalog shots, straight-on passport-like framing, symmetry lock
-`;
-
-  const LIGHTING_DIRECTION = `
-LIGHTING (HIGH-END STUDIO):
-- Soft key light from side/front (window-like softness)
-- Gentle shadow falloff for depth and dimension
-- No harsh highlights, no flat lighting
-- Neutral-premium color temperature (no yellow cast, no blue cast)
-- Lighting must enhance texture and material, not wash it out
-`;
-
-  const MODEL_AESTHETIC = `
-MODEL AESTHETICS:
-- Natural fashion posture: relaxed shoulders, subtle weight shift
-- Realistic anatomy, human tension, NOT stiff mannequin pose
-- No exaggerated posing — quiet confidence
-- Must look like a real editorial fashion shoot, NOT AI art
-`;
-
-  const SOCIAL_MEDIA_OPTIMIZATION = `
-SOCIAL MEDIA & E-COMMERCE OPTIMIZATION:
-This image is for businesses selling products on Instagram, TikTok, Facebook, and e-commerce platforms.
-- Output MUST be 9:16 vertical aspect ratio (optimized for Instagram Reels/Stories, TikTok, mobile e-commerce)
-- Image should fill entire vertical frame without black bars
-- Clothing/product must be clearly visible, well-lit, and centered
-- Professional e-commerce quality with TRUE TO LIFE colors
-- Clean composition that highlights the product
-- Must look appealing in thumbnail sizes on mobile apps
-`;
-
-  const PRODUCT_LOCK = `
-PRODUCT LOCK (NON-NEGOTIABLE):
-- Product shape, color, texture, proportions = 100% unchanged from input
-- No stylization, no redesign, no "AI improvement" of the clothing
-- Fabric details must remain sharp and realistic
-- Exact color match, exact pattern match, exact design match
-`;
-
-  const NEGATIVE_PROMPT_GENERAL = 'flat angle, straight-on camera, stiff mannequin pose, plastic skin, over-smoothing, harsh studio flash, washed-out lighting, distorted proportions, fashion illustration look, AI artifacts, unrealistic blur, cheap catalog photo, symmetry lock, robotic posture, overly smooth skin, artificial skin texture, waxy skin, CGI skin, doll-like face, porcelain skin, uncanny valley, over-processed face, excessive skin retouching, beauty filter look, AI-generated look, synthetic appearance, low-quality background, cheap background, blurry background, pixelated background, noisy background, flat lighting, unnatural lighting, harsh shadows, overexposed highlights, washed-out colors, unrealistic proportions, distorted anatomy, deformed hands, extra fingers, missing fingers, warped body, asymmetrical face, over-sharpening, oversaturated colors, HDR look, fake depth of field, unnatural bokeh, 3D render, game engine look, illustration style, stock photo look, artificial expression, passport photo framing, fake gradient background';
-
-  const FINAL_OVERRIDE = `
-FINAL OVERRIDE: If there is any conflict, prioritize fashion photography realism and editorial aesthetics while strictly preserving the original product. The final image must look like it was shot by a senior fashion photographer for a premium brand campaign — NOT AI-generated, NOT stock-photo generic, NOT flat e-commerce.
-`;
-  
   if (isHijabModel) {
-    parts.push('VIRTUAL TRY-ON TASK: Generate a fully modest hijabi female model wearing the EXACT clothing shown in the input images for social media and e-commerce use.');
+    parts.push('VIRTUAL TRY-ON: Generate a modest hijabi female model wearing the EXACT clothing from the input images. High-end editorial fashion photography, premium brand aesthetic, real human model with natural skin texture.');
     parts.push('');
-    parts.push(`STYLE REQUIREMENTS: ${POSITIVE_PROMPT}`);
+    parts.push('HIJAB REQUIREMENTS: Hijab MUST fully cover ALL hair, no hair visible. Neck fully covered. No cleavage, no transparent fabric, no tight clothing. Only face and hands may show skin. Loose fit, conservative but stylish.');
     parts.push('');
-    parts.push(CAMERA_DIRECTION);
-    parts.push(LIGHTING_DIRECTION);
-    parts.push(MODEL_AESTHETIC);
-    parts.push(SOCIAL_MEDIA_OPTIMIZATION);
-    parts.push(PRODUCT_LOCK);
-    parts.push('');
-    parts.push('=== TESETTÜR / MODEST HIJABI MODEL - ABSOLUTE REQUIREMENTS ===');
-    parts.push('');
-    parts.push('CORE IDENTITY:');
-    parts.push('- Fully modest hijabi female model for e-commerce product photography');
-    parts.push('- Turkey / Middle East hijab fashion aesthetic');
-    parts.push('- Modern, elegant, premium modest fashion');
-    parts.push('');
-    parts.push('MANDATORY COVERAGE REQUIREMENTS (NO EXCEPTIONS):');
-    parts.push('- Hijab (headscarf) MUST fully cover ALL hair - NO hair visible whatsoever, not a single strand');
-    parts.push('- Neck MUST be FULLY covered by hijab fabric or high-neck clothing');
-    parts.push('- Chest and décolletage MUST be FULLY covered - absolutely NO cleavage');
-    parts.push('- Shoulders MUST be completely covered');
-    parts.push('- Arms MUST be covered with long sleeves to the wrist');
-    parts.push('- Only face and hands may show skin');
-    parts.push('');
-    parts.push('CLOTHING STYLE REQUIREMENTS:');
-    parts.push('- Fully modest outfit with loose fit');
-    parts.push('- NO transparent, sheer, or see-through fabrics');
-    parts.push('- NO tight or body-hugging silhouettes');
-    parts.push('- NO Western runway or editorial styling');
-    parts.push('- Conservative but stylish modest wear');
-    parts.push('');
-    parts.push('POSE & EXPRESSION:');
-    parts.push('- Natural, dignified, product-focused pose with subtle weight shift');
-    parts.push('- Professional editorial model posture with quiet confidence');
-    parts.push('- NO provocative or exaggerated poses');
-    parts.push('- Subtle, confident expression');
-    parts.push('');
-    parts.push(`=== NEGATIVE PROMPT (ABSOLUTELY FORBIDDEN) ===`);
-    parts.push(`${NEGATIVE_PROMPT_GENERAL}, no visible hair, no cleavage, no open neck, no transparent fabric, no tight clothing, no western fashion look, no sheer fabric, no body-hugging silhouettes, no exposed shoulders, no short sleeves, no V-neck, no low neckline, no exposed skin except face and hands`);
-    parts.push('=== END NEGATIVE PROMPT ===');
-    parts.push('');
-    parts.push('MODEL ATTRIBUTES (within modest constraints):');
+    parts.push('MODEL:');
     if (config.ethnicity) parts.push(`- Ethnicity: ${config.ethnicity}`);
     if (config.skinTone) parts.push(`- Skin tone: ${config.skinTone}`);
     if (config.eyeColor) parts.push(`- Eye color: ${config.eyeColor}`);
@@ -547,97 +455,53 @@ FINAL OVERRIDE: If there is any conflict, prioritize fashion photography realism
     if (config.faceType) parts.push(`- Face shape: ${config.faceType}`);
     if (config.facialExpression) parts.push(`- Expression: ${config.facialExpression}`);
     if (isPortraitPose) {
-      parts.push(`- Pose: Face close-up portrait with 3/4 angle`);
+      parts.push('- Pose: Face close-up portrait, 3/4 angle');
     } else {
-      parts.push(`- Pose: ${config.pose || 'Natural full-body standing pose, head to feet visible'}`);
+      parts.push(`- Pose: ${config.pose || 'Full-body standing, head to feet visible'}`);
     }
-    if (config.background) parts.push(`- Background: ${config.background} (clean, premium, minimal — never competes with product)`);
+    if (config.background) parts.push(`- Background: ${config.background}`);
+  } else {
+    parts.push('VIRTUAL TRY-ON: Generate a fashion model wearing the EXACT clothing from the input images. High-end editorial fashion photography, premium brand aesthetic, real human model with natural skin texture, slight 3/4 camera angle, soft key light, DSLR shallow depth of field.');
     parts.push('');
-    
-    if (!isPortraitPose) {
-      parts.push('MANDATORY FULL-BODY FRAMING:');
-      parts.push('- Generate a FULL-BODY shot showing the ENTIRE model from head to toe');
-      parts.push('- DO NOT crop, zoom in, or create upper-body/half-body shots');
-      parts.push('- The complete figure must be visible: head, torso, arms, legs, and FEET');
-      parts.push('- Use vertical 9:16 portrait orientation for full-body fashion photography');
-      parts.push('- Natural standing pose with feet visible at the bottom of the frame');
-      parts.push('');
-    }
-    
-    parts.push('CLOTHING TRANSFER RULES:');
-    parts.push('- The model MUST wear the SAME outfit from the input images');
-    parts.push('- Do NOT create new or different clothing');
-    parts.push('- Preserve exact fabric, colors, patterns, and design');
-    parts.push('');
-    parts.push(FINAL_OVERRIDE);
-    parts.push('IMAGE FORMAT: Vertical 9:16 aspect ratio');
+    parts.push('MODEL:');
+    if (config.gender) parts.push(`- Gender: ${config.gender}`);
+    if (config.ethnicity) parts.push(`- Ethnicity: ${config.ethnicity}`);
+    if (config.skinTone) parts.push(`- Skin tone: ${config.skinTone}`);
+    if (config.hairColor) parts.push(`- Hair color: ${config.hairColor}`);
+    if (config.hairType) parts.push(`- Hair style: ${config.hairType}`);
+    if (config.eyeColor) parts.push(`- Eye color: ${config.eyeColor}`);
+    if (config.bodyType) parts.push(`- Body type: ${config.bodyType}`);
+    if (config.faceType) parts.push(`- Face shape: ${config.faceType}`);
+    if (config.facialExpression) parts.push(`- Expression: ${config.facialExpression}`);
+    if (config.beardType && config.gender === 'Male') parts.push(`- Beard: ${config.beardType}`);
     if (isPortraitPose) {
-      parts.push('OUTPUT: Ultra-realistic editorial modest fashion portrait photography with the hijabi model wearing the exact input clothing.');
+      parts.push('- Pose: Face close-up portrait, 3/4 angle');
     } else {
-      parts.push('OUTPUT: Ultra-realistic editorial FULL-BODY modest fashion photography (head to feet visible) with the hijabi model wearing the exact input clothing.');
-      parts.push('REMINDER: The ENTIRE body from head to feet MUST be in frame. No cropping. Hair MUST be fully covered by hijab.');
+      parts.push(`- Pose: ${config.pose || 'Full-body standing, head to feet visible'}`);
     }
-    
-    return parts.join('\n');
+    if (config.background) parts.push(`- Background: ${config.background}`);
   }
   
-  // Standard (non-Hijab) model prompt — EDITORIAL UPGRADE
-  parts.push('VIRTUAL TRY-ON TASK: Generate a fashion model wearing the EXACT clothing shown in the input images for social media and e-commerce use.');
   parts.push('');
-  parts.push(`STYLE REQUIREMENTS: ${POSITIVE_PROMPT}`);
-  parts.push('');
-  parts.push(CAMERA_DIRECTION);
-  parts.push(LIGHTING_DIRECTION);
-  parts.push(MODEL_AESTHETIC);
-  parts.push(SOCIAL_MEDIA_OPTIMIZATION);
-  parts.push(PRODUCT_LOCK);
-  parts.push('');
-  parts.push('CRITICAL RULES:');
-  parts.push('- The model MUST wear the SAME outfit from the input images');
-  parts.push('- Do NOT create new or different clothing');
-  parts.push('- Preserve exact fabric, colors, patterns, and design');
-  parts.push('');
+  parts.push('RULES: Product shape/color/texture/pattern MUST be 100% unchanged from input. No redesign. Preserve exact fabric details.');
   
   if (!isPortraitPose) {
-    parts.push('MANDATORY FULL-BODY FRAMING:');
-    parts.push('- Generate a FULL-BODY shot showing the ENTIRE model from head to toe');
-    parts.push('- DO NOT crop, zoom in, or create upper-body/half-body shots');
-    parts.push('- The complete figure must be visible: head, torso, arms, legs, and FEET');
-    parts.push('- Use vertical 9:16 portrait orientation for full-body fashion photography');
-    parts.push('- Natural standing pose with feet visible at the bottom of the frame');
-    parts.push('- NO automatic cropping or zoom-in allowed');
-    parts.push('');
-  }
-  
-  parts.push('MODEL ATTRIBUTES:');
-  if (config.gender) parts.push(`- Gender: ${config.gender}`);
-  if (config.ethnicity) parts.push(`- Ethnicity: ${config.ethnicity}`);
-  if (config.skinTone) parts.push(`- Skin tone: ${config.skinTone}`);
-  if (config.hairColor) parts.push(`- Hair color: ${config.hairColor}`);
-  if (config.hairType) parts.push(`- Hair style: ${config.hairType}`);
-  if (config.eyeColor) parts.push(`- Eye color: ${config.eyeColor}`);
-  if (config.bodyType) parts.push(`- Body type: ${config.bodyType}`);
-  if (config.faceType) parts.push(`- Face shape: ${config.faceType}`);
-  if (config.facialExpression) parts.push(`- Expression: ${config.facialExpression}`);
-  if (config.beardType && config.gender === 'Male') parts.push(`- Beard/Facial hair: ${config.beardType}`);
-  if (isPortraitPose) {
-    parts.push(`- Pose: Face close-up portrait with slight 3/4 angle for editorial depth`);
+    parts.push('FRAMING: FULL-BODY shot, head to feet visible, vertical 9:16, no cropping.');
   } else {
-    parts.push(`- Pose: ${config.pose || 'Natural full-body standing pose, head to feet visible'}`);
-  }
-  if (config.background) parts.push(`- Background: ${config.background} (clean, premium, minimal — never competes with product)`);
-  
-  parts.push('');
-  parts.push(`NEGATIVE PROMPT (AVOID THESE): ${NEGATIVE_PROMPT_GENERAL}`);
-  parts.push('');
-  parts.push(FINAL_OVERRIDE);
-  parts.push('IMAGE FORMAT: Vertical 9:16 aspect ratio');
-  if (isPortraitPose) {
-    parts.push('OUTPUT: Ultra-realistic editorial fashion portrait photography with the model wearing the exact input clothing.');
-  } else {
-    parts.push('OUTPUT: Ultra-realistic editorial FULL-BODY fashion photography (head to feet visible) with the model wearing the exact input clothing.');
-    parts.push('REMINDER: The ENTIRE body from head to feet MUST be in frame. No cropping.');
+    parts.push('FRAMING: Portrait close-up, vertical 9:16.');
   }
   
-  return parts.join('\n');
+  parts.push('AVOID: flat angle, stiff pose, plastic skin, AI artifacts, distorted proportions, deformed hands, stock photo look.');
+  parts.push('OUTPUT: Ultra-realistic editorial fashion photography, 9:16 vertical.');
+  
+  const result = parts.join('\n');
+  
+  // Safety: truncate to 4900 chars max
+  if (result.length > 4900) {
+    console.warn(`Prompt too long (${result.length} chars), truncating to 4900`);
+    return result.substring(0, 4900);
+  }
+  
+  console.log(`Prompt length: ${result.length} chars`);
+  return result;
 }
