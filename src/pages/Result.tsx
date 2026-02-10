@@ -441,7 +441,7 @@ export default function Result() {
                     toast({ title: t('naming.saved') });
                   }}
                 >
-                  {nameSaved ? '✓' : t('common.save').split(' ')[0]}
+                  {nameSaved ? '✓' : language === 'tr' ? 'Değiştir' : 'Change'}
                 </Button>
               </div>
             </div>
