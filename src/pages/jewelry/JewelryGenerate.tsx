@@ -396,7 +396,7 @@ export default function JewelryGenerate() {
                         toast.success(t('naming.saved'));
                       }}
                     >
-                      {nameSaved ? '✓' : language === 'tr' ? 'Kaydet' : 'Save'}
+                      {nameSaved ? '✓' : language === 'tr' ? 'Değiştir' : 'Change'}
                     </Button>
                   </div>
                 </div>
