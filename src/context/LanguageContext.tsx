@@ -348,6 +348,12 @@ export const translations: Translations = {
   'jewelry.lockedTitle': { en: 'Plan Upgrade Required', tr: 'Plan Yükseltmesi Gerekli' },
   'jewelry.lockedDesc': { en: 'This category is not available on your current plan. Upgrade to access more jewelry presets.', tr: 'Bu kategori mevcut planınızda kullanılamaz. Daha fazla takı kategorisine erişmek için planınızı yükseltin.' },
   'jewelry.viewPlans': { en: 'View Plans', tr: 'Planları Gör' },
+  
+  // Image naming
+  'naming.title': { en: 'Name this design', tr: 'Bu görsele bir isim verin' },
+  'naming.placeholder': { en: 'e.g. Gold Ring - White Background', tr: 'ör. Altın Yüzük - Beyaz Arka Plan' },
+  'naming.saved': { en: 'Name saved', tr: 'İsim kaydedildi' },
+  'naming.default': { en: 'Design', tr: 'Tasarım' },
   'jewelry.backToPresets': { en: 'Back to Presets', tr: 'Bölgelere Dön' },
   'jewelry.presetNotFound': { en: 'Preset not found', tr: 'Bölge bulunamadı' },
   'jewelry.uploadTitle': { en: 'Upload Your Jewelry', tr: 'Takınızı Yükleyin' },

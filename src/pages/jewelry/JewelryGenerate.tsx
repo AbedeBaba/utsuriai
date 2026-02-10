@@ -3,7 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { getJewelryPresetById, JEWELRY_CREDIT_COSTS } from "@/data/jewelryPresets";
-import { ArrowLeft, Upload, Download, CheckCircle, Loader2, Zap, Crown, Gem, Sparkles } from "lucide-react";
+import { ArrowLeft, Upload, Download, CheckCircle, Loader2, Zap, Crown, Gem, Sparkles, Pencil } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +29,9 @@ export default function JewelryGenerate() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
-  
+  const [customName, setCustomName] = useState('');
+  const [nameSaved, setNameSaved] = useState(false);
+  const [generationId, setGenerationId] = useState<string | null>(null);
   const preset = presetId ? getJewelryPresetById(presetId) : null;
   
   const handleFile = useCallback((file: File) => {
@@ -85,6 +88,10 @@ export default function JewelryGenerate() {
       
       if (data?.imageUrl) {
         setGeneratedImageUrl(data.imageUrl);
+        const defaultName = `${t('naming.default')} ${new Date().toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US')}`;
+        setCustomName(defaultName);
+        setNameSaved(false);
+        if (data?.generationId) setGenerationId(data.generationId);
         toast.success(t('jewelry.generationSuccess'));
       } else if (data?.error) {
         toast.error(data.error);
@@ -106,7 +113,7 @@ export default function JewelryGenerate() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `utsuri-jewelry-${preset?.id}-${Date.now()}.png`;
+      a.download = `${customName ? customName.replace(/\s+/g, '-').toLowerCase() : `utsuri-jewelry-${preset?.id}`}-${Date.now()}.png`;
       a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
@@ -362,23 +369,56 @@ export default function JewelryGenerate() {
             </div>
             
             {generatedImageUrl && (
-              <div className="flex gap-4 mt-4 max-w-md mx-auto">
-                <Button
-                  onClick={handleDownload}
-                  className="flex-1"
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  {t('jewelry.download')}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleGenerate}
-                  disabled={isGenerating}
-                  className="flex-1"
-                >
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  {t('jewelry.regenerate')}
-                </Button>
+              <div className="max-w-md mx-auto mt-4 space-y-4">
+                {/* Naming input */}
+                <div className="p-3 bg-card border border-border rounded-xl">
+                  <label className="text-sm font-medium text-foreground mb-2 block flex items-center gap-2">
+                    <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
+                    {t('naming.title')}
+                  </label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={customName}
+                      onChange={(e) => {
+                        setCustomName(e.target.value);
+                        setNameSaved(false);
+                      }}
+                      placeholder={t('naming.placeholder')}
+                      maxLength={100}
+                      className="flex-1"
+                    />
+                    <Button
+                      size="sm"
+                      variant={nameSaved ? "outline" : "default"}
+                      disabled={nameSaved}
+                      onClick={() => {
+                        setNameSaved(true);
+                        toast.success(t('naming.saved'));
+                      }}
+                    >
+                      {nameSaved ? '✓' : language === 'tr' ? 'Kaydet' : 'Save'}
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <Button
+                    onClick={handleDownload}
+                    className="flex-1"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    {t('jewelry.download')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleGenerate}
+                    disabled={isGenerating}
+                    className="flex-1"
+                  >
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    {t('jewelry.regenerate')}
+                  </Button>
+                </div>
               </div>
             )}
           </div>

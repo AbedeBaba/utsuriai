@@ -6,7 +6,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Download, RefreshCw, Loader2, ImageIcon, LayoutDashboard, Crown, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Download, RefreshCw, Loader2, ImageIcon, LayoutDashboard, Crown, ShoppingCart, Pencil } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { BrandLogo, BrandLogoMark } from '@/components/BrandLogo';
@@ -43,12 +44,14 @@ export default function Result() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { resetConfig } = useModelConfig();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   
   const [generation, setGeneration] = useState<GenerationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [customName, setCustomName] = useState('');
+  const [nameSaved, setNameSaved] = useState(false);
   const generationInProgressRef = useRef(false); // Prevent duplicate API calls
 
   useEffect(() => {
@@ -132,6 +135,14 @@ export default function Result() {
 
       // Update local state
       setGeneration(prev => prev ? { ...prev, status: 'completed', image_url: result.imageUrl } : null);
+      
+      // Auto-assign default name if none set
+      const defaultName = `${t('naming.default')} ${new Date().toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US')}`;
+      setCustomName(defaultName);
+      await supabase
+        .from('model_generations')
+        .update({ custom_name: defaultName })
+        .eq('id', data.id);
 
       toast({
         title: 'Başarılı!',
@@ -392,6 +403,46 @@ export default function Result() {
                     <span className="font-medium text-foreground">{generation.modest_option}</span>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Image Naming */}
+          {generation?.image_url && !generating && (
+            <div className="mb-6 p-4 bg-card border border-border rounded-xl">
+              <label className="text-sm font-medium text-foreground mb-2 block flex items-center gap-2">
+                <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
+                {t('naming.title')}
+              </label>
+              <div className="flex gap-2">
+                <Input
+                  value={customName}
+                  onChange={(e) => {
+                    setCustomName(e.target.value);
+                    setNameSaved(false);
+                  }}
+                  placeholder={t('naming.placeholder')}
+                  maxLength={100}
+                  className="flex-1"
+                />
+                <Button
+                  size="sm"
+                  variant={nameSaved ? "outline" : "default"}
+                  disabled={nameSaved}
+                  onClick={async () => {
+                    if (!generation?.id) return;
+                    const nameToSave = customName.trim() || `${t('naming.default')} ${new Date().toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US')}`;
+                    await supabase
+                      .from('model_generations')
+                      .update({ custom_name: nameToSave })
+                      .eq('id', generation.id);
+                    setCustomName(nameToSave);
+                    setNameSaved(true);
+                    toast({ title: t('naming.saved') });
+                  }}
+                >
+                  {nameSaved ? '✓' : t('common.save').split(' ')[0]}
+                </Button>
               </div>
             </div>
           )}
