@@ -71,12 +71,11 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Poll Nano Banana for task completion
-async function pollForTaskCompletion(apiKey: string, taskId: string): Promise<string> {
-  const maxWaitTime = 300000; // 5 minutes
+// Poll Nano Banana for task completion with a time limit
+async function pollForTaskCompletion(apiKey: string, taskId: string, maxWaitMs: number = 120000): Promise<string | null> {
   const startTime = Date.now();
   
-  while (Date.now() - startTime < maxWaitTime) {
+  while (Date.now() - startTime < maxWaitMs) {
     const statusResponse = await fetch(`${NANOBANANA_BASE_URL}/record-info?taskId=${taskId}`, {
       method: 'GET',
       headers: { 'Authorization': `Bearer ${apiKey}` }
@@ -107,16 +106,18 @@ async function pollForTaskCompletion(apiKey: string, taskId: string): Promise<st
     await sleep(3000);
   }
   
-  throw new Error('Nano Banana generation timeout');
+  // Return null instead of throwing - means still processing
+  console.log('Polling time limit reached, task still processing');
+  return null;
 }
 
-// Generate using Nano Banana API
+// Generate using Nano Banana API - returns { imageUrl, taskId }
 async function generateWithNanoBanana(
   apiKey: string,
   prompt: string,
   imageUrls: string[],
   usePro: boolean
-): Promise<string> {
+): Promise<{ imageUrl: string | null; taskId: string }> {
   console.log(`Starting Nano Banana ${usePro ? 'Pro' : 'Standard'} generation...`);
   
   let requestBody: Record<string, any>;
@@ -165,7 +166,12 @@ async function generateWithNanoBanana(
   }
   
   console.log(`Nano Banana Task ID: ${taskId}, polling for result...`);
-  return await pollForTaskCompletion(apiKey, taskId);
+  
+  // For standard, poll up to 120s. For pro, poll up to 60s then let frontend continue polling.
+  const pollTime = usePro ? 60000 : 120000;
+  const imageUrl = await pollForTaskCompletion(apiKey, taskId, pollTime);
+  
+  return { imageUrl, taskId };
 }
 
 serve(async (req) => {
@@ -395,14 +401,30 @@ serve(async (req) => {
 
     // Build prompt and generate with Nano Banana
     const prompt = buildPrompt(sanitizedConfig);
-    const generatedImageUrl = await generateWithNanoBanana(nanoBananaApiKey, prompt, imageUrls, usePro);
+    const result = await generateWithNanoBanana(nanoBananaApiKey, prompt, imageUrls, usePro);
 
-    console.log('Nano Banana generation successful:', generatedImageUrl);
+    if (result.imageUrl === null) {
+      // Generation still processing - return taskId for frontend polling
+      console.log('Generation still processing, returning taskId for polling:', result.taskId);
+      return new Response(
+        JSON.stringify({
+          success: true,
+          status: 'processing',
+          taskId: result.taskId,
+          generationId: generationId,
+          quality: usePro ? 'pro' : 'standard',
+          creditCost
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Nano Banana generation successful:', result.imageUrl);
 
     // Update database
     await supabase
       .from('model_generations')
-      .update({ image_url: generatedImageUrl, status: 'completed' })
+      .update({ image_url: result.imageUrl, status: 'completed' })
       .eq('id', generationId)
       .eq('user_id', user.id);
 
@@ -417,7 +439,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        imageUrl: generatedImageUrl,
+        status: 'completed',
+        imageUrl: result.imageUrl,
         quality: usePro ? 'pro' : 'standard',
         creditCost
       }),
