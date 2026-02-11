@@ -93,6 +93,30 @@ export default function Result() {
     }
   };
 
+  const pollForResult = async (taskId: string, generationId: string, usePro: boolean) => {
+    const maxPolls = 60; // 60 polls * 5s = 5 minutes max
+    for (let i = 0; i < maxPolls; i++) {
+      await new Promise(r => setTimeout(r, 5000));
+      try {
+        const { data: checkResult, error: checkError } = await supabase.functions.invoke('check-generation', {
+          body: { taskId, generationId },
+        });
+        if (checkError) continue;
+        
+        if (checkResult?.status === 'completed' && checkResult?.imageUrl) {
+          return checkResult.imageUrl;
+        }
+        if (checkResult?.status === 'failed') {
+          throw new Error(checkResult?.error || 'Generation failed');
+        }
+        // Still processing, continue polling
+      } catch (err) {
+        if (i === maxPolls - 1) throw err;
+      }
+    }
+    throw new Error('Generation timed out');
+  };
+
   const generateImage = async (data: GenerationData, usePro: boolean = false) => {
     // Prevent duplicate calls
     if (generating) {
@@ -107,7 +131,7 @@ export default function Result() {
       const { data: result, error } = await supabase.functions.invoke('generate-model', {
         body: {
           generationId: data.id,
-          userId: user?.id, // Pass user ID for trial pro generation tracking
+          userId: user?.id,
           config: {
             gender: data.gender,
             ethnicity: data.ethnicity,
@@ -127,14 +151,22 @@ export default function Result() {
             modestOption: data.modest_option,
           },
           referenceImage: data.reference_image,
-          usePro: usePro, // Pass Pro mode flag
+          usePro: usePro,
         },
       });
 
       if (error) throw error;
 
+      let imageUrl = result.imageUrl;
+
+      // If still processing (Pro mode), poll for result
+      if (result.status === 'processing' && result.taskId) {
+        console.log('Pro generation still processing, polling for result...');
+        imageUrl = await pollForResult(result.taskId, data.id, usePro);
+      }
+
       // Update local state
-      setGeneration(prev => prev ? { ...prev, status: 'completed', image_url: result.imageUrl } : null);
+      setGeneration(prev => prev ? { ...prev, status: 'completed', image_url: imageUrl } : null);
       
       // Auto-assign default name if none set
       const defaultName = `${t('naming.default')} ${new Date().toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US')}`;

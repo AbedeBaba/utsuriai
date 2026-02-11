@@ -1,1 +1,4 @@
 project_id = "cqjzvohfkvhetgrharnc"
+
+[functions.check-generation]
+verify_jwt = false
