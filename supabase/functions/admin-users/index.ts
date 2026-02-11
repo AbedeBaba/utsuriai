@@ -28,13 +28,8 @@ serve(async (req) => {
 
     const token = authHeader.replace("Bearer ", "");
     
-    // Create a client with the user's token to validate it
-    const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
-    });
-    
-    // Use getClaims to validate the token
-    const { data: claimsData, error: claimsError } = await supabaseUser.auth.getUser();
+    // Validate the token using admin client with the token directly
+    const { data: claimsData, error: claimsError } = await supabaseAdmin.auth.getUser(token);
     
     if (claimsError || !claimsData?.user) {
       console.error("Token validation error:", claimsError);
