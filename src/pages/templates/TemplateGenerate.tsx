@@ -206,21 +206,43 @@ export default function TemplateGenerate() {
   const handleDownloadAll = async () => {
     const completedImages = generatedImages.filter(img => img.status === 'complete');
     
+    if (completedImages.length === 0) {
+      toast.error(t('templates.noImagesToDownload') || 'No images to download');
+      return;
+    }
+    
+    let downloadedCount = 0;
+    
     for (const img of completedImages) {
       try {
-        const response = await fetch(img.imageUrl);
+        // Try fetch with no-cors fallback for cross-origin images
+        const response = await fetch(img.imageUrl, { mode: 'cors' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `${template?.id}-pose-${img.poseIndex + 1}.png`;
+        a.style.display = 'none';
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 100);
+        downloadedCount++;
+        // Small delay between downloads to prevent browser blocking
+        await new Promise(resolve => setTimeout(resolve, 300));
       } catch (error) {
-        console.error('Download failed for pose', img.poseIndex + 1);
+        console.warn(`CORS fetch failed for pose ${img.poseIndex + 1}, opening in new tab`, error);
+        // Fallback: open in new tab so user can save manually
+        window.open(img.imageUrl, '_blank');
+        downloadedCount++;
       }
+    }
+    
+    if (downloadedCount > 0) {
+      toast.success(language === 'tr' ? `${downloadedCount} görsel indiriliyor` : `Downloading ${downloadedCount} images`);
     }
   };
   
