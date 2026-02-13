@@ -228,17 +228,10 @@ export default function Landing() {
                 {t('landing.hero.perfectFor')}
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-base px-8 py-6 rounded-xl">
-                  {t('common.getStarted')}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                
-                <Button variant="outline" size="lg" className="text-base px-8 py-6 rounded-xl border-2 border-border hover:bg-secondary">
-                  <Play className="mr-2 h-5 w-5" />
-                  {t('nav.watchDemo')}
-                </Button>
-              </div>
+              <Button onClick={handleStart} size="lg" className="btn-gold animate-glow-pulse text-base px-8 py-6 rounded-xl">
+                {t('common.getStarted')}
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
 
             {/* Right content - Stacked Transformation Examples */}
