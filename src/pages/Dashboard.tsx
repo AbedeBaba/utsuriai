@@ -30,6 +30,7 @@ import { useSavedModels, SavedModel } from '@/hooks/useSavedModels';
 import { useModelConfig, ModelConfig } from '@/context/ModelConfigContext';
 import { SaveModelDialog } from '@/components/SaveModelDialog';
 import { BrandLogo, BrandLogoMark } from '@/components/BrandLogo';
+import { downloadImage } from '@/lib/downloadImage';
 
 type Category = 'Bottomwear' | 'Topwear' | 'Shoes' | 'Dresses';
 
@@ -188,89 +189,11 @@ export default function Dashboard() {
 
   const handleDownload = async (imageUrl: string, customName: string | null, id: string) => {
     const fileName = customName ? customName.replace(/\s+/g, '-').toLowerCase() : `utsuri-model-${id}`;
-    
-    // Create a hidden link and use the download attribute with the image URL directly
-    // This bypasses CORS issues for images that are publicly accessible
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = `${fileName}.png`;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    
-    // For cross-origin images, we need to fetch and create a blob
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      
-      link.href = blobUrl;
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup
-      setTimeout(() => {
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(blobUrl);
-      }, 100);
-      
-      toast({
-        title: 'İndirme başladı',
-        description: `${fileName}.png indiriliyor`,
-      });
-    } catch (error) {
-      console.error('Blob download failed, trying direct link:', error);
-      
-      // Fallback: Use canvas to download the image
-      try {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        
-        await new Promise<void>((resolve, reject) => {
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx?.drawImage(img, 0, 0);
-            
-            canvas.toBlob((blob) => {
-              if (blob) {
-                const blobUrl = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = `${fileName}.png`;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                
-                setTimeout(() => {
-                  document.body.removeChild(a);
-                  window.URL.revokeObjectURL(blobUrl);
-                }, 100);
-                
-                toast({
-                  title: 'İndirme başladı',
-                  description: `${fileName}.png indiriliyor`,
-                });
-                resolve();
-              } else {
-                reject(new Error('Canvas toBlob failed'));
-              }
-            }, 'image/png');
-          };
-          img.onerror = () => reject(new Error('Image load failed'));
-          img.src = imageUrl;
-        });
-      } catch (canvasError) {
-        console.error('Canvas download failed:', canvasError);
-        // Final fallback: open in new tab
-        window.open(imageUrl, '_blank');
-        toast({
-          title: 'Görsel açılıyor',
-          description: 'Görsel yeni sekmede açıldı. İndirmek için sağ tıklayıp "Farklı Kaydet" seçeneğini kullanın.',
-        });
-      }
+    const success = await downloadImage(imageUrl, `${fileName}.png`);
+    if (success) {
+      toast({ title: 'İndirme başladı', description: `${fileName}.png indiriliyor` });
+    } else {
+      toast({ title: 'Görsel açılıyor', description: 'Görsel yeni sekmede açıldı. İndirmek için sağ tıklayıp "Farklı Kaydet" seçeneğini kullanın.' });
     }
   };
 

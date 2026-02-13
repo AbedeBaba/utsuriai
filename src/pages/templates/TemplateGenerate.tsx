@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandLogoMark } from "@/components/BrandLogo";
 import { AIDisclaimer } from "@/components/AIDisclaimer";
+import { downloadImage } from "@/lib/downloadImage";
 
 interface GeneratedImage {
   poseIndex: number;
@@ -214,31 +215,11 @@ export default function TemplateGenerate() {
     let downloadedCount = 0;
     
     for (const img of completedImages) {
-      try {
-        // Try fetch with no-cors fallback for cross-origin images
-        const response = await fetch(img.imageUrl, { mode: 'cors' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${template?.id}-pose-${img.poseIndex + 1}.png`;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }, 100);
-        downloadedCount++;
-        // Small delay between downloads to prevent browser blocking
-        await new Promise(resolve => setTimeout(resolve, 300));
-      } catch (error) {
-        console.warn(`CORS fetch failed for pose ${img.poseIndex + 1}, opening in new tab`, error);
-        // Fallback: open in new tab so user can save manually
-        window.open(img.imageUrl, '_blank');
-        downloadedCount++;
-      }
+      const fileName = `${template?.id}-pose-${img.poseIndex + 1}.png`;
+      const success = await downloadImage(img.imageUrl, fileName);
+      if (success) downloadedCount++;
+      // Small delay between downloads to prevent browser blocking
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
     
     if (downloadedCount > 0) {

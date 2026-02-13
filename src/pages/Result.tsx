@@ -12,6 +12,7 @@ import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { BrandLogo, BrandLogoMark } from '@/components/BrandLogo';
 import { AIDisclaimer } from '@/components/AIDisclaimer';
+import { downloadImage } from '@/lib/downloadImage';
 
 interface GenerationData {
   id: string;
@@ -205,53 +206,12 @@ export default function Result() {
 
   const handleDownload = async () => {
     if (!generation?.image_url) return;
-
-    try {
-      // Fetch with no-cors mode for external images
-      const response = await fetch(generation.image_url, {
-        mode: 'cors',
-        credentials: 'omit',
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `fashion-model-${generation.id}.png`;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      
-      // Cleanup
-      setTimeout(() => {
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      }, 100);
-      
-      toast({
-        title: 'İndirme başladı',
-        description: 'Görseliniz indiriliyor.',
-      });
-    } catch (error) {
-      console.error('Download error:', error);
-      // Fallback: open in new tab for manual download
-      try {
-        window.open(generation.image_url, '_blank');
-        toast({
-          title: 'Görsel açılıyor',
-          description: 'Görsel yeni sekmede açıldı. Kaydetmek için sağ tıklayın.',
-        });
-      } catch {
-        toast({
-          title: 'İndirme başarısız',
-          description: 'Görsel indirilemedi. Lütfen tekrar deneyin.',
-          variant: 'destructive',
-        });
-      }
+    const fileName = `fashion-model-${generation.id}.png`;
+    const success = await downloadImage(generation.image_url, fileName);
+    if (success) {
+      toast({ title: 'İndirme başladı', description: 'Görseliniz indiriliyor.' });
+    } else {
+      toast({ title: 'Görsel açılıyor', description: 'Görsel yeni sekmede açıldı. Kaydetmek için sağ tıklayın.' });
     }
   };
 
