@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useSubscription } from "@/hooks/useSubscription";
 import { toast } from "@/hooks/use-toast";
+import piercingCategoryImg from "@/assets/jewelry/preset-piercing-category.png";
 
 // Import preset images
 import handOnlyImg from "@/assets/jewelry/preset-hand-only.jpg";
@@ -198,32 +199,93 @@ export default function JewelryHome() {
 
           {/* Piercing category card */}
           <button
-            onClick={() => navigate('/jewelry/piercing')}
+            onClick={() => {
+              if (!hasCreatorFeatureAccess) {
+                toast({
+                  title: t('jewelry.lockedTitle'),
+                  description: t('jewelry.lockedDesc'),
+                  action: (
+                    <button
+                      onClick={() => navigate('/pricing')}
+                      className="shrink-0 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                    >
+                      {t('jewelry.viewPlans')}
+                    </button>
+                  ),
+                });
+                return;
+              }
+              navigate('/jewelry/piercing');
+            }}
             className={cn(
               "group relative flex flex-col items-center justify-end p-6 rounded-xl",
               "border border-border/50 shadow-sm overflow-hidden",
-              "hover:shadow-lg hover:border-primary/40",
               "transition-all duration-300 ease-out",
               "min-h-[280px] w-full",
-              "bg-gradient-to-br from-primary/5 via-background to-primary/10"
+              !hasCreatorFeatureAccess
+                ? "opacity-60 cursor-not-allowed"
+                : "hover:shadow-lg hover:border-primary/40"
             )}
           >
-            <div className="relative z-10 flex flex-col items-center justify-end h-full pb-2 text-center">
-              <div className="mb-auto mt-4 p-3 rounded-full bg-primary/10 border border-primary/20">
-                <CircleDot className="w-8 h-8 text-primary group-hover:text-primary/80 transition-colors" />
+            {/* Background image */}
+            <div className="absolute inset-0 z-0">
+              <img
+                src={piercingCategoryImg}
+                alt={t('jewelry.piercingCard')}
+                className={cn(
+                  "w-full h-full object-cover transition-transform duration-500",
+                  hasCreatorFeatureAccess && "group-hover:scale-105"
+                )}
+              />
+              <div className={cn(
+                "absolute inset-0 bg-gradient-to-t transition-colors",
+                !hasCreatorFeatureAccess
+                  ? "from-black/90 via-black/60 to-black/30"
+                  : "from-black/80 via-black/40 to-black/10 group-hover:from-black/70"
+              )} />
+            </div>
+
+            {/* Lock overlay */}
+            {!hasCreatorFeatureAccess && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-black/40 backdrop-blur-sm border border-white/10">
+                  <Lock className="w-8 h-8 text-white/80" />
+                  <span className="text-xs text-white/70 font-medium text-center max-w-[140px]">
+                    {t('jewelry.lockedPreset')}
+                  </span>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
+            )}
+
+            <div className="relative z-10 flex flex-col items-center justify-end h-full pb-2 text-center">
+              <div className="mb-auto mt-4 p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+                <CircleDot className={cn(
+                  "w-8 h-8 transition-colors",
+                  !hasCreatorFeatureAccess ? "text-white/50" : "text-white group-hover:text-primary"
+                )} />
+              </div>
+              <h3 className={cn(
+                "text-lg font-bold mb-1 drop-shadow-lg transition-colors",
+                !hasCreatorFeatureAccess ? "text-white/60" : "text-white group-hover:text-primary"
+              )}>
                 {t('jewelry.piercingCard')}
               </h3>
-              <p className="text-xs text-muted-foreground">
+              <p className={cn(
+                "text-xs drop-shadow",
+                !hasCreatorFeatureAccess ? "text-white/40" : "text-white/70"
+              )}>
                 {t('jewelry.piercingCardDesc')}
               </p>
             </div>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-              <span className="text-sm text-primary font-semibold bg-primary/10 backdrop-blur-sm px-3 py-1 rounded-full">
-                →
-              </span>
-            </div>
+
+            {/* Hover indicator */}
+            {hasCreatorFeatureAccess && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                <span className="text-sm text-primary font-semibold bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                  →
+                </span>
+              </div>
+            )}
           </button>
         </div>
 
