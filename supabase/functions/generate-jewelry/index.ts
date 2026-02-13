@@ -39,6 +39,27 @@ const PRESETS: Record<string, { prompt: string; negativePrompt: string }> = {
     prompt: 'Editorial jewelry photography: human ankle and foot only, cropped from lower calf to foot, wearing the jewelry from the reference image. Natural skin texture with realistic detail. Soft ambient key light with gentle shadow falloff, slight warm tone for lifestyle editorial feel. Natural relaxed foot position with subtle tension. Premium brand campaign aesthetic, DSLR camera, clean minimal background. Jewelry design preserved 100% unchanged.',
     negativePrompt: 'legs full, body, shoes, floor clutter, mannequin, plastic skin, AI artifacts, 3D render, illustration, CGI, synthetic appearance, deformed jewelry, flat angle, harsh lighting, cheap catalog photo, fake gradient background',
   },
+  // Piercing presets
+  'belly-piercing': {
+    prompt: 'Close-up of a real human belly area, toned midsection cropped from lower ribcage to hip bones, wearing a belly button piercing jewelry. Realistic skin texture with natural pores and subtle muscle definition. Soft diffused studio lighting, clean neutral background. Jewelry sharp and detailed with controlled highlights. Warm natural skin tone, natural matte finish. High-end e-commerce jewelry photography, premium quality, photographed editorial look.',
+    negativePrompt: 'full body, face, legs, arms, mannequin, plastic skin, over-smoothed texture, AI artifacts, 3D render, illustration, CGI, synthetic appearance, extreme close-up, tattoo, scar, blemish, unrealistic proportions',
+  },
+  'ear-piercing': {
+    prompt: 'Close-up of a single real human ear, side profile view, hair tucked back neatly, wearing ear piercing jewelry including studs and hoops along the ear. Realistic skin texture with natural pores. Soft side lighting to enhance metal shine and jewelry details. Minimal neutral background. Natural skin tone, soft shadow separation. High-end e-commerce jewelry photography, premium quality, photographed editorial look.',
+    negativePrompt: 'full face, eyes, mouth, both ears, mannequin, artificial skin, blur, artifacts, 3D render, illustration, CGI, synthetic appearance, plastic skin, AI look',
+  },
+  'eyebrow-piercing': {
+    prompt: 'Close-up of a real human eyebrow area, cropped from forehead to upper cheekbone, wearing an eyebrow piercing barbell jewelry. Realistic skin texture with natural pores and fine eyebrow hairs visible. Soft frontal studio lighting, clean neutral background. Jewelry sharp and detailed with controlled highlights. Natural skin tone, matte finish. High-end e-commerce jewelry photography, premium quality, photographed editorial look.',
+    negativePrompt: 'full face, mouth, neck, full body, mannequin, plastic skin, over-smoothed texture, AI artifacts, 3D render, illustration, CGI, synthetic appearance, distorted features',
+  },
+  'lip-piercing': {
+    prompt: 'Close-up of real human lips and chin area only, cropped from nose tip to chin, wearing a lip piercing ring jewelry. Realistic skin texture with natural pores and lip texture. Soft frontal studio lighting with gentle highlights on metal. Clean neutral background. Natural lip color, matte skin finish. High-end e-commerce jewelry photography, premium quality, photographed editorial look.',
+    negativePrompt: 'full face, eyes, forehead, neck, full body, mannequin, plastic skin, over-smoothed texture, AI artifacts, 3D render, illustration, CGI, synthetic appearance, lipstick overdone',
+  },
+  'nose-piercing': {
+    prompt: 'Close-up of a real human nose area, cropped from between the eyes to upper lip, wearing a nose piercing ring or stud jewelry. Realistic skin texture with natural pores. Soft frontal studio lighting, clean neutral background. Jewelry sharp and detailed with controlled metal highlights. Natural skin tone, matte finish. High-end e-commerce jewelry photography, premium quality, photographed editorial look.',
+    negativePrompt: 'full face, mouth wide open, forehead, neck, full body, mannequin, plastic skin, over-smoothed texture, AI artifacts, 3D render, illustration, CGI, synthetic appearance, distorted nose',
+  },
 };
 
 function sleep(ms: number): Promise<void> {
@@ -337,6 +358,35 @@ serve(async (req) => {
 
     console.log('Jewelry generation successful:', generatedImageUrl);
 
+    // Determine category: jewelry or piercing sub-category
+    const piercingIds = ['belly-piercing', 'ear-piercing', 'eyebrow-piercing', 'lip-piercing', 'nose-piercing'];
+    const category = piercingIds.includes(presetId) ? `piercing/${presetId}` : `jewelry/${presetId}`;
+
+    // Save generation to model_generations for admin tracking
+    const { data: genRecord, error: genError } = await supabase
+      .from('model_generations')
+      .insert({
+        user_id: user.id,
+        gender: 'N/A',
+        ethnicity: 'N/A',
+        skin_tone: 'N/A',
+        hair_color: 'N/A',
+        eye_color: 'N/A',
+        body_type: 'N/A',
+        hair_type: 'N/A',
+        status: 'completed',
+        image_url: generatedImageUrl,
+        category: category,
+      })
+      .select('id')
+      .single();
+
+    if (genError) {
+      console.error('Failed to save jewelry generation record:', genError);
+    } else {
+      console.log('Saved jewelry generation record:', genRecord?.id);
+    }
+
     // Update rate limit
     await supabase.from('rate_limits').upsert({
       user_id: user.id,
@@ -349,6 +399,7 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         imageUrl: generatedImageUrl,
+        generationId: genRecord?.id || null,
         presetId,
         quality: usePro ? 'pro' : 'standard',
         creditCost
