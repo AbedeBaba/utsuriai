@@ -206,7 +206,10 @@ export default function Result() {
 
   const handleDownload = async () => {
     if (!generation?.image_url) return;
-    const fileName = `fashion-model-${generation.id}.png`;
+    const baseName = customName?.trim() 
+      ? customName.trim().replace(/\s+/g, '-').toLowerCase() 
+      : `fashion-model-${generation.id}`;
+    const fileName = `${baseName}-${Date.now()}.png`;
     const success = await downloadImage(generation.image_url, fileName);
     if (success) {
       toast({ title: 'İndirme başladı', description: 'Görseliniz indiriliyor.' });
