@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandLogoMark } from "@/components/BrandLogo";
 import { AIDisclaimer } from "@/components/AIDisclaimer";
+import { downloadImage } from "@/lib/downloadImage";
 
 interface JewelryImage {
   preview: string | null;
@@ -106,24 +107,11 @@ export default function JewelryGenerate() {
   
   const handleDownload = async () => {
     if (!generatedImageUrl) return;
-    
-    try {
-      const response = await fetch(generatedImageUrl, { mode: 'cors', credentials: 'omit' });
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${customName ? customName.replace(/\s+/g, '-').toLowerCase() : `utsuri-jewelry-${preset?.id}`}-${Date.now()}.png`;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => {
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      }, 100);
+    const fileName = `${customName ? customName.replace(/\s+/g, '-').toLowerCase() : `utsuri-jewelry-${preset?.id}`}-${Date.now()}.png`;
+    const success = await downloadImage(generatedImageUrl, fileName);
+    if (success) {
       toast.success(t('jewelry.downloadStarted'));
-    } catch {
-      window.open(generatedImageUrl, '_blank');
+    } else {
       toast.info(t('jewelry.openedInTab'));
     }
   };
