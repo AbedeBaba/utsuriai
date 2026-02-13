@@ -39,6 +39,7 @@ import TemplateGenerate from "./pages/templates/TemplateGenerate";
 // Jewelry pages
 import JewelryHome from "./pages/jewelry/JewelryHome";
 import JewelryGenerate from "./pages/jewelry/JewelryGenerate";
+import PiercingHome from "./pages/jewelry/PiercingHome";
 
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
@@ -74,6 +75,7 @@ const App = () => (
               <Route path="/templates/generate/:templateId" element={<TemplateGenerate />} />
               {/* Jewelry routes */}
               <Route path="/jewelry" element={<JewelryHome />} />
+              <Route path="/jewelry/piercing" element={<PiercingHome />} />
               <Route path="/jewelry/generate/:presetId" element={<JewelryGenerate />} />
               <Route path="/filter/gender" element={<FilterGender />} />
               <Route path="/filter/ethnicity" element={<FilterEthnicity />} />

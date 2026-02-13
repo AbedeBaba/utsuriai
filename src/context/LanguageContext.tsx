@@ -450,6 +450,31 @@ export const translations: Translations = {
   'jewelry.presets.ankletFocus': { en: 'Anklet Focus', tr: 'Halhal Odaklı' },
   'jewelry.presets.ankletFocusDesc': { en: 'From lower calf to foot with soft ambient light', tr: 'Alt bacaktan ayağa, yumuşak ortam ışığıyla' },
   'jewelry.presets.ankletFocusUseFor': { en: 'Anklets, Barefoot Jewelry', tr: 'Halhallar, Yalınayak Takıları' },
+
+  // Piercing
+  'jewelry.piercingCard': { en: 'Piercing', tr: 'Piercing' },
+  'jewelry.piercingCardDesc': { en: 'Belly, Ear, Eyebrow, Lip & Nose', tr: 'Göbek, Kulak, Kaş, Dudak ve Burun' },
+  'piercing.pageTitle': { en: 'Piercing Studio', tr: 'Piercing Stüdyosu' },
+  'piercing.badge': { en: 'Piercing-Focused AI', tr: 'Piercing Odaklı AI' },
+  'piercing.title': { en: 'Select Piercing Type', tr: 'Piercing Türü Seçin' },
+  'piercing.subtitle': { en: 'Choose the piercing type that matches your product. The AI will generate a photorealistic image focused on that body area.', tr: 'Ürününüze uygun piercing türünü seçin. AI o vücut bölgesine odaklı fotogerçekçi bir görsel oluşturacak.' },
+  'piercing.infoTitle': { en: 'How It Works', tr: 'Nasıl Çalışır' },
+  'piercing.infoDesc': { en: 'Upload your piercing jewelry photo, select a body area, and our AI will generate a premium e-commerce-ready image with completely realistic human features.', tr: 'Piercing takı fotoğrafınızı yükleyin, vücut bölgesini seçin ve AI\'mız tamamen gerçekçi insan özelliklerine sahip premium e-ticaret hazır bir görsel oluşturacak.' },
+  'piercing.presets.belly': { en: 'Belly Piercing', tr: 'Göbek Piercing' },
+  'piercing.presets.bellyDesc': { en: 'Midsection from ribcage to hip bones with soft studio lighting', tr: 'Kaburga kemiğinden kalça kemiğine orta bölge, yumuşak stüdyo ışığı' },
+  'piercing.presets.bellyUseFor': { en: 'Belly Button Rings, Barbells', tr: 'Göbek Halkaları, Barbeller' },
+  'piercing.presets.ear': { en: 'Ear Piercing', tr: 'Kulak Piercing' },
+  'piercing.presets.earDesc': { en: 'Side profile ear view with hair tucked back', tr: 'Saç arkaya toplanmış yan profil kulak görünümü' },
+  'piercing.presets.earUseFor': { en: 'Ear Studs, Hoops, Cuffs', tr: 'Kulak Tırnakları, Halkalar, Kelepçeler' },
+  'piercing.presets.eyebrow': { en: 'Eyebrow Piercing', tr: 'Kaş Piercing' },
+  'piercing.presets.eyebrowDesc': { en: 'Forehead to cheekbone area with frontal lighting', tr: 'Alın-elmacık kemiği bölgesi, ön ışıkla' },
+  'piercing.presets.eyebrowUseFor': { en: 'Eyebrow Barbells, Curved Bars', tr: 'Kaş Barbelleri, Eğri Çubuklar' },
+  'piercing.presets.lip': { en: 'Lip Piercing', tr: 'Dudak Piercing' },
+  'piercing.presets.lipDesc': { en: 'Lips and chin area with gentle highlights', tr: 'Dudak ve çene bölgesi, nazik vurgularla' },
+  'piercing.presets.lipUseFor': { en: 'Lip Rings, Labrets, Monroe', tr: 'Dudak Halkaları, Labretler, Monroe' },
+  'piercing.presets.nose': { en: 'Nose Piercing', tr: 'Burun Piercing' },
+  'piercing.presets.noseDesc': { en: 'Nose area between eyes and upper lip', tr: 'Gözler ile üst dudak arası burun bölgesi' },
+  'piercing.presets.noseUseFor': { en: 'Nose Rings, Studs, Septum', tr: 'Burun Halkaları, Tırnaklar, Septum' },
 };
 
 interface LanguageContextType {
