@@ -244,11 +244,11 @@ export default function Dashboard() {
   const displayName = profile?.first_name || user?.email?.split('@')[0] || 'there';
 
   const filteredImages = activeCategory === 'All' 
-    ? images 
+    ? images.filter(img => !img.category) 
     : images.filter(img => img.category === activeCategory);
 
   const getCategoryCount = (category: Category | 'All') => {
-    if (category === 'All') return images.length;
+    if (category === 'All') return images.filter(img => !img.category).length;
     return images.filter(img => img.category === category).length;
   };
 
