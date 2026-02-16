@@ -22,10 +22,9 @@ const signUpSchema = z.object({
   lastName: z.string().min(1, 'Last name is required').max(50, 'Last name is too long'),
   email: z.string().email('Please enter a valid email address'),
   password: z.string()
-    .min(12, 'Password must be at least 12 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number'),
+    .min(8, 'Şifre en az 8 karakter olmalıdır')
+    .regex(/[0-9]/, 'Şifre en az bir rakam içermelidir')
+    .regex(/[.,\-_!@#$%^&*()+=?]/, 'Şifre en az bir özel karakter içermelidir (. , - _ ! vb.)'),
   acceptTerms: z.literal(true, {
     errorMap: () => ({ message: 'Gizlilik Politikası ve Kullanım Koşullarını kabul etmelisiniz' }),
   }),
