@@ -109,6 +109,7 @@ export type Database = {
           payment_confirmed_at: string | null
           phone: string | null
           user_agent: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -123,6 +124,7 @@ export type Database = {
           payment_confirmed_at?: string | null
           phone?: string | null
           user_agent?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -137,6 +139,7 @@ export type Database = {
           payment_confirmed_at?: string | null
           phone?: string | null
           user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
