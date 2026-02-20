@@ -467,9 +467,11 @@ function buildPrompt(config: Record<string, string | number | null>): string {
   const isHijabModel = config.modestOption === 'Hijab';
   
   if (isHijabModel) {
-    parts.push('VIRTUAL TRY-ON: Generate a modest hijabi female model wearing the EXACT clothing from the input images. High-end editorial fashion photography, premium brand aesthetic, real human model with natural skin texture.');
+    parts.push('VIRTUAL TRY-ON photograph of a real modest hijabi female model wearing the EXACT clothing from the input images. Shot on Canon EOS R5, 85mm f/1.4 lens. RAW photo, photojournalistic fashion editorial. MUST look like a real photograph of a real person — NOT a 3D render, NOT an illustration, NOT CGI, NOT an animation.');
     parts.push('');
     parts.push('HIJAB REQUIREMENTS: Hijab MUST fully cover ALL hair, no hair visible. Neck fully covered. No cleavage, no transparent fabric, no tight clothing. Only face and hands may show skin. Loose fit, conservative but stylish.');
+    parts.push('');
+    parts.push('REALISM: Real human skin with visible pores, fine lines, subtle imperfections, natural subsurface scattering. Real eye reflections with catchlights. Natural hair texture. No airbrushing, no smoothing, no plastic look. Asymmetric facial features as in real humans.');
     parts.push('');
     parts.push('MODEL:');
     if (config.ethnicity) parts.push(`- Ethnicity: ${config.ethnicity}`);
@@ -487,7 +489,9 @@ function buildPrompt(config: Record<string, string | number | null>): string {
     }
     if (config.background) parts.push(`- Background: ${config.background}`);
   } else {
-    parts.push('VIRTUAL TRY-ON: Generate a fashion model wearing the EXACT clothing from the input images. High-end editorial fashion photography, premium brand aesthetic, real human model with natural skin texture, slight 3/4 camera angle, soft key light, DSLR shallow depth of field.');
+    parts.push('VIRTUAL TRY-ON photograph of a real fashion model wearing the EXACT clothing from the input images. Shot on Canon EOS R5, 85mm f/1.4 lens. RAW photo, photojournalistic fashion editorial for a luxury brand lookbook. MUST look like a real photograph of a real person — NOT a 3D render, NOT an illustration, NOT CGI, NOT an animation, NOT a cartoon.');
+    parts.push('');
+    parts.push('REALISM: Real human skin with visible pores, fine lines, subtle imperfections, natural subsurface scattering. Real eye reflections with catchlights. Natural hair texture with individual strands. No airbrushing, no smoothing, no plastic look. Asymmetric facial features as in real humans. Soft key light with natural shadow falloff, DSLR shallow depth of field, slight 3/4 camera angle.');
     parts.push('');
     parts.push('MODEL:');
     if (config.gender) parts.push(`- Gender: ${config.gender}`);
@@ -511,7 +515,7 @@ function buildPrompt(config: Record<string, string | number | null>): string {
   }
   
   parts.push('');
-  parts.push('RULES: Product shape/color/texture/pattern MUST be 100% unchanged from input. No redesign. Preserve exact fabric details.');
+  parts.push('CLOTHING RULES: Product shape, color, texture, pattern, logos, stitching MUST be 100% unchanged from input image. No redesign. Preserve exact fabric details.');
   
   if (!isPortraitPose) {
     if (isLyingDown) {
@@ -523,8 +527,8 @@ function buildPrompt(config: Record<string, string | number | null>): string {
     parts.push('FRAMING: Portrait close-up, vertical 9:16.');
   }
   
-  parts.push('AVOID: flat angle, stiff pose, plastic skin, AI artifacts, distorted proportions, deformed hands, stock photo look.');
-  parts.push('OUTPUT: Ultra-realistic editorial fashion photography, 9:16 vertical.');
+  parts.push('STRICTLY AVOID: cartoon style, 3D render, CGI, animation, plastic skin, overly smooth skin, doll-like appearance, AI artifacts, distorted proportions, deformed hands, stock photo look, flat lighting, uncanny valley.');
+  parts.push('OUTPUT: Indistinguishable from a real DSLR photograph, editorial fashion photography, 9:16 vertical.');
   
   const result = parts.join('\n');
   
