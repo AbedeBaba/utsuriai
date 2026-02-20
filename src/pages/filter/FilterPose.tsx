@@ -35,7 +35,7 @@ const poseOptions = [
   { id: 'Face Close-up', label: 'Yüz Yakın Çekim', subtitle: 'Portre çekimi', femaleImage: femaleFaceCloseup, maleImage: maleFaceCloseup },
   { id: 'Standing', label: 'Ayakta', subtitle: 'Tam boy dik duruş', femaleImage: femaleStanding, maleImage: maleStanding },
   { id: 'Sitting', label: 'Oturarak', subtitle: 'Oturma pozisyonu', femaleImage: femaleSitting, maleImage: maleSitting },
-  { id: 'Leaning', label: 'Yaslanmış', subtitle: 'Rahat duruş', femaleImage: femaleLeaning, maleImage: maleLeaning },
+  { id: 'Lying Down', label: 'Uzanmış', subtitle: 'Yerde uzanma pozu', femaleImage: femaleLeaning, maleImage: maleLeaning },
   { id: 'Arms Crossed', label: 'Kollar Kavuşuk', subtitle: 'Özgüvenli poz', femaleImage: femaleArmsCrossed, maleImage: maleArmsCrossed },
   { id: 'Back View', label: 'Arkadan Görünüm', subtitle: 'Arka açı', femaleImage: femaleBackView, maleImage: maleBackView },
   { id: 'Low-angle', label: 'Alt Açı', subtitle: 'Dramatik yukarı', femaleImage: femaleLowAngle, maleImage: maleLowAngle },
