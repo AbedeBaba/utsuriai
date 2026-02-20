@@ -23,7 +23,7 @@ const ALLOWED_VALUES = {
   bodyType: ['Slim', 'Athletic', 'Average', 'Curvy', 'Muscular', 'Petite', 'Tall', 'Plus Size', 'Hourglass'],
   hairType: ['Straight', 'Wavy', 'Curly', 'Coily', 'Short', 'Long', 'Bald'],
   beardType: ['Clean Shaven', 'Stubble', 'Short Beard', 'Full Beard', 'Goatee', 'Mustache', 'Van Dyke', 'Circle Beard', 'Mutton Chops', null],
-  pose: ['Face Close-up', 'Standing', 'Sitting', 'Leaning', 'Arms Crossed', 'Back View', 'Low-Angle', 'Hands on Hips', 'Top-down'],
+  pose: ['Face Close-up', 'Standing', 'Sitting', 'Lying Down', 'Arms Crossed', 'Back View', 'Low-Angle', 'Hands on Hips', 'Top-down'],
   background: ['Fashion White', 'City', 'Beach', 'Forest', 'Mountain', 'Cafe', 'Snowy', 'Underwater', 'Home'],
   faceType: ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'],
   facialExpression: ['Neutral', 'Smile', 'Serious', 'Confident'],
@@ -463,6 +463,7 @@ function buildPrompt(config: Record<string, string | number | null>): string {
   const parts: string[] = [];
   
   const isPortraitPose = config.pose === 'Face Close-up';
+  const isLyingDown = config.pose === 'Lying Down';
   const isHijabModel = config.modestOption === 'Hijab';
   
   if (isHijabModel) {
@@ -479,6 +480,8 @@ function buildPrompt(config: Record<string, string | number | null>): string {
     if (config.facialExpression) parts.push(`- Expression: ${config.facialExpression}`);
     if (isPortraitPose) {
       parts.push('- Pose: Face close-up portrait, 3/4 angle');
+    } else if (isLyingDown) {
+      parts.push('- Pose: Full-body lying down on the ground/floor, relaxed lying position, horizontal body orientation');
     } else {
       parts.push(`- Pose: ${config.pose || 'Full-body standing, head to feet visible'}`);
     }
@@ -499,6 +502,8 @@ function buildPrompt(config: Record<string, string | number | null>): string {
     if (config.beardType && config.gender === 'Male') parts.push(`- Beard: ${config.beardType}`);
     if (isPortraitPose) {
       parts.push('- Pose: Face close-up portrait, 3/4 angle');
+    } else if (isLyingDown) {
+      parts.push('- Pose: Full-body lying down on the ground/floor, relaxed lying position, horizontal body orientation');
     } else {
       parts.push(`- Pose: ${config.pose || 'Full-body standing, head to feet visible'}`);
     }
@@ -509,7 +514,11 @@ function buildPrompt(config: Record<string, string | number | null>): string {
   parts.push('RULES: Product shape/color/texture/pattern MUST be 100% unchanged from input. No redesign. Preserve exact fabric details.');
   
   if (!isPortraitPose) {
-    parts.push('FRAMING: FULL-BODY shot, head to feet visible, vertical 9:16, no cropping.');
+    if (isLyingDown) {
+      parts.push('FRAMING: FULL-BODY shot, model lying horizontally, entire body from head to feet visible, vertical 9:16, no cropping.');
+    } else {
+      parts.push('FRAMING: FULL-BODY shot, head to feet visible, vertical 9:16, no cropping.');
+    }
   } else {
     parts.push('FRAMING: Portrait close-up, vertical 9:16.');
   }
