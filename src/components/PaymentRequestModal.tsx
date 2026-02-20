@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, Copy, CreditCard, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 interface PaymentRequestModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ const IBAN_INFO = {
 
 export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice }: PaymentRequestModalProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isConfirmingPayment, setIsConfirmingPayment] = useState(false);
@@ -83,6 +85,7 @@ export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice
           email: email.trim().toLowerCase(),
           phone: phone.trim() || null,
           package_name: packageName || null,
+          user_id: user?.id ?? null,
         })
         .select('id')
         .single();
