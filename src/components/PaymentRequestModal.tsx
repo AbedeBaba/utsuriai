@@ -78,21 +78,34 @@ export function PaymentRequestModal({ isOpen, onClose, packageName, packagePrice
     setIsSubmitting(true);
     
     try {
-      const { data, error } = await supabase
-        .from('payment_requests')
-        .insert({
-          full_name: fullName.trim(),
-          email: email.trim().toLowerCase(),
-          phone: phone.trim() || null,
-          package_name: packageName || null,
-          user_id: user?.id ?? null,
-        })
-        .select('id')
-        .single();
+      const userId = user?.id ?? null;
+      const insertData: any = {
+        full_name: fullName.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim() || null,
+        package_name: packageName || null,
+        user_id: userId,
+      };
+
+      if (userId) {
+        // Authenticated user: insert and get ID for tracking
+        const { data, error } = await supabase
+          .from('payment_requests')
+          .insert(insertData)
+          .select('id')
+          .single();
+        
+        if (error) throw error;
+        setPaymentRequestId(data.id);
+      } else {
+        // Anonymous user: insert without select (RLS won't allow read)
+        const { error } = await supabase
+          .from('payment_requests')
+          .insert(insertData);
+        
+        if (error) throw error;
+      }
       
-      if (error) throw error;
-      
-      setPaymentRequestId(data.id);
       setSubmittedEmail(email.trim().toLowerCase());
       setIsSubmitted(true);
       
