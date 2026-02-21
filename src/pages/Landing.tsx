@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Upload, Wand2, Download, ArrowRight, Play, Menu } from 'lucide-react';
+import { Upload, Wand2, Download, ArrowRight, Play, Menu, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/context/LanguageContext';
@@ -510,6 +510,44 @@ export default function Landing() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Clients / Social Proof Section */}
+      <section className="py-24 lg:py-32 bg-background">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Trusted by Growing Brands
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-16">
+            We collaborate with fashion and jewelry brands to simplify their product visual production.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
+            {/* Rhodee Jewellery */}
+            <div className="group w-full max-w-[280px] rounded-2xl border border-border/60 bg-card p-8 flex flex-col items-center gap-4 shadow-sm hover:shadow-lg hover:scale-[1.03] transition-all duration-300">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary text-2xl font-bold select-none">
+                R
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">Rhodee Jewellery</h3>
+              <span className="text-xs font-medium text-muted-foreground bg-secondary/60 px-3 py-1 rounded-full">
+                Jewelry Brand
+              </span>
+              <a
+                href="https://www.instagram.com/rhodeejewellery/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                <Instagram className="w-4 h-4" />
+                @rhodeejewellery
+              </a>
+            </div>
+          </div>
+
+          <p className="mt-14 text-sm text-muted-foreground italic">
+            More collaborations coming soon.
+          </p>
         </div>
       </section>
 
