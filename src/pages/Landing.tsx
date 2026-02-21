@@ -18,6 +18,7 @@ import modelRealBg from '@/assets/modelreal.jpg';
 import heroBanner from '@/assets/hero-banner.jpeg';
 import heroBannerMobile from '@/assets/hero-banner-mobile.jpeg';
 import diverseModelsBg from '@/assets/diverse-models-bg.jpg';
+import rhodeeLogo from '@/assets/rhodee-logo.jpg';
 import instantGenerationBg from '@/assets/instant-generation-bg.jpg';
 import studioQualityBg from '@/assets/studio-quality-bg.jpg';
 import fullImageRightsBg from '@/assets/full-image-rights-bg.jpg';
@@ -517,21 +518,19 @@ export default function Landing() {
       <section className="py-24 lg:py-32 bg-background">
         <div className="max-w-5xl mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Trusted by Growing Brands
+            Büyüyen Markaların Güvendiği Platform
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-16">
-            We collaborate with fashion and jewelry brands to simplify their product visual production.
+            Moda ve takı markalarıyla iş birliği yaparak ürün görsel üretimlerini kolaylaştırıyoruz.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
+          <div className="flex justify-center">
             {/* Rhodee Jewellery */}
             <div className="group w-full max-w-[280px] rounded-2xl border border-border/60 bg-card p-8 flex flex-col items-center gap-4 shadow-sm hover:shadow-lg hover:scale-[1.03] transition-all duration-300">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary text-2xl font-bold select-none">
-                R
-              </div>
+              <img src={rhodeeLogo} alt="Rhodee Jewellery" className="w-20 h-20 object-contain rounded-full" />
               <h3 className="text-lg font-semibold text-foreground">Rhodee Jewellery</h3>
               <span className="text-xs font-medium text-muted-foreground bg-secondary/60 px-3 py-1 rounded-full">
-                Jewelry Brand
+                Takı Markası
               </span>
               <a
                 href="https://www.instagram.com/rhodeejewellery/"
@@ -546,7 +545,7 @@ export default function Landing() {
           </div>
 
           <p className="mt-14 text-sm text-muted-foreground italic">
-            More collaborations coming soon.
+            Daha fazla iş birliği çok yakında.
           </p>
         </div>
       </section>
